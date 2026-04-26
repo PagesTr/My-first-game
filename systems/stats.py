@@ -45,6 +45,22 @@ def derive_stats(player, items, classes):
         'defense': defense,
     }
 
+
+def prepare_player_for_combat(player, items, classes):
+    stats = derive_stats(player, items, classes)
+
+    player["max_hp"] = stats["hp"]
+    player["attack"] = stats["attack"]
+    player["defense"] = stats["defense"]
+
+    if player.get("current_hp", 0) <= 0:
+        player["current_hp"] = stats["hp"]
+    elif player["current_hp"] > stats["hp"]:
+        player["current_hp"] = stats["hp"]
+
+    return player
+
+
 def apply_item_stats(base, item_stats):
     """Add item stat modifiers to a base stat dictionary."""
     result = dict(base)

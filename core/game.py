@@ -4,6 +4,7 @@ from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
+from systems.stats import prepare_player_for_combat
 
 
 class Game:
@@ -43,6 +44,7 @@ class Game:
     def start_combat(self):
         enemy = self.spawn_enemy()
 
+        prepare_player_for_combat(self.player, self.data.items, self.data.classes)
         self.combat = CombatSystem(self.player, enemy)
         self.state = "combat"
 
