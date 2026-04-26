@@ -4,6 +4,7 @@ from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
+from systems.progression import apply_combat_rewards
 from systems.stats import prepare_player_for_combat
 
 
@@ -17,6 +18,7 @@ class Game:
         self.state = "class_select"
         self.auto_mode = False
         self.combat = None
+        self.last_combat_result = None
 
     def select_class(self, class_key):
         if class_key not in self.data.classes:
@@ -57,6 +59,17 @@ class Game:
 
         if self.combat and self.combat.is_over:
             print("Combat termine")
+            if self.combat.winner == "player":
+                self.last_combat_result = apply_combat_rewards(
+                    self.player,
+                    self.combat.enemy,
+                )
+            else:
+                self.last_combat_result = {
+                    "exp_gained": 0,
+                    "gold_gained": 0,
+                    "leveled_up": False,
+                }
             self.state = "zone_select"
             self.auto_mode = False
 
