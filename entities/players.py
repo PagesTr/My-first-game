@@ -1,0 +1,26 @@
+from systems.stats import derive_stats
+
+def create_player(char_class, classes, items):
+    """Create a new player using a chosen character class."""
+    player = {
+        'name': 'Hero',
+        'class': char_class,
+        'level': 1,
+        'exp': 0,
+        'next_exp': 10,
+        'gold': 0,
+        'potions': 2,
+        'equipment': ['iron_sword', 'leather_armor'],
+        'current_hp': 0,
+    }
+    stats = derive_stats(player, items, classes)
+    player.update({
+        'force': stats['force'],
+        'agility': stats['agility'],
+        'intelligence': stats['intelligence'],
+        'max_hp': stats['hp'],
+        'current_hp': stats['hp'],
+        'attack': stats['attack'],
+        'defense': stats['defense'],
+    })
+    return player

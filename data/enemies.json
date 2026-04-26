@@ -1,0 +1,68 @@
+{
+  "goblin": {
+    "name": "Goblin",
+    "stats": {"hp": 12, "attack": 3, "defense": 1},
+    "exp": 5,
+    "gold": 4,
+    "drops": [
+      {"item": "copper_coin", "chance": 1.0},
+      {"item": "leather", "chance": 0.6},
+      {"item": "health_potion", "chance": 0.2}
+    ]
+  },
+  "skeleton": {
+    "name": "Skeleton",
+    "stats": {"hp": 16, "attack": 4, "defense": 2},
+    "exp": 7,
+    "gold": 6,
+    "drops": [
+      {"item": "gold_coin", "chance": 0.8},
+      {"item": "bone", "chance": 0.7},
+      {"item": "iron_ore", "chance": 0.3}
+    ]
+  },
+  "wolf": {
+    "name": "Wolf",
+    "stats": {"hp": 14, "attack": 5, "defense": 1},
+    "exp": 8,
+    "gold": 5,
+    "drops": [
+      {"item": "leather", "chance": 0.9},
+      {"item": "copper_coin", "chance": 1.0},
+      {"item": "rare_gem", "chance": 0.1}
+    ]
+  },
+  "bandit": {
+    "name": "Bandit",
+    "stats": {"hp": 20, "attack": 6, "defense": 3},
+    "exp": 12,
+    "gold": 10,
+    "drops": [
+      {"item": "gold_coin", "chance": 1.0},
+      {"item": "iron_ore", "chance": 0.8},
+      {"item": "leather_armor", "chance": 0.3}
+    ]
+  },
+  "orc": {
+    "name": "Orc",
+    "stats": {"hp": 30, "attack": 8, "defense": 4},
+    "exp": 20,
+    "gold": 15,
+    "drops": [
+      {"item": "iron_ore", "chance": 1.0},
+      {"item": "gold_coin", "chance": 0.9},
+      {"item": "steel_armor", "chance": 0.2}
+    ]
+  },
+  "troll": {
+    "name": "Troll",
+    "stats": {"hp": 40, "attack": 10, "defense": 5},
+    "exp": 25,
+    "gold": 20,
+    "drops": [
+      {"item": "rare_gem", "chance": 0.5},
+      {"item": "bone", "chance": 0.8},
+      {"item": "legendary_sword", "chance": 0.1}
+    ]
+  }
+}

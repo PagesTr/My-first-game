@@ -1,0 +1,17 @@
+{
+  "warrior": {
+    "name": "Warrior",
+    "description": "A hardy melee fighter, resilient and straightforward.",
+    "base_stats": {"force": 3, "agility": 1, "intelligence": 0}
+  },
+  "archer": {
+    "name": "Archer",
+    "description": "Fast and accurate, strikes from a distance.",
+    "base_stats": {"force": 1, "agility": 3, "intelligence": 1}
+  },
+  "mage": {
+    "name": "Mage",
+    "description": "A spellcaster who excels with intelligence.",
+    "base_stats": {"force": 0, "agility": 1, "intelligence": 3}
+  }
+}

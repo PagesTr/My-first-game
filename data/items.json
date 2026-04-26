@@ -1,0 +1,62 @@
+{
+  "iron_sword": {
+    "name": "Iron Sword",
+    "type": "weapon",
+    "stats": {"attack": 3}
+  },
+  "leather_armor": {
+    "name": "Leather Armor",
+    "type": "armor",
+    "stats": {"defense": 2}
+  },
+  "health_potion": {
+    "name": "Health Potion",
+    "type": "consumable",
+    "stats": {"hp": 10}
+  },
+  "magic_ring": {
+    "name": "Magic Ring",
+    "type": "accessory",
+    "stats": {"intelligence": 1}
+  },
+  "copper_coin": {
+    "name": "Copper Coin",
+    "type": "currency",
+    "stats": {"gold": 1}
+  },
+  "gold_coin": {
+    "name": "Gold Coin",
+    "type": "currency",
+    "stats": {"gold": 5}
+  },
+  "steel_armor": {
+    "name": "Steel Armor",
+    "type": "armor",
+    "stats": {"defense": 5}
+  },
+  "rare_gem": {
+    "name": "Rare Gem",
+    "type": "material",
+    "stats": {"value": 50}
+  },
+  "legendary_sword": {
+    "name": "Legendary Sword",
+    "type": "weapon",
+    "stats": {"attack": 10}
+  },
+  "leather": {
+    "name": "Leather",
+    "type": "resource",
+    "stats": {"value": 5}
+  },
+  "bone": {
+    "name": "Bone",
+    "type": "resource",
+    "stats": {"value": 3}
+  },
+  "iron_ore": {
+    "name": "Iron Ore",
+    "type": "resource",
+    "stats": {"value": 8}
+  }
+}

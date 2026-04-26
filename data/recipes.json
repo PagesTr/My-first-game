@@ -1,0 +1,42 @@
+{
+  "leather_armor": {
+    "name": "Leather Armor",
+    "ingredients": [
+      {"item": "leather", "quantity": 3}
+    ],
+    "skill_required": 1
+  },
+  "iron_sword": {
+    "name": "Iron Sword",
+    "ingredients": [
+      {"item": "iron_ore", "quantity": 2},
+      {"item": "leather", "quantity": 1}
+    ],
+    "skill_required": 3
+  },
+  "magic_ring": {
+    "name": "Magic Ring",
+    "ingredients": [
+      {"item": "rare_gem", "quantity": 1},
+      {"item": "bone", "quantity": 1}
+    ],
+    "skill_required": 5
+  },
+  "steel_armor": {
+    "name": "Steel Armor",
+    "ingredients": [
+      {"item": "iron_ore", "quantity": 4},
+      {"item": "leather", "quantity": 2}
+    ],
+    "skill_required": 7
+  },
+  "legendary_sword": {
+    "name": "Legendary Sword",
+    "ingredients": [
+      {"item": "iron_ore", "quantity": 5},
+      {"item": "rare_gem", "quantity": 2},
+      {"item": "bone", "quantity": 3}
+    ],
+    "skill_required": 10
+  }
+}
