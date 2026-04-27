@@ -70,8 +70,13 @@ class Game:
                     "gold_gained": 0,
                     "leveled_up": False,
                 }
-            self.state = "zone_select"
+            self.state = "combat_result"
             self.auto_mode = False
+
+    def continue_after_combat_result(self):
+        self.state = "zone_select"
+        self.combat = None
+        self.auto_mode = False
 
     def spawn_enemy(self):
         if self.selected_zone:

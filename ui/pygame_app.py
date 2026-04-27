@@ -2,6 +2,7 @@ import pygame
 from core.game import Game
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.menu_screen import MenuScreen
+from ui.screens.result_screen import ResultScreen
 
 
 class PygameApp:
@@ -17,6 +18,7 @@ class PygameApp:
         self.game = Game()
         self.menu_screen = MenuScreen(self.game)
         self.combat_screen = CombatScreen(self.game)
+        self.result_screen = ResultScreen(self.game)
 
     def run(self):
         while self.running:
@@ -36,6 +38,8 @@ class PygameApp:
                 self.menu_screen.handle_event(event)
             elif self.game.state == "combat":
                 self.combat_screen.handle_event(event)
+            elif self.game.state == "combat_result":
+                self.result_screen.handle_event(event)
 
     def update(self):
         if self.game.state == "combat":
@@ -46,5 +50,7 @@ class PygameApp:
             self.menu_screen.draw(self.screen)
         elif self.game.state == "combat":
             self.combat_screen.draw(self.screen)
+        elif self.game.state == "combat_result":
+            self.result_screen.draw(self.screen)
 
         pygame.display.flip()
