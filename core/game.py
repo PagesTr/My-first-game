@@ -66,7 +66,7 @@ class Game:
                     self.player,
                     self.combat.enemy,
                 )
-                drops = generate_combat_loot(self.combat.enemy)
+                drops = generate_combat_loot(self.combat.enemy, self.data.items)
                 self.last_combat_result["drops"] = drops
                 self.last_combat_result["inventory_result"] = add_drops_to_inventory(
                     self.player["inventory"],

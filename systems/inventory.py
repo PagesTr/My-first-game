@@ -58,9 +58,17 @@ def add_drops_to_inventory(inventory, drops):
     }
 
     for drop in drops:
+        kind = drop.get("kind")
         item_id = drop["item"]
-        quantity = drop.get("quantity", 1)
-        if add_stackable_item(inventory, item_id, quantity):
+        if kind == "stackable":
+            quantity = drop.get("quantity", 1)
+            added = add_stackable_item(inventory, item_id, quantity)
+        elif kind == "unique":
+            added = add_unique_item(inventory, drop.copy())
+        else:
+            added = False
+
+        if added:
             result["added"].append(drop)
         else:
             result["failed"].append(drop)
