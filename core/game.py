@@ -4,6 +4,7 @@ from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
+from systems.loot import generate_combat_loot
 from systems.progression import apply_combat_rewards
 from systems.stats import prepare_player_for_combat
 
@@ -64,11 +65,15 @@ class Game:
                     self.player,
                     self.combat.enemy,
                 )
+                self.last_combat_result["drops"] = generate_combat_loot(
+                    self.combat.enemy
+                )
             else:
                 self.last_combat_result = {
                     "exp_gained": 0,
                     "gold_gained": 0,
                     "leveled_up": False,
+                    "drops": [],
                 }
             self.state = "combat_result"
             self.auto_mode = False

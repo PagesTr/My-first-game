@@ -22,7 +22,7 @@ class ResultScreen:
         self.game = game
         self.title_font = pygame.font.Font(None, 48)
         self.font = pygame.font.Font(None, 32)
-        self.continue_btn = Button((300, 450, 200, 50), "Continuer")
+        self.continue_btn = Button((300, 530, 200, 50), "Continuer")
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -39,6 +39,7 @@ class ResultScreen:
         result = self.game.last_combat_result or {}
         exp_gained = result.get("exp_gained", 0)
         gold_gained = result.get("gold_gained", 0)
+        drops = result.get("drops", [])
         current_level = self.game.player.get("level", 1) if self.game.player else 1
 
         title = self.title_font.render(title_text, True, (245, 245, 245))
@@ -53,10 +54,11 @@ class ResultScreen:
             f"Niveau actuel: {current_level}", True, (255, 255, 255)
         )
 
-        screen.blit(xp_text, (300, 220))
-        screen.blit(gold_text, (300, 270))
-        screen.blit(level_text, (300, 320))
+        screen.blit(xp_text, (300, 170))
+        screen.blit(gold_text, (300, 210))
+        screen.blit(level_text, (300, 250))
 
+        loot_y = 300
         if result.get("leveled_up", False):
             level_up_text = self.font.render(
                 "Niveau supérieur !", True, (120, 255, 160)
@@ -66,7 +68,23 @@ class ResultScreen:
                 True,
                 (120, 255, 160),
             )
-            screen.blit(level_up_text, (300, 360))
-            screen.blit(new_level_text, (300, 395))
+            screen.blit(level_up_text, (300, 290))
+            screen.blit(new_level_text, (300, 325))
+            loot_y = 370
+
+        loot_title = self.font.render("Loot :", True, (255, 255, 255))
+        screen.blit(loot_title, (300, loot_y))
+
+        if drops:
+            for index, drop in enumerate(drops[:4]):
+                item_id = drop["item"]
+                quantity = drop.get("quantity", 1)
+                loot_text = self.font.render(
+                    f"- {item_id} x {quantity}", True, (200, 200, 200)
+                )
+                screen.blit(loot_text, (300, loot_y + 35 + index * 28))
+        else:
+            no_loot_text = self.font.render("Aucun loot", True, (200, 200, 200))
+            screen.blit(no_loot_text, (300, loot_y + 35))
 
         self.continue_btn.draw(screen, self.font)
