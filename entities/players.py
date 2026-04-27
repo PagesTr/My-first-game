@@ -1,3 +1,4 @@
+from systems.inventory import create_inventory
 from systems.stats import derive_stats
 
 def create_player(char_class, classes, items):
@@ -11,6 +12,7 @@ def create_player(char_class, classes, items):
         'gold': 0,
         'potions': 2,
         'equipment': ['iron_sword', 'leather_armor'],
+        'inventory': create_inventory(),
         'current_hp': 0,
     }
     stats = derive_stats(player, items, classes)
