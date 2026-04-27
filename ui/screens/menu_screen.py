@@ -37,6 +37,7 @@ class MenuScreen:
 
         self.class_buttons = self._build_class_buttons()
         self.zone_buttons = self._build_zone_buttons()
+        self.inventory_button = MenuButton((560, 54, 160, 52), "Inventaire")
 
     def _build_class_buttons(self):
         buttons = []
@@ -79,6 +80,10 @@ class MenuScreen:
                     return
 
         if self.game.state == "zone_select":
+            if self.inventory_button.is_clicked(pos):
+                self.game.state = "inventory"
+                return
+
             for zone_key, button in self.zone_buttons:
                 if button.is_clicked(pos):
                     self.game.select_zone(zone_key)
@@ -110,6 +115,7 @@ class MenuScreen:
             f"{class_name} - Niveau {player_level}", True, (190, 200, 205)
         )
         screen.blit(subtitle, (82, 105))
+        self.inventory_button.draw(screen, self.option_font, self.body_font)
 
         for zone_key, button in self.zone_buttons:
             zone = self.game.data.zones[zone_key]
