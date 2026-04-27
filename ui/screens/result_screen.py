@@ -39,6 +39,7 @@ class ResultScreen:
         result = self.game.last_combat_result or {}
         exp_gained = result.get("exp_gained", 0)
         gold_gained = result.get("gold_gained", 0)
+        current_level = self.game.player.get("level", 1) if self.game.player else 1
 
         title = self.title_font.render(title_text, True, (245, 245, 245))
         screen.blit(title, (330, 120))
@@ -48,7 +49,24 @@ class ResultScreen:
             f"Gold gagné: {gold_gained}", True, (255, 220, 120)
         )
 
+        level_text = self.font.render(
+            f"Niveau actuel: {current_level}", True, (255, 255, 255)
+        )
+
         screen.blit(xp_text, (300, 220))
         screen.blit(gold_text, (300, 270))
+        screen.blit(level_text, (300, 320))
+
+        if result.get("leveled_up", False):
+            level_up_text = self.font.render(
+                "Niveau supérieur !", True, (120, 255, 160)
+            )
+            new_level_text = self.font.render(
+                f"Nouveau niveau : {result.get('new_level', current_level)}",
+                True,
+                (120, 255, 160),
+            )
+            screen.blit(level_up_text, (300, 360))
+            screen.blit(new_level_text, (300, 395))
 
         self.continue_btn.draw(screen, self.font)
