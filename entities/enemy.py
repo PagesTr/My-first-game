@@ -13,6 +13,7 @@ def create_enemy(template, level):
         'defense': stats['defense'] + enemy_level // 3,
         'exp': template['exp'] + enemy_level * 2,
         'gold': template['gold'] + enemy_level,
+        'drops': template.get('drops', []),
     }
 
 
