@@ -4,6 +4,7 @@ from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
+from systems.inventory import add_drops_to_inventory
 from systems.loot import generate_combat_loot
 from systems.progression import apply_combat_rewards
 from systems.stats import prepare_player_for_combat
@@ -65,8 +66,11 @@ class Game:
                     self.player,
                     self.combat.enemy,
                 )
-                self.last_combat_result["drops"] = generate_combat_loot(
-                    self.combat.enemy
+                drops = generate_combat_loot(self.combat.enemy)
+                self.last_combat_result["drops"] = drops
+                self.last_combat_result["inventory_result"] = add_drops_to_inventory(
+                    self.player["inventory"],
+                    drops,
                 )
             else:
                 self.last_combat_result = {
@@ -74,6 +78,7 @@ class Game:
                     "gold_gained": 0,
                     "leveled_up": False,
                     "drops": [],
+                    "inventory_result": {"added": [], "failed": []},
                 }
             self.state = "combat_result"
             self.auto_mode = False

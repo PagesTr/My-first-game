@@ -51,6 +51,23 @@ def add_unique_item(inventory, item_instance):
     return True
 
 
+def add_drops_to_inventory(inventory, drops):
+    result = {
+        "added": [],
+        "failed": [],
+    }
+
+    for drop in drops:
+        item_id = drop["item"]
+        quantity = drop.get("quantity", 1)
+        if add_stackable_item(inventory, item_id, quantity):
+            result["added"].append(drop)
+        else:
+            result["failed"].append(drop)
+
+    return result
+
+
 def move_item(inventory, source_index, target_index):
     if not is_valid_slot(inventory, source_index):
         return False
