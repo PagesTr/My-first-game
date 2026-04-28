@@ -1,4 +1,10 @@
-from systems.loot import RARITIES, generate_combat_loot, generate_randomized_stats
+from systems.loot import (
+    RARITIES,
+    generate_combat_loot,
+    generate_randomized_stats,
+    generate_rarity,
+    get_allowed_rarities,
+)
 
 
 def make_enemy_with_drop(item_id):
@@ -113,3 +119,55 @@ def test_unique_randomized_stats_include_rarity_bonus():
     stats = generate_randomized_stats({"attack": 3}, rarity="unique")
 
     assert 8 <= stats["attack"] <= 10
+
+
+def test_get_allowed_rarities_returns_global_rarities_when_missing():
+    item = {"type": "weapon", "stats": {"attack": 3}}
+
+    assert get_allowed_rarities(item) == RARITIES
+
+
+def test_get_allowed_rarities_filters_unknown_values():
+    item = {"type": "weapon", "rarities": ["rare", "invalid", "legendary"]}
+
+    allowed_rarities = get_allowed_rarities(item)
+
+    assert "rare" in allowed_rarities
+    assert "legendary" in allowed_rarities
+    assert "invalid" not in allowed_rarities
+
+
+def test_generate_rarity_uses_only_allowed_rarities():
+    allowed_rarities = ("legendary", "unique")
+
+    generated = {generate_rarity(allowed_rarities) for _ in range(50)}
+
+    assert generated <= set(allowed_rarities)
+
+
+def test_unique_drop_uses_item_allowed_rarities():
+    items = {
+        "legendary_sword": {
+            "type": "weapon",
+            "stats": {"attack": 10},
+            "rarities": ["legendary", "unique"],
+        }
+    }
+
+    for _ in range(50):
+        drops = generate_combat_loot(make_enemy_with_drop("legendary_sword"), items)
+        assert drops[0]["rarity"] in ("legendary", "unique")
+
+
+def test_basic_equipment_can_be_limited_to_common_and_uncommon():
+    items = {
+        "iron_sword": {
+            "type": "weapon",
+            "stats": {"attack": 3},
+            "rarities": ["common", "uncommon"],
+        }
+    }
+
+    for _ in range(50):
+        drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
+        assert drops[0]["rarity"] in ("common", "uncommon")
