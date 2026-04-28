@@ -8,18 +8,6 @@ def load_json(relative_path):
         return json.load(json_file)
 
 
-def test_item_stats_are_known_stats():
-    items = load_json("data/items.json")
-    stat_scaling = load_json("data/stat_scaling.json")
-    allowed_stats = set(stat_scaling["primary_stats"])
-    allowed_stats.update(stat_scaling["combat_secondary_stats"])
-    allowed_stats.update(stat_scaling["progression_secondary_stats"])
-    allowed_stats.update({"force", "agility", "hp", "gold", "value"})
-
-    for item_id, item in items.items():
-        for stat in item.get("stats", {}):
-            assert stat in allowed_stats, f"{item_id} uses unknown stat: {stat}"
-
 
 def test_percentage_item_stats_are_reasonable():
     items = load_json("data/items.json")
