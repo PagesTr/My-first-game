@@ -11,7 +11,7 @@
     "drops": [
       {
         "item": "legendary_sword",
-        "chance": 1.0
+        "chance": 2.0
       },
       {
         "item": "leather",
@@ -34,8 +34,8 @@
     "gold": 6,
     "drops": [
       {
-        "item": "gold_coin",
-        "chance": 0.8
+        "item": "legendary_sword",
+        "chance": 2.0
       },
       {
         "item": "bone",
@@ -58,8 +58,8 @@
     "gold": 5,
     "drops": [
       {
-        "item": "leather",
-        "chance": 0.9
+        "item": "legendary_sword",
+        "chance": 2.0
       },
       {
         "item": "copper_coin",

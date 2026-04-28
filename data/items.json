@@ -2,61 +2,109 @@
   "iron_sword": {
     "name": "Iron Sword",
     "type": "weapon",
-    "stats": {"attack": 3}
+    "stats": {
+      "attack": 3
+    },
+    "rarity_weights": {
+      "common": 70,
+      "uncommon": 25,
+      "rare": 5
+    }
   },
   "leather_armor": {
     "name": "Leather Armor",
     "type": "armor",
-    "stats": {"defense": 2}
+    "stats": {
+      "defense": 2
+    },
+    "rarity_weights": {
+      "common": 75,
+      "uncommon": 20,
+      "rare": 5
+    }
   },
   "health_potion": {
     "name": "Health Potion",
     "type": "consumable",
-    "stats": {"hp": 10}
+    "stats": {
+      "hp": 10
+    }
   },
   "magic_ring": {
     "name": "Magic Ring",
     "type": "accessory",
-    "stats": {"intelligence": 1}
+    "stats": {
+      "intelligence": 1
+    },
+    "rarity_weights": {
+      "rare": 70,
+      "epic": 25,
+      "legendary": 5
+    }
   },
   "copper_coin": {
     "name": "Copper Coin",
     "type": "currency",
-    "stats": {"gold": 1}
+    "stats": {
+      "gold": 1
+    }
   },
   "gold_coin": {
     "name": "Gold Coin",
     "type": "currency",
-    "stats": {"gold": 5}
+    "stats": {
+      "gold": 5
+    }
   },
   "steel_armor": {
     "name": "Steel Armor",
     "type": "armor",
-    "stats": {"defense": 5}
+    "stats": {
+      "defense": 5
+    },
+    "rarity_weights": {
+      "uncommon": 55,
+      "rare": 35,
+      "epic": 10
+    }
   },
   "rare_gem": {
     "name": "Rare Gem",
     "type": "material",
-    "stats": {"value": 50}
+    "stats": {
+      "value": 50
+    }
   },
   "legendary_sword": {
     "name": "Legendary Sword",
     "type": "weapon",
-    "stats": {"attack": 10}
+    "stats": {
+      "attack": 10
+    },
+    "rarity_weights": {
+      "legendary": 90,
+      "unique": 10
+    }
   },
   "leather": {
     "name": "Leather",
     "type": "resource",
-    "stats": {"value": 5}
+    "stats": {
+      "value": 5
+    }
   },
   "bone": {
     "name": "Bone",
     "type": "resource",
-    "stats": {"value": 3}
+    "stats": {
+      "value": 3
+    }
   },
   "iron_ore": {
     "name": "Iron Ore",
     "type": "resource",
-    "stats": {"value": 8}
+    "stats": {
+      "value": 8
+    }
   }
 }
