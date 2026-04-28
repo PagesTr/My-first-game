@@ -1,1 +1,9 @@
-{"python.defaultInterpreterPath": "d:\\jeux test\\.venv\\Scripts\\python.exe","python.terminal.activateEnvironment": true}
+{
+    "python.defaultInterpreterPath": "d:\\jeux test\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}

@@ -193,25 +193,67 @@ class InventoryScreen:
     def _draw_player_stats_panel(self, screen):
         player = self.game.player
         stats = [
+            ("Strength", player.get("strength", player.get("force", 0))),
+            ("Dexterity", player.get("dexterity", player.get("agility", 0))),
+            ("Intelligence", player.get("intelligence", 0)),
+            ("Vitality", player.get("vitality", 0)),
+            ("Wisdom", player.get("wisdom", 0)),
+            ("Luck", player.get("luck", 0)),
             ("Max HP", player.get("max_hp", 0)),
             ("Current HP", player.get("current_hp", 0)),
             ("Attack", player.get("attack", 0)),
             ("Defense", player.get("defense", 0)),
-            ("Strength", player.get("force", 0)),
-            ("Agility", player.get("agility", 0)),
-            ("Intelligence", player.get("intelligence", 0)),
+            ("Magic Attack", player.get("magic_attack", 0)),
+            ("Magic Defense", player.get("magic_defense", 0)),
+            ("Accuracy", player.get("accuracy", 0)),
+            ("Dodge", player.get("dodge_chance", 0)),
+            ("Block", player.get("block_chance", 0)),
+            ("Crit Chance", player.get("crit_chance", 0)),
+            ("Crit Damage", player.get("crit_damage", 0)),
+            ("Initiative", player.get("initiative", 0)),
+            ("Healing Power", player.get("healing_power", 0)),
+            ("Status Resist", player.get("status_resistance", 0)),
+            ("Loot Bonus", player.get("loot_bonus", 0)),
+            ("Gold Bonus", player.get("gold_bonus", 0)),
+            ("Rare Find", player.get("rare_find_bonus", 0)),
+            ("XP Bonus", player.get("xp_bonus", 0)),
         ]
+        percent_stats = {
+            "Accuracy",
+            "Dodge",
+            "Block",
+            "Crit Chance",
+            "Status Resist",
+            "Loot Bonus",
+            "Gold Bonus",
+            "Rare Find",
+            "XP Bonus",
+        }
+
+        def format_value(label, value):
+            if label in percent_stats:
+                return f"{value * 100:.1f}%"
+            return str(value)
 
         title = self.font.render("Stats", True, (245, 245, 245))
         screen.blit(title, (560, 440))
 
-        y = 468
-        for label, value in stats:
+        start_x = 560
+        start_y = 466
+        column_width = 112
+        line_height = 13
+        rows_per_column = 12
+
+        for index, (label, value) in enumerate(stats):
+            col = index // rows_per_column
+            row = index % rows_per_column
             stat_text = self.small_font.render(
-                f"{label}: {value}", True, (220, 220, 220)
+                f"{label}: {format_value(label, value)}", True, (220, 220, 220)
             )
-            screen.blit(stat_text, (560, y))
-            y += 16
+            screen.blit(
+                stat_text,
+                (start_x + col * column_width, start_y + row * line_height),
+            )
 
     def _draw_comparison_panel(self, screen):
         mouse_pos = pygame.mouse.get_pos()
