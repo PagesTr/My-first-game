@@ -212,6 +212,166 @@ def test_use_consumable_returns_false_for_invalid_slot():
     assert use_consumable_item(player, inventory, 1, items) is False
 
 
+def test_use_consumable_with_effects_adds_temporary_effect_to_player():
+    player = {"current_hp": 10, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "rage_potion",
+        "quantity": 2,
+    }
+    items = {
+        "rage_potion": {
+            "type": "consumable",
+            "effects": [
+                {
+                    "id": "rage_test",
+                    "name": "Rage",
+                    "source": "test",
+                    "modifiers": {"attack": 3},
+                    "duration_type": "combat",
+                    "remaining_combats": 2,
+                }
+            ],
+            "stats": {"value": 20},
+        }
+    }
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert len(player["active_effects"]) == 1
+    assert player["active_effects"][0]["modifiers"] == {"attack": 3}
+
+
+def test_use_consumable_with_effects_decreases_quantity_after_use():
+    player = {"current_hp": 10, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "rage_potion",
+        "quantity": 2,
+    }
+    items = {
+        "rage_potion": {
+            "type": "consumable",
+            "effects": [
+                {
+                    "modifiers": {"attack": 3},
+                    "duration_type": "combat",
+                    "remaining_combats": 2,
+                }
+            ],
+        }
+    }
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert inventory["slots"][0]["quantity"] == 1
+
+
+def test_use_consumable_with_effects_clears_slot_when_quantity_reaches_zero():
+    player = {"current_hp": 10, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "rage_potion",
+        "quantity": 1,
+    }
+    items = {
+        "rage_potion": {
+            "type": "consumable",
+            "effects": [
+                {
+                    "modifiers": {"attack": 3},
+                    "duration_type": "combat",
+                    "remaining_combats": 2,
+                }
+            ],
+        }
+    }
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert inventory["slots"][0] is None
+
+
+def test_use_consumable_with_invalid_effects_is_not_consumed():
+    player = {"current_hp": 10, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "broken_potion",
+        "quantity": 1,
+    }
+    items = {
+        "broken_potion": {
+            "type": "consumable",
+            "effects": [
+                {
+                    "modifiers": {"attack": 3},
+                    "duration_type": "combat",
+                    "remaining_combats": 0,
+                }
+            ],
+        }
+    }
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is False
+    assert player["active_effects"] == []
+    assert inventory["slots"][0]["quantity"] == 1
+
+
+def test_use_consumable_health_potion_still_heals_player():
+    player = {"current_hp": 5, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 1,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert player["current_hp"] == 15
+
+
+def test_use_consumable_with_heal_and_effect_consumes_if_effect_is_applied():
+    player = {"current_hp": 20, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "mixed_potion",
+        "quantity": 1,
+    }
+    items = {
+        "mixed_potion": {
+            "type": "consumable",
+            "stats": {"hp": 10},
+            "effects": [
+                {
+                    "modifiers": {"attack": 3},
+                    "duration_type": "combat",
+                    "remaining_combats": 2,
+                }
+            ],
+        }
+    }
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert player["current_hp"] == 20
+    assert len(player["active_effects"]) == 1
+    assert inventory["slots"][0] is None
+
+
 def test_compact_inventory_moves_items_to_front():
     inventory = create_inventory(size=5)
     item_a = {"kind": "stackable", "item": "a", "quantity": 1}

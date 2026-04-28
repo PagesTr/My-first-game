@@ -47,6 +47,25 @@
       "hp": 25
     }
   },
+  "rage_potion": {
+    "name": "Rage Potion",
+    "type": "consumable",
+    "effects": [
+      {
+        "id": "rage_potion_attack",
+        "name": "Rage",
+        "source": "consumable",
+        "modifiers": {
+          "attack": 3
+        },
+        "duration_type": "combat",
+        "remaining_combats": 2
+      }
+    ],
+    "stats": {
+      "value": 20
+    }
+  },
   "magic_ring": {
     "name": "Magic Ring",
     "type": "accessory",

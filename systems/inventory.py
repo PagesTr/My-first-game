@@ -1,3 +1,6 @@
+from systems.effects import add_temporary_effect
+
+
 DEFAULT_INVENTORY_SIZE = 30
 
 
@@ -98,6 +101,10 @@ def use_consumable_item(player, inventory, slot_index, items):
         healed_hp = min(max_hp, current_hp + stats["hp"])
         if healed_hp > current_hp:
             player["current_hp"] = healed_hp
+            effect_applied = True
+
+    for effect in item_data.get("effects", []):
+        if add_temporary_effect(player, effect):
             effect_applied = True
 
     if not effect_applied:
