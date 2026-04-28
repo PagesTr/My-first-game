@@ -72,8 +72,10 @@ class InventoryScreen:
         if slot.get("kind") == "stackable":
             quantity = slot.get("quantity")
             detail_text = f"x{quantity}" if quantity is not None else ""
-        else:
+        elif slot.get("kind") == "unique":
             detail_text = self._format_short_stats(slot.get("stats", {}))
+        else:
+            detail_text = ""
 
         item_label = self.small_font.render(
             self._short_text(item_name), True, (245, 245, 245)

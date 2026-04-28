@@ -49,7 +49,6 @@ class ResultScreen:
         gold_text = self.font.render(
             f"Gold gagné: {gold_gained}", True, (255, 220, 120)
         )
-
         level_text = self.font.render(
             f"Niveau actuel: {current_level}", True, (255, 255, 255)
         )
