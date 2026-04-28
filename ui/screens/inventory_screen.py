@@ -27,7 +27,7 @@ class InventoryScreen:
         self.title_font = pygame.font.Font(None, 46)
         self.font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
-        self.back_btn = Button((50, 520, 140, 50), "Retour")
+        self.back_btn = Button((50, 520, 140, 50), "Back")
         self.start_x = 50
         self.start_y = 110
         self.slot_size = 70
@@ -72,7 +72,7 @@ class InventoryScreen:
     def draw(self, screen):
         screen.fill((18, 24, 30))
 
-        title = self.title_font.render("Inventaire", True, (245, 245, 245))
+        title = self.title_font.render("Inventory", True, (245, 245, 245))
         screen.blit(title, (50, 40))
 
         if not self.game.player:
@@ -154,12 +154,12 @@ class InventoryScreen:
     def _draw_equipment_panel(self, screen):
         equipment = self.game.player["equipment"]
         labels = {
-            "weapon": "Arme",
-            "armor": "Armure",
-            "accessory": "Accessoire",
+            "weapon": "Weapon",
+            "armor": "Armor",
+            "accessory": "Accessory",
         }
 
-        title = self.font.render("Équipement", True, (245, 245, 245))
+        title = self.font.render("Equipment", True, (245, 245, 245))
         screen.blit(title, (560, 110))
 
         y = 150
@@ -173,7 +173,7 @@ class InventoryScreen:
 
             item = equipment.get(slot_key)
             if item is None:
-                item_text = "Vide"
+                item_text = "Empty"
                 detail_text = ""
             else:
                 item_text = self._get_item_name(item)
@@ -195,12 +195,12 @@ class InventoryScreen:
     def _draw_player_stats_panel(self, screen):
         player = self.game.player
         stats = [
-            ("PV max", player.get("max_hp", 0)),
-            ("PV actuels", player.get("current_hp", 0)),
-            ("Attaque", player.get("attack", 0)),
-            ("Défense", player.get("defense", 0)),
-            ("Force", player.get("force", 0)),
-            ("Agilité", player.get("agility", 0)),
+            ("Max HP", player.get("max_hp", 0)),
+            ("Current HP", player.get("current_hp", 0)),
+            ("Attack", player.get("attack", 0)),
+            ("Defense", player.get("defense", 0)),
+            ("Strength", player.get("force", 0)),
+            ("Agility", player.get("agility", 0)),
             ("Intelligence", player.get("intelligence", 0)),
         ]
 
@@ -240,16 +240,16 @@ class InventoryScreen:
         pygame.draw.rect(screen, (35, 40, 48), rect)
         pygame.draw.rect(screen, (120, 130, 140), rect, 2)
 
-        title = self.font.render("Comparaison", True, (245, 245, 245))
+        title = self.font.render("Comparison", True, (245, 245, 245))
         screen.blit(title, (rect.x + 10, rect.y + 8))
 
         item_text = self.small_font.render(
-            f"Objet : {self._short_text(self._get_item_name(item), 22)}",
+            f"Item: {self._short_text(self._get_item_name(item), 22)}",
             True,
             (220, 220, 220),
         )
         equipped_text = self.small_font.render(
-            f"Équipé : {self._short_text(self._get_item_name(current_item), 20)}",
+            f"Equipped: {self._short_text(self._get_item_name(current_item), 20)}",
             True,
             (220, 220, 220),
         )
@@ -288,19 +288,19 @@ class InventoryScreen:
 
     def _get_item_name(self, item_instance):
         if item_instance is None:
-            return "Aucun"
+            return "None"
         item_id = item_instance["item"]
         item_data = self.game.data.items.get(item_id, {})
         return item_data.get("name", item_id)
 
     def _get_stat_label(self, stat):
         labels = {
-            "attack": "Attaque",
-            "defense": "Défense",
-            "hp": "PV",
-            "max_hp": "PV max",
-            "force": "Force",
-            "agility": "Agilité",
+            "attack": "Attack",
+            "defense": "Defense",
+            "hp": "HP",
+            "max_hp": "Max HP",
+            "force": "Strength",
+            "agility": "Agility",
             "intelligence": "Intelligence",
         }
         return labels.get(stat, stat)
@@ -343,7 +343,7 @@ class InventoryScreen:
 
     def _format_short_stats(self, stats):
         for stat, value in stats.items():
-            return f"{stat} +{value}"
+            return f"{self._get_stat_label(stat)} +{value}"
         return ""
 
     def _short_text(self, text, max_length=10):
