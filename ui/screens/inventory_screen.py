@@ -204,6 +204,12 @@ class InventoryScreen:
                     source_key,
                     self.game.data.items,
                 )
+                if action_done:
+                    prepare_player_for_combat(
+                        self.game.player,
+                        self.game.data.items,
+                        self.game.data.classes,
+                    )
             else:
                 action_done = equip_item(
                     self.game.player,
