@@ -4,7 +4,8 @@
     "description": "A dense forest filled with weak but numerous enemies.",
     "unlock_level": 1,
     "enemy_pool": [
-      "goblin"
+      "goblin",
+      "wolf"
     ],
     "loot_table": [
       "health_potion",
