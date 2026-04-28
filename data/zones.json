@@ -3,8 +3,14 @@
     "name": "Mystic Forest",
     "description": "A dense forest filled with weak but numerous enemies.",
     "unlock_level": 1,
-    "enemy_pool": ["goblin", "wolf"],
-    "loot_table": ["health_potion", "copper_coin", "leather_armor"],
+    "enemy_pool": [
+      "goblin"
+    ],
+    "loot_table": [
+      "health_potion",
+      "copper_coin",
+      "leather_armor"
+    ],
     "difficulty_multiplier": 1.0,
     "farming_rate": 10
   },
@@ -12,8 +18,15 @@
     "name": "Shadow Caves",
     "description": "Deep caverns inhabited by stronger creatures.",
     "unlock_level": 5,
-    "enemy_pool": ["skeleton", "bandit"],
-    "loot_table": ["iron_sword", "gold_coin", "magic_ring"],
+    "enemy_pool": [
+      "skeleton",
+      "bandit"
+    ],
+    "loot_table": [
+      "iron_sword",
+      "gold_coin",
+      "magic_ring"
+    ],
     "difficulty_multiplier": 1.5,
     "farming_rate": 8
   },
@@ -21,8 +34,15 @@
     "name": "Frozen Peaks",
     "description": "Perilous mountains guarded by elite enemies.",
     "unlock_level": 10,
-    "enemy_pool": ["orc", "troll"],
-    "loot_table": ["steel_armor", "rare_gem", "legendary_sword"],
+    "enemy_pool": [
+      "orc",
+      "troll"
+    ],
+    "loot_table": [
+      "steel_armor",
+      "rare_gem",
+      "legendary_sword"
+    ],
     "difficulty_multiplier": 2.0,
     "farming_rate": 5
   }

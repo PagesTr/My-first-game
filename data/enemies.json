@@ -11,11 +11,11 @@
     "drops": [
       {
         "item": "legendary_sword",
-        "chance": 2.0
+        "chance": 1.0
       },
       {
         "item": "leather",
-        "chance": 0.6
+        "chance": 0.8
       },
       {
         "item": "health_potion",
@@ -35,7 +35,7 @@
     "drops": [
       {
         "item": "legendary_sword",
-        "chance": 2.0
+        "chance": 1.0
       },
       {
         "item": "bone",
@@ -59,7 +59,7 @@
     "drops": [
       {
         "item": "legendary_sword",
-        "chance": 2.0
+        "chance": 1.0
       },
       {
         "item": "copper_coin",

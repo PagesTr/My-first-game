@@ -6,6 +6,7 @@ from systems.loot import (
     generate_rarity,
     get_allowed_rarities,
     get_rarity_weights,
+    roll_drop_count,
 )
 
 
@@ -15,6 +16,17 @@ def make_enemy_with_drop(item_id):
             {
                 "item": item_id,
                 "chance": 1.0,
+            }
+        ]
+    }
+
+
+def make_enemy_with_drop_chance(item_id, chance):
+    return {
+        "drops": [
+            {
+                "item": item_id,
+                "chance": chance,
             }
         ]
     }
@@ -226,3 +238,47 @@ def test_unique_drop_uses_item_specific_rarity_weights():
     for _ in range(50):
         drops = generate_combat_loot(make_enemy_with_drop("legendary_sword"), items)
         assert drops[0]["rarity"] in ("legendary", "unique")
+
+
+def test_roll_drop_count_returns_zero_for_zero_or_negative_chance():
+    assert roll_drop_count(0) == 0
+    assert roll_drop_count(-1) == 0
+
+
+def test_roll_drop_count_returns_integer_part_as_guaranteed_count():
+    assert roll_drop_count(1.0) == 1
+    assert roll_drop_count(2.0) == 2
+
+
+def test_stackable_drop_uses_drop_count_as_quantity():
+    items = {"leather": {"type": "resource", "stats": {}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop_chance("leather", 2.0), items)
+
+    assert len(drops) == 1
+    assert drops[0]["kind"] == "stackable"
+    assert drops[0]["quantity"] == 2
+
+
+def test_unique_drop_generates_multiple_instances_when_chance_above_one():
+    items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop_chance("iron_sword", 2.0), items)
+
+    assert len(drops) == 2
+    for drop in drops:
+        assert drop["kind"] == "unique"
+        assert drop["item"] == "iron_sword"
+        assert "rarity" in drop
+        assert "stats" in drop
+
+
+def test_fractional_chance_above_one_keeps_guaranteed_drop():
+    items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
+
+    for _ in range(50):
+        drops = generate_combat_loot(
+            make_enemy_with_drop_chance("iron_sword", 1.5),
+            items,
+        )
+        assert 1 <= len(drops) <= 2

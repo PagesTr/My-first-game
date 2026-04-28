@@ -79,16 +79,32 @@ def generate_randomized_stats(base_stats, rarity="common"):
     return stats
 
 
+def roll_drop_count(chance):
+    if not isinstance(chance, (int, float)) or chance <= 0:
+        return 0
+
+    guaranteed_count = int(chance)
+    extra_chance = chance - guaranteed_count
+    count = guaranteed_count
+    if random.random() <= extra_chance:
+        count += 1
+    return count
+
+
 def generate_combat_loot(enemy, items):
     drops = []
 
     for drop in enemy.get("drops", []):
-        if random.random() <= drop["chance"]:
-            item_id = drop["item"]
-            item_data = items.get(item_id, {})
+        drop_count = roll_drop_count(drop.get("chance", 0))
+        if drop_count <= 0:
+            continue
 
-            if is_unique_equipment(item_data):
-                rarity_weights = get_rarity_weights(item_data)
+        item_id = drop["item"]
+        item_data = items.get(item_id, {})
+
+        if is_unique_equipment(item_data):
+            rarity_weights = get_rarity_weights(item_data)
+            for _ in range(drop_count):
                 rarity = generate_rarity(rarity_weights)
                 drops.append(
                     {
@@ -101,13 +117,13 @@ def generate_combat_loot(enemy, items):
                         ),
                     }
                 )
-            else:
-                drops.append(
-                    {
-                        "kind": "stackable",
-                        "item": item_id,
-                        "quantity": 1,
-                    }
-                )
+        else:
+            drops.append(
+                {
+                    "kind": "stackable",
+                    "item": item_id,
+                    "quantity": drop_count,
+                }
+            )
 
     return drops
