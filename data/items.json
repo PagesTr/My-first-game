@@ -3,7 +3,8 @@
     "name": "Iron Sword",
     "type": "weapon",
     "stats": {
-      "attack": 3
+      "strength": 1,
+      "attack": 2
     },
     "rarity_weights": {
       "common": 70,
@@ -15,7 +16,9 @@
     "name": "Leather Armor",
     "type": "armor",
     "stats": {
-      "defense": 2
+      "vitality": 1,
+      "defense": 1,
+      "dodge_chance": 0.02
     },
     "rarity_weights": {
       "common": 75,
@@ -34,7 +37,10 @@
     "name": "Magic Ring",
     "type": "accessory",
     "stats": {
-      "intelligence": 1
+      "intelligence": 1,
+      "wisdom": 1,
+      "magic_attack": 2,
+      "healing_power": 2
     },
     "rarity_weights": {
       "rare": 70,
@@ -60,7 +66,9 @@
     "name": "Steel Armor",
     "type": "armor",
     "stats": {
-      "defense": 5
+      "vitality": 2,
+      "defense": 4,
+      "block_chance": 0.03
     },
     "rarity_weights": {
       "uncommon": 55,
@@ -79,28 +87,16 @@
     "name": "Legendary Sword",
     "type": "weapon",
     "stats": {
-      "strength": 2,
+      "strength": 3,
       "dexterity": 2,
-      "intelligence": 2,
-      "vitality": 2,
-      "wisdom": 2,
-      "luck": 2,
+      "luck": 1,
       "attack": 10,
-      "defense": 2,
-      "magic_attack": 3,
-      "magic_defense": 2,
-      "accuracy": 0.05,
-      "dodge_chance": 0.03,
-      "block_chance": 0.02,
       "crit_chance": 0.10,
       "crit_damage": 0.50,
-      "initiative": 3,
-      "healing_power": 4,
-      "status_resistance": 0.05,
-      "loot_bonus": 0.10,
+      "initiative": 2,
       "gold_bonus": 0.10,
-      "rare_find_bonus": 0.05,
-      "xp_bonus": 0.10
+      "xp_bonus": 0.10,
+      "rare_find_bonus": 0.05
     },
     "rarity_weights": {
       "legendary": 90,
