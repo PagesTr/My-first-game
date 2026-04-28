@@ -1,6 +1,7 @@
 from systems.loot import (
     RARITIES,
     RARITY_WEIGHTS,
+    apply_rare_find_bonus,
     generate_combat_loot,
     generate_randomized_stats,
     generate_rarity,
@@ -282,3 +283,55 @@ def test_fractional_chance_above_one_keeps_guaranteed_drop():
             items,
         )
         assert 1 <= len(drops) <= 2
+
+
+def test_apply_rare_find_bonus_improves_high_rarity_weights():
+    weights = {
+        "common": 60,
+        "uncommon": 25,
+        "rare": 10,
+        "epic": 4,
+        "legendary": 1,
+        "unique": 0.5,
+    }
+
+    adjusted = apply_rare_find_bonus(weights, 0.10)
+
+    assert adjusted is not weights
+    assert adjusted["common"] < weights["common"]
+    assert adjusted["uncommon"] == weights["uncommon"]
+    assert adjusted["rare"] > weights["rare"]
+    assert adjusted["epic"] > weights["epic"]
+    assert adjusted["legendary"] > weights["legendary"]
+    assert adjusted["unique"] > weights["unique"]
+
+
+def test_apply_rare_find_bonus_returns_copy_without_bonus():
+    weights = {
+        "common": 60,
+        "uncommon": 25,
+        "rare": 10,
+        "epic": 4,
+        "legendary": 1,
+        "unique": 0.5,
+    }
+
+    adjusted = apply_rare_find_bonus(weights, 0.0)
+
+    assert adjusted == weights
+    assert adjusted is not weights
+
+
+def test_apply_rare_find_bonus_keeps_weights_positive():
+    weights = {
+        "common": 60,
+        "uncommon": 25,
+        "rare": 10,
+        "epic": 4,
+        "legendary": 1,
+        "unique": 0.5,
+    }
+
+    adjusted = apply_rare_find_bonus(weights, 0.95)
+
+    assert all(weight > 0 for weight in adjusted.values())
