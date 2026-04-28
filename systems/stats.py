@@ -119,6 +119,15 @@ def derive_stats(player, items, classes):
 def prepare_player_for_combat(player, items, classes):
     stats = derive_stats(player, items, classes)
 
+    player["force"] = stats["force"]
+    player["agility"] = stats["agility"]
+    player["strength"] = stats["strength"]
+    player["dexterity"] = stats["dexterity"]
+    player["intelligence"] = stats["intelligence"]
+    player["vitality"] = stats["vitality"]
+    player["wisdom"] = stats["wisdom"]
+    player["luck"] = stats["luck"]
+
     player["max_hp"] = stats["hp"]
     player["attack"] = stats["attack"]
     player["defense"] = stats["defense"]
