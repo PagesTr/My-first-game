@@ -1,7 +1,6 @@
 import pygame
 
-from systems.equipment import equip_item
-from systems.inventory import find_first_empty_slot
+from systems.equipment import equip_item, unequip_item
 from systems.stats import prepare_player_for_combat
 
 
@@ -132,24 +131,18 @@ class InventoryScreen:
         return pygame.Rect(550, 150 + index * 95, 200, 80)
 
     def _unequip_item(self, equipment_slot):
-        player = self.game.player
-        item = player["equipment"].get(equipment_slot)
-        if item is None:
-            return False
-
-        inventory = player["inventory"]
-        empty_slot = find_first_empty_slot(inventory)
-        if empty_slot is None:
-            return False
-
-        inventory["slots"][empty_slot] = item
-        player["equipment"][equipment_slot] = None
-        prepare_player_for_combat(
-            player,
-            self.game.data.items,
-            self.game.data.classes,
+        unequipped = unequip_item(
+            self.game.player,
+            self.game.player["inventory"],
+            equipment_slot,
         )
-        return True
+        if unequipped:
+            prepare_player_for_combat(
+                self.game.player,
+                self.game.data.items,
+                self.game.data.classes,
+            )
+        return unequipped
 
     def _draw_equipment_panel(self, screen):
         equipment = self.game.player["equipment"]

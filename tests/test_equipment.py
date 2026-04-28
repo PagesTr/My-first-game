@@ -1,4 +1,4 @@
-from systems.equipment import can_equip_item, equip_item
+from systems.equipment import can_equip_item, equip_item, unequip_item
 from systems.inventory import create_inventory
 from systems.stats import derive_stats
 
@@ -133,3 +133,43 @@ def test_derive_stats_keeps_compatibility_with_old_equipment_list():
     stats = derive_stats(player, make_items(), make_classes())
 
     assert stats["attack"] == 10
+
+
+def test_unequip_item_moves_equipped_item_to_inventory():
+    player = make_player()
+    weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+    player["equipment"]["weapon"] = weapon
+    inventory = create_inventory(size=2)
+
+    unequipped = unequip_item(player, inventory, "weapon")
+
+    assert unequipped is True
+    assert player["equipment"]["weapon"] is None
+    assert weapon in inventory["slots"]
+
+
+def test_unequip_item_returns_false_when_equipment_slot_is_empty():
+    player = make_player()
+    inventory = create_inventory(size=2)
+
+    assert unequip_item(player, inventory, "weapon") is False
+
+
+def test_unequip_item_returns_false_when_inventory_is_full():
+    player = make_player()
+    weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+    player["equipment"]["weapon"] = weapon
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 1}
+
+    unequipped = unequip_item(player, inventory, "weapon")
+
+    assert unequipped is False
+    assert player["equipment"]["weapon"] == weapon
+
+
+def test_unequip_item_returns_false_for_unknown_equipment_slot():
+    player = make_player()
+    inventory = create_inventory(size=2)
+
+    assert unequip_item(player, inventory, "unknown") is False

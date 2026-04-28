@@ -51,3 +51,23 @@ def equip_item(player, inventory, slot_index, items):
 
     slots[empty_slot] = current_equipment
     return True
+
+
+def unequip_item(player, inventory, equipment_slot):
+    equipment = player.get("equipment")
+    if not isinstance(equipment, dict):
+        return False
+    if equipment_slot not in equipment:
+        return False
+
+    item = equipment[equipment_slot]
+    if item is None:
+        return False
+
+    empty_slot = find_first_empty_slot(inventory)
+    if empty_slot is None:
+        return False
+
+    inventory["slots"][empty_slot] = item
+    equipment[equipment_slot] = None
+    return True
