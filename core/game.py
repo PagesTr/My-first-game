@@ -4,6 +4,7 @@ from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
+from systems.effects import tick_combat_effects
 from systems.inventory import add_drops_to_inventory
 from systems.loot import generate_combat_loot
 from systems.progression import apply_combat_rewards
@@ -93,6 +94,9 @@ class Game:
             self.auto_mode = False
 
     def continue_after_combat_result(self):
+        if self.player is not None:
+            tick_combat_effects(self.player)
+            prepare_player_for_combat(self.player, self.data.items, self.data.classes)
         self.state = "zone_select"
         self.combat = None
         self.auto_mode = False

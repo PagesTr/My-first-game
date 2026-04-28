@@ -17,6 +17,7 @@ def create_player(char_class, classes, items):
             'accessory': None,
         },
         'inventory': create_inventory(),
+        'active_effects': [],
         'current_hp': 0,
     }
     stats = derive_stats(player, items, classes)

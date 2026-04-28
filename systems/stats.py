@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from systems.effects import get_active_stat_modifiers
+
 
 def load_stat_scaling():
     scaling_path = Path(__file__).resolve().parent.parent / "data" / "stat_scaling.json"
@@ -44,6 +46,10 @@ def derive_stats(player, items, classes):
                 continue
             for stat, value in item.get('stats', {}).items():
                 total[stat] = total.get(stat, 0) + value
+
+    active_modifiers = get_active_stat_modifiers(player)
+    for stat, value in active_modifiers.items():
+        total[stat] = total.get(stat, 0) + value
 
     total = normalize_primary_stats(total)
     scaling = load_stat_scaling()
