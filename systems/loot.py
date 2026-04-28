@@ -59,6 +59,23 @@ def get_rarity_weights(item_data):
     }
 
 
+def apply_rare_find_bonus(rarity_weights, rare_find_bonus):
+    adjusted_weights = dict(rarity_weights)
+    if rare_find_bonus <= 0:
+        return adjusted_weights
+
+    bonus_multiplier = 1 + rare_find_bonus
+    for rarity, weight in rarity_weights.items():
+        if rarity == "common":
+            adjusted_weights[rarity] = max(0.1, weight * (1 - rare_find_bonus))
+        elif rarity in ("rare", "epic", "legendary", "unique"):
+            adjusted_weights[rarity] = weight * bonus_multiplier
+        else:
+            adjusted_weights[rarity] = weight
+
+    return adjusted_weights
+
+
 def generate_rarity(rarity_weights=None):
     weights_by_rarity = rarity_weights if rarity_weights is not None else RARITY_WEIGHTS
     return random.choices(
@@ -91,11 +108,19 @@ def roll_drop_count(chance):
     return count
 
 
-def generate_combat_loot(enemy, items):
+def generate_combat_loot(enemy, items, player=None):
     drops = []
+    loot_bonus = 0.0
+    rare_find_bonus = 0.0
+
+    if player is not None:
+        loot_bonus = player.get("loot_bonus", 0.0)
+        rare_find_bonus = player.get("rare_find_bonus", 0.0)
 
     for drop in enemy.get("drops", []):
-        drop_count = roll_drop_count(drop.get("chance", 0))
+        base_chance = drop.get("chance", 0)
+        modified_chance = base_chance * (1 + loot_bonus)
+        drop_count = roll_drop_count(modified_chance)
         if drop_count <= 0:
             continue
 
@@ -103,7 +128,10 @@ def generate_combat_loot(enemy, items):
         item_data = items.get(item_id, {})
 
         if is_unique_equipment(item_data):
-            rarity_weights = get_rarity_weights(item_data)
+            rarity_weights = apply_rare_find_bonus(
+                get_rarity_weights(item_data),
+                rare_find_bonus,
+            )
             for _ in range(drop_count):
                 rarity = generate_rarity(rarity_weights)
                 drops.append(
