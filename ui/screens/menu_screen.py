@@ -45,7 +45,12 @@ class MenuScreen:
         for class_key, class_data in self.game.data.classes.items():
             stats = class_data["base_stats"]
             subtitle = (
-                f"FOR {stats['force']}  AGI {stats['agility']}  INT {stats['intelligence']}"
+                f"STR {stats.get('strength', 0)}  "
+                f"DEX {stats.get('dexterity', 0)}  "
+                f"INT {stats.get('intelligence', 0)}  "
+                f"VIT {stats.get('vitality', 0)}  "
+                f"WIS {stats.get('wisdom', 0)}  "
+                f"LUCK {stats.get('luck', 0)}"
             )
             buttons.append(
                 (class_key, MenuButton((80, y, 640, 80), class_data["name"], subtitle))
