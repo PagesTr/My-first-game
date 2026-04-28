@@ -33,6 +33,9 @@ class InventoryScreen:
         self.selected_item = None
         self.selected_item_source = None
         self.selected_item_position = None
+        self.last_click_time = 0
+        self.last_click_source = None
+        self.double_click_delay = 400
         self.start_x = 50
         self.start_y = 110
         self.slot_size = 70
@@ -55,9 +58,10 @@ class InventoryScreen:
             item_instance, source = self._get_item_at_pos(event.pos)
             if item_instance is None:
                 self._clear_selected_item()
+                self.last_click_source = None
                 return
 
-            if self._is_double_click(event):
+            if self._is_double_click(source):
                 self._handle_item_action(source)
                 return
 
@@ -159,9 +163,17 @@ class InventoryScreen:
         self.selected_item = None
         self.selected_item_source = None
         self.selected_item_position = None
+        self.last_click_source = None
 
-    def _is_double_click(self, event):
-        return getattr(event, "clicks", 1) >= 2
+    def _is_double_click(self, source):
+        current_time = pygame.time.get_ticks()
+        is_double_click = (
+            source == self.last_click_source
+            and current_time - self.last_click_time <= self.double_click_delay
+        )
+        self.last_click_time = current_time
+        self.last_click_source = source
+        return is_double_click
 
     def _handle_item_action(self, source):
         source_type, source_key = source
@@ -383,13 +395,16 @@ class InventoryScreen:
         return str(value)
 
     def _draw_comparison_panel(self, screen):
-        mouse_pos = pygame.mouse.get_pos()
-        slot_index = self._get_slot_index_at_pos(mouse_pos)
-        if slot_index is None:
+        source = self.selected_item_source
+        if source is None:
+            return
+
+        source_type, source_key = source
+        if source_type != "inventory":
             return
 
         inventory = self.game.player["inventory"]
-        item = inventory["slots"][slot_index]
+        item = inventory["slots"][source_key]
         if item is None:
             return
 
