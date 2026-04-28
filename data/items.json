@@ -66,6 +66,25 @@
       "value": 20
     }
   },
+  "guard_potion": {
+    "name": "Guard Potion",
+    "type": "consumable",
+    "effects": [
+      {
+        "id": "guard_potion_defense",
+        "name": "Guard",
+        "source": "consumable",
+        "modifiers": {
+          "defense": 3
+        },
+        "duration_type": "combat",
+        "remaining_combats": 2
+      }
+    ],
+    "stats": {
+      "value": 20
+    }
+  },
   "magic_ring": {
     "name": "Magic Ring",
     "type": "accessory",

@@ -1,4 +1,4 @@
-from systems.inventory import create_inventory
+from systems.inventory import add_stackable_item, create_inventory
 from systems.stats import derive_stats
 
 def create_player(char_class, classes, items):
@@ -20,6 +20,10 @@ def create_player(char_class, classes, items):
         'active_effects': [],
         'current_hp': 0,
     }
+    # Temporary test items for buff effect validation.
+    add_stackable_item(player["inventory"], "rage_potion", 1)
+    add_stackable_item(player["inventory"], "guard_potion", 1)
+
     stats = derive_stats(player, items, classes)
     player.update({
         'force': stats['force'],
