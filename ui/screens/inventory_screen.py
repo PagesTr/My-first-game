@@ -90,7 +90,10 @@ class InventoryScreen:
                 self.slot_size,
             )
             pygame.draw.rect(screen, (45, 50, 58), rect)
-            pygame.draw.rect(screen, (120, 130, 140), rect, 2)
+            border_color = (120, 130, 140)
+            if slot is not None and slot.get("kind") == "unique" and slot.get("rarity"):
+                border_color = self._get_rarity_color(slot)
+            pygame.draw.rect(screen, border_color, rect, 2)
 
             if slot is not None:
                 self._draw_slot_content(screen, rect, slot)
@@ -168,12 +171,14 @@ class InventoryScreen:
             if item is None:
                 item_text = "Empty"
                 detail_text = ""
+                name_color = (245, 245, 245)
             else:
                 item_text = self._get_item_display_name(item)
                 detail_text = self._format_short_stats(item.get("stats", {}))
+                name_color = self._get_rarity_color(item)
 
             name_label = self.small_font.render(
-                self._short_text(item_text, 18), True, (245, 245, 245)
+                self._short_text(item_text, 18), True, name_color
             )
             screen.blit(name_label, (rect.x + 8, rect.y + 32))
 
@@ -239,12 +244,12 @@ class InventoryScreen:
         item_text = self.small_font.render(
             f"Item: {self._short_text(self._get_item_display_name(item), 22)}",
             True,
-            (220, 220, 220),
+            self._get_rarity_color(item),
         )
         equipped_text = self.small_font.render(
             f"Equipped: {self._short_text(self._get_item_display_name(current_item), 20)}",
             True,
-            (220, 220, 220),
+            self._get_rarity_color(current_item),
         )
         screen.blit(item_text, (rect.x + 10, rect.y + 32))
         screen.blit(equipped_text, (rect.x + 10, rect.y + 50))
@@ -294,6 +299,19 @@ class InventoryScreen:
             return ""
         return rarity.capitalize()
 
+    def _get_rarity_color(self, item_instance):
+        if item_instance is None:
+            return (245, 245, 245)
+        colors = {
+            "common": (170, 170, 170),
+            "uncommon": (100, 220, 120),
+            "rare": (100, 160, 255),
+            "epic": (180, 120, 255),
+            "legendary": (255, 200, 80),
+            "unique": (240, 90, 90),
+        }
+        return colors.get(item_instance.get("rarity"), (245, 245, 245))
+
     def _get_item_display_name(self, item_instance):
         if item_instance is None:
             return "None"
@@ -335,15 +353,18 @@ class InventoryScreen:
             item_name = item_data.get("name", item_id)
             quantity = slot.get("quantity")
             detail_text = f"x{quantity}" if quantity is not None else ""
+            item_color = (245, 245, 245)
         elif slot.get("kind") == "unique":
             item_name = self._get_item_display_name(slot)
             detail_text = self._format_short_stats(slot.get("stats", {}))
+            item_color = self._get_rarity_color(slot)
         else:
             item_name = item_data.get("name", item_id)
             detail_text = ""
+            item_color = (245, 245, 245)
 
         item_label = self.small_font.render(
-            self._short_text(item_name), True, (245, 245, 245)
+            self._short_text(item_name), True, item_color
         )
         screen.blit(item_label, (rect.x + 6, rect.y + 10))
 

@@ -77,7 +77,7 @@ class ResultScreen:
         if drops:
             for index, drop in enumerate(drops[:4]):
                 loot_text = self.font.render(
-                    self._format_drop(drop), True, (200, 200, 200)
+                    self._format_drop(drop), True, self._get_drop_color(drop)
                 )
                 screen.blit(loot_text, (300, loot_y + 35 + index * 28))
         else:
@@ -112,6 +112,24 @@ class ResultScreen:
         if not rarity:
             return ""
         return rarity.capitalize()
+
+    def _get_rarity_color(self, drop):
+        if drop is None:
+            return (200, 200, 200)
+        colors = {
+            "common": (170, 170, 170),
+            "uncommon": (100, 220, 120),
+            "rare": (100, 160, 255),
+            "epic": (180, 120, 255),
+            "legendary": (255, 200, 80),
+            "unique": (240, 90, 90),
+        }
+        return colors.get(drop.get("rarity"), (200, 200, 200))
+
+    def _get_drop_color(self, drop):
+        if drop.get("kind") == "unique":
+            return self._get_rarity_color(drop)
+        return (200, 200, 200)
 
     def _format_stats(self, stats):
         parts = []
