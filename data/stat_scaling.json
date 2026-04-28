@@ -1,0 +1,95 @@
+{
+  "primary_stats": [
+    "strength",
+    "dexterity",
+    "intelligence",
+    "vitality",
+    "wisdom",
+    "luck"
+  ],
+  "combat_secondary_stats": [
+    "max_hp",
+    "attack",
+    "defense",
+    "magic_attack",
+    "magic_defense",
+    "accuracy",
+    "dodge_chance",
+    "block_chance",
+    "crit_chance",
+    "crit_damage",
+    "initiative",
+    "healing_power",
+    "status_resistance"
+  ],
+  "progression_secondary_stats": [
+    "loot_bonus",
+    "gold_bonus",
+    "rare_find_bonus",
+    "xp_bonus"
+  ],
+  "base_values": {
+    "max_hp": 20,
+    "attack": 5,
+    "defense": 2,
+    "magic_attack": 0,
+    "magic_defense": 1,
+    "accuracy": 0.85,
+    "dodge_chance": 0.03,
+    "block_chance": 0.0,
+    "crit_chance": 0.05,
+    "crit_damage": 1.5,
+    "initiative": 10,
+    "healing_power": 10,
+    "status_resistance": 0.0,
+    "loot_bonus": 0.0,
+    "gold_bonus": 0.0,
+    "rare_find_bonus": 0.0,
+    "xp_bonus": 0.0
+  },
+  "primary_to_secondary": {
+    "strength": {
+      "attack": 1.0,
+      "defense": 0.25,
+      "max_hp": 1.0,
+      "block_chance": 0.003
+    },
+    "dexterity": {
+      "attack": 0.5,
+      "accuracy": 0.015,
+      "dodge_chance": 0.01,
+      "crit_chance": 0.012,
+      "initiative": 1.0
+    },
+    "intelligence": {
+      "magic_attack": 1.5,
+      "magic_defense": 0.3
+    },
+    "vitality": {
+      "max_hp": 4.0,
+      "defense": 0.5
+    },
+    "wisdom": {
+      "magic_defense": 1.0,
+      "healing_power": 1.5,
+      "status_resistance": 0.01
+    },
+    "luck": {
+      "loot_bonus": 0.01,
+      "gold_bonus": 0.01,
+      "rare_find_bonus": 0.005
+    }
+  },
+  "caps": {
+    "accuracy": 0.95,
+    "dodge_chance": 0.45,
+    "block_chance": 0.40,
+    "crit_chance": 0.60,
+    "crit_damage": 3.0,
+    "status_resistance": 0.50,
+    "loot_bonus": 1.0,
+    "gold_bonus": 1.0,
+    "rare_find_bonus": 0.50,
+    "xp_bonus": 1.0
+  }
+}
