@@ -53,8 +53,7 @@ class CombatSystem:
             dmg = self._compute_damage(attacker, defender)
             if dmg > 0:
                 defender["current_hp"] = max(0, defender["current_hp"] - dmg)
-
-            self.log.append(f"{actor_name} attacks -> {dmg} damage")
+                self.log.append(f"{actor_name} attacks -> {dmg} damage")
 
         elif action == "heal":
             heal = int(attacker.get("healing_power", 10))

@@ -2,16 +2,37 @@
   "warrior": {
     "name": "Warrior",
     "description": "A hardy melee fighter, resilient and straightforward.",
-    "base_stats": {"force": 3, "agility": 1, "intelligence": 0}
+    "base_stats": {
+      "strength": 4,
+      "dexterity": 1,
+      "intelligence": 0,
+      "vitality": 4,
+      "wisdom": 1,
+      "luck": 0
+    }
   },
   "archer": {
     "name": "Archer",
     "description": "Fast and accurate, strikes from a distance.",
-    "base_stats": {"force": 1, "agility": 3, "intelligence": 1}
+    "base_stats": {
+      "strength": 2,
+      "dexterity": 4,
+      "intelligence": 0,
+      "vitality": 2,
+      "wisdom": 1,
+      "luck": 2
+    }
   },
   "mage": {
     "name": "Mage",
     "description": "A spellcaster who excels with intelligence.",
-    "base_stats": {"force": 0, "agility": 1, "intelligence": 3}
+    "base_stats": {
+      "strength": 0,
+      "dexterity": 1,
+      "intelligence": 4,
+      "vitality": 2,
+      "wisdom": 3,
+      "luck": 1
+    }
   }
 }
