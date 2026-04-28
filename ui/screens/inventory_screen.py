@@ -27,6 +27,8 @@ class InventoryScreen:
         self.font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
+        self.show_advanced_stats = False
+        self.stats_details_btn = Button((650, 430, 100, 40), "Details")
         self.start_x = 50
         self.start_y = 110
         self.slot_size = 70
@@ -40,6 +42,10 @@ class InventoryScreen:
                 return
 
             if not self.game.player:
+                return
+
+            if self.stats_details_btn.is_clicked(event.pos):
+                self.show_advanced_stats = not self.show_advanced_stats
                 return
 
             equipment_slot = self._get_equipment_slot_at_pos(event.pos)
@@ -102,6 +108,8 @@ class InventoryScreen:
         self._draw_player_stats_panel(screen)
         self._draw_comparison_panel(screen)
         self.back_btn.draw(screen, self.font)
+        if self.show_advanced_stats:
+            self._draw_advanced_stats_panel(screen)
 
     def _get_slot_index_at_pos(self, pos):
         if not self.game.player:
@@ -193,67 +201,106 @@ class InventoryScreen:
     def _draw_player_stats_panel(self, screen):
         player = self.game.player
         stats = [
+            ("Max HP", player.get("max_hp", 0)),
+            ("Current HP", player.get("current_hp", 0)),
+            ("Attack", player.get("attack", 0)),
+            ("Defense", player.get("defense", 0)),
             ("Strength", player.get("strength", player.get("force", 0))),
             ("Dexterity", player.get("dexterity", player.get("agility", 0))),
             ("Intelligence", player.get("intelligence", 0)),
             ("Vitality", player.get("vitality", 0)),
             ("Wisdom", player.get("wisdom", 0)),
             ("Luck", player.get("luck", 0)),
-            ("Max HP", player.get("max_hp", 0)),
-            ("Current HP", player.get("current_hp", 0)),
-            ("Attack", player.get("attack", 0)),
-            ("Defense", player.get("defense", 0)),
-            ("Magic Attack", player.get("magic_attack", 0)),
-            ("Magic Defense", player.get("magic_defense", 0)),
-            ("Accuracy", player.get("accuracy", 0)),
-            ("Dodge", player.get("dodge_chance", 0)),
-            ("Block", player.get("block_chance", 0)),
-            ("Crit Chance", player.get("crit_chance", 0)),
-            ("Crit Damage", player.get("crit_damage", 0)),
-            ("Initiative", player.get("initiative", 0)),
-            ("Healing Power", player.get("healing_power", 0)),
-            ("Status Resist", player.get("status_resistance", 0)),
-            ("Loot Bonus", player.get("loot_bonus", 0)),
-            ("Gold Bonus", player.get("gold_bonus", 0)),
-            ("Rare Find", player.get("rare_find_bonus", 0)),
-            ("XP Bonus", player.get("xp_bonus", 0)),
         ]
-        percent_stats = {
-            "Accuracy",
-            "Dodge",
-            "Block",
-            "Crit Chance",
-            "Status Resist",
-            "Loot Bonus",
-            "Gold Bonus",
-            "Rare Find",
-            "XP Bonus",
-        }
-
-        def format_value(label, value):
-            if label in percent_stats:
-                return f"{value * 100:.1f}%"
-            return str(value)
 
         title = self.font.render("Stats", True, (245, 245, 245))
         screen.blit(title, (560, 440))
+        self.stats_details_btn.draw(screen, self.small_font)
 
         start_x = 560
         start_y = 466
-        column_width = 112
+        column_width = 100
         line_height = 13
-        rows_per_column = 12
+        rows_per_column = 10
 
         for index, (label, value) in enumerate(stats):
             col = index // rows_per_column
             row = index % rows_per_column
             stat_text = self.small_font.render(
-                f"{label}: {format_value(label, value)}", True, (220, 220, 220)
+                f"{label}: {value}", True, (220, 220, 220)
             )
             screen.blit(
                 stat_text,
                 (start_x + col * column_width, start_y + row * line_height),
             )
+
+    def _draw_advanced_stats_panel(self, screen):
+        player = self.game.player
+        rect = pygame.Rect(180, 80, 440, 420)
+        stats = [
+            ("Magic Attack", "magic_attack", player.get("magic_attack", 0)),
+            ("Magic Defense", "magic_defense", player.get("magic_defense", 0)),
+            ("Accuracy", "accuracy", player.get("accuracy", 0)),
+            ("Dodge", "dodge_chance", player.get("dodge_chance", 0)),
+            ("Block", "block_chance", player.get("block_chance", 0)),
+            ("Crit Chance", "crit_chance", player.get("crit_chance", 0)),
+            ("Crit Damage", "crit_damage", player.get("crit_damage", 0)),
+            ("Initiative", "initiative", player.get("initiative", 0)),
+            ("Healing Power", "healing_power", player.get("healing_power", 0)),
+            ("Status Resist", "status_resistance", player.get("status_resistance", 0)),
+            ("Loot Bonus", "loot_bonus", player.get("loot_bonus", 0)),
+            ("Gold Bonus", "gold_bonus", player.get("gold_bonus", 0)),
+            ("Rare Find", "rare_find_bonus", player.get("rare_find_bonus", 0)),
+            ("XP Bonus", "xp_bonus", player.get("xp_bonus", 0)),
+        ]
+
+        pygame.draw.rect(screen, (28, 34, 42), rect)
+        pygame.draw.rect(screen, (180, 190, 200), rect, 2)
+
+        title = self.font.render("Advanced Stats", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 16, rect.y + 14))
+
+        start_x = rect.x + 18
+        start_y = rect.y + 54
+        column_width = 205
+        line_height = 22
+        rows_per_column = 7
+
+        for index, (label, stat_key, value) in enumerate(stats):
+            col = index // rows_per_column
+            row = index % rows_per_column
+            stat_text = self.small_font.render(
+                f"{label}: {self._format_stat_value(stat_key, value)}",
+                True,
+                (220, 220, 220),
+            )
+            screen.blit(
+                stat_text,
+                (start_x + col * column_width, start_y + row * line_height),
+            )
+
+        hint = self.small_font.render(
+            "Click Details again to close", True, (170, 175, 180)
+        )
+        screen.blit(hint, (rect.x + 16, rect.bottom - 32))
+
+    def _format_stat_value(self, stat_key, value):
+        percent_stats = {
+            "accuracy",
+            "dodge_chance",
+            "block_chance",
+            "crit_chance",
+            "status_resistance",
+            "loot_bonus",
+            "gold_bonus",
+            "rare_find_bonus",
+            "xp_bonus",
+        }
+        if stat_key in percent_stats:
+            return f"{value * 100:.1f}%"
+        if stat_key == "crit_damage":
+            return f"x{value}"
+        return str(value)
 
     def _draw_comparison_panel(self, screen):
         mouse_pos = pygame.mouse.get_pos()
