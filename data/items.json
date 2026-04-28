@@ -103,6 +103,83 @@
       "unique": 10
     }
   },
+  "goblin_ear": {
+    "name": "Goblin Ear",
+    "type": "resource",
+    "stats": {
+      "value": 2
+    }
+  },
+  "goblin_charm": {
+    "name": "Goblin Charm",
+    "type": "resource",
+    "stats": {
+      "value": 15
+    }
+  },
+  "ancient_bone": {
+    "name": "Ancient Bone",
+    "type": "resource",
+    "stats": {
+      "value": 18
+    }
+  },
+  "wolf_pelt": {
+    "name": "Wolf Pelt",
+    "type": "resource",
+    "stats": {
+      "value": 6
+    }
+  },
+  "sharp_fang": {
+    "name": "Sharp Fang",
+    "type": "resource",
+    "stats": {
+      "value": 20
+    }
+  },
+  "bandit_badge": {
+    "name": "Bandit Badge",
+    "type": "resource",
+    "stats": {
+      "value": 8
+    }
+  },
+  "hidden_pouch": {
+    "name": "Hidden Pouch",
+    "type": "resource",
+    "stats": {
+      "value": 25
+    }
+  },
+  "orc_tusk": {
+    "name": "Orc Tusk",
+    "type": "resource",
+    "stats": {
+      "value": 12
+    }
+  },
+  "warrior_trophy": {
+    "name": "Warrior Trophy",
+    "type": "resource",
+    "stats": {
+      "value": 35
+    }
+  },
+  "troll_hide": {
+    "name": "Troll Hide",
+    "type": "resource",
+    "stats": {
+      "value": 20
+    }
+  },
+  "troll_heart": {
+    "name": "Troll Heart",
+    "type": "resource",
+    "stats": {
+      "value": 60
+    }
+  },
   "leather": {
     "name": "Leather",
     "type": "resource",

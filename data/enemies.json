@@ -10,16 +10,24 @@
     "gold": 4,
     "drops": [
       {
-        "item": "legendary_sword",
+        "item": "goblin_ear",
         "chance": 1.0
       },
       {
+        "item": "goblin_charm",
+        "chance": 0.08
+      },
+      {
         "item": "leather",
-        "chance": 0.8
+        "chance": 0.4
       },
       {
         "item": "health_potion",
-        "chance": 0.2
+        "chance": 0.15
+      },
+      {
+        "item": "iron_sword",
+        "chance": 0.08
       }
     ]
   },
@@ -34,16 +42,24 @@
     "gold": 6,
     "drops": [
       {
-        "item": "legendary_sword",
+        "item": "bone",
         "chance": 1.0
       },
       {
-        "item": "bone",
-        "chance": 0.7
+        "item": "ancient_bone",
+        "chance": 0.1
       },
       {
         "item": "iron_ore",
-        "chance": 0.3
+        "chance": 0.25
+      },
+      {
+        "item": "health_potion",
+        "chance": 0.1
+      },
+      {
+        "item": "iron_sword",
+        "chance": 0.06
       }
     ]
   },
@@ -58,16 +74,20 @@
     "gold": 5,
     "drops": [
       {
-        "item": "legendary_sword",
+        "item": "wolf_pelt",
         "chance": 1.0
       },
       {
-        "item": "copper_coin",
-        "chance": 1.0
+        "item": "sharp_fang",
+        "chance": 0.12
       },
       {
-        "item": "rare_gem",
-        "chance": 0.1
+        "item": "leather",
+        "chance": 0.3
+      },
+      {
+        "item": "health_potion",
+        "chance": 0.08
       }
     ]
   },
@@ -82,16 +102,24 @@
     "gold": 10,
     "drops": [
       {
-        "item": "gold_coin",
-        "chance": 1.0
+        "item": "bandit_badge",
+        "chance": 0.9
       },
       {
-        "item": "iron_ore",
-        "chance": 0.8
+        "item": "hidden_pouch",
+        "chance": 0.12
+      },
+      {
+        "item": "gold_coin",
+        "chance": 0.4
+      },
+      {
+        "item": "health_potion",
+        "chance": 0.15
       },
       {
         "item": "leather_armor",
-        "chance": 0.3
+        "chance": 0.12
       }
     ]
   },
@@ -106,16 +134,24 @@
     "gold": 15,
     "drops": [
       {
-        "item": "iron_ore",
+        "item": "orc_tusk",
         "chance": 1.0
       },
       {
+        "item": "warrior_trophy",
+        "chance": 0.1
+      },
+      {
+        "item": "iron_ore",
+        "chance": 0.4
+      },
+      {
         "item": "gold_coin",
-        "chance": 0.9
+        "chance": 0.5
       },
       {
         "item": "steel_armor",
-        "chance": 0.2
+        "chance": 0.12
       }
     ]
   },
@@ -130,16 +166,24 @@
     "gold": 20,
     "drops": [
       {
+        "item": "troll_hide",
+        "chance": 1.0
+      },
+      {
+        "item": "troll_heart",
+        "chance": 0.08
+      },
+      {
         "item": "rare_gem",
-        "chance": 0.5
+        "chance": 0.25
       },
       {
         "item": "bone",
-        "chance": 0.8
+        "chance": 0.5
       },
       {
         "item": "legendary_sword",
-        "chance": 0.1
+        "chance": 0.03
       }
     ]
   }
