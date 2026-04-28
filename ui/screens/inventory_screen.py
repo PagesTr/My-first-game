@@ -91,6 +91,7 @@ class InventoryScreen:
                 self._draw_slot_content(screen, rect, slot)
 
         self._draw_equipment_panel(screen)
+        self._draw_player_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
 
     def _get_slot_index_at_pos(self, pos):
@@ -154,6 +155,29 @@ class InventoryScreen:
                 screen.blit(detail_label, (rect.x + 8, rect.y + 54))
 
             y += 95
+
+    def _draw_player_stats_panel(self, screen):
+        player = self.game.player
+        stats = [
+            ("PV max", player.get("max_hp", 0)),
+            ("PV actuels", player.get("current_hp", 0)),
+            ("Attaque", player.get("attack", 0)),
+            ("Défense", player.get("defense", 0)),
+            ("Force", player.get("force", 0)),
+            ("Agilité", player.get("agility", 0)),
+            ("Intelligence", player.get("intelligence", 0)),
+        ]
+
+        title = self.font.render("Stats", True, (245, 245, 245))
+        screen.blit(title, (560, 440))
+
+        y = 468
+        for label, value in stats:
+            stat_text = self.small_font.render(
+                f"{label}: {value}", True, (220, 220, 220)
+            )
+            screen.blit(stat_text, (560, y))
+            y += 16
 
     def _draw_slot_content(self, screen, rect, slot):
         item_id = slot["item"]
