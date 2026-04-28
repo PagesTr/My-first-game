@@ -1,6 +1,7 @@
 import pygame
 
 from systems.equipment import equip_item
+from systems.inventory import find_first_empty_slot
 from systems.stats import prepare_player_for_combat
 
 
@@ -40,6 +41,11 @@ class InventoryScreen:
                 return
 
             if not self.game.player:
+                return
+
+            equipment_slot = self._get_equipment_slot_at_pos(event.pos)
+            if equipment_slot is not None:
+                self._unequip_item(equipment_slot)
                 return
 
             slot_index = self._get_slot_index_at_pos(event.pos)
@@ -113,6 +119,37 @@ class InventoryScreen:
 
         return None
 
+    def _get_equipment_slot_at_pos(self, pos):
+        for slot_key in ("weapon", "armor", "accessory"):
+            if self._get_equipment_slot_rect(slot_key).collidepoint(pos):
+                return slot_key
+        return None
+
+    def _get_equipment_slot_rect(self, slot_key):
+        slot_order = ("weapon", "armor", "accessory")
+        index = slot_order.index(slot_key)
+        return pygame.Rect(550, 150 + index * 95, 200, 80)
+
+    def _unequip_item(self, equipment_slot):
+        player = self.game.player
+        item = player["equipment"].get(equipment_slot)
+        if item is None:
+            return False
+
+        inventory = player["inventory"]
+        empty_slot = find_first_empty_slot(inventory)
+        if empty_slot is None:
+            return False
+
+        inventory["slots"][empty_slot] = item
+        player["equipment"][equipment_slot] = None
+        prepare_player_for_combat(
+            player,
+            self.game.data.items,
+            self.game.data.classes,
+        )
+        return True
+
     def _draw_equipment_panel(self, screen):
         equipment = self.game.player["equipment"]
         labels = {
@@ -126,7 +163,7 @@ class InventoryScreen:
 
         y = 150
         for slot_key, label in labels.items():
-            rect = pygame.Rect(550, y, 200, 80)
+            rect = self._get_equipment_slot_rect(slot_key)
             pygame.draw.rect(screen, (45, 50, 58), rect)
             pygame.draw.rect(screen, (120, 130, 140), rect, 2)
 
