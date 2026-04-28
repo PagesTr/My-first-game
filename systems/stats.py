@@ -7,13 +7,21 @@ def derive_stats(player, items, classes):
     class_data = classes[player['class']]
     total = dict(class_data['base_stats'])
 
-    # Add stats from each equipped item.
-    for item_key in player.get('equipment', []):
-        item = items.get(item_key)
-        if not item:
-            continue
-        for stat, value in item.get('stats', {}).items():
-            total[stat] = total.get(stat, 0) + value
+    # Add stats from equipped items. Supports the new slot dict and the old list format.
+    equipment = player.get('equipment', [])
+    if isinstance(equipment, dict):
+        for item_instance in equipment.values():
+            if not item_instance:
+                continue
+            for stat, value in item_instance.get('stats', {}).items():
+                total[stat] = total.get(stat, 0) + value
+    else:
+        for item_key in equipment:
+            item = items.get(item_key)
+            if not item:
+                continue
+            for stat, value in item.get('stats', {}).items():
+                total[stat] = total.get(stat, 0) + value
 
     # Compute final derived stats from base values.
     hp = (

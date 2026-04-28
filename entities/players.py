@@ -11,7 +11,11 @@ def create_player(char_class, classes, items):
         'next_exp': 10,
         'gold': 0,
         'potions': 2,
-        'equipment': ['iron_sword', 'leather_armor'],
+        'equipment': {
+            'weapon': None,
+            'armor': None,
+            'accessory': None,
+        },
         'inventory': create_inventory(),
         'current_hp': 0,
     }
