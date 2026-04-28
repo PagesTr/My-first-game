@@ -32,6 +32,11 @@ class Game:
             classes=self.data.classes,
             items=self.data.items,
         )
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+        )
         self.state = "zone_select"
 
     def select_zone(self, zone_key):
