@@ -1,4 +1,4 @@
-from core.inventory import (
+from systems.inventory import (
     add_drops_to_inventory,
     add_stackable_item,
     add_unique_item,

@@ -1,4 +1,4 @@
-from core.loot import generate_combat_loot
+from systems.loot import generate_combat_loot
 
 
 def make_enemy_with_drop(item_id):

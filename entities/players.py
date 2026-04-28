@@ -1,5 +1,5 @@
-from core.inventory import create_inventory
-from core.stats import derive_stats
+from systems.inventory import create_inventory
+from systems.stats import derive_stats
 
 def create_player(char_class, classes, items):
     """Create a new player using a chosen character class."""
