@@ -51,12 +51,13 @@ class CombatSystem:
 
         if action == "attack":
             dmg = self._compute_damage(attacker, defender)
-            defender["current_hp"] = max(0, defender["current_hp"] - dmg)
+            if dmg > 0:
+                defender["current_hp"] = max(0, defender["current_hp"] - dmg)
 
             self.log.append(f"{actor_name} attaque -> {dmg} degats")
 
         elif action == "heal":
-            heal = 10
+            heal = int(attacker.get("healing_power", 10))
             attacker["current_hp"] = min(
                 attacker["max_hp"], attacker["current_hp"] + heal
             )
@@ -80,12 +81,27 @@ class CombatSystem:
     # ======================
 
     def _compute_damage(self, attacker, defender):
+        accuracy = attacker.get("accuracy", 1.0)
+        dodge_chance = defender.get("dodge_chance", 0.0)
+        hit_chance = accuracy - dodge_chance
+        hit_chance = max(0.05, min(0.95, hit_chance))
+
+        if random.random() > hit_chance:
+            self.log.append("Attaque esquivee !")
+            return 0
+
         base = attacker["attack"] - defender["defense"]
         base = max(1, base)
 
-        # petit crit simple
-        if random.random() < 0.1:
-            base *= 2
+        block_chance = defender.get("block_chance", 0.0)
+        if random.random() < block_chance:
+            base = max(1, int(base / 2))
+            self.log.append("Attaque bloquee !")
+
+        crit_chance = attacker.get("crit_chance", 0.1)
+        crit_damage = attacker.get("crit_damage", 2.0)
+        if random.random() < crit_chance:
+            base = max(1, int(base * crit_damage))
             self.log.append("Coup critique !")
 
         return base
