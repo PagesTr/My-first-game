@@ -105,6 +105,7 @@ class InventoryScreen:
 
         self._draw_equipment_panel(screen)
         self._draw_player_stats_panel(screen)
+        self._draw_active_effects_panel(screen)
         if self.show_advanced_stats:
             self._draw_advanced_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
@@ -399,6 +400,64 @@ class InventoryScreen:
         if stat_key == "crit_damage":
             return f"x{value}"
         return str(value)
+
+    def _format_effect_modifier(self, stat, value):
+        label = self._get_stat_label(stat)
+        if value > 0:
+            sign = "+"
+        elif value < 0:
+            sign = "-"
+        else:
+            sign = ""
+
+        formatted_value = self._format_stat_value(stat, abs(value))
+        return f"{sign}{formatted_value} {label}"
+
+    def _draw_active_effects_panel(self, screen):
+        player = self.game.player
+        active_effects = player.get("active_effects", [])
+        rect = pygame.Rect(360, 520, 180, 70)
+
+        pygame.draw.rect(screen, (35, 40, 48), rect)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2)
+
+        title = self.small_font.render("Active Effects", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 8, rect.y + 6))
+
+        valid_effects = [effect for effect in active_effects if isinstance(effect, dict)]
+        if not valid_effects:
+            none_text = self.small_font.render("None", True, (170, 175, 180))
+            screen.blit(none_text, (rect.x + 8, rect.y + 28))
+            return
+
+        y = rect.y + 26
+        for effect in valid_effects[:4]:
+            name = effect.get("name", effect.get("id", "Unknown Effect"))
+            duration_type = effect.get("duration_type")
+            if duration_type == "combat":
+                duration = f"{effect.get('remaining_combats', 0)} combat(s)"
+            elif duration_type == "time":
+                duration = f"{effect.get('remaining_seconds', 0)}s"
+            else:
+                duration = "Unknown duration"
+
+            modifiers = effect.get("modifiers", {})
+            modifier_text = ""
+            if isinstance(modifiers, dict):
+                for stat, value in modifiers.items():
+                    if isinstance(value, (int, float)):
+                        modifier_text = self._format_effect_modifier(stat, value)
+                        break
+
+            line = f"{self._short_text(name, 11)} {duration}"
+            if modifier_text:
+                line = f"{line} {modifier_text}"
+
+            effect_text = self.small_font.render(
+                self._short_text(line, 24), True, (220, 220, 220)
+            )
+            screen.blit(effect_text, (rect.x + 8, y))
+            y += 14
 
     def _draw_comparison_panel(self, screen):
         source = self.selected_item_source
