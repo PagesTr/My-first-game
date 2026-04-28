@@ -99,7 +99,6 @@ class InventoryScreen:
 
         self._draw_equipment_panel(screen)
         self._draw_player_stats_panel(screen)
-        self._draw_comparison_panel(screen)
         if self.show_advanced_stats:
             self._draw_advanced_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
@@ -487,6 +486,64 @@ class InventoryScreen:
 
         return lines
 
+    def _get_selected_comparison_item(self, item_instance):
+        source = self.selected_item_source
+        if source is None:
+            return None
+
+        source_type, _ = source
+        if source_type != "inventory":
+            return None
+
+        equipment_type = self._get_equipment_type(item_instance)
+        if equipment_type is None:
+            return None
+
+        return self.game.player["equipment"].get(equipment_type)
+
+    def _get_tooltip_stat_line_indexes(self, lines):
+        stat_line_indexes = {}
+        in_stats_section = False
+
+        for index, line in enumerate(lines):
+            if line == "Stats:":
+                in_stats_section = True
+                continue
+            if not in_stats_section or ":" not in line:
+                continue
+
+            stat_label = line.split(":", 1)[0]
+            stat_line_indexes[stat_label] = index
+
+        return stat_line_indexes
+
+    def _build_comparison_values(self, item_instance, current_item):
+        item_id = item_instance.get("item")
+        current_item_id = current_item.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        current_item_data = self.game.data.items.get(current_item_id, {})
+        new_stats = item_instance.get("stats") or item_data.get("stats", {})
+        current_stats = current_item.get("stats") or current_item_data.get("stats", {})
+        comparison_values = {}
+
+        for stat, new_value in new_stats.items():
+            current_value = current_stats.get(stat, 0)
+            diff = new_value - current_value
+            label = self._get_stat_label(stat)
+            if stat == "crit_damage":
+                formatted_diff = str(abs(diff))
+            else:
+                formatted_diff = self._format_stat_value(stat, abs(diff))
+
+            if diff > 0:
+                comparison_values[label] = f"+{formatted_diff}"
+            elif diff < 0:
+                comparison_values[label] = f"-{formatted_diff}"
+            else:
+                comparison_values[label] = "="
+
+        return comparison_values
+
     def _draw_item_tooltip(self, screen):
         item_instance = self.selected_item
         source = self.selected_item_source
@@ -505,17 +562,41 @@ class InventoryScreen:
 
         self.selected_item = item_instance
         lines = self._get_tooltip_lines(item_instance)
-        rendered_lines = [
+        left_rendered_lines = [
             self.small_font.render(line, True, (220, 220, 220))
             for line in lines
         ]
-        if not rendered_lines:
+        if not left_rendered_lines:
             return
 
         padding = 10
         line_height = 18
-        width = max(line.get_width() for line in rendered_lines) + padding * 2
-        height = len(rendered_lines) * line_height + padding * 2
+        column_gap = 28
+        current_item = self._get_selected_comparison_item(item_instance)
+        comparison_values = {}
+        stat_line_indexes = {}
+        right_header_lines = []
+        right_width = 0
+
+        if current_item is not None:
+            comparison_values = self._build_comparison_values(item_instance, current_item)
+            stat_line_indexes = self._get_tooltip_stat_line_indexes(lines)
+            right_header_lines = [
+                "Compared to equipped",
+                self._get_item_display_name(current_item),
+            ]
+            right_texts = right_header_lines + list(comparison_values.values())
+            right_width = max(
+                self.small_font.render(text, True, (220, 220, 220)).get_width()
+                for text in right_texts
+            )
+
+        left_width = max(line.get_width() for line in left_rendered_lines)
+        width = left_width + padding * 2
+        if current_item is not None:
+            width += column_gap + right_width
+
+        height = len(left_rendered_lines) * line_height + padding * 2
         x, y = self.selected_item_position
 
         if x + width > screen.get_width():
@@ -536,6 +617,32 @@ class InventoryScreen:
 
             text = self.small_font.render(line, True, color)
             screen.blit(text, (rect.x + padding, rect.y + padding + index * line_height))
+
+        if current_item is None:
+            return
+
+        right_x = rect.x + padding + left_width + column_gap
+        for index, line in enumerate(right_header_lines):
+            color = (220, 220, 220)
+            if index == 1:
+                color = self._get_rarity_color(current_item)
+            text = self.small_font.render(line, True, color)
+            screen.blit(text, (right_x, rect.y + padding + index * line_height))
+
+        for stat_label, diff_text in comparison_values.items():
+            line_index = stat_line_indexes.get(stat_label)
+            if line_index is None:
+                continue
+
+            if diff_text.startswith("+"):
+                color = (120, 220, 140)
+            elif diff_text.startswith("-"):
+                color = (230, 110, 110)
+            else:
+                color = (170, 170, 170)
+
+            text = self.small_font.render(diff_text, True, color)
+            screen.blit(text, (right_x, rect.y + padding + line_index * line_height))
 
     def _get_equipment_type(self, item_instance):
         if item_instance is None:
