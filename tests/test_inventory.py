@@ -2,6 +2,7 @@ from systems.inventory import (
     add_drops_to_inventory,
     add_stackable_item,
     add_unique_item,
+    compact_inventory,
     create_inventory,
     move_item,
     use_consumable_item,
@@ -209,3 +210,74 @@ def test_use_consumable_returns_false_for_invalid_slot():
 
     assert use_consumable_item(player, inventory, -1, items) is False
     assert use_consumable_item(player, inventory, 1, items) is False
+
+
+def test_compact_inventory_moves_items_to_front():
+    inventory = create_inventory(size=5)
+    item_a = {"kind": "stackable", "item": "a", "quantity": 1}
+    item_b = {"kind": "stackable", "item": "b", "quantity": 1}
+    item_c = {"kind": "stackable", "item": "c", "quantity": 1}
+    inventory["slots"] = [item_a, None, item_b, None, item_c]
+
+    compacted = compact_inventory(inventory)
+
+    assert compacted is True
+    assert inventory["slots"] == [item_a, item_b, item_c, None, None]
+
+
+def test_compact_inventory_preserves_relative_order():
+    inventory = create_inventory(size=4)
+    item_a = {"kind": "stackable", "item": "a", "quantity": 1}
+    item_b = {"kind": "stackable", "item": "b", "quantity": 1}
+    item_c = {"kind": "stackable", "item": "c", "quantity": 1}
+    inventory["slots"] = [None, item_a, item_b, item_c]
+
+    compact_inventory(inventory)
+
+    assert inventory["slots"][:3] == [item_a, item_b, item_c]
+
+
+def test_compact_inventory_preserves_unique_item_stats():
+    inventory = create_inventory(size=3)
+    unique_item = {
+        "kind": "unique",
+        "item": "iron_sword",
+        "stats": {"attack": 4, "crit_chance": 0.1},
+    }
+    inventory["slots"] = [None, unique_item, None]
+
+    compact_inventory(inventory)
+
+    assert inventory["slots"][0] is unique_item
+    assert inventory["slots"][0]["stats"] == {"attack": 4, "crit_chance": 0.1}
+
+
+def test_compact_inventory_preserves_inventory_size():
+    inventory = create_inventory(size=4)
+    inventory["slots"] = [
+        None,
+        {"kind": "stackable", "item": "a", "quantity": 1},
+        None,
+        None,
+    ]
+
+    compact_inventory(inventory)
+
+    assert inventory["size"] == 4
+    assert len(inventory["slots"]) == 4
+
+
+def test_compact_inventory_works_with_empty_inventory():
+    inventory = create_inventory(size=3)
+
+    compacted = compact_inventory(inventory)
+
+    assert compacted is True
+    assert inventory["slots"] == [None, None, None]
+
+
+def test_compact_inventory_returns_false_for_invalid_inventory():
+    assert compact_inventory(None) is False
+    assert compact_inventory({}) is False
+    assert compact_inventory({"slots": [], "size": 1}) is False
+    assert compact_inventory({"slots": None, "size": 1}) is False

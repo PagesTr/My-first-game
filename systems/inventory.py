@@ -110,6 +110,27 @@ def use_consumable_item(player, inventory, slot_index, items):
     return True
 
 
+def compact_inventory(inventory):
+    if not isinstance(inventory, dict):
+        return False
+    if "slots" not in inventory or "size" not in inventory:
+        return False
+    if not isinstance(inventory["slots"], list):
+        return False
+    if not isinstance(inventory["size"], int):
+        return False
+    if len(inventory["slots"]) != inventory["size"]:
+        return False
+
+    compacted_slots = [slot for slot in inventory["slots"] if slot is not None]
+    empty_count = inventory["size"] - len(compacted_slots)
+    if empty_count < 0:
+        return False
+
+    inventory["slots"] = compacted_slots + [None] * empty_count
+    return True
+
+
 def move_item(inventory, source_index, target_index):
     if not is_valid_slot(inventory, source_index):
         return False
