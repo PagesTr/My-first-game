@@ -1,9 +1,11 @@
 from systems.loot import (
     RARITIES,
+    RARITY_WEIGHTS,
     generate_combat_loot,
     generate_randomized_stats,
     generate_rarity,
     get_allowed_rarities,
+    get_rarity_weights,
 )
 
 
@@ -73,7 +75,7 @@ def test_unique_drop_contains_stats_dict():
     assert isinstance(drops[0]["stats"], dict)
 
 
-def test_generated_stats_include_possible_rarity_bonus():
+def test_generated_stats_include_rarity_bonus():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -138,11 +140,14 @@ def test_get_allowed_rarities_filters_unknown_values():
 
 
 def test_generate_rarity_uses_only_allowed_rarities():
-    allowed_rarities = ("legendary", "unique")
+    rarity_weights = {
+        "legendary": RARITY_WEIGHTS["legendary"],
+        "unique": RARITY_WEIGHTS["unique"],
+    }
 
-    generated = {generate_rarity(allowed_rarities) for _ in range(50)}
+    generated = {generate_rarity(rarity_weights) for _ in range(50)}
 
-    assert generated <= set(allowed_rarities)
+    assert generated <= set(rarity_weights)
 
 
 def test_unique_drop_uses_item_allowed_rarities():
@@ -171,3 +176,53 @@ def test_basic_equipment_can_be_limited_to_common_and_uncommon():
     for _ in range(50):
         drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
         assert drops[0]["rarity"] in ("common", "uncommon")
+
+
+def test_get_rarity_weights_uses_item_specific_weights():
+    item = {"rarity_weights": {"rare": 80, "epic": 20}}
+
+    assert get_rarity_weights(item) == {"rare": 80, "epic": 20}
+
+
+def test_get_rarity_weights_filters_invalid_entries():
+    item = {
+        "rarity_weights": {
+            "rare": 10,
+            "invalid": 99,
+            "epic": 0,
+            "legendary": -5,
+        }
+    }
+
+    assert get_rarity_weights(item) == {"rare": 10}
+
+
+def test_get_rarity_weights_falls_back_to_rarities_pool():
+    item = {"rarities": ["legendary", "unique"]}
+
+    assert get_rarity_weights(item) == {
+        "legendary": RARITY_WEIGHTS["legendary"],
+        "unique": RARITY_WEIGHTS["unique"],
+    }
+
+
+def test_generate_rarity_uses_specific_weights_keys():
+    rarity_weights = {"legendary": 90, "unique": 10}
+
+    generated = {generate_rarity(rarity_weights) for _ in range(50)}
+
+    assert generated <= set(rarity_weights)
+
+
+def test_unique_drop_uses_item_specific_rarity_weights():
+    items = {
+        "legendary_sword": {
+            "type": "weapon",
+            "stats": {"attack": 10},
+            "rarity_weights": {"legendary": 90, "unique": 10},
+        }
+    }
+
+    for _ in range(50):
+        drops = generate_combat_loot(make_enemy_with_drop("legendary_sword"), items)
+        assert drops[0]["rarity"] in ("legendary", "unique")

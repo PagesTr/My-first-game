@@ -39,11 +39,31 @@ def get_allowed_rarities(item_data):
     return filtered_rarities
 
 
-def generate_rarity(allowed_rarities=None):
-    rarities = tuple(allowed_rarities) if allowed_rarities is not None else RARITIES
+def get_rarity_weights(item_data):
+    item_weights = item_data.get("rarity_weights")
+    if isinstance(item_weights, dict):
+        filtered_weights = {
+            rarity: weight
+            for rarity, weight in item_weights.items()
+            if rarity in RARITIES
+            and isinstance(weight, (int, float))
+            and weight > 0
+        }
+        if filtered_weights:
+            return filtered_weights
+
+    allowed_rarities = get_allowed_rarities(item_data)
+    return {
+        rarity: RARITY_WEIGHTS[rarity]
+        for rarity in allowed_rarities
+    }
+
+
+def generate_rarity(rarity_weights=None):
+    weights_by_rarity = rarity_weights if rarity_weights is not None else RARITY_WEIGHTS
     return random.choices(
-        rarities,
-        weights=[RARITY_WEIGHTS[rarity] for rarity in rarities],
+        list(weights_by_rarity.keys()),
+        weights=list(weights_by_rarity.values()),
         k=1,
     )[0]
 
@@ -68,8 +88,8 @@ def generate_combat_loot(enemy, items):
             item_data = items.get(item_id, {})
 
             if is_unique_equipment(item_data):
-                allowed_rarities = get_allowed_rarities(item_data)
-                rarity = generate_rarity(allowed_rarities)
+                rarity_weights = get_rarity_weights(item_data)
+                rarity = generate_rarity(rarity_weights)
                 drops.append(
                     {
                         "kind": "unique",
