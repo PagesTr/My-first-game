@@ -120,9 +120,10 @@ class InventoryScreen:
         self._draw_equipment_panel(screen)
         self._draw_player_stats_panel(screen)
         self._draw_comparison_panel(screen)
-        self.back_btn.draw(screen, self.font)
         if self.show_advanced_stats:
             self._draw_advanced_stats_panel(screen)
+        self.back_btn.draw(screen, self.font)
+        self._draw_item_tooltip(screen)
 
     def _get_slot_index_at_pos(self, pos):
         if not self.game.player:
@@ -153,6 +154,21 @@ class InventoryScreen:
         slot_order = ("weapon", "armor", "accessory")
         index = slot_order.index(slot_key)
         return pygame.Rect(550, 150 + index * 95, 200, 80)
+
+    def _get_hovered_item(self):
+        if not self.game.player:
+            return None
+
+        mouse_pos = pygame.mouse.get_pos()
+        slot_index = self._get_slot_index_at_pos(mouse_pos)
+        if slot_index is not None:
+            return self.game.player["inventory"]["slots"][slot_index]
+
+        equipment_slot = self._get_equipment_slot_at_pos(mouse_pos)
+        if equipment_slot is not None:
+            return self.game.player["equipment"].get(equipment_slot)
+
+        return None
 
     def _unequip_item(self, equipment_slot):
         unequipped = unequip_item(
@@ -372,6 +388,78 @@ class InventoryScreen:
             stat_text = self.small_font.render(line, True, color)
             screen.blit(stat_text, (rect.x + 10, y))
             y += 18
+
+    def _get_tooltip_lines(self, item_instance):
+        item_id = item_instance.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        item_type = item_data.get("type", "unknown")
+        item_kind = item_instance.get("kind", "unknown")
+        stats = item_instance.get("stats") or item_data.get("stats", {})
+
+        lines = [
+            self._get_item_display_name(item_instance),
+            f"Type: {item_type}",
+            f"Kind: {item_kind}",
+        ]
+
+        rarity = item_instance.get("rarity")
+        if rarity:
+            lines.append(f"Rarity: {rarity.capitalize()}")
+
+        quantity = item_instance.get("quantity")
+        if quantity is not None:
+            lines.append(f"Quantity: {quantity}")
+
+        if stats:
+            lines.append("Stats:")
+            for stat, value in stats.items():
+                label = self._get_stat_label(stat)
+                formatted_value = self._format_stat_value(stat, value)
+                lines.append(f"{label}: {formatted_value}")
+        else:
+            lines.append("No stats")
+
+        return lines
+
+    def _draw_item_tooltip(self, screen):
+        item_instance = self._get_hovered_item()
+        if item_instance is None:
+            return
+
+        lines = self._get_tooltip_lines(item_instance)
+        rendered_lines = [
+            self.small_font.render(line, True, (220, 220, 220))
+            for line in lines
+        ]
+        if not rendered_lines:
+            return
+
+        padding = 10
+        line_height = 18
+        width = max(line.get_width() for line in rendered_lines) + padding * 2
+        height = len(rendered_lines) * line_height + padding * 2
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        x = mouse_x + 14
+        y = mouse_y + 14
+
+        if x + width > screen.get_width():
+            x = max(0, screen.get_width() - width - 6)
+        if y + height > screen.get_height():
+            y = max(0, screen.get_height() - height - 6)
+
+        rect = pygame.Rect(x, y, width, height)
+        pygame.draw.rect(screen, (28, 34, 42), rect)
+        pygame.draw.rect(screen, (180, 190, 200), rect, 2)
+
+        for index, line in enumerate(lines):
+            color = (220, 220, 220)
+            if index == 0:
+                color = self._get_rarity_color(item_instance)
+            elif line == "Stats:":
+                color = (220, 220, 160)
+
+            text = self.small_font.render(line, True, color)
+            screen.blit(text, (rect.x + padding, rect.y + padding + index * line_height))
 
     def _get_equipment_type(self, item_instance):
         if item_instance is None:
