@@ -10,7 +10,7 @@ class CombatSystem:
         self.is_over = False
         self.winner = None
 
-        self.log = []  # utile pour UI plus tard
+        self.log = []  # Useful for the UI later
 
     # ======================
     # PUBLIC API
@@ -18,9 +18,9 @@ class CombatSystem:
 
     def step(self, player_action):
         """
-        Execute un tour complet :
-        - action joueur
-        - action ennemi
+        Execute a full combat turn:
+        - player action
+        - enemy action
         """
 
         if self.is_over:
@@ -29,13 +29,13 @@ class CombatSystem:
         self.turn_count += 1
         self.log.clear()
 
-        # --- joueur joue ---
+        # --- Player turn ---
         self._apply_action(self.player, self.enemy, player_action, is_player=True)
 
         if self._check_end():
             return
 
-        # --- ennemi joue (IA simple pour l'instant) ---
+        # --- Enemy turn (simple AI for now) ---
         enemy_action = self._enemy_ai()
 
         self._apply_action(self.enemy, self.player, enemy_action, is_player=False)
@@ -54,7 +54,7 @@ class CombatSystem:
             if dmg > 0:
                 defender["current_hp"] = max(0, defender["current_hp"] - dmg)
 
-            self.log.append(f"{actor_name} attaque -> {dmg} degats")
+            self.log.append(f"{actor_name} attacks -> {dmg} damage")
 
         elif action == "heal":
             heal = int(attacker.get("healing_power", 10))
@@ -62,22 +62,22 @@ class CombatSystem:
                 attacker["max_hp"], attacker["current_hp"] + heal
             )
 
-            self.log.append(f"{actor_name} se soigne -> +{heal} HP")
+            self.log.append(f"{actor_name} heals -> +{heal} HP")
 
-        # Extensible ici (skills, items, etc.)
+        # Extensible here (skills, items, etc.)
 
     # ======================
-    # IA ENNEMI (simple)
+    # ENEMY AI (simple)
     # ======================
 
     def _enemy_ai(self):
-        # Tres basique pour l'instant
+        # Very basic for now
         if self.enemy["current_hp"] < 5:
             return "heal"
         return "attack"
 
     # ======================
-    # CALCULS
+    # CALCULATIONS
     # ======================
 
     def _compute_damage(self, attacker, defender):
@@ -87,7 +87,7 @@ class CombatSystem:
         hit_chance = max(0.05, min(0.95, hit_chance))
 
         if random.random() > hit_chance:
-            self.log.append("Attaque esquivee !")
+            self.log.append("Attack dodged!")
             return 0
 
         base = attacker["attack"] - defender["defense"]
@@ -96,31 +96,31 @@ class CombatSystem:
         block_chance = defender.get("block_chance", 0.0)
         if random.random() < block_chance:
             base = max(1, int(base / 2))
-            self.log.append("Attaque bloquee !")
+            self.log.append("Attack blocked!")
 
         crit_chance = attacker.get("crit_chance", 0.1)
         crit_damage = attacker.get("crit_damage", 2.0)
         if random.random() < crit_chance:
             base = max(1, int(base * crit_damage))
-            self.log.append("Coup critique !")
+            self.log.append("Critical hit!")
 
         return base
 
     # ======================
-    # FIN DE COMBAT
+    # END OF COMBAT
     # ======================
 
     def _check_end(self):
         if self.player["current_hp"] <= 0:
             self.is_over = True
             self.winner = "enemy"
-            self.log.append("Defaite")
+            self.log.append("Defeat")
             return True
 
         if self.enemy["current_hp"] <= 0:
             self.is_over = True
             self.winner = "player"
-            self.log.append("Victoire")
+            self.log.append("Victory")
             return True
 
         return False
