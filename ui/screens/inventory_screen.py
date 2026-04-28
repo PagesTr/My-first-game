@@ -176,9 +176,7 @@ class InventoryScreen:
                 item_text = "Vide"
                 detail_text = ""
             else:
-                item_id = item["item"]
-                item_data = self.game.data.items.get(item_id, {})
-                item_text = item_data.get("name", item_id)
+                item_text = self._get_item_name(item)
                 detail_text = self._format_short_stats(item.get("stats", {}))
 
             name_label = self.small_font.render(
@@ -233,12 +231,12 @@ class InventoryScreen:
             return
 
         current_item = self.game.player["equipment"].get(equipment_type)
-        comparison_lines = self._format_stats_comparison(
+        comparison_lines = self._build_stats_comparison(
             item.get("stats", {}),
             current_item.get("stats", {}) if current_item else {},
         )
 
-        rect = pygame.Rect(220, 510, 320, 80)
+        rect = pygame.Rect(215, 430, 325, 160)
         pygame.draw.rect(screen, (35, 40, 48), rect)
         pygame.draw.rect(screen, (120, 130, 140), rect, 2)
 
@@ -258,14 +256,29 @@ class InventoryScreen:
         screen.blit(item_text, (rect.x + 10, rect.y + 32))
         screen.blit(equipped_text, (rect.x + 10, rect.y + 50))
 
-        x = rect.x + 180
-        y = rect.y + 32
-        for line in comparison_lines[:2]:
-            stat_text = self.small_font.render(line, True, (220, 220, 160))
-            screen.blit(stat_text, (x, y))
+        y = rect.y + 76
+        for label, new_value, current_value, diff in comparison_lines[:5]:
+            if diff > 0:
+                diff_text = f"+{diff}"
+                color = (120, 220, 140)
+            elif diff < 0:
+                diff_text = str(diff)
+                color = (230, 110, 110)
+            else:
+                diff_text = "="
+                color = (170, 170, 170)
+
+            line = f"{label}: {new_value} vs {current_value} ({diff_text})"
+            stat_text = self.small_font.render(line, True, color)
+            screen.blit(stat_text, (rect.x + 10, y))
             y += 18
 
     def _get_equipment_type(self, item_instance):
+        if item_instance is None:
+            return None
+        if item_instance.get("kind") != "unique":
+            return None
+
         item_id = item_instance["item"]
         item_data = self.game.data.items.get(item_id, {})
         item_type = item_data.get("type")
@@ -273,25 +286,36 @@ class InventoryScreen:
             return item_type
         return None
 
-    def _format_stats_comparison(self, new_stats, current_stats):
-        lines = []
-        stat_names = sorted(set(new_stats) | set(current_stats))
-        for stat in stat_names:
-            diff = new_stats.get(stat, 0) - current_stats.get(stat, 0)
-            if diff > 0:
-                lines.append(f"{stat}: +{diff}")
-            elif diff < 0:
-                lines.append(f"{stat}: {diff}")
-            else:
-                lines.append(f"{stat}: =")
-        return lines
-
     def _get_item_name(self, item_instance):
         if item_instance is None:
             return "Aucun"
         item_id = item_instance["item"]
         item_data = self.game.data.items.get(item_id, {})
         return item_data.get("name", item_id)
+
+    def _get_stat_label(self, stat):
+        labels = {
+            "attack": "Attaque",
+            "defense": "Défense",
+            "hp": "PV",
+            "max_hp": "PV max",
+            "force": "Force",
+            "agility": "Agilité",
+            "intelligence": "Intelligence",
+        }
+        return labels.get(stat, stat)
+
+    def _build_stats_comparison(self, new_stats, current_stats):
+        comparison = []
+        stat_names = sorted(set(new_stats) | set(current_stats))
+        for stat in stat_names:
+            new_value = new_stats.get(stat, 0)
+            current_value = current_stats.get(stat, 0)
+            diff = new_value - current_value
+            comparison.append(
+                (self._get_stat_label(stat), new_value, current_value, diff)
+            )
+        return comparison
 
     def _draw_slot_content(self, screen, rect, slot):
         item_id = slot["item"]
