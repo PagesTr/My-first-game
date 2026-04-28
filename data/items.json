@@ -33,6 +33,20 @@
       "hp": 10
     }
   },
+  "minor_health_potion": {
+    "name": "Minor Health Potion",
+    "type": "consumable",
+    "stats": {
+      "hp": 5
+    }
+  },
+  "greater_health_potion": {
+    "name": "Greater Health Potion",
+    "type": "consumable",
+    "stats": {
+      "hp": 25
+    }
+  },
   "magic_ring": {
     "name": "Magic Ring",
     "type": "accessory",

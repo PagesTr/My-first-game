@@ -22,8 +22,8 @@
         "chance": 0.4
       },
       {
-        "item": "health_potion",
-        "chance": 0.15
+        "item": "minor_health_potion",
+        "chance": 0.18
       },
       {
         "item": "iron_sword",
@@ -86,7 +86,7 @@
         "chance": 0.3
       },
       {
-        "item": "health_potion",
+        "item": "minor_health_potion",
         "chance": 0.08
       }
     ]
@@ -150,6 +150,10 @@
         "chance": 0.5
       },
       {
+        "item": "greater_health_potion",
+        "chance": 0.08
+      },
+      {
         "item": "steel_armor",
         "chance": 0.12
       }
@@ -180,6 +184,10 @@
       {
         "item": "bone",
         "chance": 0.5
+      },
+      {
+        "item": "greater_health_potion",
+        "chance": 0.1
       },
       {
         "item": "legendary_sword",
