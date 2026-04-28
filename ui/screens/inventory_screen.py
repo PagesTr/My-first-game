@@ -98,6 +98,7 @@ class InventoryScreen:
 
         self._draw_equipment_panel(screen)
         self._draw_player_stats_panel(screen)
+        self._draw_comparison_panel(screen)
         self.back_btn.draw(screen, self.font)
 
     def _get_slot_index_at_pos(self, pos):
@@ -215,6 +216,82 @@ class InventoryScreen:
             )
             screen.blit(stat_text, (560, y))
             y += 16
+
+    def _draw_comparison_panel(self, screen):
+        mouse_pos = pygame.mouse.get_pos()
+        slot_index = self._get_slot_index_at_pos(mouse_pos)
+        if slot_index is None:
+            return
+
+        inventory = self.game.player["inventory"]
+        item = inventory["slots"][slot_index]
+        if item is None:
+            return
+
+        equipment_type = self._get_equipment_type(item)
+        if equipment_type is None:
+            return
+
+        current_item = self.game.player["equipment"].get(equipment_type)
+        comparison_lines = self._format_stats_comparison(
+            item.get("stats", {}),
+            current_item.get("stats", {}) if current_item else {},
+        )
+
+        rect = pygame.Rect(220, 510, 320, 80)
+        pygame.draw.rect(screen, (35, 40, 48), rect)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2)
+
+        title = self.font.render("Comparaison", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 10, rect.y + 8))
+
+        item_text = self.small_font.render(
+            f"Objet : {self._short_text(self._get_item_name(item), 22)}",
+            True,
+            (220, 220, 220),
+        )
+        equipped_text = self.small_font.render(
+            f"Équipé : {self._short_text(self._get_item_name(current_item), 20)}",
+            True,
+            (220, 220, 220),
+        )
+        screen.blit(item_text, (rect.x + 10, rect.y + 32))
+        screen.blit(equipped_text, (rect.x + 10, rect.y + 50))
+
+        x = rect.x + 180
+        y = rect.y + 32
+        for line in comparison_lines[:2]:
+            stat_text = self.small_font.render(line, True, (220, 220, 160))
+            screen.blit(stat_text, (x, y))
+            y += 18
+
+    def _get_equipment_type(self, item_instance):
+        item_id = item_instance["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_type = item_data.get("type")
+        if item_type in ("weapon", "armor", "accessory"):
+            return item_type
+        return None
+
+    def _format_stats_comparison(self, new_stats, current_stats):
+        lines = []
+        stat_names = sorted(set(new_stats) | set(current_stats))
+        for stat in stat_names:
+            diff = new_stats.get(stat, 0) - current_stats.get(stat, 0)
+            if diff > 0:
+                lines.append(f"{stat}: +{diff}")
+            elif diff < 0:
+                lines.append(f"{stat}: {diff}")
+            else:
+                lines.append(f"{stat}: =")
+        return lines
+
+    def _get_item_name(self, item_instance):
+        if item_instance is None:
+            return "Aucun"
+        item_id = item_instance["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        return item_data.get("name", item_id)
 
     def _draw_slot_content(self, screen, rect, slot):
         item_id = slot["item"]
