@@ -1,13 +1,13 @@
 import random
 
 from core.dataManager import DataManager
-from entities.enemy import create_enemy
-from entities.players import create_player
-from systems.combat import CombatSystem
-from systems.inventory import add_drops_to_inventory
-from systems.loot import generate_combat_loot
-from systems.progression import apply_combat_rewards
-from systems.stats import prepare_player_for_combat
+from core.enemy import create_enemy
+from core.players import create_player
+from core.combat import CombatSystem
+from core.inventory import add_drops_to_inventory
+from core.loot import generate_combat_loot
+from core.progression import apply_combat_rewards
+from core.stats import prepare_player_for_combat
 
 
 class Game:

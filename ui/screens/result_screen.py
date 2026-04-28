@@ -77,10 +77,8 @@ class ResultScreen:
 
         if drops:
             for index, drop in enumerate(drops[:4]):
-                item_id = drop["item"]
-                quantity = drop.get("quantity", 1)
                 loot_text = self.font.render(
-                    f"- {item_id} x {quantity}", True, (200, 200, 200)
+                    self._format_drop(drop), True, (200, 200, 200)
                 )
                 screen.blit(loot_text, (300, loot_y + 35 + index * 28))
         else:
@@ -88,3 +86,26 @@ class ResultScreen:
             screen.blit(no_loot_text, (300, loot_y + 35))
 
         self.continue_btn.draw(screen, self.font)
+
+    def _format_drop(self, drop):
+        item_id = drop["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_name = item_data.get("name", item_id)
+        kind = drop.get("kind")
+
+        if kind == "stackable":
+            return f"- {item_name} x {drop.get('quantity', 1)}"
+
+        if kind == "unique":
+            stats_text = self._format_stats(drop.get("stats", {}))
+            if stats_text:
+                return f"- {item_name} ({stats_text})"
+            return f"- {item_name}"
+
+        return f"- {item_name}"
+
+    def _format_stats(self, stats):
+        parts = []
+        for stat, value in stats.items():
+            parts.append(f"{stat} +{value}")
+        return ", ".join(parts)

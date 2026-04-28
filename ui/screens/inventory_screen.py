@@ -65,19 +65,34 @@ class InventoryScreen:
         self.back_btn.draw(screen, self.font)
 
     def _draw_slot_content(self, screen, rect, slot):
-        if slot.get("kind") == "stackable":
-            item_text = slot["item"]
-            quantity = slot.get("quantity")
-            quantity_text = f"x{quantity}" if quantity is not None else ""
-        else:
-            item_text = slot.get("name", slot.get("item", "Item"))
-            quantity_text = ""
+        item_id = slot["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_name = item_data.get("name", item_id)
 
-        item_label = self.small_font.render(str(item_text), True, (245, 245, 245))
+        if slot.get("kind") == "stackable":
+            quantity = slot.get("quantity")
+            detail_text = f"x{quantity}" if quantity is not None else ""
+        else:
+            detail_text = self._format_short_stats(slot.get("stats", {}))
+
+        item_label = self.small_font.render(
+            self._short_text(item_name), True, (245, 245, 245)
+        )
         screen.blit(item_label, (rect.x + 6, rect.y + 10))
 
-        if quantity_text:
-            quantity_label = self.small_font.render(
-                quantity_text, True, (220, 220, 160)
+        if detail_text:
+            detail_label = self.small_font.render(
+                self._short_text(detail_text), True, (220, 220, 160)
             )
-            screen.blit(quantity_label, (rect.x + 6, rect.y + 42))
+            screen.blit(detail_label, (rect.x + 6, rect.y + 42))
+
+    def _format_short_stats(self, stats):
+        for stat, value in stats.items():
+            return f"{stat} +{value}"
+        return ""
+
+    def _short_text(self, text, max_length=10):
+        text = str(text)
+        if len(text) <= max_length:
+            return text
+        return text[: max_length - 1] + "."
