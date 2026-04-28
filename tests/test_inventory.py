@@ -4,6 +4,7 @@ from systems.inventory import (
     add_unique_item,
     create_inventory,
     move_item,
+    use_consumable_item,
 )
 
 
@@ -118,3 +119,93 @@ def test_add_drops_to_inventory_puts_unknown_kind_in_failed():
     assert result["added"] == []
     assert result["failed"] == drops
     assert inventory["slots"][0] is None
+
+
+def test_use_consumable_heals_player():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 2,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert player["current_hp"] == 15
+
+
+def test_use_consumable_does_not_exceed_max_hp():
+    player = {"current_hp": 18, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 2,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert player["current_hp"] == 20
+
+
+def test_use_consumable_decreases_quantity_after_use():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 2,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert inventory["slots"][0]["quantity"] == 1
+
+
+def test_use_consumable_clears_slot_when_quantity_reaches_zero():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 1,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is True
+    assert inventory["slots"][0] is None
+
+
+def test_use_consumable_returns_false_for_non_consumable_item():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 1,
+    }
+    items = {"leather": {"type": "resource", "stats": {"value": 5}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is False
+    assert player["current_hp"] == 5
+    assert inventory["slots"][0]["quantity"] == 1
+
+
+def test_use_consumable_returns_false_for_invalid_slot():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    assert use_consumable_item(player, inventory, -1, items) is False
+    assert use_consumable_item(player, inventory, 1, items) is False

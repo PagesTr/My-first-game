@@ -76,6 +76,40 @@ def add_drops_to_inventory(inventory, drops):
     return result
 
 
+def use_consumable_item(player, inventory, slot_index, items):
+    if not is_valid_slot(inventory, slot_index):
+        return False
+
+    slot = inventory["slots"][slot_index]
+    if slot is None:
+        return False
+
+    item_id = slot.get("item")
+    item_data = items.get(item_id, {})
+    if item_data.get("type") != "consumable":
+        return False
+
+    stats = item_data.get("stats", {})
+    effect_applied = False
+
+    if "hp" in stats:
+        max_hp = player.get("max_hp", 0)
+        current_hp = player.get("current_hp", 0)
+        healed_hp = min(max_hp, current_hp + stats["hp"])
+        if healed_hp > current_hp:
+            player["current_hp"] = healed_hp
+            effect_applied = True
+
+    if not effect_applied:
+        return False
+
+    slot["quantity"] = slot.get("quantity", 1) - 1
+    if slot["quantity"] <= 0:
+        inventory["slots"][slot_index] = None
+
+    return True
+
+
 def move_item(inventory, source_index, target_index):
     if not is_valid_slot(inventory, source_index):
         return False

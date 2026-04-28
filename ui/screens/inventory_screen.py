@@ -1,6 +1,7 @@
 import pygame
 
 from systems.equipment import equip_item, unequip_item
+from systems.inventory import use_consumable_item
 from systems.stats import prepare_player_for_combat
 
 
@@ -58,8 +59,20 @@ class InventoryScreen:
                 return
 
             inventory = self.game.player["inventory"]
-            if inventory["slots"][slot_index] is None:
+            slot = inventory["slots"][slot_index]
+            if slot is None:
                 return
+
+            item_data = self.game.data.items.get(slot.get("item"), {})
+            if slot.get("kind") == "stackable" and item_data.get("type") == "consumable":
+                used = use_consumable_item(
+                    self.game.player,
+                    inventory,
+                    slot_index,
+                    self.game.data.items,
+                )
+                if used:
+                    return
 
             equipped = equip_item(
                 self.game.player,
