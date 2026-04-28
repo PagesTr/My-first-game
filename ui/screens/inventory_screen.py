@@ -30,6 +30,9 @@ class InventoryScreen:
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.show_advanced_stats = False
         self.stats_details_btn = Button((650, 430, 100, 40), "Details")
+        self.selected_item = None
+        self.selected_item_source = None
+        self.selected_item_position = None
         self.start_x = 50
         self.start_y = 110
         self.slot_size = 70
@@ -49,43 +52,16 @@ class InventoryScreen:
                 self.show_advanced_stats = not self.show_advanced_stats
                 return
 
-            equipment_slot = self._get_equipment_slot_at_pos(event.pos)
-            if equipment_slot is not None:
-                self._unequip_item(equipment_slot)
+            item_instance, source = self._get_item_at_pos(event.pos)
+            if item_instance is None:
+                self._clear_selected_item()
                 return
 
-            slot_index = self._get_slot_index_at_pos(event.pos)
-            if slot_index is None:
+            if self._is_double_click(event):
+                self._handle_item_action(source)
                 return
 
-            inventory = self.game.player["inventory"]
-            slot = inventory["slots"][slot_index]
-            if slot is None:
-                return
-
-            item_data = self.game.data.items.get(slot.get("item"), {})
-            if slot.get("kind") == "stackable" and item_data.get("type") == "consumable":
-                used = use_consumable_item(
-                    self.game.player,
-                    inventory,
-                    slot_index,
-                    self.game.data.items,
-                )
-                if used:
-                    return
-
-            equipped = equip_item(
-                self.game.player,
-                inventory,
-                slot_index,
-                self.game.data.items,
-            )
-            if equipped:
-                prepare_player_for_combat(
-                    self.game.player,
-                    self.game.data.items,
-                    self.game.data.classes,
-                )
+            self._select_item(item_instance, source, event.pos)
 
     def draw(self, screen):
         screen.fill((18, 24, 30))
@@ -154,6 +130,81 @@ class InventoryScreen:
         slot_order = ("weapon", "armor", "accessory")
         index = slot_order.index(slot_key)
         return pygame.Rect(550, 150 + index * 95, 200, 80)
+
+    def _get_item_at_pos(self, pos):
+        if not self.game.player:
+            return None, None
+
+        slot_index = self._get_slot_index_at_pos(pos)
+        if slot_index is not None:
+            item_instance = self.game.player["inventory"]["slots"][slot_index]
+            if item_instance is not None:
+                return item_instance, ("inventory", slot_index)
+            return None, None
+
+        equipment_slot = self._get_equipment_slot_at_pos(pos)
+        if equipment_slot is not None:
+            item_instance = self.game.player["equipment"].get(equipment_slot)
+            if item_instance is not None:
+                return item_instance, ("equipment", equipment_slot)
+
+        return None, None
+
+    def _select_item(self, item_instance, source, pos):
+        self.selected_item = item_instance
+        self.selected_item_source = source
+        self.selected_item_position = (pos[0] + 14, pos[1] + 14)
+
+    def _clear_selected_item(self):
+        self.selected_item = None
+        self.selected_item_source = None
+        self.selected_item_position = None
+
+    def _is_double_click(self, event):
+        return getattr(event, "clicks", 1) >= 2
+
+    def _handle_item_action(self, source):
+        source_type, source_key = source
+        action_done = False
+
+        if source_type == "inventory":
+            inventory = self.game.player["inventory"]
+            item_instance = inventory["slots"][source_key]
+            if item_instance is None:
+                self._clear_selected_item()
+                return False
+
+            item_data = self.game.data.items.get(item_instance.get("item"), {})
+            if (
+                item_instance.get("kind") == "stackable"
+                and item_data.get("type") == "consumable"
+            ):
+                action_done = use_consumable_item(
+                    self.game.player,
+                    inventory,
+                    source_key,
+                    self.game.data.items,
+                )
+            else:
+                action_done = equip_item(
+                    self.game.player,
+                    inventory,
+                    source_key,
+                    self.game.data.items,
+                )
+                if action_done:
+                    prepare_player_for_combat(
+                        self.game.player,
+                        self.game.data.items,
+                        self.game.data.classes,
+                    )
+        elif source_type == "equipment":
+            action_done = self._unequip_item(source_key)
+
+        if action_done:
+            self._clear_selected_item()
+
+        return action_done
 
     def _get_hovered_item(self):
         if not self.game.player:
@@ -422,10 +473,22 @@ class InventoryScreen:
         return lines
 
     def _draw_item_tooltip(self, screen):
-        item_instance = self._get_hovered_item()
-        if item_instance is None:
+        item_instance = self.selected_item
+        source = self.selected_item_source
+        if item_instance is None or source is None or self.selected_item_position is None:
             return
 
+        source_type, source_key = source
+        if source_type == "inventory":
+            item_instance = self.game.player["inventory"]["slots"][source_key]
+        elif source_type == "equipment":
+            item_instance = self.game.player["equipment"].get(source_key)
+
+        if item_instance is None:
+            self._clear_selected_item()
+            return
+
+        self.selected_item = item_instance
         lines = self._get_tooltip_lines(item_instance)
         rendered_lines = [
             self.small_font.render(line, True, (220, 220, 220))
@@ -438,9 +501,7 @@ class InventoryScreen:
         line_height = 18
         width = max(line.get_width() for line in rendered_lines) + padding * 2
         height = len(rendered_lines) * line_height + padding * 2
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        x = mouse_x + 14
-        y = mouse_y + 14
+        x, y = self.selected_item_position
 
         if x + width > screen.get_width():
             x = max(0, screen.get_width() - width - 6)
