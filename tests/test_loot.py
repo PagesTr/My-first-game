@@ -67,7 +67,7 @@ def test_unique_drop_contains_stats_dict():
     assert isinstance(drops[0]["stats"], dict)
 
 
-def test_generated_stats_are_between_base_value_and_base_plus_two():
+def test_generated_stats_include_possible_rarity_bonus():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)

@@ -169,7 +169,7 @@ class InventoryScreen:
                 item_text = "Empty"
                 detail_text = ""
             else:
-                item_text = self._get_item_name(item)
+                item_text = self._get_item_display_name(item)
                 detail_text = self._format_short_stats(item.get("stats", {}))
 
             name_label = self.small_font.render(
@@ -237,12 +237,12 @@ class InventoryScreen:
         screen.blit(title, (rect.x + 10, rect.y + 8))
 
         item_text = self.small_font.render(
-            f"Item: {self._short_text(self._get_item_name(item), 22)}",
+            f"Item: {self._short_text(self._get_item_display_name(item), 22)}",
             True,
             (220, 220, 220),
         )
         equipped_text = self.small_font.render(
-            f"Equipped: {self._short_text(self._get_item_name(current_item), 20)}",
+            f"Equipped: {self._short_text(self._get_item_display_name(current_item), 20)}",
             True,
             (220, 220, 220),
         )
@@ -286,6 +286,23 @@ class InventoryScreen:
         item_data = self.game.data.items.get(item_id, {})
         return item_data.get("name", item_id)
 
+    def _get_rarity_label(self, item_instance):
+        if item_instance is None:
+            return ""
+        rarity = item_instance.get("rarity")
+        if not rarity:
+            return ""
+        return rarity.capitalize()
+
+    def _get_item_display_name(self, item_instance):
+        if item_instance is None:
+            return "None"
+        item_name = self._get_item_name(item_instance)
+        rarity = self._get_rarity_label(item_instance)
+        if rarity:
+            return f"[{rarity}] {item_name}"
+        return item_name
+
     def _get_stat_label(self, stat):
         labels = {
             "attack": "Attack",
@@ -313,14 +330,16 @@ class InventoryScreen:
     def _draw_slot_content(self, screen, rect, slot):
         item_id = slot["item"]
         item_data = self.game.data.items.get(item_id, {})
-        item_name = item_data.get("name", item_id)
 
         if slot.get("kind") == "stackable":
+            item_name = item_data.get("name", item_id)
             quantity = slot.get("quantity")
             detail_text = f"x{quantity}" if quantity is not None else ""
         elif slot.get("kind") == "unique":
+            item_name = self._get_item_display_name(slot)
             detail_text = self._format_short_stats(slot.get("stats", {}))
         else:
+            item_name = item_data.get("name", item_id)
             detail_text = ""
 
         item_label = self.small_font.render(

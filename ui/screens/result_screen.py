@@ -96,15 +96,37 @@ class ResultScreen:
             return f"- {item_name} x {drop.get('quantity', 1)}"
 
         if kind == "unique":
+            rarity = self._get_rarity_label(drop)
+            display_name = f"[{rarity}] {item_name}" if rarity else item_name
             stats_text = self._format_stats(drop.get("stats", {}))
             if stats_text:
-                return f"- {item_name} ({stats_text})"
-            return f"- {item_name}"
+                return f"- {display_name} ({stats_text})"
+            return f"- {display_name}"
 
         return f"- {item_name}"
+
+    def _get_rarity_label(self, drop):
+        if drop is None:
+            return ""
+        rarity = drop.get("rarity")
+        if not rarity:
+            return ""
+        return rarity.capitalize()
 
     def _format_stats(self, stats):
         parts = []
         for stat, value in stats.items():
-            parts.append(f"{stat} +{value}")
+            parts.append(f"{self._get_stat_label(stat)} +{value}")
         return ", ".join(parts)
+
+    def _get_stat_label(self, stat):
+        labels = {
+            "attack": "Attack",
+            "defense": "Defense",
+            "hp": "HP",
+            "max_hp": "Max HP",
+            "force": "Strength",
+            "agility": "Agility",
+            "intelligence": "Intelligence",
+        }
+        return labels.get(stat, stat)
