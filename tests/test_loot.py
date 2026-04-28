@@ -1,4 +1,4 @@
-from systems.loot import generate_combat_loot
+from systems.loot import RARITIES, generate_combat_loot, generate_randomized_stats
 
 
 def make_enemy_with_drop(item_id):
@@ -72,8 +72,44 @@ def test_generated_stats_are_between_base_value_and_base_plus_two():
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
 
-    assert 3 <= drops[0]["stats"]["attack"] <= 5
+    assert 3 <= drops[0]["stats"]["attack"] <= 10
 
 
 def test_enemy_without_drops_returns_empty_list():
     assert generate_combat_loot({}, {}) == []
+
+
+def test_unique_drop_contains_rarity():
+    items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
+
+    assert "rarity" in drops[0]
+
+
+def test_generated_rarity_is_known():
+    items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
+
+    assert drops[0]["rarity"] in RARITIES
+
+
+def test_stackable_drop_does_not_contain_rarity():
+    items = {"leather": {"type": "resource", "stats": {}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop("leather"), items)
+
+    assert "rarity" not in drops[0]
+
+
+def test_rare_randomized_stats_include_rarity_bonus():
+    stats = generate_randomized_stats({"attack": 3}, rarity="rare")
+
+    assert 5 <= stats["attack"] <= 7
+
+
+def test_unique_randomized_stats_include_rarity_bonus():
+    stats = generate_randomized_stats({"attack": 3}, rarity="unique")
+
+    assert 8 <= stats["attack"] <= 10
