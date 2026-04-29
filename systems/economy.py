@@ -63,7 +63,9 @@ def calculate_item_sell_price(item_instance, item_data):
     return int(base_value * rarity_multiplier * source_multiplier * value_multiplier)
 
 
-def sell_inventory_item(player, inventory, slot_index, items):
+def sell_inventory_item(player, inventory, slot_index, items, quantity=1):
+    if type(quantity) is not int or quantity <= 0:
+        return False
     if not is_valid_inventory(inventory):
         return False
     if not isinstance(slot_index, int) or slot_index < 0 or slot_index >= inventory["size"]:
@@ -81,13 +83,23 @@ def sell_inventory_item(player, inventory, slot_index, items):
 
     kind = slot.get("kind")
     if kind == "stackable":
-        slot["quantity"] = slot.get("quantity", 1) - 1
+        available_quantity = slot.get("quantity", 1)
+        if type(available_quantity) is not int or available_quantity <= 0:
+            return False
+        if quantity > available_quantity:
+            return False
+
+        total_price = sell_price * quantity
+        slot["quantity"] = available_quantity - quantity
         if slot["quantity"] <= 0:
             inventory["slots"][slot_index] = None
     elif kind == "unique":
+        if quantity > 1:
+            return False
+        total_price = sell_price
         inventory["slots"][slot_index] = None
     else:
         return False
 
-    player["gold"] = player.get("gold", 0) + sell_price
+    player["gold"] = player.get("gold", 0) + total_price
     return True

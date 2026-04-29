@@ -203,6 +203,75 @@ def test_sell_stackable_item_increases_gold_and_decreases_quantity():
     assert inventory["slots"][0]["quantity"] == 1
 
 
+def test_sell_three_stackable_items_increases_gold_by_unit_price_times_three():
+    player = {"gold": 10}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 5}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sold = sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert sold is True
+    assert player["gold"] == 22
+
+
+def test_sell_three_stackable_items_decreases_quantity_by_three():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 5}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sold = sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert sold is True
+    assert inventory["slots"][0]["quantity"] == 2
+
+
+def test_sell_exact_stackable_quantity_clears_slot():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 3}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sold = sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert sold is True
+    assert inventory["slots"][0] is None
+
+
+def test_sell_more_than_available_stackable_quantity_returns_false():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sold = sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert sold is False
+
+
+def test_sell_more_than_available_stackable_quantity_does_not_change_gold():
+    player = {"gold": 5}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert player["gold"] == 5
+
+
+def test_sell_more_than_available_stackable_quantity_does_not_change_quantity():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    sell_inventory_item(player, inventory, 0, items, quantity=3)
+
+    assert inventory["slots"][0]["quantity"] == 2
+
+
 def test_sell_last_stackable_item_clears_slot():
     player = {"gold": 0}
     inventory = create_inventory(size=1)
@@ -237,6 +306,17 @@ def test_sell_unique_item_clears_slot():
 
     assert sold is True
     assert inventory["slots"][0] is None
+
+
+def test_sell_unique_item_with_quantity_two_returns_false():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "unique", "item": "iron_sword"}
+    items = {"iron_sword": {"manual_sell_price": 10}}
+
+    sold = sell_inventory_item(player, inventory, 0, items, quantity=2)
+
+    assert sold is False
 
 
 def test_sell_unknown_kind_returns_false_without_changing_gold_or_slot():
@@ -279,3 +359,30 @@ def test_sell_item_with_invalid_index_returns_false():
     assert sell_inventory_item(player, inventory, -1, items) is False
     assert sell_inventory_item(player, inventory, 1, items) is False
     assert player["gold"] == 0
+
+
+def test_sell_item_with_zero_quantity_returns_false():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    assert sell_inventory_item(player, inventory, 0, items, quantity=0) is False
+
+
+def test_sell_item_with_negative_quantity_returns_false():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    assert sell_inventory_item(player, inventory, 0, items, quantity=-1) is False
+
+
+def test_sell_item_with_non_integer_quantity_returns_false():
+    player = {"gold": 0}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 2}
+    items = {"leather": {"manual_sell_price": 4}}
+
+    assert sell_inventory_item(player, inventory, 0, items, quantity=1.5) is False

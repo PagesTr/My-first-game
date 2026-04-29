@@ -28,6 +28,10 @@ class MerchantScreen:
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.sell_btn = Button((210, 520, 140, 50), "Sell")
         self.selected_slot_index = None
+        self.sell_quantity = 1
+        self.decrease_quantity_btn = Button((560, 390, 40, 36), "-")
+        self.increase_quantity_btn = Button((610, 390, 40, 36), "+")
+        self.sell_all_btn = Button((660, 390, 90, 36), "All")
         self.message = ""
         self.message_color = (190, 200, 205)
         self.start_x = 50
@@ -47,6 +51,27 @@ class MerchantScreen:
         if not self.game.player:
             return
 
+        if self.decrease_quantity_btn.is_clicked(event.pos):
+            self.sell_quantity = max(1, self.sell_quantity - 1)
+            return
+
+        if self.increase_quantity_btn.is_clicked(event.pos):
+            selected_item = self._get_selected_item()
+            if selected_item is not None and selected_item.get("kind") == "stackable":
+                available_quantity = self._get_available_quantity()
+                self.sell_quantity = min(available_quantity, self.sell_quantity + 1)
+            else:
+                self.sell_quantity = 1
+            return
+
+        if self.sell_all_btn.is_clicked(event.pos):
+            selected_item = self._get_selected_item()
+            if selected_item is not None and selected_item.get("kind") == "stackable":
+                self.sell_quantity = self._get_available_quantity()
+            else:
+                self.sell_quantity = 1
+            return
+
         if self.sell_btn.is_clicked(event.pos):
             self._sell_selected_item()
             return
@@ -58,9 +83,11 @@ class MerchantScreen:
         inventory = self.game.player["inventory"]
         if inventory["slots"][slot_index] is not None:
             self._select_slot(slot_index)
+            self.sell_quantity = 1
             self.message = ""
         else:
             self.selected_slot_index = None
+            self.sell_quantity = 1
             self.message = ""
 
     def draw(self, screen):
@@ -73,6 +100,7 @@ class MerchantScreen:
             self._draw_gold_panel(screen)
             self._draw_inventory_slots(screen)
             self._draw_selected_item_panel(screen)
+            self._draw_quantity_controls(screen)
             self._draw_message(screen)
         else:
             message = self.font.render("No player available.", True, (220, 220, 220))
@@ -103,6 +131,27 @@ class MerchantScreen:
     def _select_slot(self, slot_index):
         self.selected_slot_index = slot_index
 
+    def _get_selected_item(self):
+        if not self.game.player or self.selected_slot_index is None:
+            return None
+
+        slots = self.game.player["inventory"]["slots"]
+        if not 0 <= self.selected_slot_index < len(slots):
+            return None
+
+        return slots[self.selected_slot_index]
+
+    def _get_available_quantity(self):
+        item_instance = self._get_selected_item()
+        if item_instance is None:
+            return 0
+        if item_instance.get("kind") == "stackable":
+            quantity = item_instance.get("quantity")
+            if type(quantity) is int and quantity > 0:
+                return quantity
+            return 0
+        return 1
+
     def _sell_selected_item(self):
         if not self.game.player or self.selected_slot_index is None:
             self.message = "Select an item first."
@@ -111,24 +160,21 @@ class MerchantScreen:
 
         inventory = self.game.player["inventory"]
         slots = inventory["slots"]
-        if not 0 <= self.selected_slot_index < len(slots):
-            self.message = "Select an item first."
-            self.message_color = (230, 160, 120)
-            return False
-
-        item_instance = slots[self.selected_slot_index]
+        item_instance = self._get_selected_item()
         if item_instance is None:
             self.message = "Select an item first."
             self.message_color = (230, 160, 120)
             return False
 
         item_name = self._get_item_name(item_instance)
-        sell_price = self._get_item_sell_price(item_instance)
+        unit_price = self._get_item_sell_price(item_instance)
+        total_price = unit_price * self.sell_quantity
         sold = sell_inventory_item(
             self.game.player,
             inventory,
             self.selected_slot_index,
             self.game.data.items,
+            self.sell_quantity,
         )
 
         if not sold:
@@ -136,11 +182,18 @@ class MerchantScreen:
             self.message_color = (230, 160, 120)
             return False
 
-        self.message = f"Sold {item_name} for {sell_price} gold."
+        if self.sell_quantity == 1:
+            self.message = f"Sold {item_name} for {total_price} gold."
+        else:
+            self.message = f"Sold {self.sell_quantity}x {item_name} for {total_price} gold."
         self.message_color = (120, 220, 140)
 
         if slots[self.selected_slot_index] is None:
             self.selected_slot_index = None
+            self.sell_quantity = 1
+        else:
+            available_quantity = self._get_available_quantity()
+            self.sell_quantity = min(self.sell_quantity, available_quantity)
 
         return True
 
@@ -189,12 +242,7 @@ class MerchantScreen:
         title = self.font.render("Selected Item", True, (245, 245, 245))
         screen.blit(title, (rect.x + 10, rect.y + 10))
 
-        item_instance = None
-        if self.selected_slot_index is not None:
-            slots = self.game.player["inventory"]["slots"]
-            if 0 <= self.selected_slot_index < len(slots):
-                item_instance = slots[self.selected_slot_index]
-
+        item_instance = self._get_selected_item()
         if item_instance is None:
             message = self.small_font.render(
                 "Select an item to sell.",
@@ -212,24 +260,29 @@ class MerchantScreen:
         screen.blit(name, (rect.x + 10, rect.y + 45))
 
         y = rect.y + 70
-        quantity = item_instance.get("quantity")
-        if quantity is not None:
-            quantity_text = self.small_font.render(
-                f"Quantity: {quantity}",
-                True,
-                (220, 220, 220),
-            )
-            screen.blit(quantity_text, (rect.x + 10, y))
-            y += 24
+        unit_price = self._get_item_sell_price(item_instance)
+        available_quantity = self._get_available_quantity()
+        if item_instance.get("kind") != "stackable":
+            self.sell_quantity = 1
+        elif available_quantity > 0:
+            self.sell_quantity = min(self.sell_quantity, available_quantity)
 
-        sell_price = self._get_item_sell_price(item_instance)
-        if sell_price > 0:
-            price_line = f"Sell price: {sell_price} gold"
+        if unit_price > 0:
+            unit_price_line = f"Unit price: {unit_price} gold"
+            total_line = f"Total: {unit_price * self.sell_quantity} gold"
         else:
-            price_line = "Sell price: -"
+            unit_price_line = "Unit price: -"
+            total_line = "Total: -"
 
-        price_text = self.small_font.render(price_line, True, (245, 220, 120))
-        screen.blit(price_text, (rect.x + 10, y))
+        panel_lines = [
+            unit_price_line,
+            f"Quantity to sell: {self.sell_quantity}",
+            total_line,
+        ]
+        for line in panel_lines:
+            line_text = self.small_font.render(line, True, (245, 220, 120))
+            screen.blit(line_text, (rect.x + 10, y))
+            y += 24
 
     def _draw_message(self, screen):
         if not self.message:
@@ -237,6 +290,15 @@ class MerchantScreen:
 
         message_text = self.small_font.render(self.message, True, self.message_color)
         screen.blit(message_text, (560, 310))
+
+    def _draw_quantity_controls(self, screen):
+        item_instance = self._get_selected_item()
+        if item_instance is None or item_instance.get("kind") != "stackable":
+            return
+
+        self.decrease_quantity_btn.draw(screen, self.font)
+        self.increase_quantity_btn.draw(screen, self.font)
+        self.sell_all_btn.draw(screen, self.small_font)
 
     def _get_item_name(self, item_instance):
         item_id = item_instance.get("item")
