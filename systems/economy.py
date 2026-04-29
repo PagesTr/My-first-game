@@ -32,7 +32,18 @@ def calculate_base_level_value(level):
     return 33 * level**1.73
 
 
+def is_item_sellable(item_instance, item_data):
+    if item_instance.get("sellable") is False:
+        return False
+    if item_data.get("sellable") is False:
+        return False
+    return True
+
+
 def calculate_item_sell_price(item_instance, item_data):
+    if not is_item_sellable(item_instance, item_data):
+        return 0
+
     manual_sell_price = item_data.get("manual_sell_price")
     if "manual_sell_price" in item_instance:
         manual_sell_price = item_instance["manual_sell_price"]
@@ -77,6 +88,9 @@ def sell_inventory_item(player, inventory, slot_index, items, quantity=1):
 
     item_id = slot.get("item")
     item_data = items.get(item_id, {})
+    if not is_item_sellable(slot, item_data):
+        return False
+
     sell_price = calculate_item_sell_price(slot, item_data)
     if sell_price <= 0:
         return False

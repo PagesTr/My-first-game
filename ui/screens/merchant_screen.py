@@ -1,6 +1,10 @@
 import pygame
 
-from systems.economy import calculate_item_sell_price, sell_inventory_item
+from systems.economy import (
+    calculate_item_sell_price,
+    is_item_sellable,
+    sell_inventory_item,
+)
 
 
 class Button:
@@ -118,6 +122,10 @@ class MerchantScreen:
 
         if self.sell_btn.is_clicked(event.pos):
             selected_item = self._get_selected_item()
+            if not self._is_selected_item_sellable():
+                self.message = "This item cannot be sold."
+                self.message_color = (230, 160, 120)
+                return
             if self._requires_sale_confirmation(selected_item):
                 self._start_sale_confirmation()
             else:
@@ -311,10 +319,24 @@ class MerchantScreen:
         rarity = item_instance.get("rarity", item_data.get("rarity", "common"))
         return rarity in ("rare", "epic", "legendary", "unique")
 
+    def _is_selected_item_sellable(self):
+        item_instance = self._get_selected_item()
+        if item_instance is None:
+            return False
+
+        item_id = item_instance.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        return is_item_sellable(item_instance, item_data)
+
     def _start_sale_confirmation(self):
         item_instance = self._get_selected_item()
         if item_instance is None:
             self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
+            return False
+
+        if not self._is_selected_item_sellable():
+            self.message = "This item cannot be sold."
             self.message_color = (230, 160, 120)
             return False
 
@@ -354,6 +376,11 @@ class MerchantScreen:
         item_instance = self._get_selected_item()
         if item_instance is None:
             self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
+            return False
+
+        if not self._is_selected_item_sellable():
+            self.message = "This item cannot be sold."
             self.message_color = (230, 160, 120)
             return False
 
@@ -412,7 +439,13 @@ class MerchantScreen:
                 continue
 
             item_name = self._short_text(self._get_item_name(slot), 10)
-            item_label = self.small_font.render(item_name, True, (245, 245, 245))
+            item_id = slot.get("item")
+            item_data = self.game.data.items.get(item_id, {})
+            if is_item_sellable(slot, item_data):
+                item_color = (245, 245, 245)
+            else:
+                item_color = (140, 140, 145)
+            item_label = self.small_font.render(item_name, True, item_color)
             screen.blit(item_label, (rect.x + 6, rect.y + 10))
 
             if slot.get("kind") == "stackable" and slot.get("quantity") is not None:
@@ -463,18 +496,28 @@ class MerchantScreen:
         if not self.quantity_input_active:
             self.quantity_input_text = str(self.sell_quantity)
 
-        if unit_price > 0:
+        if not self._is_selected_item_sellable():
+            panel_lines = [
+                "Cannot be sold",
+                f"Quantity to sell: {self.sell_quantity}",
+                "Total: -",
+            ]
+        elif unit_price > 0:
             unit_price_line = f"Unit price: {unit_price} gold"
             total_line = f"Total: {unit_price * self.sell_quantity} gold"
+            panel_lines = [
+                unit_price_line,
+                f"Quantity to sell: {self.sell_quantity}",
+                total_line,
+            ]
         else:
             unit_price_line = "Unit price: -"
             total_line = "Total: -"
-
-        panel_lines = [
-            unit_price_line,
-            f"Quantity to sell: {self.sell_quantity}",
-            total_line,
-        ]
+            panel_lines = [
+                unit_price_line,
+                f"Quantity to sell: {self.sell_quantity}",
+                total_line,
+            ]
         for line in panel_lines:
             line_text = self.small_font.render(line, True, (245, 220, 120))
             screen.blit(line_text, (rect.x + 10, y))

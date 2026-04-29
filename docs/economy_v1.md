@@ -262,7 +262,25 @@ The following rules must always remain true:
 
 ---
 
-# 12. Future Systems (Not Implemented Yet)
+# 12. Unsellable Items
+
+By default, items are sellable.
+
+Quest items or protected items can define:
+
+
+"sellable": false
+
+
+Unsellable items must return a sell price of 0.
+
+Unsellable items must not be removed from inventory by merchant selling.
+
+The merchant screen may display them, but should clearly show that they cannot be sold.
+
+---
+
+# 13. Future Systems (Not Implemented Yet)
 
 The economy must remain compatible with:
 
@@ -278,7 +296,7 @@ Balancing will be adjusted once these systems are implemented.
 
 ---
 
-# 13. Important Notes for Future Balancing
+# 14. Important Notes for Future Balancing
 
 Keep the following in mind when adding new systems:
 

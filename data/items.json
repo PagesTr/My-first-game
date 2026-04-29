@@ -335,5 +335,14 @@
     "stats": {
       "value": 8
     }
+  },
+  "sealed_quest_letter": {
+    "name": "Sealed Quest Letter",
+    "type": "quest",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "sellable": false,
+    "stats": {}
   }
 }

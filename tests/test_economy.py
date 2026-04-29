@@ -152,6 +152,22 @@ def test_item_stats_do_not_change_price():
     assert price_with_stats == price_without_stats
 
 
+def test_calculate_item_sell_price_returns_zero_when_item_data_is_unsellable():
+    item_data = {
+        "sellable": False,
+        "manual_sell_price": 10,
+    }
+
+    assert calculate_item_sell_price({}, item_data) == 0
+
+
+def test_calculate_item_sell_price_returns_zero_when_item_instance_is_unsellable():
+    item_instance = {"sellable": False}
+    item_data = {"manual_sell_price": 10}
+
+    assert calculate_item_sell_price(item_instance, item_data) == 0
+
+
 def test_all_items_have_valid_economic_valuation_fields():
     items_path = Path(__file__).resolve().parents[1] / "data" / "items.json"
     with items_path.open(encoding="utf-8") as items_file:
@@ -337,6 +353,26 @@ def test_sell_unknown_kind_returns_false_without_changing_gold_or_slot():
     assert sold is False
     assert player["gold"] == 5
     assert inventory["slots"][0] is slot
+
+
+def test_sell_unsellable_item_returns_false_without_changing_gold_or_slot():
+    player = {"gold": 5}
+    inventory = create_inventory(size=1)
+    slot = {"kind": "stackable", "item": "quest_token", "quantity": 2}
+    inventory["slots"][0] = slot
+    items = {
+        "quest_token": {
+            "manual_sell_price": 10,
+            "sellable": False,
+        }
+    }
+
+    sold = sell_inventory_item(player, inventory, 0, items)
+
+    assert sold is False
+    assert player["gold"] == 5
+    assert inventory["slots"][0] is slot
+    assert inventory["slots"][0]["quantity"] == 2
 
 
 def test_sell_empty_slot_returns_false():
