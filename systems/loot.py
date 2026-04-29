@@ -23,7 +23,14 @@ RARITY_BONUS = {
 
 
 def is_unique_equipment(item_data):
-    return item_data.get("type") in ("weapon", "armor", "accessory")
+    item_type = item_data.get("type")
+    if item_type in ("weapon", "armor", "accessory"):
+        return True
+
+    return (
+        item_type == "equipment"
+        and item_data.get("category") in ("weapon", "armor", "accessory")
+    )
 
 
 def get_allowed_rarities(item_data):

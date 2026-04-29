@@ -44,7 +44,10 @@ def test_equipment_items_have_non_empty_stats():
     items = load_json("data/items.json")
 
     for item_id, item in items.items():
-        if item.get("type") in ("weapon", "armor", "accessory"):
+        if item.get("type") == "equipment":
+            assert item.get("category") in ("weapon", "armor", "accessory"), (
+                f"{item_id} should have an equipment category"
+            )
             assert item.get("stats"), f"{item_id} should have stats"
 
 

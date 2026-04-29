@@ -738,9 +738,12 @@ class InventoryScreen:
 
         item_id = item_instance["item"]
         item_data = self.game.data.items.get(item_id, {})
-        item_type = item_data.get("type")
-        if item_type in ("weapon", "armor", "accessory"):
-            return item_type
+        if item_data.get("type") != "equipment":
+            return None
+
+        item_category = item_data.get("category")
+        if item_category in ("weapon", "armor", "accessory"):
+            return item_category
         return None
 
     def _get_item_name(self, item_instance):

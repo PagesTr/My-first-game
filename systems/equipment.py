@@ -6,8 +6,14 @@ EQUIPMENT_TYPES = ("weapon", "armor", "accessory")
 
 def get_equipment_slot(item_data):
     item_type = item_data.get("type")
-    if item_type in EQUIPMENT_TYPES:
-        return item_type
+    if item_type != "equipment":
+        if item_type in EQUIPMENT_TYPES:
+            return item_type
+        return None
+
+    equipment_category = item_data.get("category")
+    if equipment_category in EQUIPMENT_TYPES:
+        return equipment_category
     return None
 
 

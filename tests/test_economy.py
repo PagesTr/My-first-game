@@ -14,21 +14,13 @@ from systems.inventory import create_inventory
 
 
 VALID_ITEM_CATEGORIES = {
-    "sword",
+    "weapon",
     "armor",
     "accessory",
     "potion",
     "currency",
-    "gem",
-    "trophy",
-    "bone",
-    "hide",
-    "fang",
-    "badge",
-    "pouch",
-    "tusk",
-    "ore",
-    "leather",
+    "monster_drop",
+    "gathering",
     "quest",
 }
 
@@ -217,6 +209,8 @@ def test_all_items_have_valid_category():
         assert isinstance(item_data["category"], str), item_id
         assert item_data["category"], item_id
         assert item_data["category"] in VALID_ITEM_CATEGORIES, item_id
+        if item_data["type"] == "equipment":
+            assert item_data["category"] in {"weapon", "armor", "accessory"}, item_id
 
 
 def test_leather_has_positive_sell_price_from_items_data():
