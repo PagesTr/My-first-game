@@ -28,6 +28,8 @@ class MerchantScreen:
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.sell_btn = Button((210, 520, 140, 50), "Sell")
         self.selected_slot_index = None
+        self.message = ""
+        self.message_color = (190, 200, 205)
         self.start_x = 50
         self.start_y = 120
         self.slot_size = 70
@@ -56,8 +58,10 @@ class MerchantScreen:
         inventory = self.game.player["inventory"]
         if inventory["slots"][slot_index] is not None:
             self._select_slot(slot_index)
+            self.message = ""
         else:
             self.selected_slot_index = None
+            self.message = ""
 
     def draw(self, screen):
         screen.fill((18, 24, 30))
@@ -69,6 +73,7 @@ class MerchantScreen:
             self._draw_gold_panel(screen)
             self._draw_inventory_slots(screen)
             self._draw_selected_item_panel(screen)
+            self._draw_message(screen)
         else:
             message = self.font.render("No player available.", True, (220, 220, 220))
             screen.blit(message, (50, 120))
@@ -100,18 +105,44 @@ class MerchantScreen:
 
     def _sell_selected_item(self):
         if not self.game.player or self.selected_slot_index is None:
+            self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
             return False
 
+        inventory = self.game.player["inventory"]
+        slots = inventory["slots"]
+        if not 0 <= self.selected_slot_index < len(slots):
+            self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
+            return False
+
+        item_instance = slots[self.selected_slot_index]
+        if item_instance is None:
+            self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
+            return False
+
+        item_name = self._get_item_name(item_instance)
+        sell_price = self._get_item_sell_price(item_instance)
         sold = sell_inventory_item(
             self.game.player,
-            self.game.player["inventory"],
+            inventory,
             self.selected_slot_index,
             self.game.data.items,
         )
-        if sold:
+
+        if not sold:
+            self.message = "This item cannot be sold."
+            self.message_color = (230, 160, 120)
+            return False
+
+        self.message = f"Sold {item_name} for {sell_price} gold."
+        self.message_color = (120, 220, 140)
+
+        if slots[self.selected_slot_index] is None:
             self.selected_slot_index = None
 
-        return sold
+        return True
 
     def _draw_inventory_slots(self, screen):
         slots = self.game.player["inventory"]["slots"]
@@ -199,6 +230,13 @@ class MerchantScreen:
 
         price_text = self.small_font.render(price_line, True, (245, 220, 120))
         screen.blit(price_text, (rect.x + 10, y))
+
+    def _draw_message(self, screen):
+        if not self.message:
+            return
+
+        message_text = self.small_font.render(self.message, True, self.message_color)
+        screen.blit(message_text, (560, 310))
 
     def _get_item_name(self, item_instance):
         item_id = item_instance.get("item")
