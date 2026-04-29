@@ -27,6 +27,9 @@ class MerchantScreen:
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.sell_btn = Button((660, 480, 90, 40), "Sell")
+        self.pending_sale = False
+        self.confirm_btn = Button((560, 520, 90, 40), "Confirm")
+        self.cancel_btn = Button((660, 520, 90, 40), "Cancel")
         self.selected_slot_index = None
         self.sell_quantity = 1
         self.decrease_quantity_btn = Button((560, 390, 40, 36), "-")
@@ -52,10 +55,25 @@ class MerchantScreen:
             return
 
         if self.back_btn.is_clicked(event.pos):
+            self.pending_sale = False
             self.game.state = "zone_select"
             return
 
         if not self.game.player:
+            return
+
+        if self.pending_sale:
+            if self.confirm_btn.is_clicked(event.pos):
+                self.pending_sale = False
+                self._sell_selected_item()
+                return
+            if self.cancel_btn.is_clicked(event.pos):
+                self._cancel_sale_confirmation()
+                return
+            if self.back_btn.is_clicked(event.pos):
+                self.pending_sale = False
+                self.game.state = "zone_select"
+                return
             return
 
         if self.quantity_input_rect.collidepoint(event.pos):
@@ -66,12 +84,14 @@ class MerchantScreen:
             return
 
         if self.decrease_quantity_btn.is_clicked(event.pos):
+            self.pending_sale = False
             self.sell_quantity = max(1, self.sell_quantity - 1)
             self.quantity_input_text = str(self.sell_quantity)
             self.quantity_limit_message = ""
             return
 
         if self.increase_quantity_btn.is_clicked(event.pos):
+            self.pending_sale = False
             selected_item = self._get_selected_item()
             if selected_item is not None and selected_item.get("kind") == "stackable":
                 available_quantity = self._get_available_quantity()
@@ -86,6 +106,7 @@ class MerchantScreen:
             return
 
         if self.sell_all_btn.is_clicked(event.pos):
+            self.pending_sale = False
             selected_item = self._get_selected_item()
             if selected_item is not None and selected_item.get("kind") == "stackable":
                 self.sell_quantity = self._get_available_quantity()
@@ -96,7 +117,11 @@ class MerchantScreen:
             return
 
         if self.sell_btn.is_clicked(event.pos):
-            self._sell_selected_item()
+            selected_item = self._get_selected_item()
+            if self._requires_sale_confirmation(selected_item):
+                self._start_sale_confirmation()
+            else:
+                self._sell_selected_item()
             return
 
         slot_index = self._get_slot_index_at_pos(event.pos)
@@ -105,6 +130,7 @@ class MerchantScreen:
 
         inventory = self.game.player["inventory"]
         if inventory["slots"][slot_index] is not None:
+            self.pending_sale = False
             self._select_slot(slot_index)
             self.sell_quantity = 1
             self.quantity_input_text = "1"
@@ -112,6 +138,7 @@ class MerchantScreen:
             self.quantity_limit_message = ""
             self.message = ""
         else:
+            self.pending_sale = False
             self.selected_slot_index = None
             self.sell_quantity = 1
             self.quantity_input_text = "1"
@@ -132,6 +159,7 @@ class MerchantScreen:
             self._draw_quantity_controls(screen)
             self._draw_quantity_input(screen)
             self._draw_message(screen)
+            self._draw_confirmation_controls(screen)
         else:
             message = self.font.render("No player available.", True, (220, 220, 220))
             screen.blit(message, (50, 120))
@@ -194,20 +222,24 @@ class MerchantScreen:
             return False
 
         if event.key == pygame.K_RETURN:
+            self.pending_sale = False
             self._apply_quantity_input()
             self.quantity_input_active = False
             self.quantity_limit_message = ""
             return True
         if event.key == pygame.K_ESCAPE:
+            self.pending_sale = False
             self.quantity_input_active = False
             self.quantity_input_text = str(self.sell_quantity)
             self.quantity_limit_message = ""
             return True
         if event.key == pygame.K_BACKSPACE:
+            self.pending_sale = False
             self.quantity_input_text = self.quantity_input_text[:-1]
             self._clamp_quantity_text_to_available()
             return True
         if event.unicode.isdigit():
+            self.pending_sale = False
             self.quantity_input_text += event.unicode
             self._clamp_quantity_text_to_available()
             return True
@@ -268,7 +300,50 @@ class MerchantScreen:
         else:
             self.quantity_limit_message = ""
 
+    def _requires_sale_confirmation(self, item_instance):
+        if item_instance is None:
+            return False
+        if item_instance.get("kind") == "unique":
+            return True
+
+        item_id = item_instance.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        rarity = item_instance.get("rarity", item_data.get("rarity", "common"))
+        return rarity in ("rare", "epic", "legendary", "unique")
+
+    def _start_sale_confirmation(self):
+        item_instance = self._get_selected_item()
+        if item_instance is None:
+            self.message = "Select an item first."
+            self.message_color = (230, 160, 120)
+            return False
+
+        self._apply_quantity_input()
+        item_name = self._get_item_name(item_instance)
+        unit_price = self._get_item_sell_price(item_instance)
+        total_price = unit_price * self.sell_quantity
+
+        if unit_price <= 0:
+            self.message = "This item cannot be sold."
+            self.message_color = (230, 160, 120)
+            return False
+
+        self.pending_sale = True
+        self.quantity_input_active = False
+        if self.sell_quantity == 1:
+            self.message = f"Confirm sale of {item_name} for {total_price} gold?"
+        else:
+            self.message = f"Confirm sale of {self.sell_quantity}x {item_name} for {total_price} gold?"
+        self.message_color = (245, 220, 120)
+        return True
+
+    def _cancel_sale_confirmation(self):
+        self.pending_sale = False
+        self.message = "Sale cancelled."
+        self.message_color = (190, 200, 205)
+
     def _sell_selected_item(self):
+        self.pending_sale = False
         if not self.game.player or self.selected_slot_index is None:
             self.message = "Select an item first."
             self.message_color = (230, 160, 120)
@@ -411,6 +486,13 @@ class MerchantScreen:
 
         message_text = self.small_font.render(self.message, True, self.message_color)
         screen.blit(message_text, (560, 310))
+
+    def _draw_confirmation_controls(self, screen):
+        if not self.pending_sale:
+            return
+
+        self.confirm_btn.draw(screen, self.small_font)
+        self.cancel_btn.draw(screen, self.small_font)
 
     def _draw_quantity_controls(self, screen):
         item_instance = self._get_selected_item()
