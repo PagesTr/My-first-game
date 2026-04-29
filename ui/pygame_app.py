@@ -2,6 +2,7 @@ import pygame
 from core.game import Game
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
 from ui.screens.result_screen import ResultScreen
 
@@ -21,6 +22,7 @@ class PygameApp:
         self.combat_screen = CombatScreen(self.game)
         self.result_screen = ResultScreen(self.game)
         self.inventory_screen = InventoryScreen(self.game)
+        self.merchant_screen = MerchantScreen(self.game)
 
     def run(self):
         while self.running:
@@ -44,6 +46,8 @@ class PygameApp:
                 self.result_screen.handle_event(event)
             elif self.game.state == "inventory":
                 self.inventory_screen.handle_event(event)
+            elif self.game.state == "merchant":
+                self.merchant_screen.handle_event(event)
 
     def update(self):
         if self.game.state == "combat":
@@ -58,5 +62,7 @@ class PygameApp:
             self.result_screen.draw(self.screen)
         elif self.game.state == "inventory":
             self.inventory_screen.draw(self.screen)
+        elif self.game.state == "merchant":
+            self.merchant_screen.draw(self.screen)
 
         pygame.display.flip()
