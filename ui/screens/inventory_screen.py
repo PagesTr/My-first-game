@@ -1,7 +1,7 @@
 import pygame
 
 from systems.equipment import equip_item, unequip_item
-from systems.economy import calculate_item_sell_price, sell_inventory_item
+from systems.economy import calculate_item_sell_price
 from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
 
@@ -30,7 +30,6 @@ class InventoryScreen:
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.compact_btn = Button((210, 520, 140, 50), "Compact")
-        self.sell_btn = Button((370, 520, 140, 50), "Sell")
         self.show_advanced_stats = False
         self.stats_details_btn = Button((650, 430, 100, 40), "Details")
         self.selected_item = None
@@ -59,10 +58,6 @@ class InventoryScreen:
                 self._clear_selected_item()
                 return
 
-            if self.sell_btn.is_clicked(event.pos):
-                self._sell_selected_item()
-                return
-
             if self.stats_details_btn.is_clicked(event.pos):
                 self.show_advanced_stats = not self.show_advanced_stats
                 return
@@ -88,6 +83,8 @@ class InventoryScreen:
         if not self.game.player:
             self.back_btn.draw(screen, self.font)
             return
+
+        self._draw_gold_panel(screen)
 
         slots = self.game.player["inventory"]["slots"]
 
@@ -116,7 +113,6 @@ class InventoryScreen:
             self._draw_advanced_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
         self.compact_btn.draw(screen, self.font)
-        self.sell_btn.draw(screen, self.font)
         self._draw_item_tooltip(screen)
 
     def _get_slot_index_at_pos(self, pos):
@@ -238,27 +234,6 @@ class InventoryScreen:
 
         return action_done
 
-    def _sell_selected_item(self):
-        if not self.game.player:
-            return False
-        if self.selected_item is None or self.selected_item_source is None:
-            return False
-
-        source_type, slot_index = self.selected_item_source
-        if source_type != "inventory":
-            return False
-
-        sold = sell_inventory_item(
-            self.game.player,
-            self.game.player["inventory"],
-            slot_index,
-            self.game.data.items,
-        )
-        if sold:
-            self._clear_selected_item()
-
-        return sold
-
     def _get_hovered_item(self):
         if not self.game.player:
             return None
@@ -287,6 +262,11 @@ class InventoryScreen:
                 self.game.data.classes,
             )
         return unequipped
+
+    def _draw_gold_panel(self, screen):
+        gold = self.game.player.get("gold", 0)
+        gold_text = self.font.render(f"Gold: {gold}", True, (245, 220, 120))
+        screen.blit(gold_text, (560, 70))
 
     def _draw_equipment_panel(self, screen):
         equipment = self.game.player["equipment"]
