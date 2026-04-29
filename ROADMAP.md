@@ -53,6 +53,53 @@ It should stay short, practical, and focused on the next useful development step
 - Reuse the temporary effects system for active skill buffs when possible.
 - Keep passive effects separate from temporary effects if they are permanent.
 
+## Professions and crafting jobs
+
+- Add professions only after resources have a clear purpose.
+- Possible professions:
+  - Blacksmithing for weapons and armor upgrades
+  - Alchemy for potions and consumables
+  - Leatherworking for armor and utility items
+  - Gathering for raw resources
+- Keep the first profession system simple.
+  - Profession level
+  - XP per craft
+  - Basic recipes
+- Avoid adding too many professions before crafting is useful.
+- Decide if professions are unlocked by level, quests, or zones.
+
+## Crafting and upgrades
+
+- Add a simple recipe system later.
+- Recipes should consume resources and create items or consumables.
+- Equipment upgrades can use rare resources later.
+- Keep crafting separate from loot generation.
+- Add recipe tests before adding many recipes.
+
+## Economy and shops
+
+- Add basic item selling before complex shops.
+- Use item `value` when selling resources.
+- Add shops later for consumables and starter gear.
+- Keep prices simple until the economy is balanced.
+
+## Quests and objectives
+
+- Add simple objectives later.
+  - Defeat enemies
+  - Collect resources
+  - Reach a level
+  - Craft an item
+- Use quests to introduce systems progressively.
+- Avoid complex branching quests early.
+
+## Zones and exploration
+
+- Add more zones after current systems are stable.
+- Use zones to introduce enemy families, resources, and professions.
+- Decide if zones have special effects or modifiers.
+- Keep zone unlock rules simple at first.
+
 ## Temporary effects
 
 - Display active effects in combat, not only in the inventory.
@@ -102,6 +149,15 @@ It should stay short, practical, and focused on the next useful development step
 - Keep tooltip and comparison behavior simple and readable.
 - Add level-up feedback to the result screen later.
 - Add skill display when the skill system exists.
+- Add profession display when professions exist.
+- Add crafting UI only after the recipe system exists.
+
+## Save system
+
+- Add save and load only after the player state becomes worth preserving.
+- Save player progression, inventory, equipment, effects, and unlocked zones.
+- Keep the first save format simple and JSON-based.
+- Add tests for save data compatibility later.
 
 ## Testing and tools
 
