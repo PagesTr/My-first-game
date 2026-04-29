@@ -13,6 +13,26 @@ from systems.economy import (
 from systems.inventory import create_inventory
 
 
+VALID_ITEM_CATEGORIES = {
+    "sword",
+    "armor",
+    "accessory",
+    "potion",
+    "currency",
+    "gem",
+    "trophy",
+    "bone",
+    "hide",
+    "fang",
+    "badge",
+    "pouch",
+    "tusk",
+    "ore",
+    "leather",
+    "quest",
+}
+
+
 def test_calculate_base_level_value_for_level_one():
     assert calculate_base_level_value(1) == pytest.approx(33)
 
@@ -185,6 +205,18 @@ def test_all_items_have_valid_economic_valuation_fields():
             assert item_data["economic_source"] in SOURCE_MULTIPLIERS, item_id
         if "rarity" in item_data:
             assert item_data["rarity"] in RARITY_MULTIPLIERS, item_id
+
+
+def test_all_items_have_valid_category():
+    items_path = Path(__file__).resolve().parents[1] / "data" / "items.json"
+    with items_path.open(encoding="utf-8") as items_file:
+        items = json.load(items_file)
+
+    for item_id, item_data in items.items():
+        assert "category" in item_data, item_id
+        assert isinstance(item_data["category"], str), item_id
+        assert item_data["category"], item_id
+        assert item_data["category"] in VALID_ITEM_CATEGORIES, item_id
 
 
 def test_leather_has_positive_sell_price_from_items_data():
