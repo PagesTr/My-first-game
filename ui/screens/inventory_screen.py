@@ -1,6 +1,7 @@
 import pygame
 
 from systems.equipment import equip_item, unequip_item
+from systems.economy import calculate_item_sell_price, sell_inventory_item
 from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
 
@@ -29,6 +30,7 @@ class InventoryScreen:
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.compact_btn = Button((210, 520, 140, 50), "Compact")
+        self.sell_btn = Button((370, 520, 140, 50), "Sell")
         self.show_advanced_stats = False
         self.stats_details_btn = Button((650, 430, 100, 40), "Details")
         self.selected_item = None
@@ -55,6 +57,10 @@ class InventoryScreen:
             if self.compact_btn.is_clicked(event.pos):
                 compact_inventory(self.game.player["inventory"])
                 self._clear_selected_item()
+                return
+
+            if self.sell_btn.is_clicked(event.pos):
+                self._sell_selected_item()
                 return
 
             if self.stats_details_btn.is_clicked(event.pos):
@@ -110,6 +116,7 @@ class InventoryScreen:
             self._draw_advanced_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
         self.compact_btn.draw(screen, self.font)
+        self.sell_btn.draw(screen, self.font)
         self._draw_item_tooltip(screen)
 
     def _get_slot_index_at_pos(self, pos):
@@ -230,6 +237,27 @@ class InventoryScreen:
             self._clear_selected_item()
 
         return action_done
+
+    def _sell_selected_item(self):
+        if not self.game.player:
+            return False
+        if self.selected_item is None or self.selected_item_source is None:
+            return False
+
+        source_type, slot_index = self.selected_item_source
+        if source_type != "inventory":
+            return False
+
+        sold = sell_inventory_item(
+            self.game.player,
+            self.game.player["inventory"],
+            slot_index,
+            self.game.data.items,
+        )
+        if sold:
+            self._clear_selected_item()
+
+        return sold
 
     def _get_hovered_item(self):
         if not self.game.player:
@@ -546,6 +574,12 @@ class InventoryScreen:
         quantity = item_instance.get("quantity")
         if quantity is not None:
             lines.append(f"Quantity: {quantity}")
+
+        sell_price = calculate_item_sell_price(item_instance, item_data)
+        if sell_price > 0:
+            lines.append(f"Sell price: {sell_price} gold")
+        else:
+            lines.append("Sell price: -")
 
         if stats:
             lines.append("Stats:")

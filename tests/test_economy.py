@@ -171,6 +171,19 @@ def test_all_items_have_valid_economic_valuation_fields():
             assert item_data["rarity"] in RARITY_MULTIPLIERS, item_id
 
 
+def test_leather_has_positive_sell_price_from_items_data():
+    items_path = Path(__file__).resolve().parents[1] / "data" / "items.json"
+    with items_path.open(encoding="utf-8") as items_file:
+        items = json.load(items_file)
+
+    price = calculate_item_sell_price(
+        {"item": "leather", "kind": "stackable"},
+        items["leather"],
+    )
+
+    assert price > 0
+
+
 def test_sell_stackable_item_increases_gold_and_decreases_quantity():
     player = {"gold": 10}
     inventory = create_inventory(size=1)
