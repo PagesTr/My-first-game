@@ -200,23 +200,37 @@ class MerchantScreen:
         if not self.game.player:
             return None
 
-        slots = self.game.player["inventory"]["slots"]
-        for index in range(len(slots)):
-            col = index % self.columns
-            row = index // self.columns
-            rect = pygame.Rect(
-                self.start_x + col * (self.slot_size + self.gap),
-                self.start_y + row * (self.slot_size + self.gap),
-                self.slot_size,
-                self.slot_size,
-            )
+        visible_slots = self._get_visible_inventory_slots()
+        for display_index, (real_slot_index, _) in enumerate(visible_slots):
+            rect = self._get_visible_slot_rect(display_index)
             if rect.collidepoint(pos):
-                slot = slots[index]
-                if slot is not None and not self._item_matches_active_filter(slot):
-                    return None
-                return index
+                return real_slot_index
 
         return None
+
+    def _get_visible_inventory_slots(self):
+        if not self.game.player:
+            return []
+
+        visible_slots = []
+        slots = self.game.player["inventory"]["slots"]
+        for real_slot_index, slot in enumerate(slots):
+            if slot is None:
+                continue
+            if not self._item_matches_active_filter(slot):
+                continue
+            visible_slots.append((real_slot_index, slot))
+        return visible_slots
+
+    def _get_visible_slot_rect(self, display_index):
+        col = display_index % self.columns
+        row = display_index // self.columns
+        return pygame.Rect(
+            self.start_x + col * (self.slot_size + self.gap),
+            self.start_y + row * (self.slot_size + self.gap),
+            self.slot_size,
+            self.slot_size,
+        )
 
     def _item_matches_active_filter(self, item_instance):
         if item_instance is None:
@@ -455,27 +469,24 @@ class MerchantScreen:
     def _draw_inventory_slots(self, screen):
         slots = self.game.player["inventory"]["slots"]
 
-        for index, slot in enumerate(slots):
-            col = index % self.columns
-            row = index // self.columns
-            rect = pygame.Rect(
-                self.start_x + col * (self.slot_size + self.gap),
-                self.start_y + row * (self.slot_size + self.gap),
-                self.slot_size,
-                self.slot_size,
-            )
-
+        for display_index in range(len(slots)):
+            rect = self._get_visible_slot_rect(display_index)
             pygame.draw.rect(screen, (45, 50, 58), rect)
-            border_color = (230, 215, 120) if index == self.selected_slot_index else (120, 130, 140)
-            pygame.draw.rect(screen, border_color, rect, 3 if index == self.selected_slot_index else 2)
+            pygame.draw.rect(screen, (120, 130, 140), rect, 2)
 
-            if slot is None:
-                continue
+        visible_slots = self._get_visible_inventory_slots()
+        if self.selected_slot_index is not None and all(
+            real_slot_index != self.selected_slot_index
+            for real_slot_index, _ in visible_slots
+        ):
+            self.selected_slot_index = None
 
-            if not self._item_matches_active_filter(slot):
-                if index == self.selected_slot_index:
-                    self.selected_slot_index = None
-                continue
+        for display_index, (real_slot_index, slot) in enumerate(visible_slots):
+            rect = self._get_visible_slot_rect(display_index)
+            pygame.draw.rect(screen, (45, 50, 58), rect)
+            is_selected = real_slot_index == self.selected_slot_index
+            border_color = (230, 215, 120) if is_selected else (120, 130, 140)
+            pygame.draw.rect(screen, border_color, rect, 3 if is_selected else 2)
 
             item_name = self._short_text(self._get_item_name(slot), 10)
             item_id = slot.get("item")
