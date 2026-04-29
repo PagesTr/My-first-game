@@ -26,7 +26,7 @@ class MerchantScreen:
         self.font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
-        self.sell_btn = Button((210, 520, 140, 50), "Sell")
+        self.sell_btn = Button((660, 480, 90, 40), "Sell")
         self.selected_slot_index = None
         self.sell_quantity = 1
         self.decrease_quantity_btn = Button((560, 390, 40, 36), "-")
@@ -35,6 +35,7 @@ class MerchantScreen:
         self.quantity_input_active = False
         self.quantity_input_text = "1"
         self.quantity_input_rect = pygame.Rect(560, 440, 190, 36)
+        self.quantity_limit_message = ""
         self.message = ""
         self.message_color = (190, 200, 205)
         self.start_x = 50
@@ -67,6 +68,7 @@ class MerchantScreen:
         if self.decrease_quantity_btn.is_clicked(event.pos):
             self.sell_quantity = max(1, self.sell_quantity - 1)
             self.quantity_input_text = str(self.sell_quantity)
+            self.quantity_limit_message = ""
             return
 
         if self.increase_quantity_btn.is_clicked(event.pos):
@@ -77,6 +79,10 @@ class MerchantScreen:
             else:
                 self.sell_quantity = 1
             self.quantity_input_text = str(self.sell_quantity)
+            if self.sell_quantity == self._get_available_quantity() and self.sell_quantity > 1:
+                self.quantity_limit_message = "Max reached"
+            else:
+                self.quantity_limit_message = ""
             return
 
         if self.sell_all_btn.is_clicked(event.pos):
@@ -86,6 +92,7 @@ class MerchantScreen:
             else:
                 self.sell_quantity = 1
             self.quantity_input_text = str(self.sell_quantity)
+            self.quantity_limit_message = "Max reached" if self.sell_quantity > 1 else ""
             return
 
         if self.sell_btn.is_clicked(event.pos):
@@ -102,12 +109,14 @@ class MerchantScreen:
             self.sell_quantity = 1
             self.quantity_input_text = "1"
             self.quantity_input_active = False
+            self.quantity_limit_message = ""
             self.message = ""
         else:
             self.selected_slot_index = None
             self.sell_quantity = 1
             self.quantity_input_text = "1"
             self.quantity_input_active = False
+            self.quantity_limit_message = ""
             self.message = ""
 
     def draw(self, screen):
@@ -187,19 +196,57 @@ class MerchantScreen:
         if event.key == pygame.K_RETURN:
             self._apply_quantity_input()
             self.quantity_input_active = False
+            self.quantity_limit_message = ""
             return True
         if event.key == pygame.K_ESCAPE:
             self.quantity_input_active = False
             self.quantity_input_text = str(self.sell_quantity)
+            self.quantity_limit_message = ""
             return True
         if event.key == pygame.K_BACKSPACE:
             self.quantity_input_text = self.quantity_input_text[:-1]
+            self._clamp_quantity_text_to_available()
             return True
         if event.unicode.isdigit():
             self.quantity_input_text += event.unicode
+            self._clamp_quantity_text_to_available()
             return True
 
         return True
+
+    def _clamp_quantity_text_to_available(self):
+        if not self.quantity_input_text:
+            self.quantity_limit_message = ""
+            return
+
+        try:
+            entered_quantity = int(self.quantity_input_text)
+        except ValueError:
+            self.quantity_input_text = str(self.sell_quantity)
+            self.quantity_limit_message = ""
+            return
+
+        available_quantity = self._get_available_quantity()
+        if available_quantity <= 0:
+            self.quantity_input_text = "1"
+            self.sell_quantity = 1
+            self.quantity_limit_message = ""
+            return
+
+        if entered_quantity > available_quantity:
+            self.quantity_input_text = str(available_quantity)
+            self.sell_quantity = available_quantity
+            self.quantity_limit_message = "Max reached"
+            return
+
+        if entered_quantity < 1:
+            self.quantity_input_text = "1"
+            self.sell_quantity = 1
+            self.quantity_limit_message = ""
+            return
+
+        self.sell_quantity = entered_quantity
+        self.quantity_limit_message = ""
 
     def _apply_quantity_input(self):
         if not self.quantity_input_text:
@@ -216,6 +263,10 @@ class MerchantScreen:
         else:
             self.sell_quantity = max(1, min(self.sell_quantity, available_quantity))
         self.quantity_input_text = str(self.sell_quantity)
+        if self.sell_quantity == available_quantity and available_quantity > 1:
+            self.quantity_limit_message = "Max reached"
+        else:
+            self.quantity_limit_message = ""
 
     def _sell_selected_item(self):
         if not self.game.player or self.selected_slot_index is None:
@@ -391,6 +442,17 @@ class MerchantScreen:
             input_text,
             (self.quantity_input_rect.x + 10, self.quantity_input_rect.y + 9),
         )
+
+        if self.quantity_limit_message:
+            limit_text = self.small_font.render(
+                self.quantity_limit_message,
+                True,
+                (245, 220, 120),
+            )
+            screen.blit(
+                limit_text,
+                (self.quantity_input_rect.x, self.quantity_input_rect.y + 42),
+            )
 
     def _get_item_name(self, item_instance):
         item_id = item_instance.get("item")
