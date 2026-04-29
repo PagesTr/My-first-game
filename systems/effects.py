@@ -29,6 +29,28 @@ def add_temporary_effect(player, effect):
 
     effect_copy = dict(effect)
     effect_copy["modifiers"] = dict(modifiers)
+    effect_id = effect_copy.get("id")
+    if effect_id:
+        for active_effect in active_effects:
+            if not isinstance(active_effect, dict):
+                continue
+            if active_effect.get("id") != effect_id:
+                continue
+
+            active_effect["modifiers"] = dict(modifiers)
+            if "name" in effect_copy:
+                active_effect["name"] = effect_copy["name"]
+            if "source" in effect_copy:
+                active_effect["source"] = effect_copy["source"]
+            active_effect["duration_type"] = duration_type
+            if duration_type == "combat":
+                active_effect["remaining_combats"] = effect_copy["remaining_combats"]
+                active_effect.pop("remaining_seconds", None)
+            if duration_type == "time":
+                active_effect["remaining_seconds"] = effect_copy["remaining_seconds"]
+                active_effect.pop("remaining_combats", None)
+            return True
+
     active_effects.append(effect_copy)
     return True
 

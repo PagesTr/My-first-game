@@ -93,6 +93,77 @@ def test_add_temporary_effect_rejects_invalid_effect():
     ) is False
 
 
+def test_add_temporary_effect_with_same_id_keeps_single_active_effect():
+    player = {}
+
+    add_temporary_effect(player, make_combat_effect(effect_id="rage"))
+    add_temporary_effect(player, make_combat_effect(effect_id="rage"))
+
+    assert len(player["active_effects"]) == 1
+
+
+def test_add_temporary_effect_with_same_id_refreshes_remaining_combats():
+    player = {}
+    first_effect = make_combat_effect(effect_id="rage", remaining_combats=1)
+    second_effect = make_combat_effect(effect_id="rage", remaining_combats=2)
+
+    add_temporary_effect(player, first_effect)
+    add_temporary_effect(player, second_effect)
+
+    assert len(player["active_effects"]) == 1
+    assert player["active_effects"][0]["remaining_combats"] == 2
+
+
+def test_add_temporary_effect_with_same_id_refreshes_remaining_seconds():
+    player = {}
+    first_effect = make_time_effect(effect_id="focus", remaining_seconds=10)
+    second_effect = make_time_effect(effect_id="focus", remaining_seconds=60)
+
+    add_temporary_effect(player, first_effect)
+    add_temporary_effect(player, second_effect)
+
+    assert len(player["active_effects"]) == 1
+    assert player["active_effects"][0]["remaining_seconds"] == 60
+
+
+def test_add_temporary_effect_with_same_id_does_not_stack_modifiers():
+    player = {}
+    first_effect = make_combat_effect(effect_id="rage", remaining_combats=1)
+    second_effect = make_combat_effect(effect_id="rage", remaining_combats=2)
+    second_effect["modifiers"] = {"attack": 5}
+
+    add_temporary_effect(player, first_effect)
+    add_temporary_effect(player, second_effect)
+
+    modifiers = get_active_stat_modifiers(player)
+    assert len(player["active_effects"]) == 1
+    assert modifiers == {"attack": 5}
+
+
+def test_add_temporary_effect_with_different_ids_still_stacks_modifiers():
+    player = {}
+
+    add_temporary_effect(player, make_combat_effect(effect_id="rage_one"))
+    add_temporary_effect(player, make_combat_effect(effect_id="rage_two"))
+
+    modifiers = get_active_stat_modifiers(player)
+    assert len(player["active_effects"]) == 2
+    assert modifiers == {"attack": 6}
+
+
+def test_add_temporary_effect_without_id_adds_new_entries():
+    player = {}
+    first_effect = make_combat_effect()
+    second_effect = make_combat_effect()
+    first_effect.pop("id")
+    second_effect.pop("id")
+
+    add_temporary_effect(player, first_effect)
+    add_temporary_effect(player, second_effect)
+
+    assert len(player["active_effects"]) == 2
+
+
 def test_get_active_stat_modifiers_sums_multiple_effects():
     player = {
         "active_effects": [

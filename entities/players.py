@@ -21,7 +21,7 @@ def create_player(char_class, classes, items):
         'current_hp': 0,
     }
     # Temporary test items for buff effect validation.
-    add_stackable_item(player["inventory"], "rage_potion", 1)
+    add_stackable_item(player["inventory"], "rage_potion", 2)
     add_stackable_item(player["inventory"], "guard_potion", 1)
 
     stats = derive_stats(player, items, classes)
