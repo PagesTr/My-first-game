@@ -45,6 +45,14 @@ class MerchantScreen:
         self.quantity_limit_message = ""
         self.message = ""
         self.message_color = (190, 200, 205)
+        self.active_filter = "all"
+        self.filter_buttons = [
+            ("all", Button((50, 82, 90, 32), "All")),
+            ("equipment", Button((150, 82, 110, 32), "Equipment")),
+            ("resource", Button((270, 82, 110, 32), "Resources")),
+            ("consumable", Button((390, 82, 120, 32), "Consumables")),
+            ("quest", Button((520, 82, 90, 32), "Quest")),
+        ]
         self.start_x = 50
         self.start_y = 120
         self.slot_size = 70
@@ -79,6 +87,18 @@ class MerchantScreen:
                 self.game.state = "zone_select"
                 return
             return
+
+        for filter_key, button in self.filter_buttons:
+            if button.is_clicked(event.pos):
+                self.active_filter = filter_key
+                self.selected_slot_index = None
+                self.sell_quantity = 1
+                self.quantity_input_text = "1"
+                self.quantity_input_active = False
+                self.quantity_limit_message = ""
+                self.pending_sale = False
+                self.message = ""
+                return
 
         if self.quantity_input_rect.collidepoint(event.pos):
             selected_item = self._get_selected_item()
@@ -162,6 +182,7 @@ class MerchantScreen:
 
         if self.game.player:
             self._draw_gold_panel(screen)
+            self._draw_filter_buttons(screen)
             self._draw_inventory_slots(screen)
             self._draw_selected_item_panel(screen)
             self._draw_quantity_controls(screen)
@@ -190,9 +211,22 @@ class MerchantScreen:
                 self.slot_size,
             )
             if rect.collidepoint(pos):
+                slot = slots[index]
+                if slot is not None and not self._item_matches_active_filter(slot):
+                    return None
                 return index
 
         return None
+
+    def _item_matches_active_filter(self, item_instance):
+        if item_instance is None:
+            return False
+        if self.active_filter == "all":
+            return True
+
+        item_id = item_instance.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        return item_data.get("type") == self.active_filter
 
     def _select_slot(self, slot_index):
         self.selected_slot_index = slot_index
@@ -438,6 +472,11 @@ class MerchantScreen:
             if slot is None:
                 continue
 
+            if not self._item_matches_active_filter(slot):
+                if index == self.selected_slot_index:
+                    self.selected_slot_index = None
+                continue
+
             item_name = self._short_text(self._get_item_name(slot), 10)
             item_id = slot.get("item")
             item_data = self.game.data.items.get(item_id, {})
@@ -461,6 +500,12 @@ class MerchantScreen:
         gold_text = self.font.render(f"Gold: {gold}", True, (245, 220, 120))
         screen.blit(gold_text, (560, 70))
 
+    def _draw_filter_buttons(self, screen):
+        for filter_key, button in self.filter_buttons:
+            button.draw(screen, self.small_font)
+            if filter_key == self.active_filter:
+                pygame.draw.rect(screen, (245, 220, 120), button.rect, 3)
+
     def _draw_selected_item_panel(self, screen):
         rect = pygame.Rect(560, 120, 190, 170)
         pygame.draw.rect(screen, (35, 40, 48), rect)
@@ -470,6 +515,10 @@ class MerchantScreen:
         screen.blit(title, (rect.x + 10, rect.y + 10))
 
         item_instance = self._get_selected_item()
+        if item_instance is not None and not self._item_matches_active_filter(item_instance):
+            self.selected_slot_index = None
+            item_instance = None
+
         if item_instance is None:
             message = self.small_font.render(
                 "Select an item to sell.",
