@@ -44,7 +44,7 @@ def calculate_item_sell_price(item_instance, item_data):
     if manual_sell_price is not None:
         if not isinstance(manual_sell_price, int) or manual_sell_price <= 0:
             return 0
-        return int(manual_sell_price * value_multiplier)
+        return manual_sell_price
 
     level = item_instance.get("level", item_data.get("level", 1))
     rarity = item_instance.get("rarity", item_data.get("rarity", "common"))
@@ -79,13 +79,15 @@ def sell_inventory_item(player, inventory, slot_index, items):
     if sell_price <= 0:
         return False
 
-    player["gold"] += sell_price
-
-    if slot.get("kind") == "stackable":
+    kind = slot.get("kind")
+    if kind == "stackable":
         slot["quantity"] = slot.get("quantity", 1) - 1
         if slot["quantity"] <= 0:
             inventory["slots"][slot_index] = None
-    elif slot.get("kind") == "unique":
+    elif kind == "unique":
         inventory["slots"][slot_index] = None
+    else:
+        return False
 
+    player["gold"] = player.get("gold", 0) + sell_price
     return True

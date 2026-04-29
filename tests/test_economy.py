@@ -89,6 +89,26 @@ def test_manual_sell_price_overrides_formula():
     assert price == 12
 
 
+def test_manual_sell_price_is_not_changed_by_value_multiplier():
+    item_data = {
+        "manual_sell_price": 12,
+        "value_multiplier": 3.0,
+        "level": 100,
+        "rarity": "unique",
+        "economic_source": "dropped_item",
+    }
+
+    price = calculate_item_sell_price({}, item_data)
+
+    assert price == 12
+
+
+def test_invalid_manual_sell_price_returns_zero():
+    assert calculate_item_sell_price({}, {"manual_sell_price": 0}) == 0
+    assert calculate_item_sell_price({}, {"manual_sell_price": -1}) == 0
+    assert calculate_item_sell_price({}, {"manual_sell_price": 1.5}) == 0
+
+
 def test_value_multiplier_changes_final_price():
     base_item = {
         "level": 10,
@@ -180,6 +200,26 @@ def test_sell_unique_item_clears_slot():
 
     assert sold is True
     assert inventory["slots"][0] is None
+
+
+def test_sell_unknown_kind_returns_false_without_changing_gold_or_slot():
+    player = {"gold": 5}
+    inventory = create_inventory(size=1)
+    slot = {"kind": "unknown", "item": "mystery_item"}
+    inventory["slots"][0] = slot
+    items = {
+        "mystery_item": {
+            "level": 1,
+            "rarity": "common",
+            "economic_source": "crafted_item",
+        }
+    }
+
+    sold = sell_inventory_item(player, inventory, 0, items)
+
+    assert sold is False
+    assert player["gold"] == 5
+    assert inventory["slots"][0] is slot
 
 
 def test_sell_empty_slot_returns_false():
