@@ -1,6 +1,11 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from systems.economy import (
+    RARITY_MULTIPLIERS,
+    SOURCE_MULTIPLIERS,
     calculate_base_level_value,
     calculate_item_sell_price,
     sell_inventory_item,
@@ -145,6 +150,25 @@ def test_item_stats_do_not_change_price():
     price_with_stats = calculate_item_sell_price({}, item_with_stats)
 
     assert price_with_stats == price_without_stats
+
+
+def test_all_items_have_valid_economic_valuation_fields():
+    items_path = Path(__file__).resolve().parents[1] / "data" / "items.json"
+    with items_path.open(encoding="utf-8") as items_file:
+        items = json.load(items_file)
+
+    for item_id, item_data in items.items():
+        has_manual_price = "manual_sell_price" in item_data
+        has_formula_fields = all(
+            field in item_data
+            for field in ("level", "rarity", "economic_source")
+        )
+
+        assert has_manual_price or has_formula_fields, item_id
+        if "economic_source" in item_data:
+            assert item_data["economic_source"] in SOURCE_MULTIPLIERS, item_id
+        if "rarity" in item_data:
+            assert item_data["rarity"] in RARITY_MULTIPLIERS, item_id
 
 
 def test_sell_stackable_item_increases_gold_and_decreases_quantity():

@@ -2,6 +2,9 @@
   "iron_sword": {
     "name": "Iron Sword",
     "type": "weapon",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
     "stats": {
       "strength": 1,
       "attack": 2
@@ -15,6 +18,9 @@
   "leather_armor": {
     "name": "Leather Armor",
     "type": "armor",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
     "stats": {
       "vitality": 1,
       "defense": 1,
@@ -29,6 +35,9 @@
   "health_potion": {
     "name": "Health Potion",
     "type": "consumable",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "consumable",
     "stats": {
       "hp": 10
     }
@@ -36,6 +45,9 @@
   "minor_health_potion": {
     "name": "Minor Health Potion",
     "type": "consumable",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "consumable",
     "stats": {
       "hp": 5
     }
@@ -43,6 +55,9 @@
   "greater_health_potion": {
     "name": "Greater Health Potion",
     "type": "consumable",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "consumable",
     "stats": {
       "hp": 25
     }
@@ -50,6 +65,9 @@
   "rage_potion": {
     "name": "Rage Potion",
     "type": "consumable",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "consumable",
     "effects": [
       {
         "id": "rage_potion_attack",
@@ -69,6 +87,9 @@
   "guard_potion": {
     "name": "Guard Potion",
     "type": "consumable",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "consumable",
     "effects": [
       {
         "id": "guard_potion_defense",
@@ -88,6 +109,9 @@
   "magic_ring": {
     "name": "Magic Ring",
     "type": "accessory",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
     "stats": {
       "intelligence": 1,
       "wisdom": 1,
@@ -103,6 +127,10 @@
   "copper_coin": {
     "name": "Copper Coin",
     "type": "currency",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "manual_sell_price": 1,
     "stats": {
       "gold": 1
     }
@@ -110,6 +138,10 @@
   "gold_coin": {
     "name": "Gold Coin",
     "type": "currency",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "manual_sell_price": 5,
     "stats": {
       "gold": 5
     }
@@ -117,6 +149,9 @@
   "steel_armor": {
     "name": "Steel Armor",
     "type": "armor",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
     "stats": {
       "vitality": 2,
       "defense": 4,
@@ -131,6 +166,9 @@
   "rare_gem": {
     "name": "Rare Gem",
     "type": "material",
+    "level": 1,
+    "rarity": "epic",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 50
     }
@@ -138,6 +176,9 @@
   "legendary_sword": {
     "name": "Legendary Sword",
     "type": "weapon",
+    "level": 1,
+    "rarity": "legendary",
+    "economic_source": "dropped_item",
     "stats": {
       "strength": 3,
       "dexterity": 2,
@@ -158,6 +199,9 @@
   "goblin_ear": {
     "name": "Goblin Ear",
     "type": "resource",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 2
     }
@@ -165,6 +209,9 @@
   "goblin_charm": {
     "name": "Goblin Charm",
     "type": "resource",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 15
     }
@@ -172,6 +219,9 @@
   "ancient_bone": {
     "name": "Ancient Bone",
     "type": "resource",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 18
     }
@@ -179,6 +229,9 @@
   "wolf_pelt": {
     "name": "Wolf Pelt",
     "type": "resource",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 6
     }
@@ -186,6 +239,9 @@
   "sharp_fang": {
     "name": "Sharp Fang",
     "type": "resource",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 20
     }
@@ -193,6 +249,9 @@
   "bandit_badge": {
     "name": "Bandit Badge",
     "type": "resource",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 8
     }
@@ -200,6 +259,9 @@
   "hidden_pouch": {
     "name": "Hidden Pouch",
     "type": "resource",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 25
     }
@@ -207,6 +269,9 @@
   "orc_tusk": {
     "name": "Orc Tusk",
     "type": "resource",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 12
     }
@@ -214,6 +279,9 @@
   "warrior_trophy": {
     "name": "Warrior Trophy",
     "type": "resource",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 35
     }
@@ -221,6 +289,9 @@
   "troll_hide": {
     "name": "Troll Hide",
     "type": "resource",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 20
     }
@@ -228,6 +299,9 @@
   "troll_heart": {
     "name": "Troll Heart",
     "type": "resource",
+    "level": 1,
+    "rarity": "epic",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 60
     }
@@ -235,6 +309,9 @@
   "leather": {
     "name": "Leather",
     "type": "resource",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 5
     }
@@ -242,6 +319,9 @@
   "bone": {
     "name": "Bone",
     "type": "resource",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 3
     }
@@ -249,6 +329,9 @@
   "iron_ore": {
     "name": "Iron Ore",
     "type": "resource",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
     "stats": {
       "value": 8
     }
