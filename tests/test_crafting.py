@@ -9,6 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RECIPES_PATH = PROJECT_ROOT / "data" / "recipes.json"
 ITEMS_PATH = PROJECT_ROOT / "data" / "items.json"
 ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
+ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
 VALID_INGREDIENT_KINDS = {"stackable", "unique"}
 
 
@@ -155,6 +156,24 @@ def test_crafted_items_are_not_zone_loot_items():
         zone_loot_items.update(zone.get("loot_table", []))
 
     overlapping_items = crafted_items & zone_loot_items
+    assert not overlapping_items, overlapping_items
+
+
+def test_crafted_items_are_not_enemy_drop_items():
+    recipes = load_json(RECIPES_PATH)
+    enemies = load_json(ENEMIES_PATH)
+
+    crafted_items = {
+        recipe["result"]["item"]
+        for recipe in recipes.values()
+    }
+
+    enemy_drop_items = set()
+    for enemy in enemies.values():
+        for drop in enemy.get("drops", []):
+            enemy_drop_items.add(drop["item"])
+
+    overlapping_items = crafted_items & enemy_drop_items
     assert not overlapping_items, overlapping_items
 
 
