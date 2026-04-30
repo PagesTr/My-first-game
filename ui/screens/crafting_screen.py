@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pygame
 
-from systems.crafting import craft_item
+from systems.crafting import can_craft, craft_item
 
 
 class Button:
@@ -29,6 +29,7 @@ class CraftingScreen:
         self.font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
+        self.craft_btn = Button((350, 520, 140, 50), "Craft")
         self.recipes = self._load_recipes()
         self.recipe_buttons = []
         self.selected_recipe_id = None
@@ -47,8 +48,12 @@ class CraftingScreen:
         for recipe_id, button in self.recipe_buttons:
             if button.is_clicked(event.pos):
                 self.selected_recipe_id = recipe_id
-                self._try_craft(recipe_id)
+                self.message = ""
                 return
+
+        if self.craft_btn.is_clicked(event.pos):
+            self._try_craft()
+            return
 
     def draw(self, screen):
         screen.fill((18, 24, 30))
@@ -60,6 +65,7 @@ class CraftingScreen:
         self._draw_recipe_details(screen)
         self._draw_message(screen)
         self.back_btn.draw(screen, self.font)
+        self._draw_craft_button(screen)
 
     def _load_recipes(self):
         recipes_path = Path(__file__).resolve().parents[2] / "data" / "recipes.json"
@@ -70,17 +76,19 @@ class CraftingScreen:
         self.recipe_buttons = []
         for index, recipe_id in enumerate(list(self.recipes)[:8]):
             rect = (50, 110 + index * 46, 250, 38)
-            self.recipe_buttons.append((recipe_id, Button(rect, self._format_recipe_name(recipe_id))))
+            self.recipe_buttons.append(
+                (recipe_id, Button(rect, self._format_recipe_name(recipe_id)))
+            )
 
         if self.recipe_buttons and self.selected_recipe_id is None:
             self.selected_recipe_id = self.recipe_buttons[0][0]
 
-    def _try_craft(self, recipe_id):
-        if not self.game.player:
+    def _try_craft(self):
+        if not self.game.player or self.selected_recipe_id is None:
             self._set_message("Cannot craft")
             return
 
-        recipe = self.recipes[recipe_id]
+        recipe = self.recipes[self.selected_recipe_id]
         crafted = craft_item(
             self.game.player["inventory"],
             recipe,
@@ -116,16 +124,26 @@ class CraftingScreen:
         name_text = self.font.render(name, True, (245, 245, 245))
         screen.blit(name_text, (x, y))
 
-        ingredients_title = self.small_font.render("Ingredients", True, (220, 220, 160))
-        screen.blit(ingredients_title, (x, y + 44))
+        status = self._get_recipe_status_text(recipe)
+        status_color = (120, 190, 130) if status == "Available" else (210, 110, 110)
+        status_text = self.small_font.render(status, True, status_color)
+        screen.blit(status_text, (x, y + 28))
 
-        line_y = y + 70
+        ingredients_title = self.small_font.render("Ingredients", True, (220, 220, 160))
+        screen.blit(ingredients_title, (x, y + 58))
+
+        line_y = y + 84
         for ingredient in recipe.get("ingredients", []):
             item_name = self._get_item_name(ingredient.get("item"))
-            quantity = ingredient.get("quantity", 0)
-            kind = ingredient.get("kind", "unknown")
-            line = f"{item_name} x{quantity} ({kind})"
-            text = self.small_font.render(line, True, (220, 220, 220))
+            required_quantity = ingredient.get("quantity", 0)
+            owned_quantity = self._count_owned_ingredient(ingredient)
+            line = f"{item_name} x{owned_quantity} / {required_quantity}"
+            color = (
+                (120, 190, 130)
+                if owned_quantity >= required_quantity
+                else (210, 110, 110)
+            )
+            text = self.small_font.render(line, True, color)
             screen.blit(text, (x, line_y))
             line_y += 24
 
@@ -150,7 +168,10 @@ class CraftingScreen:
             return
 
         text = self.font.render(self.message, True, (245, 245, 245))
-        screen.blit(text, (220, 535))
+        screen.blit(text, (510, 535))
+
+    def _draw_craft_button(self, screen):
+        self.craft_btn.draw(screen, self.font)
 
     def _format_recipe_name(self, recipe_id):
         recipe = self.recipes.get(recipe_id, {})
@@ -160,3 +181,42 @@ class CraftingScreen:
     def _get_item_name(self, item_id):
         item_data = self.game.data.items.get(item_id, {})
         return item_data.get("name", item_id)
+
+    def _get_recipe_status_text(self, recipe):
+        if self.game.player and can_craft(self.game.player["inventory"], recipe):
+            return "Available"
+        return "Missing ingredients"
+
+    def _count_stackable_item(self, item_id):
+        if not self.game.player:
+            return 0
+
+        total = 0
+        for slot in self.game.player["inventory"]["slots"]:
+            if (
+                slot is not None
+                and slot.get("kind") == "stackable"
+                and slot.get("item") == item_id
+            ):
+                total += slot.get("quantity", 0)
+        return total
+
+    def _count_unique_item(self, item_id):
+        if not self.game.player:
+            return 0
+
+        total = 0
+        for slot in self.game.player["inventory"]["slots"]:
+            if (
+                slot is not None
+                and slot.get("kind") == "unique"
+                and slot.get("item") == item_id
+            ):
+                total += 1
+        return total
+
+    def _count_owned_ingredient(self, ingredient):
+        item_id = ingredient.get("item")
+        if ingredient.get("kind") == "unique":
+            return self._count_unique_item(item_id)
+        return self._count_stackable_item(item_id)
