@@ -38,7 +38,7 @@ class Game:
             self.data.items,
             self.data.classes,
         )
-        self.state = "zone_select"
+        self.state = "town"
 
     def select_zone(self, zone_key):
         if not self.player or zone_key not in self.data.zones:
@@ -97,7 +97,7 @@ class Game:
         if self.player is not None:
             tick_combat_effects(self.player)
             prepare_player_for_combat(self.player, self.data.items, self.data.classes)
-        self.state = "zone_select"
+        self.state = "town"
         self.combat = None
         self.auto_mode = False
 
