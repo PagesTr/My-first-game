@@ -1,10 +1,10 @@
 RARITY_MULTIPLIERS = {
     "common": 1.00,
-    "uncommon": 1.35,
-    "rare": 2.00,
-    "epic": 3.50,
-    "legendary": 6.00,
-    "unique": 10.00,
+    "uncommon": 2.35,
+    "rare": 5.00,
+    "epic": 10,
+    "legendary": 25,
+    "unique": 100,
 }
 
 SOURCE_MULTIPLIERS = {

@@ -67,6 +67,17 @@
       "hp": 25
     }
   },
+  "field_dressing": {
+    "name": "Field Dressing",
+    "type": "consumable",
+    "category": "potion",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "crafted_item",
+    "stats": {
+      "hp": 6
+    }
+  },
   "rage_potion": {
     "name": "Rage Potion",
     "type": "consumable",
@@ -207,6 +218,50 @@
     "rarity_weights": {
       "legendary": 90,
       "unique": 10
+    }
+  },
+  "rusty_sword": {
+    "name": "Rusty Sword",
+    "type": "equipment",
+    "category": "weapon",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "attack": 1
+    }
+  },
+  "restored_sword": {
+    "name": "Restored Sword",
+    "type": "equipment",
+    "category": "weapon",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "crafted_item",
+    "stats": {
+      "attack": 2
+    }
+  },
+  "worn_leather_armor": {
+    "name": "Worn Leather Armor",
+    "type": "equipment",
+    "category": "armor",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "defense": 1
+    }
+  },
+  "patched_leather_armor": {
+    "name": "Patched Leather Armor",
+    "type": "equipment",
+    "category": "armor",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "crafted_item",
+    "stats": {
+      "defense": 2
     }
   },
   "goblin_ear": {
