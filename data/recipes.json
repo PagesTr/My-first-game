@@ -12,12 +12,10 @@
         "quantity": 1
       }
     ],
-    "result": [
-      {
-        "item": "field_dressing",
-        "quantity": 1
-      }
-    ]
+    "result": {
+      "item": "field_dressing",
+      "quantity": 1
+    }
   },
   "restore_rusty_sword": {
     "ingredients": [
@@ -32,12 +30,10 @@
         "quantity": 2
       }
     ],
-    "result": [
-      {
-        "item": "restored_sword",
-        "quantity": 1
-      }
-    ]
+    "result": {
+      "item": "restored_sword",
+      "quantity": 1
+    }
   },
   "patch_worn_leather_armor": {
     "ingredients": [
@@ -52,11 +48,9 @@
         "quantity": 2
       }
     ],
-    "result": [
-      {
-        "item": "patched_leather_armor",
-        "quantity": 1
-      }
-    ]
+    "result": {
+      "item": "patched_leather_armor",
+      "quantity": 1
+    }
   }
 }
