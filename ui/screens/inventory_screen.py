@@ -30,6 +30,7 @@ class InventoryScreen:
         self.small_font = pygame.font.Font(None, 20)
         self.back_btn = Button((50, 520, 140, 50), "Back")
         self.compact_btn = Button((210, 520, 140, 50), "Compact")
+        self.craft_btn = Button((650, 520, 100, 50), "Craft")
         self.show_advanced_stats = False
         self.stats_details_btn = Button((650, 430, 100, 40), "Details")
         self.selected_item = None
@@ -56,6 +57,11 @@ class InventoryScreen:
             if self.compact_btn.is_clicked(event.pos):
                 compact_inventory(self.game.player["inventory"])
                 self._clear_selected_item()
+                return
+
+            if self.craft_btn.is_clicked(event.pos):
+                self._clear_selected_item()
+                self.game.state = "crafting"
                 return
 
             if self.stats_details_btn.is_clicked(event.pos):
@@ -113,6 +119,7 @@ class InventoryScreen:
             self._draw_advanced_stats_panel(screen)
         self.back_btn.draw(screen, self.font)
         self.compact_btn.draw(screen, self.font)
+        self.craft_btn.draw(screen, self.font)
         self._draw_item_tooltip(screen)
 
     def _get_slot_index_at_pos(self, pos):
