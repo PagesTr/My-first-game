@@ -8,6 +8,7 @@ from systems.inventory import add_stackable_item, add_unique_item, create_invent
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RECIPES_PATH = PROJECT_ROOT / "data" / "recipes.json"
 ITEMS_PATH = PROJECT_ROOT / "data" / "items.json"
+ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
 VALID_INGREDIENT_KINDS = {"stackable", "unique"}
 
 
@@ -138,6 +139,23 @@ def test_all_result_items_exist_in_items_data():
 
     for recipe_id, recipe in recipes.items():
         assert recipe["result"]["item"] in items, recipe_id
+
+
+def test_crafted_items_are_not_zone_loot_items():
+    recipes = load_json(RECIPES_PATH)
+    zones = load_json(ZONES_PATH)
+
+    crafted_items = {
+        recipe["result"]["item"]
+        for recipe in recipes.values()
+    }
+
+    zone_loot_items = set()
+    for zone in zones.values():
+        zone_loot_items.update(zone.get("loot_table", []))
+
+    overlapping_items = crafted_items & zone_loot_items
+    assert not overlapping_items, overlapping_items
 
 
 def test_can_craft_returns_true_when_all_stackable_ingredients_are_available():
