@@ -42,7 +42,7 @@ class CraftingScreen:
             return
 
         if self.back_btn.is_clicked(event.pos):
-            self.game.state = "inventory"
+            self.game.state = "zone_select"
             return
 
         for recipe_id, button in self.recipe_buttons:

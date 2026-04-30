@@ -39,6 +39,7 @@ class MenuScreen:
         self.zone_buttons = self._build_zone_buttons()
         self.inventory_button = MenuButton((560, 54, 160, 52), "Inventaire")
         self.merchant_button = MenuButton((560, 116, 160, 52), "Merchant")
+        self.crafting_button = MenuButton((560, 178, 160, 52), "Craft")
 
     def _build_class_buttons(self):
         buttons = []
@@ -94,6 +95,10 @@ class MenuScreen:
                 self.game.state = "merchant"
                 return
 
+            if self.crafting_button.is_clicked(pos):
+                self.game.state = "crafting"
+                return
+
             for zone_key, button in self.zone_buttons:
                 if button.is_clicked(pos):
                     self.game.select_zone(zone_key)
@@ -127,6 +132,7 @@ class MenuScreen:
         screen.blit(subtitle, (82, 105))
         self.inventory_button.draw(screen, self.option_font, self.body_font)
         self.merchant_button.draw(screen, self.option_font, self.body_font)
+        self.crafting_button.draw(screen, self.option_font, self.body_font)
 
         for zone_key, button in self.zone_buttons:
             zone = self.game.data.zones[zone_key]
