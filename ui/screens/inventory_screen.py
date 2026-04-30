@@ -47,7 +47,7 @@ class InventoryScreen:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.back_btn.is_clicked(event.pos):
-                self.game.state = "zone_select"
+                self.game.state = "town"
                 return
 
             if not self.game.player:

@@ -37,8 +37,27 @@ class MenuScreen:
 
         self.class_buttons = self._build_class_buttons()
         self.zone_buttons = self._build_zone_buttons()
-        self.inventory_button = MenuButton((560, 54, 160, 52), "Inventaire")
-        self.merchant_button = MenuButton((560, 116, 160, 52), "Merchant")
+        self.expedition_button = MenuButton(
+            (80, 150, 300, 72),
+            "Expedition",
+            "Choose a combat zone",
+        )
+        self.inventory_button = MenuButton(
+            (80, 238, 300, 72),
+            "Inventory",
+            "Manage gear and items",
+        )
+        self.merchant_button = MenuButton(
+            (80, 326, 300, 72),
+            "Merchant",
+            "Sell items",
+        )
+        self.crafting_button = MenuButton(
+            (80, 414, 300, 72),
+            "Craft",
+            "Use resources",
+        )
+        self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
 
     def _build_class_buttons(self):
         buttons = []
@@ -85,13 +104,26 @@ class MenuScreen:
                     self.zone_buttons = self._build_zone_buttons()
                     return
 
-        if self.game.state == "zone_select":
+        if self.game.state == "town":
+            if self.expedition_button.is_clicked(pos):
+                self.game.state = "zone_select"
+                return
+
             if self.inventory_button.is_clicked(pos):
                 self.game.state = "inventory"
                 return
 
             if self.merchant_button.is_clicked(pos):
                 self.game.state = "merchant"
+                return
+
+            if self.crafting_button.is_clicked(pos):
+                self.game.state = "crafting"
+                return
+
+        if self.game.state == "zone_select":
+            if self.zone_back_button.is_clicked(pos):
+                self.game.state = "town"
                 return
 
             for zone_key, button in self.zone_buttons:
@@ -104,6 +136,8 @@ class MenuScreen:
 
         if self.game.state == "class_select":
             self._draw_class_select(screen)
+        elif self.game.state == "town":
+            self._draw_town(screen)
         elif self.game.state == "zone_select":
             self._draw_zone_select(screen)
 
@@ -113,6 +147,54 @@ class MenuScreen:
 
         for _, button in self.class_buttons:
             button.draw(screen, self.option_font, self.body_font)
+
+    def _draw_town(self, screen):
+        player_level = self.game.player["level"] if self.game.player else 1
+
+        title = self.title_font.render("Town", True, (245, 245, 245))
+        screen.blit(title, (80, 64))
+
+        if self.game.selected_class:
+            class_name = self.game.data.classes[self.game.selected_class]["name"]
+        else:
+            class_name = "Adventurer"
+        subtitle = self.body_font.render(
+            f"{class_name} - Level {player_level}", True, (190, 200, 205)
+        )
+        screen.blit(subtitle, (82, 105))
+
+        self.expedition_button.draw(screen, self.option_font, self.body_font)
+        self.inventory_button.draw(screen, self.option_font, self.body_font)
+        self.merchant_button.draw(screen, self.option_font, self.body_font)
+        self.crafting_button.draw(screen, self.option_font, self.body_font)
+        self._draw_town_player_panel(screen)
+
+    def _draw_town_player_panel(self, screen):
+        rect = pygame.Rect(470, 150, 250, 220)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+
+        title = self.option_font.render("Player", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 18, rect.y + 18))
+
+        player = self.game.player or {}
+        if self.game.selected_class:
+            class_name = self.game.data.classes[self.game.selected_class]["name"]
+        else:
+            class_name = "Adventurer"
+
+        lines = [
+            f"Class: {class_name}",
+            f"Level: {player.get('level', 1)}",
+            f"HP: {player.get('current_hp', 0)} / {player.get('max_hp', 0)}",
+            f"Gold: {player.get('gold', 0)}",
+        ]
+
+        y = rect.y + 62
+        for line in lines:
+            text = self.body_font.render(line, True, (190, 200, 205))
+            screen.blit(text, (rect.x + 18, y))
+            y += 34
 
     def _draw_zone_select(self, screen):
         player_level = self.game.player["level"] if self.game.player else 1
@@ -125,8 +207,7 @@ class MenuScreen:
             f"{class_name} - Niveau {player_level}", True, (190, 200, 205)
         )
         screen.blit(subtitle, (82, 105))
-        self.inventory_button.draw(screen, self.option_font, self.body_font)
-        self.merchant_button.draw(screen, self.option_font, self.body_font)
+        self.zone_back_button.draw(screen, self.option_font, self.body_font)
 
         for zone_key, button in self.zone_buttons:
             zone = self.game.data.zones[zone_key]

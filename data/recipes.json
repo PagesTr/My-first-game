@@ -1,42 +1,56 @@
 {
-  "leather_armor": {
-    "name": "Leather Armor",
+  "brew_field_dressing": {
     "ingredients": [
-      {"item": "leather", "quantity": 3}
+      {
+        "kind": "stackable",
+        "item": "goblin_ear",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "wolf_pelt",
+        "quantity": 1
+      }
     ],
-    "skill_required": 1
+    "result": {
+      "item": "field_dressing",
+      "quantity": 1
+    }
   },
-  "iron_sword": {
-    "name": "Iron Sword",
+  "restore_rusty_sword": {
     "ingredients": [
-      {"item": "iron_ore", "quantity": 2},
-      {"item": "leather", "quantity": 1}
+      {
+        "kind": "unique",
+        "item": "rusty_sword",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 2
+      }
     ],
-    "skill_required": 3
+    "result": {
+      "item": "restored_sword",
+      "quantity": 1
+    }
   },
-  "magic_ring": {
-    "name": "Magic Ring",
+  "patch_worn_leather_armor": {
     "ingredients": [
-      {"item": "rare_gem", "quantity": 1},
-      {"item": "bone", "quantity": 1}
+      {
+        "kind": "unique",
+        "item": "worn_leather_armor",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 2
+      }
     ],
-    "skill_required": 5
-  },
-  "steel_armor": {
-    "name": "Steel Armor",
-    "ingredients": [
-      {"item": "iron_ore", "quantity": 4},
-      {"item": "leather", "quantity": 2}
-    ],
-    "skill_required": 7
-  },
-  "legendary_sword": {
-    "name": "Legendary Sword",
-    "ingredients": [
-      {"item": "iron_ore", "quantity": 5},
-      {"item": "rare_gem", "quantity": 2},
-      {"item": "bone", "quantity": 3}
-    ],
-    "skill_required": 10
+    "result": {
+      "item": "patched_leather_armor",
+      "quantity": 1
+    }
   }
 }
