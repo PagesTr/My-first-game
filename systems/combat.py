@@ -70,8 +70,13 @@ class CombatSystem:
     # ======================
 
     def _enemy_ai(self):
-        # Very basic for now
-        if self.enemy["current_hp"] < 5:
+        behavior = self.enemy.get("behavior", "balanced")
+
+        if behavior == "aggressive":
+            return "attack"
+
+        heal_threshold = 0.30 if behavior == "defensive" else 0.25
+        if self.enemy["current_hp"] <= self.enemy["max_hp"] * heal_threshold:
             return "heal"
         return "attack"
 

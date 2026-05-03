@@ -1,6 +1,7 @@
 {
   "goblin": {
     "name": "Goblin",
+    "behavior": "balanced",
     "stats": {
       "hp": 12,
       "attack": 3,
@@ -28,11 +29,16 @@
       {
         "item": "iron_sword",
         "chance": 0.58
+      },
+      {
+        "item": "rusty_sword",
+        "chance": 0.08
       }
     ]
   },
   "skeleton": {
     "name": "Skeleton",
+    "behavior": "defensive",
     "stats": {
       "hp": 16,
       "attack": 4,
@@ -65,6 +71,7 @@
   },
   "wolf": {
     "name": "Wolf",
+    "behavior": "aggressive",
     "stats": {
       "hp": 14,
       "attack": 5,
@@ -88,11 +95,16 @@
       {
         "item": "minor_health_potion",
         "chance": 0.08
+      },
+      {
+        "item": "worn_leather_armor",
+        "chance": 0.08
       }
     ]
   },
   "bandit": {
     "name": "Bandit",
+    "behavior": "balanced",
     "stats": {
       "hp": 20,
       "attack": 6,
@@ -125,6 +137,7 @@
   },
   "orc": {
     "name": "Orc",
+    "behavior": "aggressive",
     "stats": {
       "hp": 30,
       "attack": 8,
@@ -161,6 +174,7 @@
   },
   "troll": {
     "name": "Troll",
+    "behavior": "defensive",
     "stats": {
       "hp": 40,
       "attack": 10,

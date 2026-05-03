@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "craftability/2026-05-03_1821_craftability_report.md",
+                "file": "craftability/2026-05-03_1839_craftability_report.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-05-03_1821_craftability_report"
+              "title": "2026-05-03_1839_craftability_report"
             }
           }
         ]
@@ -185,8 +185,10 @@
   },
   "active": "7dc2b72b41a33cd0",
   "lastOpenFiles": [
-    "Craft V1.md",
+    "craftability/2026-05-03_1826_craftability_report.md",
+    "craftability/2026-05-03_1839_craftability_report.md",
     "craftability/2026-05-03_1821_craftability_report.md",
+    "Craft V1.md",
     "craftability/2026-05-03_1801_craftability_report.md"
   ]
 }
