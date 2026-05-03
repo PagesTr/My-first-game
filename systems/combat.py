@@ -16,7 +16,7 @@ class CombatSystem:
     # PUBLIC API
     # ======================
 
-    def step(self, player_action):
+    def step(self, player_action=None):
         """
         Execute a full combat turn:
         - player action
@@ -25,6 +25,9 @@ class CombatSystem:
 
         if self.is_over:
             return
+
+        if player_action is None:
+            player_action = self._player_auto_action()
 
         self.turn_count += 1
         self.log.clear()
@@ -64,6 +67,11 @@ class CombatSystem:
             self.log.append(f"{actor_name} heals -> +{heal} HP")
 
         # Extensible here (skills, items, etc.)
+
+    def _player_auto_action(self):
+        if self.player["current_hp"] <= self.player["max_hp"] * 0.30:
+            return "heal"
+        return "attack"
 
     # ======================
     # ENEMY AI (simple)

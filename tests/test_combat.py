@@ -124,3 +124,31 @@ def test_combat_ends_when_player_dies(monkeypatch):
 
     assert combat.is_over is True
     assert combat.winner == "enemy"
+
+
+def test_player_auto_action_returns_heal_when_player_hp_is_low():
+    player = make_player()
+    player["current_hp"] = 6
+    combat = CombatSystem(player, make_enemy("aggressive", current_hp=20))
+
+    assert combat._player_auto_action() == "heal"
+
+
+def test_player_auto_action_returns_attack_when_player_hp_is_high():
+    player = make_player()
+    player["current_hp"] = 7
+    combat = CombatSystem(player, make_enemy("aggressive", current_hp=20))
+
+    assert combat._player_auto_action() == "attack"
+
+
+def test_step_uses_player_auto_action_when_action_is_none(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["current_hp"] = 6
+    enemy = make_enemy("aggressive", current_hp=20)
+    combat = CombatSystem(player, enemy)
+
+    combat.step(None)
+
+    assert player["current_hp"] > 6

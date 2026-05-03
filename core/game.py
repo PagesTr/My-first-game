@@ -59,10 +59,7 @@ class Game:
         self.state = "combat"
 
     def update_combat(self, action=None):
-        if self.auto_mode:
-            action = "attack"
-
-        if action and self.combat:
+        if self.combat and (action is not None or self.auto_mode):
             self.combat.step(action)
 
         if self.combat and self.combat.is_over:
