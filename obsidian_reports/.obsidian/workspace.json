@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "289340586bb89103",
+        "id": "da44f50a643f7bab",
         "type": "tabs",
         "children": [
           {
-            "id": "94f2990582bb98b7",
+            "id": "7dc2b72b41a33cd0",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "craftability/2026-05-03_1801_craftability_report.md",
+                "file": "craftability/2026-05-03_1821_craftability_report.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-05-03_1801_craftability_report"
+              "title": "2026-05-03_1821_craftability_report"
             }
           }
         ]
@@ -183,6 +183,10 @@
       "bases:Créer une nouvelle base": false
     }
   },
-  "active": "94f2990582bb98b7",
-  "lastOpenFiles": []
+  "active": "7dc2b72b41a33cd0",
+  "lastOpenFiles": [
+    "Craft V1.md",
+    "craftability/2026-05-03_1821_craftability_report.md",
+    "craftability/2026-05-03_1801_craftability_report.md"
+  ]
 }

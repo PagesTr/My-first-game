@@ -268,7 +268,17 @@ def get_timestamped_report_path():
     ensure_reports_directory()
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     filename = f"{timestamp}_craftability_report.md"
-    return OBSIDIAN_REPORTS_DIR / filename
+    report_path = OBSIDIAN_REPORTS_DIR / filename
+    if not report_path.exists():
+        return report_path
+
+    counter = 2
+    while True:
+        filename = f"{timestamp}_craftability_report_{counter}.md"
+        report_path = OBSIDIAN_REPORTS_DIR / filename
+        if not report_path.exists():
+            return report_path
+        counter += 1
 
 
 def markdown_value(value):
