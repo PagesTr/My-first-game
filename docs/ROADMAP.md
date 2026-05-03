@@ -1,170 +1,168 @@
-# Project Roadmap
+# Roadmap
 
-This file tracks planned improvements and deferred ideas.
-It should stay short, practical, and focused on the next useful development steps.
+## Development Strategy
 
-## Inventory and items
+The project evolves in small, stable, and incremental blocks.
 
-- Remove temporary test items from the starting inventory when another acquisition method exists.
-  - `rage_potion`
-  - `guard_potion`
-- Decide how buff consumables become available.
-  - Enemy drops
-  - Shop
-  - Crafting
-  - Quest rewards
-  - Chests
-- Add a proper value and selling system for resources.
-- Improve item tooltips.
-  - Show effects more clearly.
-  - Separate item value from combat stats.
-  - Add descriptions later.
-- Decide whether the temporary `Compact` button should stay or be removed later.
+Each block must:
 
-## Leveling and progression
+- keep the game playable;
+- avoid breaking existing systems;
+- modify as few files as possible;
+- be testable;
+- prepare the next block without overengineering.
 
-- Keep leveling simple and readable before adding complex progression.
-- Improve level-up rewards.
-  - Stat increases
-  - Max HP increase
-  - Possible class-based bonuses
-- Decide if the player chooses stat upgrades manually or receives automatic class-based growth.
-- Add clear feedback when the player levels up.
-- Review XP curve and enemy rewards after more zones are added.
+---
 
-## Active and passive skills
+## Block 1 — Combat refinement
 
-- Add a generic skill system later, separate from consumables.
-- Active skills should be usable during combat.
-  - Damage skill
-  - Heal skill
-  - Defensive skill
-  - Buff or debuff skill
-- Passive skills should modify the player without direct activation.
-  - Permanent stat bonus
-  - Loot bonus
-  - Crit bonus
-  - Class identity bonus
-- Decide how skills are unlocked.
-  - Level milestones
-  - Skill tree
-  - Class progression
-  - Quest rewards
-- Reuse the temporary effects system for active skill buffs when possible.
-- Keep passive effects separate from temporary effects if they are permanent.
+Objective:
 
-## Professions and crafting jobs
+- improve enemy identity;
+- prepare automatic combat behavior;
+- stabilize the combat system.
 
-- Add professions only after resources have a clear purpose.
-- Possible professions:
-  - Blacksmithing for weapons and armor upgrades
-  - Alchemy for potions and consumables
-  - Leatherworking for armor and utility items
-  - Gathering for raw resources
-- Keep the first profession system simple.
-  - Profession level
-  - XP per craft
-  - Basic recipes
-- Avoid adding too many professions before crafting is useful.
-- Decide if professions are unlocked by level, quests, or zones.
+Scope:
 
-## Crafting and upgrades
+- enemy behaviors (aggressive, defensive, balanced);
+- basic AI improvements;
+- minimal extensions to combat actions;
+- add combat tests.
 
-- Craft V1 is in progress.
-- Recipes are stored in `data/recipes.json`.
-- Recipes consume stackable or unique inventory items.
-- Crafted items must stay separate from droppable items.
-- Crafting is accessible from the town hub.
-- Keep crafting separate from loot generation.
-- Stabilize Craft V1 before adding more recipes.
-- Equipment upgrade chains can use rare resources later.
-- Professions remain out of scope until resources have a clear purpose.
+Avoid:
 
-## Economy and shops
+- full skill systems;
+- full automation;
+- major UI changes.
 
-- Add basic item selling before complex shops.
-- Use item `value` when selling resources.
-- Add shops later for consumables and starter gear.
-- Keep prices simple until the economy is balanced.
+---
 
-## Quests and objectives
+## Block 2 — Zones system
 
-- Add simple objectives later.
-  - Defeat enemies
-  - Collect resources
-  - Reach a level
-  - Craft an item
-- Use quests to introduce systems progressively.
-- Avoid complex branching quests early.
+Objective:
 
-## Zones and exploration
+- introduce zones as the main game structure.
 
-- Add more zones after current systems are stable.
-- Use zones to introduce enemy families, resources, and professions.
-- Decide if zones have special effects or modifiers.
-- Keep zone unlock rules simple at first.
+Scope:
 
-## Temporary effects
+- define zones in data;
+- link enemies to zones;
+- simple zone selection.
 
-- Display active effects in combat, not only in the inventory.
-- Connect time-based effects to a real game clock.
-- Add more effect types later.
-  - Poison
-  - Bleed
-  - Healing over time
-  - Shield
-  - Damage reduction
-  - XP bonus
-  - Loot bonus
-- Keep the current stacking rule by default.
-  - Same effect id refreshes duration.
-  - Different effect ids can coexist.
-- Decide later if rare effects need special stacking rules.
+Avoid:
 
-## Loot and resources
+- complex navigation;
+- full world map.
 
-- Use `tools/simulate_loot.py` after drop changes to check balance.
-- Give rare resources a real use.
-  - `troll_heart`
-  - `warrior_trophy`
-  - `hidden_pouch`
-  - `goblin_charm`
-- Decide the main purpose of resources.
-  - Selling
-  - Crafting
-  - Equipment upgrades
-  - Quests
+---
 
-## Consumables
+## Block 3 — Dungeons
 
-- Add more buff consumables only when their effects are supported.
-- Possible future consumables:
-  - Critical chance potion
-  - Dodge potion
-  - Loot bonus potion
-  - XP bonus potion
-  - Out-of-combat healing item
+Objective:
 
-## UI
+- add structured challenges per zone.
 
-- Improve the Active Effects panel readability.
-- Show multiple modifiers per effect when needed.
-- Add buff and debuff colors later.
-- Keep tooltip and comparison behavior simple and readable.
-- Add level-up feedback to the result screen later.
-- Add skill display when the skill system exists.
-- Add profession display when professions exist.
-- Add crafting UI only after the recipe system exists.
+Scope:
 
-## Save system
+- sequential fights;
+- simple boss;
+- reward system.
 
-- Add save and load only after the player state becomes worth preserving.
-- Save player progression, inventory, equipment, effects, and unlocked zones.
-- Keep the first save format simple and JSON-based.
-- Add tests for save data compatibility later.
+Avoid:
 
-## Testing and tools
+- complex dungeon layouts;
+- branching paths.
 
-- Keep pytest coverage for inventory, loot, equipment, effects, progression, and skills.
-- Add tests when new gameplay rules are added.
-- Keep debug tools separate from gameplay systems.
+---
+
+## Block 4 — Skills system
+
+Objective:
+
+- introduce class identity through skills.
+
+Scope:
+
+- passive stat modifiers;
+- simple triggered active effects;
+- skill slots.
+
+Avoid:
+
+- complex cooldown systems;
+- full skill trees.
+
+---
+
+## Block 5 — Idle system
+
+Objective:
+
+- allow passive progression.
+
+Scope:
+
+- offline reward calculation;
+- zone-based idle activity.
+
+Constraint:
+
+- active play must remain more rewarding.
+
+---
+
+## Block 6 — Jobs and gathering
+
+Objective:
+
+- add resource collection systems.
+
+Scope:
+
+- zone-based jobs;
+- simple progression.
+
+---
+
+## Block 7 — Companions
+
+Objective:
+
+- manage multiple characters.
+
+Scope:
+
+- recruitment;
+- specialization;
+- multiple activity assignments.
+
+Avoid:
+
+- team combat at this stage.
+
+---
+
+## Long-Term Goals
+
+- team-based combat;
+- advanced skill trees;
+- deeper dungeon mechanics;
+- economy and crafting depth;
+- balancing idle vs active gameplay.
+
+---
+
+## Next Step
+
+Focus on:
+
+```text
+Block 1 — Combat refinement
+```
+
+Specifically:
+
+- add enemy behavior;
+- improve enemy AI;
+- ensure combat remains stable;
+- add first combat tests.
