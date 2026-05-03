@@ -69,3 +69,58 @@ def test_enemy_ai_returns_attack_for_defensive_enemy_with_enough_hp():
     combat = CombatSystem(make_player(), make_enemy("defensive", current_hp=7))
 
     assert combat._enemy_ai() == "attack"
+
+
+def test_attack_reduces_enemy_hp(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["attack"] = 10
+    enemy = make_enemy("aggressive", current_hp=20)
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+
+    assert enemy["current_hp"] < 20
+
+
+def test_heal_restores_player_hp(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["current_hp"] = 5
+    player["healing_power"] = 20
+    enemy = make_enemy("defensive", current_hp=1)
+    combat = CombatSystem(player, enemy)
+
+    combat.step("heal")
+
+    assert player["current_hp"] == player["max_hp"]
+
+
+def test_combat_ends_when_enemy_dies(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["attack"] = 10
+    enemy = make_enemy("aggressive", current_hp=1)
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+
+    assert combat.is_over is True
+    assert combat.winner == "player"
+
+
+def test_combat_ends_when_player_dies(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["current_hp"] = 1
+    player["max_hp"] = 1
+    player["attack"] = 1
+    player["defense"] = 0
+    enemy = make_enemy("aggressive", current_hp=20)
+    enemy["attack"] = 10
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+
+    assert combat.is_over is True
+    assert combat.winner == "enemy"
