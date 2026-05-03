@@ -70,11 +70,15 @@ It should stay short, practical, and focused on the next useful development step
 
 ## Crafting and upgrades
 
-- Add a simple recipe system later.
-- Recipes should consume resources and create items or consumables.
-- Equipment upgrades can use rare resources later.
+- Craft V1 is in progress.
+- Recipes are stored in `data/recipes.json`.
+- Recipes consume stackable or unique inventory items.
+- Crafted items must stay separate from droppable items.
+- Crafting is accessible from the town hub.
 - Keep crafting separate from loot generation.
-- Add recipe tests before adding many recipes.
+- Stabilize Craft V1 before adding more recipes.
+- Equipment upgrade chains can use rare resources later.
+- Professions remain out of scope until resources have a clear purpose.
 
 ## Economy and shops
 
