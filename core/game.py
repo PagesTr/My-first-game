@@ -55,7 +55,7 @@ class Game:
         enemy = self.spawn_enemy()
 
         prepare_player_for_combat(self.player, self.data.items, self.data.classes)
-        self.combat = CombatSystem(self.player, enemy)
+        self.combat = CombatSystem(self.player, enemy, self.data.skills)
         self.state = "combat"
 
     def update_combat(self, action=None):

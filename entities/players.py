@@ -18,6 +18,12 @@ def create_player(char_class, classes, items):
         },
         'inventory': create_inventory(),
         'active_effects': [],
+        'skills': {
+            'warrior_comeback_strike': {
+                'level': 1,
+                'enhanced': False,
+            },
+        },
         'skill_cooldowns': {},
         'current_hp': 0,
     }

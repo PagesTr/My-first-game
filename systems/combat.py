@@ -4,9 +4,10 @@ from systems.skills import apply_before_action_skills, tick_skill_cooldowns
 
 
 class CombatSystem:
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, skills_data=None):
         self.player = player
         self.enemy = enemy
+        self.skills_data = skills_data or {}
 
         self.turn_count = 0
         self.is_over = False
@@ -14,6 +15,7 @@ class CombatSystem:
 
         self.log = []  # Useful for the UI later
         self.pending_damage_multiplier = 1.0
+        self.player_took_damage_since_last_action = False
 
     # ======================
     # PUBLIC API
@@ -66,6 +68,8 @@ class CombatSystem:
             dmg = self._compute_damage(attacker, defender)
             if dmg > 0:
                 defender["current_hp"] = max(0, defender["current_hp"] - dmg)
+                if is_player is False and defender is self.player:
+                    self.player_took_damage_since_last_action = True
                 self.log.append(f"{actor_name} attacks -> {dmg} damage")
 
         elif action == "heal":
@@ -91,6 +95,8 @@ class CombatSystem:
         return
 
     def _on_after_action(self, actor, target, action, is_player):
+        if is_player is True:
+            self.player_took_damage_since_last_action = False
         return
 
     def _on_turn_end(self):

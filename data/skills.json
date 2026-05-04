@@ -1,0 +1,31 @@
+{
+  "warrior_comeback_strike": {
+    "name": "Comeback Strike",
+    "class": "warrior",
+    "type": "active",
+    "trigger": "before_player_attack_after_damage_taken",
+    "description": "Deal a stronger attack after taking damage.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.25,
+        "cooldown": 4
+      },
+      "2": {
+        "damage_multiplier": 1.35,
+        "cooldown": 4
+      },
+      "3": {
+        "damage_multiplier": 1.45,
+        "cooldown": 3
+      },
+      "4": {
+        "damage_multiplier": 1.60,
+        "cooldown": 3
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.85,
+      "cooldown": 2
+    }
+  }
+}

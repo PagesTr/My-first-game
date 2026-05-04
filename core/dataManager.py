@@ -13,6 +13,7 @@ class DataManager:
         self.enemies = self.load("data/enemies.json")
         self.recipes = self.load("data/recipes.json")
         self.zones = self.load("data/zones.json")
+        self.skills = self.load("data/skills.json")
 
     def load(self, path):
         with open(path, encoding="utf-8") as f:
