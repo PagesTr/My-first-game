@@ -82,3 +82,43 @@ def test_derive_stats_supports_legacy_force_and_agility():
     assert stats["strength"] == 3
     assert stats["dexterity"] == 2
     assert stats["intelligence"] == 1
+
+
+def test_passive_skill_can_increase_max_hp_by_character_level():
+    skill_id = "warrior_vitality_training"
+    base_player = {
+        "class": "warrior",
+        "level": 5,
+        "equipment": {},
+        "skills": {},
+    }
+    passive_player = {
+        "class": "warrior",
+        "level": 5,
+        "equipment": {},
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "type": "passive",
+            "levels": {
+                "1": {
+                    "stat_modifiers_per_character_level": {
+                        "max_hp": 1,
+                    },
+                },
+            },
+        },
+    }
+    classes = make_warrior_class()
+    items = {}
+
+    base_stats = derive_stats(base_player, items, classes, skills_data)
+    passive_stats = derive_stats(passive_player, items, classes, skills_data)
+
+    assert passive_stats["max_hp"] == base_stats["max_hp"] + 5

@@ -27,5 +27,39 @@
       "damage_multiplier": 1.85,
       "cooldown": 2
     }
+  },
+  "warrior_vitality_training": {
+    "name": "Vitality Training",
+    "class": "warrior",
+    "type": "passive",
+    "trigger": "always",
+    "description": "Increase max HP based on character level.",
+    "levels": {
+      "1": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 1
+        }
+      },
+      "2": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 2
+        }
+      },
+      "3": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 3
+        }
+      },
+      "4": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 4
+        }
+      }
+    },
+    "enhanced": {
+      "stat_modifiers_per_character_level": {
+        "max_hp": 6
+      }
+    }
   }
 }

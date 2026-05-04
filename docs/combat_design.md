@@ -124,6 +124,148 @@ Do not create a full skill tree until the basic combat skill loop is stable.
 
 ---
 
+## Skill JSON convention
+
+Each skill in `data/skills.json` should follow a common structure:
+
+- `name`
+- `class`
+- `type`
+- `trigger`
+- `description`
+- `levels`
+- `enhanced`
+
+Rules:
+
+- `type` can be `"active"` or `"passive"`.
+- Skills have 4 standard levels.
+- `enhanced` is available only at level 4.
+- Active skills can have a cooldown, but cooldown is optional.
+- Passive skills should use `stat_modifiers`.
+- Gameplay values must stay in `data/skills.json`, not in `systems/skills.py`.
+
+Allowed or planned triggers:
+
+- `always`
+- `on_combat_start`
+- `on_turn_start`
+- `before_player_attack`
+- `before_player_attack_after_damage_taken`
+- `after_player_attack`
+- `on_damage_taken`
+- `on_combat_end`
+
+Example active skill with cooldown:
+
+```json
+{
+  "warrior_comeback_strike": {
+    "name": "Comeback Strike",
+    "class": "warrior",
+    "type": "active",
+    "trigger": "before_player_attack_after_damage_taken",
+    "description": "Deal a stronger attack after taking damage.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.25,
+        "cooldown": 4
+      },
+      "2": {
+        "damage_multiplier": 1.35,
+        "cooldown": 4
+      },
+      "3": {
+        "damage_multiplier": 1.45,
+        "cooldown": 3
+      },
+      "4": {
+        "damage_multiplier": 1.6,
+        "cooldown": 3
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.85,
+      "cooldown": 2
+    }
+  }
+}
+```
+
+Example active skill without cooldown:
+
+```json
+{
+  "rogue_quick_cut": {
+    "name": "Quick Cut",
+    "class": "rogue",
+    "type": "active",
+    "trigger": "before_player_attack",
+    "description": "Slightly improve a basic attack.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.1
+      },
+      "2": {
+        "damage_multiplier": 1.15
+      },
+      "3": {
+        "damage_multiplier": 1.2
+      },
+      "4": {
+        "damage_multiplier": 1.25
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.4
+    }
+  }
+}
+```
+
+Example passive skill with stat modifiers:
+
+```json
+{
+  "warrior_weapon_training": {
+    "name": "Weapon Training",
+    "class": "warrior",
+    "type": "passive",
+    "trigger": "always",
+    "description": "Increase attack while the skill is learned.",
+    "levels": {
+      "1": {
+        "stat_modifiers": {
+          "attack": 1
+        }
+      },
+      "2": {
+        "stat_modifiers": {
+          "attack": 2
+        }
+      },
+      "3": {
+        "stat_modifiers": {
+          "attack": 3
+        }
+      },
+      "4": {
+        "stat_modifiers": {
+          "attack": 4
+        }
+      }
+    },
+    "enhanced": {
+      "stat_modifiers": {
+        "attack": 6
+      }
+    }
+  }
+}
+```
+
+---
+
 ## First warrior skill direction
 
 The first planned warrior skill is a simple comeback attack.

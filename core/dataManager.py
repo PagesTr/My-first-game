@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
-import random
 
 # Data files are stored in the Examples/data folder.
 DATA_DIR = Path(__file__).with_name('data')
-import json
 
 class DataManager:
     def __init__(self):

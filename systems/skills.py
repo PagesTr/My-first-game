@@ -128,11 +128,38 @@ def get_skill_values(skills_data, player, skill_id):
         levels = skill_definition.get("levels", {})
         values = levels.get(str(level))
 
-    if not values:
-        return None
-    if "damage_multiplier" not in values or "cooldown" not in values:
+    if not isinstance(values, dict):
         return None
     return values
+
+
+def get_passive_skill_stat_modifiers(skills_data, player):
+    skills_data = skills_data or {}
+    modifiers = {}
+
+    for skill_id in ensure_skills(player):
+        skill_definition = skills_data.get(skill_id)
+        if not skill_definition or skill_definition.get("type") != "passive":
+            continue
+
+        skill_values = get_skill_values(skills_data, player, skill_id)
+        if skill_values is None:
+            continue
+
+        for stat, value in skill_values.get("stat_modifiers", {}).items():
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                modifiers[stat] = modifiers.get(stat, 0) + value
+
+        level = player.get("level", 1)
+        per_level_modifiers = skill_values.get(
+            "stat_modifiers_per_character_level",
+            {},
+        )
+        for stat, value in per_level_modifiers.items():
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                modifiers[stat] = modifiers.get(stat, 0) + value * level
+
+    return modifiers
 
 
 def apply_before_action_skills(combat, actor, target, action, is_player):
@@ -157,9 +184,13 @@ def apply_before_action_skills(combat, actor, target, action, is_player):
     )
     if skill_values is None:
         return
+    if "damage_multiplier" not in skill_values:
+        return
 
     combat.pending_damage_multiplier = skill_values["damage_multiplier"]
-    cooldowns[WARRIOR_COMEBACK_STRIKE] = skill_values["cooldown"]
+    cooldown = skill_values.get("cooldown", 0)
+    if cooldown > 0:
+        cooldowns[WARRIOR_COMEBACK_STRIKE] = cooldown
     combat.log.append("Comeback Strike activated!")
 
 

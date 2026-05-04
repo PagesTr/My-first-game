@@ -8,6 +8,7 @@ from systems.skills import (
     enhance_skill,
     equip_skill,
     get_player_skill_state,
+    get_passive_skill_stat_modifiers,
     get_skill_slot_count,
     get_skill_values,
     is_skill_equipped,
@@ -253,6 +254,167 @@ def test_get_skill_values_returns_level_values():
         "damage_multiplier": 1.25,
         "cooldown": 4,
     }
+
+
+def test_get_skill_values_allows_values_without_cooldown():
+    skill_id = "active_without_cooldown"
+    player = {
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "levels": {
+                "1": {
+                    "damage_multiplier": 1.2,
+                },
+            },
+        },
+    }
+
+    values = get_skill_values(skills_data, player, skill_id)
+
+    assert values == {"damage_multiplier": 1.2}
+
+
+def test_get_skill_values_allows_passive_stat_modifiers():
+    skill_id = "passive_attack_bonus"
+    player = {
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "type": "passive",
+            "levels": {
+                "1": {
+                    "stat_modifiers": {
+                        "attack": 2,
+                    },
+                },
+            },
+        },
+    }
+
+    values = get_skill_values(skills_data, player, skill_id)
+
+    assert values == {"stat_modifiers": {"attack": 2}}
+
+
+def test_passive_skill_stat_modifiers_apply_flat_bonus():
+    skill_id = "passive_attack_bonus"
+    player = {
+        "level": 1,
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "type": "passive",
+            "levels": {
+                "1": {
+                    "stat_modifiers": {
+                        "attack": 2,
+                    },
+                },
+            },
+        },
+    }
+
+    modifiers = get_passive_skill_stat_modifiers(skills_data, player)
+
+    assert modifiers == {"attack": 2}
+
+
+def test_passive_skill_stat_modifiers_apply_per_character_level_bonus():
+    skill_id = "passive_vitality_bonus"
+    player = {
+        "level": 5,
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "type": "passive",
+            "levels": {
+                "1": {
+                    "stat_modifiers_per_character_level": {
+                        "max_hp": 2,
+                    },
+                },
+            },
+        },
+    }
+
+    modifiers = get_passive_skill_stat_modifiers(skills_data, player)
+
+    assert modifiers == {"max_hp": 10}
+
+
+def test_passive_skill_stat_modifiers_ignore_active_skills():
+    skill_id = "active_attack_bonus"
+    player = {
+        "level": 1,
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "type": "active",
+            "levels": {
+                "1": {
+                    "stat_modifiers": {
+                        "attack": 2,
+                    },
+                },
+            },
+        },
+    }
+
+    modifiers = get_passive_skill_stat_modifiers(skills_data, player)
+
+    assert modifiers == {}
+
+
+def test_get_skill_values_returns_none_when_level_values_are_missing():
+    skill_id = "missing_level_values"
+    player = {
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+    }
+    skills_data = {
+        skill_id: {
+            "levels": {},
+        },
+    }
+
+    values = get_skill_values(skills_data, player, skill_id)
+
+    assert values is None
 
 
 def test_get_skill_values_returns_enhanced_values_only_at_level_4():
