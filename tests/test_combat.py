@@ -153,3 +153,16 @@ def test_step_uses_player_auto_action_when_action_is_none(monkeypatch):
     combat.step(None)
 
     assert player["current_hp"] > 6
+
+
+def test_combat_hooks_do_not_change_attack_step_behavior(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["attack"] = 10
+    enemy = make_enemy("aggressive", current_hp=20)
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+
+    assert combat.turn_count == 1
+    assert enemy["current_hp"] < 20

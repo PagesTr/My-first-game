@@ -31,19 +31,26 @@ class CombatSystem:
 
         self.turn_count += 1
         self.log.clear()
+        self._on_turn_start()
 
         # --- Player turn ---
+        self._on_before_action(self.player, self.enemy, player_action, True)
         self._apply_action(self.player, self.enemy, player_action, is_player=True)
+        self._on_after_action(self.player, self.enemy, player_action, True)
 
         if self._check_end():
+            self._on_turn_end()
             return
 
         # --- Enemy turn (simple AI for now) ---
         enemy_action = self._enemy_ai()
 
+        self._on_before_action(self.enemy, self.player, enemy_action, False)
         self._apply_action(self.enemy, self.player, enemy_action, is_player=False)
+        self._on_after_action(self.enemy, self.player, enemy_action, False)
 
         self._check_end()
+        self._on_turn_end()
 
     # ======================
     # ACTIONS
@@ -72,6 +79,18 @@ class CombatSystem:
         if self.player["current_hp"] <= self.player["max_hp"] * 0.30:
             return "heal"
         return "attack"
+
+    def _on_turn_start(self):
+        return
+
+    def _on_before_action(self, actor, target, action, is_player):
+        return
+
+    def _on_after_action(self, actor, target, action, is_player):
+        return
+
+    def _on_turn_end(self):
+        return
 
     # ======================
     # ENEMY AI (simple)
