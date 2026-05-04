@@ -13,6 +13,90 @@ def ensure_skill_cooldowns(player):
     return player["skill_cooldowns"]
 
 
+def get_skill_slot_count(player):
+    level = player.get("level", 1)
+    if level >= 10:
+        return 3
+    if level >= 5:
+        return 2
+    return 1
+
+
+def ensure_equipped_skills(player):
+    if "equipped_skills" not in player:
+        player["equipped_skills"] = []
+    return player["equipped_skills"]
+
+
+def is_skill_equipped(player, skill_id):
+    equipped_skills = ensure_equipped_skills(player)
+    return skill_id in equipped_skills
+
+
+def learn_skill(player, skill_id):
+    skills = ensure_skills(player)
+    if skill_id in skills:
+        return False
+
+    skills[skill_id] = {"level": 1, "enhanced": False}
+    return True
+
+
+def upgrade_skill(player, skill_id):
+    skills = ensure_skills(player)
+    if skill_id not in skills:
+        return False
+
+    skill_state = get_player_skill_state(player, skill_id)
+    level = skill_state["level"]
+    if level >= 4:
+        return False
+
+    skills[skill_id]["level"] = level + 1
+    return True
+
+
+def enhance_skill(player, skill_id):
+    skills = ensure_skills(player)
+    if skill_id not in skills:
+        return False
+
+    skill_state = get_player_skill_state(player, skill_id)
+    if skill_state["level"] < 4 or skill_state["enhanced"] is True:
+        return False
+
+    skills[skill_id]["enhanced"] = True
+    return True
+
+
+def is_skill_known(player, skill_id):
+    return get_player_skill_state(player, skill_id)["level"] >= 1
+
+
+def equip_skill(player, skill_id):
+    if not is_skill_known(player, skill_id):
+        return False
+
+    equipped_skills = ensure_equipped_skills(player)
+    if skill_id in equipped_skills:
+        return True
+
+    if len(equipped_skills) >= get_skill_slot_count(player):
+        return False
+
+    equipped_skills.append(skill_id)
+    return True
+
+
+def unequip_skill(player, skill_id):
+    equipped_skills = ensure_equipped_skills(player)
+    if skill_id not in equipped_skills:
+        return False
+
+    equipped_skills.remove(skill_id)
+    return True
+
+
 def get_player_skill_state(player, skill_id):
     skills = ensure_skills(player)
     skill_state = skills.get(skill_id)
@@ -57,6 +141,8 @@ def apply_before_action_skills(combat, actor, target, action, is_player):
         or actor.get("class") != "warrior"
         or action != "attack"
         or combat.player_took_damage_since_last_action is not True
+        or is_skill_known(actor, WARRIOR_COMEBACK_STRIKE) is not True
+        or is_skill_equipped(actor, WARRIOR_COMEBACK_STRIKE) is not True
     ):
         return
 
