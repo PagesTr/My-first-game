@@ -88,7 +88,8 @@ def test_heal_restores_player_hp(monkeypatch):
     player = make_player()
     player["current_hp"] = 5
     player["healing_power"] = 20
-    enemy = make_enemy("defensive", current_hp=1)
+    enemy = make_enemy("aggressive", current_hp=20)
+    enemy["accuracy"] = 0.0
     combat = CombatSystem(player, enemy)
 
     combat.step("heal")
