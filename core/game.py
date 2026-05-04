@@ -37,6 +37,7 @@ class Game:
             self.player,
             self.data.items,
             self.data.classes,
+            self.data.skills,
         )
         self.state = "town"
 
@@ -54,7 +55,12 @@ class Game:
     def start_combat(self):
         enemy = self.spawn_enemy()
 
-        prepare_player_for_combat(self.player, self.data.items, self.data.classes)
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
         self.combat = CombatSystem(self.player, enemy, self.data.skills)
         self.state = "combat"
 
@@ -93,7 +99,12 @@ class Game:
     def continue_after_combat_result(self):
         if self.player is not None:
             tick_combat_effects(self.player)
-            prepare_player_for_combat(self.player, self.data.items, self.data.classes)
+            prepare_player_for_combat(
+                self.player,
+                self.data.items,
+                self.data.classes,
+                self.data.skills,
+            )
         self.state = "town"
         self.combat = None
         self.auto_mode = False
