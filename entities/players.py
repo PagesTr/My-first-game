@@ -18,6 +18,7 @@ def create_player(char_class, classes, items):
         },
         'inventory': create_inventory(),
         'active_effects': [],
+        'skill_cooldowns': {},
         'current_hp': 0,
     }
     # Temporary test items for buff effect validation.

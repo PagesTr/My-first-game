@@ -1,5 +1,7 @@
 import random
 
+from systems.skills import apply_before_action_skills, tick_skill_cooldowns
+
 
 class CombatSystem:
     def __init__(self, player, enemy):
@@ -11,6 +13,7 @@ class CombatSystem:
         self.winner = None
 
         self.log = []  # Useful for the UI later
+        self.pending_damage_multiplier = 1.0
 
     # ======================
     # PUBLIC API
@@ -84,12 +87,14 @@ class CombatSystem:
         return
 
     def _on_before_action(self, actor, target, action, is_player):
+        apply_before_action_skills(self, actor, target, action, is_player)
         return
 
     def _on_after_action(self, actor, target, action, is_player):
         return
 
     def _on_turn_end(self):
+        tick_skill_cooldowns(self.player)
         return
 
     # ======================
@@ -119,6 +124,7 @@ class CombatSystem:
 
         if random.random() > hit_chance:
             self.log.append("Attack dodged!")
+            self.pending_damage_multiplier = 1.0
             return 0
 
         base = attacker["attack"] - defender["defense"]
@@ -134,6 +140,9 @@ class CombatSystem:
         if random.random() < crit_chance:
             base = max(1, int(base * crit_damage))
             self.log.append("Critical hit!")
+
+        base = max(1, int(base * self.pending_damage_multiplier))
+        self.pending_damage_multiplier = 1.0
 
         return base
 
