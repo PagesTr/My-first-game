@@ -1,11 +1,6 @@
-# Project Roadmap
+# Roadmap
 
-This file tracks planned improvements and deferred ideas.
-It should stay practical, but now also aligned with the global block-based roadmap.
-
----
-
-# Global Development Strategy
+## Development Strategy
 
 The project evolves in small, stable, and incremental blocks.
 
@@ -18,8 +13,6 @@ Each block must:
 - prepare the next block without overengineering.
 
 ---
-
-# Current Block
 
 ## Block 1 — Combat refinement
 
@@ -44,121 +37,122 @@ Avoid:
 
 ---
 
-# Future Blocks
-
 ## Block 2 — Zones system
 
-- introduce zones
-- link enemies to zones
-- define zone identity
+Objective:
+
+- introduce zones as the main game structure.
+
+Scope:
+
+- define zones in data;
+- link enemies to zones;
+- simple zone selection.
+
+Avoid:
+
+- complex navigation;
+- full world map.
+
+---
 
 ## Block 3 — Dungeons
 
-- sequential fights
-- boss per zone
+Objective:
+
+- add structured challenges per zone.
+
+Scope:
+
+- sequential fights;
+- simple boss;
+- reward system.
+
+Avoid:
+
+- complex dungeon layouts;
+- branching paths.
+
+---
 
 ## Block 4 — Skills system
 
-- active and passive skills
-- class identity
+Objective:
+
+- introduce class identity through skills.
+
+Scope:
+
+- passive stat modifiers;
+- simple triggered active effects;
+- skill slots.
+
+Avoid:
+
+- complex cooldown systems;
+- full skill trees.
+
+---
 
 ## Block 5 — Idle system
 
-- offline progression
-- balance with active play
+Objective:
+
+- allow passive progression.
+
+Scope:
+
+- offline reward calculation;
+- zone-based idle activity.
+
+Constraint:
+
+- active play must remain more rewarding.
+
+---
 
 ## Block 6 — Jobs and gathering
 
-- zone-based professions
+Objective:
+
+- add resource collection systems.
+
+Scope:
+
+- zone-based jobs;
+- simple progression.
+
+---
 
 ## Block 7 — Companions
 
-- multiple characters
-- specialization
+Objective:
+
+- manage multiple characters.
+
+Scope:
+
+- recruitment;
+- specialization;
+- multiple activity assignments.
+
+Avoid:
+
+- team combat at this stage.
 
 ---
 
-# Detailed Systems (from original roadmap)
+## Long-Term Goals
 
-## Inventory and items
-
-- Remove temporary test items from the starting inventory when another acquisition method exists.
-- Decide how buff consumables become available.
-- Add a proper value and selling system for resources.
-- Improve item tooltips.
-
-## Leveling and progression
-
-- Keep leveling simple before adding complexity.
-- Improve level-up rewards.
-- Add clear feedback on level-up.
-- Review XP curve after zones are added.
-
-## Active and passive skills
-
-- Add a generic skill system (Block 4).
-- Active skills during combat.
-- Passive skills modifying stats.
-- Decide unlocking method.
-- Reuse temporary effects system.
-
-## Professions and crafting jobs
-
-- Add professions after resources are useful.
-- Keep first version simple.
-
-## Crafting and upgrades
-
-- Stabilize Craft V1.
-- Keep crafting separate from loot.
-
-## Economy and shops
-
-- Add selling system first.
-- Add shops later.
-
-## Quests and objectives
-
-- Add simple objectives.
-- Use quests to introduce systems.
-
-## Zones and exploration
-
-- Expand zones (Block 2).
-- Add identity and content per zone.
-
-## Temporary effects
-
-- Display effects in combat.
-- Add more effect types later.
-
-## Loot and resources
-
-- Balance drops.
-- Give resources a purpose.
-
-## Consumables
-
-- Add new consumables only when supported.
-
-## UI
-
-- Improve readability.
-- Add skill and profession UI later.
-
-## Save system
-
-- Add save/load later.
-- Keep JSON format.
-
-## Testing and tools
-
-- Maintain pytest coverage.
-- Add tests with each new system.
+- team-based combat;
+- advanced skill trees;
+- deeper dungeon mechanics;
+- economy and crafting depth;
+- balancing idle vs active gameplay.
 
 ---
 
-# Next Step
+## Next Step
 
 Focus on:
 
@@ -168,7 +162,7 @@ Block 1 — Combat refinement
 
 Specifically:
 
-- enemy behavior
-- AI improvement
-- combat stability
-- first tests
+- add enemy behavior;
+- improve enemy AI;
+- ensure combat remains stable;
+- add first combat tests.
