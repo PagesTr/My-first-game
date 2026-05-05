@@ -1,5 +1,6 @@
 import pygame
 
+from systems.stats import prepare_player_for_combat
 from systems.skills import (
     equip_skill,
     get_available_class_skills,
@@ -64,6 +65,12 @@ class SkillsScreen:
                     return
                 if learn_or_upgrade_skill(player, skill_id):
                     spend_skill_point(player)
+                    prepare_player_for_combat(
+                        self.game.player,
+                        self.game.data.items,
+                        self.game.data.classes,
+                        self.game.data.skills,
+                    )
                 return
 
     def draw(self, screen):
