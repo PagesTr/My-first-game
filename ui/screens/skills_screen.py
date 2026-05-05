@@ -65,12 +65,20 @@ class SkillsScreen:
                     return
                 if learn_or_upgrade_skill(player, skill_id):
                     spend_skill_point(player)
+                    previous_max_hp = self.game.player.get("max_hp", 0)
                     prepare_player_for_combat(
                         self.game.player,
                         self.game.data.items,
                         self.game.data.classes,
                         self.game.data.skills,
                     )
+                    new_max_hp = self.game.player.get("max_hp", 0)
+                    max_hp_gain = new_max_hp - previous_max_hp
+                    if max_hp_gain > 0:
+                        self.game.player["current_hp"] = min(
+                            new_max_hp,
+                            self.game.player.get("current_hp", 0) + max_hp_gain,
+                        )
                 return
 
     def draw(self, screen):
