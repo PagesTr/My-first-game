@@ -5,6 +5,7 @@ from systems.skills import (
     equip_skill,
     get_available_class_skills,
     get_player_skill_state,
+    get_skill_slot_count,
     get_skill_type,
     is_skill_equipped,
     learn_or_upgrade_skill,
@@ -104,9 +105,39 @@ class SkillsScreen:
         screen.blit(points, (62, 100))
         screen.blit(enhanced_points, (62, 126))
 
+        available_skills = get_available_class_skills(self.game.data.skills, player)
+        active_skills = [
+            (skill_id, skill_data)
+            for skill_id, skill_data in available_skills
+            if get_skill_type(self.game.data.skills, skill_id) == "active"
+        ]
+        passive_skills = [
+            (skill_id, skill_data)
+            for skill_id, skill_data in available_skills
+            if get_skill_type(self.game.data.skills, skill_id) == "passive"
+        ]
+
+        used_slots = len(player.get("equipped_skills", []))
+        slot_count = get_skill_slot_count(player)
+
         y = 170
-        for skill_id, skill_data in get_available_class_skills(self.game.data.skills, player):
+        y = self._draw_section_header(
+            screen,
+            f"Active skills ({used_slots}/{slot_count} slots)",
+            y,
+        )
+        for skill_id, skill_data in active_skills:
             y = self._draw_skill_row(screen, skill_id, skill_data, y)
+
+        y += 12
+        y = self._draw_section_header(screen, "Passive skills", y)
+        for skill_id, skill_data in passive_skills:
+            y = self._draw_skill_row(screen, skill_id, skill_data, y)
+
+    def _draw_section_header(self, screen, text, y):
+        label = self.option_font.render(text, True, (245, 245, 245))
+        screen.blit(label, (60, y))
+        return y + 34
 
     def _draw_skill_row(self, screen, skill_id, skill_data, y):
         player = self.game.player or {}

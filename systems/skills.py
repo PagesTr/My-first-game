@@ -1,4 +1,5 @@
 WARRIOR_COMEBACK_STRIKE = "warrior_comeback_strike"
+WARRIOR_EXECUTION_STRIKE = "warrior_execution_strike"
 
 
 def ensure_skills(player):
@@ -206,12 +207,24 @@ def apply_before_action_skills(combat, actor, target, action, is_player):
         is_player is not True
         or actor.get("class") != "warrior"
         or action != "attack"
-        or combat.player_took_damage_since_last_action is not True
-        or is_skill_known(actor, WARRIOR_COMEBACK_STRIKE) is not True
-        or is_skill_equipped(actor, WARRIOR_COMEBACK_STRIKE) is not True
     ):
         return
 
+    if (
+        combat.player_took_damage_since_last_action is True
+        and is_skill_known(actor, WARRIOR_COMEBACK_STRIKE) is True
+        and is_skill_equipped(actor, WARRIOR_COMEBACK_STRIKE) is True
+    ):
+        apply_comeback_strike(combat, actor)
+
+    if (
+        is_skill_known(actor, WARRIOR_EXECUTION_STRIKE) is True
+        and is_skill_equipped(actor, WARRIOR_EXECUTION_STRIKE) is True
+    ):
+        apply_execution_strike(combat, actor, target)
+
+
+def apply_comeback_strike(combat, actor):
     cooldowns = ensure_skill_cooldowns(actor)
     if cooldowns.get(WARRIOR_COMEBACK_STRIKE, 0) > 0:
         return
@@ -226,11 +239,36 @@ def apply_before_action_skills(combat, actor, target, action, is_player):
     if "damage_multiplier" not in skill_values:
         return
 
-    combat.pending_damage_multiplier = skill_values["damage_multiplier"]
+    combat.pending_damage_multiplier *= skill_values["damage_multiplier"]
     cooldown = skill_values.get("cooldown", 0)
     if cooldown > 0:
         cooldowns[WARRIOR_COMEBACK_STRIKE] = cooldown
     combat.log.append("Comeback Strike activated!")
+
+
+def apply_execution_strike(combat, actor, target):
+    skill_values = get_skill_values(
+        combat.skills_data,
+        actor,
+        WARRIOR_EXECUTION_STRIKE,
+    )
+    if skill_values is None:
+        return
+    if "damage_multiplier" not in skill_values:
+        return
+    if "enemy_hp_threshold" not in skill_values:
+        return
+
+    max_hp = target.get("max_hp", 0)
+    if max_hp <= 0:
+        return
+
+    enemy_hp_ratio = target["current_hp"] / max_hp
+    if enemy_hp_ratio > skill_values["enemy_hp_threshold"]:
+        return
+
+    combat.pending_damage_multiplier *= skill_values["damage_multiplier"]
+    combat.log.append("Execution Strike activated!")
 
 
 def tick_skill_cooldowns(player):

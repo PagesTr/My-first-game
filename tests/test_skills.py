@@ -1,6 +1,7 @@
 from systems.combat import CombatSystem
 from systems.skills import (
     WARRIOR_COMEBACK_STRIKE,
+    WARRIOR_EXECUTION_STRIKE,
     apply_before_action_skills,
     ensure_equipped_skills,
     ensure_skill_cooldowns,
@@ -41,6 +42,18 @@ def make_skills_data():
             "enhanced": {
                 "damage_multiplier": 1.85,
                 "cooldown": 2,
+            },
+        },
+        WARRIOR_EXECUTION_STRIKE: {
+            "levels": {
+                "1": {
+                    "enemy_hp_threshold": 0.25,
+                    "damage_multiplier": 1.25,
+                },
+            },
+            "enhanced": {
+                "enemy_hp_threshold": 0.45,
+                "damage_multiplier": 1.75,
             },
         },
     }
@@ -589,6 +602,63 @@ def test_warrior_comeback_strike_respects_cooldown():
     apply_before_action_skills(combat, player, enemy, "attack", True)
 
     assert combat.pending_damage_multiplier == 1.0
+
+
+def test_execution_strike_triggers_when_enemy_hp_is_low():
+    player = make_player(level=0)
+    learn_skill(player, WARRIOR_EXECUTION_STRIKE)
+    equip_skill(player, WARRIOR_EXECUTION_STRIKE)
+    enemy = make_enemy()
+    enemy["current_hp"] = 5
+    combat = CombatSystem(player, enemy, make_skills_data())
+
+    apply_before_action_skills(combat, player, enemy, "attack", True)
+
+    assert combat.pending_damage_multiplier == 1.25
+    assert "Execution Strike activated!" in combat.log
+
+
+def test_execution_strike_does_not_trigger_when_enemy_hp_is_high():
+    player = make_player(level=0)
+    learn_skill(player, WARRIOR_EXECUTION_STRIKE)
+    equip_skill(player, WARRIOR_EXECUTION_STRIKE)
+    enemy = make_enemy()
+    enemy["current_hp"] = 6
+    combat = CombatSystem(player, enemy, make_skills_data())
+
+    apply_before_action_skills(combat, player, enemy, "attack", True)
+
+    assert combat.pending_damage_multiplier == 1.0
+
+
+def test_execution_strike_does_not_require_cooldown():
+    player = make_player(level=0)
+    learn_skill(player, WARRIOR_EXECUTION_STRIKE)
+    equip_skill(player, WARRIOR_EXECUTION_STRIKE)
+    enemy = make_enemy()
+    enemy["current_hp"] = 5
+    combat = CombatSystem(player, enemy, make_skills_data())
+
+    apply_before_action_skills(combat, player, enemy, "attack", True)
+
+    assert WARRIOR_EXECUTION_STRIKE not in player["skill_cooldowns"]
+
+
+def test_active_damage_multipliers_can_stack():
+    player = make_player(level=0)
+    player["level"] = 5
+    learn_skill(player, WARRIOR_COMEBACK_STRIKE)
+    learn_skill(player, WARRIOR_EXECUTION_STRIKE)
+    equip_skill(player, WARRIOR_COMEBACK_STRIKE)
+    equip_skill(player, WARRIOR_EXECUTION_STRIKE)
+    enemy = make_enemy()
+    enemy["current_hp"] = 5
+    combat = CombatSystem(player, enemy, make_skills_data())
+    combat.player_took_damage_since_last_action = True
+
+    apply_before_action_skills(combat, player, enemy, "attack", True)
+
+    assert combat.pending_damage_multiplier == 1.5625
 
 
 def test_tick_skill_cooldowns_decreases_active_cooldown():
