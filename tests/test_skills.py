@@ -481,6 +481,36 @@ def test_passive_skill_stat_modifiers_ignore_active_skills():
     assert modifiers == {}
 
 
+def test_passive_skill_stat_modifiers_do_not_require_equipped_skill():
+    skill_id = "passive_attack_bonus"
+    player = {
+        "level": 1,
+        "skills": {
+            skill_id: {
+                "level": 1,
+                "enhanced": False,
+            },
+        },
+        "equipped_skills": [],
+    }
+    skills_data = {
+        skill_id: {
+            "type": "passive",
+            "levels": {
+                "1": {
+                    "stat_modifiers": {
+                        "attack": 2,
+                    },
+                },
+            },
+        },
+    }
+
+    modifiers = get_passive_skill_stat_modifiers(skills_data, player)
+
+    assert modifiers == {"attack": 2}
+
+
 def test_get_skill_values_returns_none_when_level_values_are_missing():
     skill_id = "missing_level_values"
     player = {

@@ -180,7 +180,10 @@ def get_passive_skill_stat_modifiers(skills_data, player):
         if skill_values is None:
             continue
 
-        for stat, value in skill_values.get("stat_modifiers", {}).items():
+        flat_modifiers = skill_values.get("stat_modifiers", {})
+        if not isinstance(flat_modifiers, dict):
+            flat_modifiers = {}
+        for stat, value in flat_modifiers.items():
             if isinstance(value, (int, float)) and not isinstance(value, bool):
                 modifiers[stat] = modifiers.get(stat, 0) + value
 
@@ -189,6 +192,8 @@ def get_passive_skill_stat_modifiers(skills_data, player):
             "stat_modifiers_per_character_level",
             {},
         )
+        if not isinstance(per_level_modifiers, dict):
+            per_level_modifiers = {}
         for stat, value in per_level_modifiers.items():
             if isinstance(value, (int, float)) and not isinstance(value, bool):
                 modifiers[stat] = modifiers.get(stat, 0) + value * level
