@@ -37,6 +37,7 @@ class Game:
             self.player,
             self.data.items,
             self.data.classes,
+            self.data.skills,
         )
         self.state = "town"
 
@@ -54,15 +55,17 @@ class Game:
     def start_combat(self):
         enemy = self.spawn_enemy()
 
-        prepare_player_for_combat(self.player, self.data.items, self.data.classes)
-        self.combat = CombatSystem(self.player, enemy)
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.combat = CombatSystem(self.player, enemy, self.data.skills)
         self.state = "combat"
 
     def update_combat(self, action=None):
-        if self.auto_mode:
-            action = "attack"
-
-        if action and self.combat:
+        if self.combat and (action is not None or self.auto_mode):
             self.combat.step(action)
 
         if self.combat and self.combat.is_over:
@@ -96,7 +99,12 @@ class Game:
     def continue_after_combat_result(self):
         if self.player is not None:
             tick_combat_effects(self.player)
-            prepare_player_for_combat(self.player, self.data.items, self.data.classes)
+            prepare_player_for_combat(
+                self.player,
+                self.data.items,
+                self.data.classes,
+                self.data.skills,
+            )
         self.state = "town"
         self.combat = None
         self.auto_mode = False

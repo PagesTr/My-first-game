@@ -57,6 +57,11 @@ class MenuScreen:
             "Craft",
             "Use resources",
         )
+        self.skills_button = MenuButton(
+            (80, 502, 300, 72),
+            "Skills",
+            "Learn and equip skills",
+        )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
 
     def _build_class_buttons(self):
@@ -121,6 +126,10 @@ class MenuScreen:
                 self.game.state = "crafting"
                 return
 
+            if self.skills_button.is_clicked(pos):
+                self.game.state = "skills"
+                return
+
         if self.game.state == "zone_select":
             if self.zone_back_button.is_clicked(pos):
                 self.game.state = "town"
@@ -167,6 +176,7 @@ class MenuScreen:
         self.inventory_button.draw(screen, self.option_font, self.body_font)
         self.merchant_button.draw(screen, self.option_font, self.body_font)
         self.crafting_button.draw(screen, self.option_font, self.body_font)
+        self.skills_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
 
     def _draw_town_player_panel(self, screen):

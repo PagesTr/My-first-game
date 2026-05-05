@@ -212,6 +212,7 @@ class InventoryScreen:
                         self.game.player,
                         self.game.data.items,
                         self.game.data.classes,
+                        self.game.data.skills,
                     )
             else:
                 action_done = equip_item(
@@ -225,6 +226,7 @@ class InventoryScreen:
                         self.game.player,
                         self.game.data.items,
                         self.game.data.classes,
+                        self.game.data.skills,
                     )
         elif source_type == "equipment":
             action_done = self._unequip_item(source_key)
@@ -260,6 +262,7 @@ class InventoryScreen:
                 self.game.player,
                 self.game.data.items,
                 self.game.data.classes,
+                self.game.data.skills,
             )
         return unequipped
 
