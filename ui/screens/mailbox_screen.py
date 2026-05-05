@@ -48,7 +48,7 @@ class MailboxScreen:
         screen.blit(title, (60, 48))
         self.back_button.draw(screen, self.option_font)
 
-        reports = self.game.combat_reports
+        reports = getattr(self.game, "combat_reports", [])
         if not reports:
             empty_text = self.body_font.render(
                 "No combat reports yet.",

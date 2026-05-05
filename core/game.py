@@ -22,6 +22,7 @@ class Game:
         self.auto_mode = False
         self.combat = None
         self.last_combat_result = None
+        self.combat_reports = []
 
     def select_class(self, class_key):
         if class_key not in self.data.classes:
