@@ -84,7 +84,31 @@ class ResultScreen:
             no_loot_text = self.font.render("Aucun loot", True, (200, 200, 200))
             screen.blit(no_loot_text, (300, loot_y + 35))
 
+        self._draw_combat_report_mail(screen, result)
         self.continue_btn.draw(screen, self.font)
+
+    def _draw_combat_report_mail(self, screen, result):
+        mail = result.get("combat_report_mail")
+        if not mail:
+            return
+
+        small_font = pygame.font.Font(None, 22)
+        y = 390
+        title = small_font.render(mail.get("title", ""), True, (220, 228, 235))
+        summary = small_font.render(mail.get("summary", ""), True, (190, 200, 205))
+        screen.blit(title, (300, y))
+        screen.blit(summary, (300, y + 22))
+
+        body_lines = mail.get("body", "").splitlines()
+        if "Combat log:" in body_lines:
+            log_start = body_lines.index("Combat log:") + 1
+            log_lines = body_lines[log_start:][-3:]
+        else:
+            log_lines = body_lines[-3:]
+
+        for index, line in enumerate(log_lines):
+            text = small_font.render(line, True, (190, 200, 205))
+            screen.blit(text, (300, y + 48 + index * 20))
 
     def _format_drop(self, drop):
         item_id = drop["item"]

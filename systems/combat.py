@@ -14,6 +14,7 @@ class CombatSystem:
         self.winner = None
 
         self.log = []  # Useful for the UI later
+        self.history = []
         self.pending_damage_multiplier = 1.0
         self.player_took_damage_since_last_action = False
 
@@ -61,6 +62,10 @@ class CombatSystem:
     # ACTIONS
     # ======================
 
+    def _add_log(self, message):
+        self.log.append(message)
+        self.history.append(f"Turn {self.turn_count}: {message}")
+
     def _apply_action(self, attacker, defender, action, is_player):
         actor_name = "Player" if is_player else "Enemy"
 
@@ -70,7 +75,7 @@ class CombatSystem:
                 defender["current_hp"] = max(0, defender["current_hp"] - dmg)
                 if is_player is False and defender is self.player:
                     self.player_took_damage_since_last_action = True
-                self.log.append(f"{actor_name} attacks -> {dmg} damage")
+                self._add_log(f"{actor_name} attacks -> {dmg} damage")
 
         elif action == "heal":
             heal = int(attacker.get("healing_power", 10))
@@ -78,7 +83,7 @@ class CombatSystem:
                 attacker["max_hp"], attacker["current_hp"] + heal
             )
 
-            self.log.append(f"{actor_name} heals -> +{heal} HP")
+            self._add_log(f"{actor_name} heals -> +{heal} HP")
 
         # Extensible here (skills, items, etc.)
 
@@ -91,7 +96,10 @@ class CombatSystem:
         return
 
     def _on_before_action(self, actor, target, action, is_player):
+        log_start = len(self.log)
         apply_before_action_skills(self, actor, target, action, is_player)
+        for message in self.log[log_start:]:
+            self.history.append(f"Turn {self.turn_count}: {message}")
         return
 
     def _on_after_action(self, actor, target, action, is_player):
@@ -129,7 +137,7 @@ class CombatSystem:
         hit_chance = max(0.05, min(0.95, hit_chance))
 
         if random.random() > hit_chance:
-            self.log.append("Attack dodged!")
+            self._add_log("Attack dodged!")
             self.pending_damage_multiplier = 1.0
             return 0
 
@@ -139,13 +147,13 @@ class CombatSystem:
         block_chance = defender.get("block_chance", 0.0)
         if random.random() < block_chance:
             base = max(1, int(base / 2))
-            self.log.append("Attack blocked!")
+            self._add_log("Attack blocked!")
 
         crit_chance = attacker.get("crit_chance", 0.1)
         crit_damage = attacker.get("crit_damage", 2.0)
         if random.random() < crit_chance:
             base = max(1, int(base * crit_damage))
-            self.log.append("Critical hit!")
+            self._add_log("Critical hit!")
 
         base = max(1, int(base * self.pending_damage_multiplier))
         self.pending_damage_multiplier = 1.0
@@ -160,13 +168,13 @@ class CombatSystem:
         if self.player["current_hp"] <= 0:
             self.is_over = True
             self.winner = "enemy"
-            self.log.append("Defeat")
+            self._add_log("Defeat")
             return True
 
         if self.enemy["current_hp"] <= 0:
             self.is_over = True
             self.winner = "player"
-            self.log.append("Victory")
+            self._add_log("Victory")
             return True
 
         return False
@@ -183,4 +191,12 @@ class CombatSystem:
             "log": self.log,
             "is_over": self.is_over,
             "winner": self.winner,
+        }
+
+    def get_combat_report(self):
+        return {
+            "enemy_name": self.enemy.get("name", "Unknown Enemy"),
+            "turns": self.turn_count,
+            "winner": self.winner,
+            "history": list(self.history),
         }

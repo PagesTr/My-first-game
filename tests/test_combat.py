@@ -166,3 +166,34 @@ def test_combat_hooks_do_not_change_attack_step_behavior(monkeypatch):
 
     assert combat.turn_count == 1
     assert enemy["current_hp"] < 20
+
+
+def test_combat_history_keeps_logs_across_turns(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    player["attack"] = 2
+    enemy = make_enemy("aggressive", current_hp=20)
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+    combat.step("attack")
+
+    assert len(combat.history) > len(combat.log)
+    assert any(line.startswith("Turn 1:") for line in combat.history)
+    assert any(line.startswith("Turn 2:") for line in combat.history)
+
+
+def test_get_combat_report_returns_expected_fields(monkeypatch):
+    monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
+    player = make_player()
+    enemy = make_enemy("aggressive", current_hp=20)
+    enemy["name"] = "Training Dummy"
+    combat = CombatSystem(player, enemy)
+
+    combat.step("attack")
+    report = combat.get_combat_report()
+
+    assert report["enemy_name"] == "Training Dummy"
+    assert report["turns"] == 1
+    assert report["winner"] == combat.winner
+    assert report["history"] == combat.history
