@@ -9,11 +9,16 @@ from systems.skills import (
     equip_skill,
     get_player_skill_state,
     get_passive_skill_stat_modifiers,
+    get_available_class_skills,
     get_skill_slot_count,
+    get_skill_type,
     get_skill_values,
     is_skill_equipped,
     is_skill_known,
     learn_skill,
+    learn_or_upgrade_skill,
+    refund_skill_point,
+    spend_skill_point,
     tick_skill_cooldowns,
     unequip_skill,
     upgrade_skill,
@@ -134,6 +139,86 @@ def test_get_skill_slot_count_returns_three_slots_at_level_ten():
     player = {"level": 10}
 
     assert get_skill_slot_count(player) == 3
+
+
+def test_get_available_class_skills_returns_only_player_class_skills():
+    skills_data = {
+        "warrior_skill": {
+            "class": "warrior",
+            "type": "active",
+        },
+        "mage_skill": {
+            "class": "mage",
+            "type": "active",
+        },
+    }
+    player = {"class": "warrior"}
+
+    available_skills = get_available_class_skills(skills_data, player)
+
+    assert available_skills == [("warrior_skill", skills_data["warrior_skill"])]
+
+
+def test_get_skill_type_defaults_to_active():
+    skills_data = {
+        "unknown_type_skill": {},
+    }
+
+    assert get_skill_type(skills_data, "unknown_type_skill") == "active"
+
+
+def test_spend_skill_point_returns_true_when_available():
+    player = {"skill_points": 1}
+
+    spent = spend_skill_point(player)
+
+    assert spent is True
+    assert player["skill_points"] == 0
+
+
+def test_spend_skill_point_returns_false_when_empty():
+    player = {"skill_points": 0}
+
+    spent = spend_skill_point(player)
+
+    assert spent is False
+    assert player["skill_points"] == 0
+
+
+def test_refund_skill_point_adds_one_point():
+    player = {"skill_points": 0}
+
+    refunded = refund_skill_point(player)
+
+    assert refunded is True
+    assert player["skill_points"] == 1
+
+
+def test_learn_or_upgrade_skill_learns_unknown_skill():
+    player = make_player(level=0)
+
+    progressed = learn_or_upgrade_skill(player, WARRIOR_COMEBACK_STRIKE)
+
+    assert progressed is True
+    assert player["skills"][WARRIOR_COMEBACK_STRIKE]["level"] == 1
+
+
+def test_learn_or_upgrade_skill_upgrades_known_skill():
+    player = make_player(level=1)
+
+    progressed = learn_or_upgrade_skill(player, WARRIOR_COMEBACK_STRIKE)
+
+    assert progressed is True
+    assert player["skills"][WARRIOR_COMEBACK_STRIKE]["level"] == 2
+
+
+def test_learn_or_upgrade_skill_returns_false_at_level_four():
+    player = make_player(level=4)
+
+    progressed = learn_or_upgrade_skill(player, WARRIOR_COMEBACK_STRIKE)
+
+    assert progressed is False
+    assert player["skills"][WARRIOR_COMEBACK_STRIKE]["level"] == 4
 
 
 def test_learn_skill_adds_level_one_skill():

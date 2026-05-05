@@ -33,6 +33,40 @@ def is_skill_equipped(player, skill_id):
     return skill_id in equipped_skills
 
 
+def get_available_class_skills(skills_data, player):
+    return [
+        (skill_id, skill_data)
+        for skill_id, skill_data in (skills_data or {}).items()
+        if skill_data.get("class") == player.get("class")
+    ]
+
+
+def get_skill_type(skills_data, skill_id):
+    return (skills_data or {}).get(skill_id, {}).get("type", "active")
+
+
+def spend_skill_point(player):
+    if player.get("skill_points", 0) <= 0:
+        return False
+
+    player["skill_points"] -= 1
+    return True
+
+
+def refund_skill_point(player):
+    player["skill_points"] = player.get("skill_points", 0) + 1
+    return True
+
+
+def learn_or_upgrade_skill(player, skill_id):
+    skill_state = get_player_skill_state(player, skill_id)
+    if skill_state["level"] == 0:
+        return learn_skill(player, skill_id)
+    if skill_state["level"] < 4:
+        return upgrade_skill(player, skill_id)
+    return False
+
+
 def learn_skill(player, skill_id):
     skills = ensure_skills(player)
     if skill_id in skills:
