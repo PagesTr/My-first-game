@@ -25,8 +25,15 @@ class MailboxScreen:
         self.back_button = Button((620, 48, 120, 48), "Back")
         self.mail_rows = []
         self.selected_mail_index = 0
+        self.scroll_offset = 0
 
     def handle_event(self, event):
+        if event.type == pygame.MOUSEWHEEL:
+            mails = getattr(self.game, "mailbox", [])
+            max_offset = max(0, len(mails) - self._get_visible_mail_count())
+            self.scroll_offset = max(0, min(max_offset, self.scroll_offset - event.y))
+            return
+
         if event.type != pygame.MOUSEBUTTONDOWN:
             return
 
@@ -55,13 +62,28 @@ class MailboxScreen:
             return
 
         self.selected_mail_index = min(self.selected_mail_index, len(mails) - 1)
+        self.scroll_offset = min(
+            self.scroll_offset, max(0, len(mails) - self._get_visible_mail_count())
+        )
 
+        visible_count = self._get_visible_mail_count()
+        visible_mails = mails[self.scroll_offset:self.scroll_offset + visible_count]
         y = 120
-        for index, mail in enumerate(mails[:8]):
-            self._draw_mail_row(screen, index, mail, y)
+        for visible_index, mail in enumerate(visible_mails):
+            mail_index = self.scroll_offset + visible_index
+            self._draw_mail_row(screen, mail_index, mail, y)
             y += 76
 
+        if len(mails) > visible_count:
+            help_text = self.body_font.render(
+                "Mouse wheel to scroll", True, (190, 200, 205)
+            )
+            screen.blit(help_text, (60, 570))
+
         self._draw_mail_detail(screen, mails[self.selected_mail_index])
+
+    def _get_visible_mail_count(self):
+        return 6
 
     def _draw_mail_row(self, screen, index, mail, y):
         rect = pygame.Rect(60, y, 300, 64)
