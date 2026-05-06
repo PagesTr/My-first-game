@@ -5,7 +5,11 @@ from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
-from systems.inventory import add_stackable_item, add_unique_item
+from systems.inventory import (
+    claim_all_pending_drops,
+    claim_pending_drop,
+    swap_pending_drop_with_inventory_slot,
+)
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
@@ -120,59 +124,29 @@ class Game:
         if self.last_combat_result is None or self.player is None:
             return False
 
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
         inventory_result = self.last_combat_result.get("inventory_result")
         if not isinstance(inventory_result, dict):
             return False
 
-        pending = inventory_result.get("pending")
-        if not isinstance(pending, list):
-            return False
-        if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
-            return False
-
-        drop = pending[drop_index]
-        kind = drop.get("kind")
-        item_id = drop["item"]
-        if kind == "stackable":
-            added = add_stackable_item(
-                self.player["inventory"],
-                item_id,
-                drop.get("quantity", 1),
-            )
-        elif kind == "unique":
-            added = add_unique_item(self.player["inventory"], drop.copy())
-        else:
-            added = False
-
-        if added:
-            claimed_drop = pending.pop(drop_index)
-            inventory_result.setdefault("added", []).append(claimed_drop)
-            return True
-
-        failed = inventory_result.setdefault("failed", [])
-        if drop not in failed:
-            failed.append(drop)
-        return False
+        return claim_pending_drop(inventory, inventory_result, drop_index)
 
     def try_claim_all_combat_drops(self):
         if self.last_combat_result is None or self.player is None:
             return False
 
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
         inventory_result = self.last_combat_result.get("inventory_result")
         if not isinstance(inventory_result, dict):
             return False
 
-        pending = inventory_result.get("pending")
-        if not isinstance(pending, list):
-            return True
-
-        index = 0
-        while index < len(pending):
-            if self.try_claim_combat_drop(index):
-                continue
-            index += 1
-
-        return len(pending) == 0
+        return claim_all_pending_drops(inventory, inventory_result)
 
     def replace_inventory_item_with_pending_drop(self, drop_index, inventory_slot_index):
         if self.player is None or self.last_combat_result is None:
@@ -197,35 +171,12 @@ class Game:
         if not isinstance(inventory_result, dict):
             return False
 
-        pending = inventory_result.get("pending")
-        if not isinstance(pending, list):
-            return False
-
-        if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
-            return False
-
-        drop = pending[drop_index]
-        item_id = drop["item"]
-        kind = drop.get("kind")
-        if kind == "stackable":
-            replacement = {
-                "kind": "stackable",
-                "item": item_id,
-                "quantity": drop.get("quantity", 1),
-            }
-        elif kind == "unique":
-            replacement = drop.copy()
-            replacement["kind"] = "unique"
-        else:
-            return False
-
-        previous_slot = slots[inventory_slot_index]
-        slots[inventory_slot_index] = replacement
-        claimed_drop = pending.pop(drop_index)
-        if previous_slot is not None:
-            pending.append(previous_slot)
-        inventory_result.setdefault("added", []).append(claimed_drop)
-        return True
+        return swap_pending_drop_with_inventory_slot(
+            inventory,
+            inventory_result,
+            drop_index,
+            inventory_slot_index,
+        )
 
     def spawn_enemy(self):
         if self.selected_zone:
