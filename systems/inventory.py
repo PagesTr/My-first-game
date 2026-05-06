@@ -194,6 +194,27 @@ def swap_pending_drop_with_inventory_slot(
     return True
 
 
+def move_inventory_slot_to_pending(inventory, inventory_result, slot_index):
+    if not _is_inventory_valid(inventory):
+        return False
+    if not isinstance(inventory_result, dict):
+        return False
+
+    pending = inventory_result.get("pending")
+    if not isinstance(pending, list):
+        return False
+    if not is_valid_slot(inventory, slot_index):
+        return False
+
+    slot = inventory["slots"][slot_index]
+    if slot is None:
+        return False
+
+    pending.append(slot.copy())
+    inventory["slots"][slot_index] = None
+    return True
+
+
 def use_consumable_item(player, inventory, slot_index, items):
     if not is_valid_slot(inventory, slot_index):
         return False

@@ -83,9 +83,21 @@ class ResultScreen:
                 return
 
             if event.button == 1:
-                if self.replacement_mode and self.selected_pending_drop_index is not None:
+                if self.replacement_mode:
                     for slot_rect, slot_index, _slot in self.inventory_slot_rects:
                         if slot_rect.collidepoint(event.pos):
+                            if self.selected_pending_drop_index is None:
+                                moved = self.game.move_inventory_item_to_pending_loot(
+                                    slot_index
+                                )
+                                if moved:
+                                    self.loot_message = (
+                                        "Objet déplacé vers le butin temporaire."
+                                    )
+                                else:
+                                    self.loot_message = "Déplacement impossible."
+                                return
+
                             replaced = self.game.replace_inventory_item_with_pending_drop(
                                 self.selected_pending_drop_index,
                                 slot_index,
@@ -165,6 +177,7 @@ class ResultScreen:
         self._draw_loot_section(screen, loot_rect, drops)
         if self.replacement_mode:
             self._draw_inventory_replacement_grid(screen)
+            self._draw_replacement_instructions(screen)
         self._draw_loot_tooltip(screen)
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
@@ -368,6 +381,18 @@ class ResultScreen:
                 screen.blit(pygame.transform.scale(icon, (24, 24)), icon_rect)
             else:
                 self._draw_small_icon_fallback(screen, icon_rect)
+
+    def _draw_replacement_instructions(self, screen):
+        lines = [
+            "Clique un objet de l'inventaire pour le déplacer vers le butin.",
+            "Ou sélectionne un butin puis un slot pour échanger.",
+        ]
+        y = 522
+        for line in lines:
+            text = self.small_font.render(line, True, PALETTE["muted"])
+            text_rect = text.get_rect(center=(400, y))
+            screen.blit(text, text_rect)
+            y += 20
 
     def _draw_inventory_tooltip(self, screen):
         if not self.replacement_mode:

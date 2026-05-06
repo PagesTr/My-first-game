@@ -8,6 +8,7 @@ from systems.effects import tick_combat_effects
 from systems.inventory import (
     claim_all_pending_drops,
     claim_pending_drop,
+    move_inventory_slot_to_pending,
     swap_pending_drop_with_inventory_slot,
 )
 from systems.loot import generate_combat_loot
@@ -177,6 +178,20 @@ class Game:
             drop_index,
             inventory_slot_index,
         )
+
+    def move_inventory_item_to_pending_loot(self, slot_index):
+        if self.player is None or self.last_combat_result is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        return move_inventory_slot_to_pending(inventory, inventory_result, slot_index)
 
     def spawn_enemy(self):
         if self.selected_zone:
