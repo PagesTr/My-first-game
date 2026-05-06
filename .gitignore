@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 .env
+obsidian_reports/craftability/*.md
+!obsidian_reports/craftability/.gitkeep

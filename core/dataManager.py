@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
-import random
 
 # Data files are stored in the Examples/data folder.
 DATA_DIR = Path(__file__).with_name('data')
-import json
 
 class DataManager:
     def __init__(self):
@@ -13,6 +11,7 @@ class DataManager:
         self.enemies = self.load("data/enemies.json")
         self.recipes = self.load("data/recipes.json")
         self.zones = self.load("data/zones.json")
+        self.skills = self.load("data/skills.json")
 
     def load(self, path):
         with open(path, encoding="utf-8") as f:

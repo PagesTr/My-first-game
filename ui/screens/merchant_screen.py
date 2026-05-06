@@ -68,7 +68,7 @@ class MerchantScreen:
 
         if self.back_btn.is_clicked(event.pos):
             self.pending_sale = False
-            self.game.state = "zone_select"
+            self.game.state = "town"
             return
 
         if not self.game.player:
@@ -84,7 +84,7 @@ class MerchantScreen:
                 return
             if self.back_btn.is_clicked(event.pos):
                 self.pending_sale = False
-                self.game.state = "zone_select"
+                self.game.state = "town"
                 return
             return
 

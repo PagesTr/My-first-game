@@ -1,10 +1,13 @@
 import pygame
 from core.game import Game
 from ui.screens.combat_screen import CombatScreen
+from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
 from ui.screens.result_screen import ResultScreen
+from ui.screens.skills_screen import SkillsScreen
 
 
 class PygameApp:
@@ -22,7 +25,10 @@ class PygameApp:
         self.combat_screen = CombatScreen(self.game)
         self.result_screen = ResultScreen(self.game)
         self.inventory_screen = InventoryScreen(self.game)
+        self.crafting_screen = CraftingScreen(self.game)
         self.merchant_screen = MerchantScreen(self.game)
+        self.skills_screen = SkillsScreen(self.game)
+        self.mailbox_screen = MailboxScreen(self.game)
 
     def run(self):
         while self.running:
@@ -38,7 +44,7 @@ class PygameApp:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.game.state in ("class_select", "zone_select"):
+            if self.game.state in ("class_select", "town", "zone_select"):
                 self.menu_screen.handle_event(event)
             elif self.game.state == "combat":
                 self.combat_screen.handle_event(event)
@@ -46,15 +52,21 @@ class PygameApp:
                 self.result_screen.handle_event(event)
             elif self.game.state == "inventory":
                 self.inventory_screen.handle_event(event)
+            elif self.game.state == "crafting":
+                self.crafting_screen.handle_event(event)
             elif self.game.state == "merchant":
                 self.merchant_screen.handle_event(event)
+            elif self.game.state == "skills":
+                self.skills_screen.handle_event(event)
+            elif self.game.state == "mailbox":
+                self.mailbox_screen.handle_event(event)
 
     def update(self):
         if self.game.state == "combat":
             self.combat_screen.update()
 
     def render(self):
-        if self.game.state in ("class_select", "zone_select"):
+        if self.game.state in ("class_select", "town", "zone_select"):
             self.menu_screen.draw(self.screen)
         elif self.game.state == "combat":
             self.combat_screen.draw(self.screen)
@@ -62,7 +74,13 @@ class PygameApp:
             self.result_screen.draw(self.screen)
         elif self.game.state == "inventory":
             self.inventory_screen.draw(self.screen)
+        elif self.game.state == "crafting":
+            self.crafting_screen.draw(self.screen)
         elif self.game.state == "merchant":
             self.merchant_screen.draw(self.screen)
+        elif self.game.state == "skills":
+            self.skills_screen.draw(self.screen)
+        elif self.game.state == "mailbox":
+            self.mailbox_screen.draw(self.screen)
 
         pygame.display.flip()

@@ -167,23 +167,23 @@ class ResultScreen:
                 loot_text = self.font.render(
                     self._format_drop(drop), True, self._get_drop_color(drop)
                 )
-                screen.blit(loot_text, (row_rect.x + 10, row_rect.y + 5))
-                y += 38
-            return
+                screen.blit(loot_text, (300, loot_y + 35 + index * 28))
+        else:
+            no_loot_text = self.font.render("Aucun loot", True, (200, 200, 200))
+            screen.blit(no_loot_text, (300, loot_y + 35))
 
-        no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
-        screen.blit(no_loot_text, (rect.x + 28, y))
+        self.continue_btn.draw(screen, self.font)
 
     def _draw_combat_report_mail(self, screen, result):
         mail = result.get("combat_report_mail")
         if not mail:
             return
 
-        text = self.small_font.render(
-            "Combat report saved to Mailbox", True, PALETTE["muted"]
+        small_font = pygame.font.Font(None, 22)
+        text = small_font.render(
+            "Combat report saved to Mailbox", True, (190, 200, 205)
         )
-        text_rect = text.get_rect(center=(400, 490))
-        screen.blit(text, text_rect)
+        screen.blit(text, (300, 480))
 
     def _format_drop(self, drop):
         item_id = drop["item"]

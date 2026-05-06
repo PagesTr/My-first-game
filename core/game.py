@@ -7,6 +7,7 @@ from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
 from systems.inventory import add_drops_to_inventory
 from systems.loot import generate_combat_loot
+from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
 from systems.stats import prepare_player_for_combat
 
@@ -22,6 +23,7 @@ class Game:
         self.auto_mode = False
         self.combat = None
         self.last_combat_result = None
+        self.mailbox = create_mailbox()
 
     def select_class(self, class_key):
         if class_key not in self.data.classes:
@@ -37,8 +39,9 @@ class Game:
             self.player,
             self.data.items,
             self.data.classes,
+            self.data.skills,
         )
-        self.state = "zone_select"
+        self.state = "town"
 
     def select_zone(self, zone_key):
         if not self.player or zone_key not in self.data.zones:
@@ -54,15 +57,17 @@ class Game:
     def start_combat(self):
         enemy = self.spawn_enemy()
 
-        prepare_player_for_combat(self.player, self.data.items, self.data.classes)
-        self.combat = CombatSystem(self.player, enemy)
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.combat = CombatSystem(self.player, enemy, self.data.skills)
         self.state = "combat"
 
     def update_combat(self, action=None):
-        if self.auto_mode:
-            action = "attack"
-
-        if action and self.combat:
+        if self.combat and (action is not None or self.auto_mode):
             self.combat.step(action)
 
         if self.combat and self.combat.is_over:
@@ -90,14 +95,23 @@ class Game:
                     "drops": [],
                     "inventory_result": {"added": [], "failed": []},
                 }
+            combat_report = self.combat.get_combat_report()
+            mail = create_combat_report_mail(combat_report, self.last_combat_result)
+            add_mail(self.mailbox, mail)
+            self.last_combat_result["combat_report_mail"] = mail
             self.state = "combat_result"
             self.auto_mode = False
 
     def continue_after_combat_result(self):
         if self.player is not None:
             tick_combat_effects(self.player)
-            prepare_player_for_combat(self.player, self.data.items, self.data.classes)
-        self.state = "zone_select"
+            prepare_player_for_combat(
+                self.player,
+                self.data.items,
+                self.data.classes,
+                self.data.skills,
+            )
+        self.state = "town"
         self.combat = None
         self.auto_mode = False
 
