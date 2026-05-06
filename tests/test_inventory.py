@@ -69,6 +69,26 @@ def test_full_inventory_refuses_new_item():
     assert added is False
 
 
+def test_full_inventory_still_stacks_existing_stackable_item():
+    inventory = create_inventory(size=1)
+    add_stackable_item(inventory, "leather", 1)
+
+    added = add_stackable_item(inventory, "leather", 2)
+
+    assert added is True
+    assert inventory["slots"][0]["quantity"] == 3
+
+
+def test_add_unique_item_returns_false_when_inventory_is_full():
+    inventory = create_inventory(size=1)
+    add_unique_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
+
+    added = add_unique_item(inventory, {"item": "iron_helmet", "stats": {"defense": 2}})
+
+    assert added is False
+    assert inventory["slots"][0]["item"] == "iron_sword"
+
+
 def test_move_item_swaps_two_slots():
     inventory = create_inventory(size=2)
     add_stackable_item(inventory, "leather", 1)
@@ -86,6 +106,16 @@ def test_move_item_returns_false_for_invalid_indexes():
 
     assert move_item(inventory, -1, 0) is False
     assert move_item(inventory, 0, 2) is False
+
+
+def test_move_item_with_same_source_and_target_keeps_item_in_place():
+    inventory = create_inventory(size=1)
+    add_stackable_item(inventory, "leather", 1)
+
+    moved = move_item(inventory, 0, 0)
+
+    assert moved is True
+    assert inventory["slots"][0]["item"] == "leather"
 
 
 def test_add_drops_to_inventory_adds_stackable_drop():
@@ -120,6 +150,20 @@ def test_add_drops_to_inventory_puts_unknown_kind_in_failed():
     assert result["added"] == []
     assert result["failed"] == drops
     assert inventory["slots"][0] is None
+
+
+def test_add_drops_to_inventory_splits_added_and_failed_drops():
+    inventory = create_inventory(size=1)
+    drops = [
+        {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}},
+        {"kind": "unique", "item": "iron_helmet", "stats": {"defense": 2}},
+    ]
+
+    result = add_drops_to_inventory(inventory, drops)
+
+    assert result["added"] == [drops[0]]
+    assert result["failed"] == [drops[1]]
+    assert inventory["slots"][0]["item"] == "iron_sword"
 
 
 def test_use_consumable_heals_player():
@@ -201,6 +245,17 @@ def test_use_consumable_returns_false_for_non_consumable_item():
     assert used is False
     assert player["current_hp"] == 5
     assert inventory["slots"][0]["quantity"] == 1
+
+
+def test_use_consumable_returns_false_when_slot_is_empty():
+    player = {"current_hp": 5, "max_hp": 20}
+    inventory = create_inventory(size=1)
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is False
+    assert inventory["slots"][0] is None
 
 
 def test_use_consumable_returns_false_for_invalid_slot():
@@ -372,6 +427,23 @@ def test_use_consumable_with_heal_and_effect_consumes_if_effect_is_applied():
     assert inventory["slots"][0] is None
 
 
+def test_use_consumable_returns_false_at_full_hp_without_effect():
+    player = {"current_hp": 20, "max_hp": 20, "active_effects": []}
+    inventory = create_inventory(size=1)
+    inventory["slots"][0] = {
+        "kind": "stackable",
+        "item": "health_potion",
+        "quantity": 1,
+    }
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 10}}}
+
+    used = use_consumable_item(player, inventory, 0, items)
+
+    assert used is False
+    assert player["current_hp"] == 20
+    assert inventory["slots"][0]["quantity"] == 1
+
+
 def test_compact_inventory_moves_items_to_front():
     inventory = create_inventory(size=5)
     item_a = {"kind": "stackable", "item": "a", "quantity": 1}
@@ -441,3 +513,11 @@ def test_compact_inventory_returns_false_for_invalid_inventory():
     assert compact_inventory({}) is False
     assert compact_inventory({"slots": [], "size": 1}) is False
     assert compact_inventory({"slots": None, "size": 1}) is False
+
+
+def test_compact_inventory_returns_false_when_declared_size_does_not_match_slots():
+    inventory = {"slots": [None, None], "size": 3}
+
+    compacted = compact_inventory(inventory)
+
+    assert compacted is False
