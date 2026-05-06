@@ -154,6 +154,26 @@ class Game:
             failed.append(drop)
         return False
 
+    def try_claim_all_combat_drops(self):
+        if self.last_combat_result is None or self.player is None:
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending")
+        if not isinstance(pending, list):
+            return True
+
+        index = 0
+        while index < len(pending):
+            if self.try_claim_combat_drop(index):
+                continue
+            index += 1
+
+        return len(pending) == 0
+
     def spawn_enemy(self):
         if self.selected_zone:
             zone = self.data.zones[self.selected_zone]

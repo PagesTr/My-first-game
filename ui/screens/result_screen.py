@@ -66,7 +66,14 @@ class ResultScreen:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.continue_btn.is_clicked(event.pos):
-                self.game.continue_after_combat_result()
+                result = self.game.last_combat_result or {}
+                if self._has_pending_drops(result):
+                    if self.game.try_claim_all_combat_drops():
+                        self.game.continue_after_combat_result()
+                    else:
+                        self.loot_message = "Inventaire plein : choisis quoi garder."
+                else:
+                    self.game.continue_after_combat_result()
                 return
 
             if event.button == 1:
@@ -91,6 +98,9 @@ class ResultScreen:
         gold_gained = result.get("gold_gained", 0)
         drops = self._get_pending_drops(result)
         current_level = self.game.player.get("level", 1) if self.game.player else 1
+        self.continue_btn.text = (
+            "Tout récupérer" if self._has_pending_drops(result) else "Continuer"
+        )
 
         self._draw_title(screen, title_text, title_color)
 
@@ -332,6 +342,14 @@ class ResultScreen:
         if isinstance(inventory_result, dict) and "pending" in inventory_result:
             return inventory_result.get("pending", [])
         return result.get("drops", [])
+
+    def _has_pending_drops(self, result):
+        inventory_result = result.get("inventory_result", {})
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending", [])
+        return isinstance(pending, list) and len(pending) > 0
 
     def _load_icon(self, path):
         try:
