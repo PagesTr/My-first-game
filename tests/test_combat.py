@@ -183,6 +183,15 @@ def test_combat_history_keeps_logs_across_turns(monkeypatch):
     assert any(line.startswith("Turn 2:") for line in combat.history)
 
 
+def test_add_combat_log_adds_message_to_log_and_history():
+    combat = CombatSystem(make_player(), make_enemy("aggressive", current_hp=20))
+
+    combat.add_combat_log("Test message")
+
+    assert "Test message" in combat.log
+    assert any("Test message" in line for line in combat.history)
+
+
 def test_get_combat_report_returns_expected_fields(monkeypatch):
     monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
     player = make_player()

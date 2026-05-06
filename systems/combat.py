@@ -62,6 +62,9 @@ class CombatSystem:
     # ACTIONS
     # ======================
 
+    def add_combat_log(self, message):
+        self._add_log(message)
+
     def _add_log(self, message):
         self.log.append(message)
         self.history.append(f"Turn {self.turn_count}: {message}")
@@ -96,10 +99,7 @@ class CombatSystem:
         return
 
     def _on_before_action(self, actor, target, action, is_player):
-        log_start = len(self.log)
         apply_before_action_skills(self, actor, target, action, is_player)
-        for message in self.log[log_start:]:
-            self.history.append(f"Turn {self.turn_count}: {message}")
         return
 
     def _on_after_action(self, actor, target, action, is_player):

@@ -1,5 +1,7 @@
 import pygame
 
+from ui.assets import draw_background, load_image
+
 
 class Button:
     def __init__(self, rect, text):
@@ -21,6 +23,7 @@ class CombatScreen:
     def __init__(self, game):
         self.game = game
         self.font = pygame.font.Font(None, 32)
+        self.combat_background = load_image("assets/backgrounds/combat.png", (800, 600))
 
         # boutons
         self.attack_btn = Button((50, 450, 150, 50), "Attaquer")
@@ -62,7 +65,7 @@ class CombatScreen:
     # ======================
 
     def draw(self, screen):
-        screen.fill((20, 20, 30))
+        draw_background(screen, self.combat_background, (20, 20, 30))
 
         combat = self.game.combat
         if combat is None:

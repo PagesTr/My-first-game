@@ -1,5 +1,7 @@
 import pygame
 
+from ui.assets import draw_background, load_image
+
 
 class MenuButton:
     def __init__(self, rect, title, subtitle="", enabled=True):
@@ -34,6 +36,13 @@ class MenuScreen:
         self.title_font = pygame.font.Font(None, 46)
         self.option_font = pygame.font.Font(None, 30)
         self.body_font = pygame.font.Font(None, 24)
+        self.town_background = load_image("assets/backgrounds/town.png", (800, 600))
+        self.zone_background = load_image(
+            "assets/backgrounds/zone_select.png", (800, 600)
+        )
+        self.class_background = load_image(
+            "assets/backgrounds/class_select.png", (800, 600)
+        )
 
         self.class_buttons = self._build_class_buttons()
         self.zone_buttons = self._build_zone_buttons()
@@ -147,16 +156,17 @@ class MenuScreen:
             for zone_key, button in self.zone_buttons:
                 if button.is_clicked(pos):
                     self.game.select_zone(zone_key)
-                    return
+            return
 
     def draw(self, screen):
-        screen.fill((18, 24, 30))
-
         if self.game.state == "class_select":
+            draw_background(screen, self.class_background, (18, 24, 30))
             self._draw_class_select(screen)
         elif self.game.state == "town":
+            draw_background(screen, self.town_background, (18, 24, 30))
             self._draw_town(screen)
         elif self.game.state == "zone_select":
+            draw_background(screen, self.zone_background, (18, 24, 30))
             self._draw_zone_select(screen)
 
     def _draw_class_select(self, screen):

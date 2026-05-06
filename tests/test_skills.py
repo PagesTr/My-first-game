@@ -618,6 +618,19 @@ def test_execution_strike_triggers_when_enemy_hp_is_low():
     assert "Execution Strike activated!" in combat.log
 
 
+def test_active_skill_activation_is_added_to_combat_history():
+    player = make_player(level=0)
+    learn_skill(player, WARRIOR_EXECUTION_STRIKE)
+    equip_skill(player, WARRIOR_EXECUTION_STRIKE)
+    enemy = make_enemy()
+    enemy["current_hp"] = 5
+    combat = CombatSystem(player, enemy, make_skills_data())
+
+    apply_before_action_skills(combat, player, enemy, "attack", True)
+
+    assert any("Execution Strike activated!" in line for line in combat.history)
+
+
 def test_execution_strike_does_not_trigger_when_enemy_hp_is_high():
     player = make_player(level=0)
     learn_skill(player, WARRIOR_EXECUTION_STRIKE)
