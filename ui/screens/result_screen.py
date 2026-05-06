@@ -54,6 +54,13 @@ class ResultScreen:
         self.small_font = pygame.font.Font(None, 22)
         self.continue_btn = Button((300, 530, 200, 50), "Continuer")
         self.loot_rows = []
+        self.loot_cards = []
+        self.icons = {
+            "unknown": self._load_icon("assets/icons/item_unknown.png"),
+            "equipment": self._load_icon("assets/icons/equipment.png"),
+            "material": self._load_icon("assets/icons/material.png"),
+            "consumable": self._load_icon("assets/icons/consumable.png"),
+        }
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -202,25 +209,52 @@ class ResultScreen:
 
     def _draw_loot_section(self, screen, rect, drops):
         self.loot_rows = []
-        y = rect.y + 72
+        self.loot_cards = []
         if drops:
-            for drop in drops[:6]:
-                row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 30)
-                pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
-                pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
+            card_width = 82
+            card_height = 84
+            gap = 12
+            start_x = rect.x + 24
+            start_y = rect.y + 72
+
+            for index, drop in enumerate(drops[:6]):
+                column = index % 3
+                row = index // 3
+                card_rect = pygame.Rect(
+                    start_x + column * (card_width + gap),
+                    start_y + row * (card_height + gap),
+                    card_width,
+                    card_height,
+                )
                 pygame.draw.rect(
                     screen,
-                    self._get_drop_color(drop),
-                    (row_rect.x, row_rect.y, 4, row_rect.height),
+                    PALETTE["panel_dark"],
+                    card_rect,
                 )
-                self.loot_rows.append((row_rect, drop))
-                short_drop = self._short_text(self._format_drop_short(drop), 28)
-                loot_text = self.font.render(
+                pygame.draw.rect(screen, self._get_drop_color(drop), card_rect, 2)
+                pygame.draw.rect(
+                    screen, PALETTE["panel_light"], card_rect.inflate(-8, -8), 1
+                )
+                self.loot_cards.append((card_rect, drop))
+                self.loot_rows.append((card_rect, drop))
+
+                icon = self._get_drop_icon(drop)
+                icon_rect = pygame.Rect(card_rect.x + 25, card_rect.y + 10, 32, 32)
+                if icon is not None:
+                    screen.blit(icon, icon_rect)
+                else:
+                    self._draw_icon_fallback(screen, icon_rect)
+
+                short_drop = self._short_text(self._format_drop_short(drop), 12)
+                loot_text = self.small_font.render(
                     short_drop, True, self._get_drop_color(drop)
                 )
-                screen.blit(loot_text, (row_rect.x + 12, row_rect.y + 5))
-                y += 38
+                text_rect = loot_text.get_rect(
+                    center=(card_rect.centerx, card_rect.y + 62)
+                )
+                screen.blit(loot_text, text_rect)
         else:
+            y = rect.y + 72
             row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 42)
             pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
             pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
@@ -230,8 +264,8 @@ class ResultScreen:
     def _draw_loot_tooltip(self, screen):
         mouse_pos = pygame.mouse.get_pos()
         hovered_drop = None
-        for row_rect, drop in self.loot_rows:
-            if row_rect.collidepoint(mouse_pos):
+        for card_rect, drop in self.loot_cards:
+            if card_rect.collidepoint(mouse_pos):
                 hovered_drop = drop
                 break
 
@@ -265,6 +299,36 @@ class ResultScreen:
         for line in rendered_lines:
             screen.blit(line, (tooltip_rect.x + 12, line_y))
             line_y += 22
+
+    def _load_icon(self, path):
+        try:
+            icon = pygame.image.load(path).convert_alpha()
+        except (pygame.error, FileNotFoundError, OSError):
+            return None
+        return pygame.transform.scale(icon, (32, 32))
+
+    def _get_drop_icon(self, drop):
+        item_id = drop["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_type = item_data.get("type", "")
+        if not item_type:
+            item_type = item_data.get("category", "")
+        item_type = str(item_type).lower()
+
+        if item_type == "equipment":
+            return self.icons.get("equipment")
+        if item_type == "consumable":
+            return self.icons.get("consumable")
+        if item_type in ("material", "resource"):
+            return self.icons.get("material")
+        return self.icons.get("unknown")
+
+    def _draw_icon_fallback(self, screen, rect):
+        pygame.draw.rect(screen, PALETTE["panel"], rect)
+        pygame.draw.rect(screen, PALETTE["border_light"], rect, 2)
+        question = self.font.render("?", True, PALETTE["text"])
+        question_rect = question.get_rect(center=rect.center)
+        screen.blit(question, question_rect)
 
     def _format_drop_short(self, drop):
         item_id = drop["item"]
