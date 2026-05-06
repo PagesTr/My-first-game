@@ -46,7 +46,7 @@ def test_add_unique_item_uses_empty_slot():
     added = add_unique_item(inventory, item)
 
     assert added is True
-    assert inventory["slots"][0]["kind"] == "unique"
+    assert inventory["slots"][0]["kind"] == "individual"
     assert inventory["slots"][0]["item"] == "iron_sword"
 
 
@@ -131,13 +131,13 @@ def test_add_drops_to_inventory_adds_stackable_drop():
 
 def test_add_drops_to_inventory_adds_unique_drop():
     inventory = create_inventory(size=2)
-    drops = [{"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}]
+    drops = [{"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}]
 
     result = add_drops_to_inventory(inventory, drops)
 
     assert result["added"] == drops
     assert result["failed"] == []
-    assert inventory["slots"][0]["kind"] == "unique"
+    assert inventory["slots"][0]["kind"] == "individual"
     assert inventory["slots"][0]["stats"] == {"attack": 4}
 
 
@@ -155,8 +155,8 @@ def test_add_drops_to_inventory_puts_unknown_kind_in_failed():
 def test_add_drops_to_inventory_splits_added_and_failed_drops():
     inventory = create_inventory(size=1)
     drops = [
-        {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}},
-        {"kind": "unique", "item": "iron_helmet", "stats": {"defense": 2}},
+        {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}},
+        {"kind": "individual", "item": "iron_helmet", "stats": {"defense": 2}},
     ]
 
     result = add_drops_to_inventory(inventory, drops)
@@ -472,7 +472,7 @@ def test_compact_inventory_preserves_relative_order():
 def test_compact_inventory_preserves_unique_item_stats():
     inventory = create_inventory(size=3)
     unique_item = {
-        "kind": "unique",
+        "kind": "individual",
         "item": "iron_sword",
         "stats": {"attack": 4, "crit_chance": 0.1},
     }

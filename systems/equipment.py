@@ -20,7 +20,7 @@ def get_equipment_slot(item_data):
 def can_equip_item(item_instance, items):
     if item_instance is None:
         return False
-    if item_instance.get("kind") != "unique":
+    if item_instance.get("kind") != "individual":
         return False
 
     item_data = items.get(item_instance.get("item"))

@@ -107,7 +107,7 @@ def sell_inventory_item(player, inventory, slot_index, items, quantity=1):
         slot["quantity"] = available_quantity - quantity
         if slot["quantity"] <= 0:
             inventory["slots"][slot_index] = None
-    elif kind == "unique":
+    elif kind == "individual":
         if quantity > 1:
             return False
         total_price = sell_price

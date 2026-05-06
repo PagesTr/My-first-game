@@ -99,7 +99,7 @@ class InventoryScreen:
             )
             pygame.draw.rect(screen, (45, 50, 58), rect)
             border_color = (120, 130, 140)
-            if slot is not None and slot.get("kind") == "unique" and slot.get("rarity"):
+            if slot is not None and slot.get("kind") == "individual" and slot.get("rarity"):
                 border_color = self._get_rarity_color(slot)
             pygame.draw.rect(screen, border_color, rect, 2)
 
@@ -736,7 +736,7 @@ class InventoryScreen:
     def _get_equipment_type(self, item_instance):
         if item_instance is None:
             return None
-        if item_instance.get("kind") != "unique":
+        if item_instance.get("kind") != "individual":
             return None
 
         item_id = item_instance["item"]
@@ -819,7 +819,7 @@ class InventoryScreen:
             quantity = slot.get("quantity")
             detail_text = f"x{quantity}" if quantity is not None else ""
             item_color = (245, 245, 245)
-        elif slot.get("kind") == "unique":
+        elif slot.get("kind") == "individual":
             item_name = self._get_item_display_name(slot)
             detail_text = self._format_short_stats(slot.get("stats", {}))
             item_color = self._get_rarity_color(slot)

@@ -58,7 +58,7 @@ def test_weapon_item_generates_unique_drop():
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "iron_sword"
 
 
@@ -67,7 +67,7 @@ def test_armor_item_generates_unique_drop():
 
     drops = generate_combat_loot(make_enemy_with_drop("leather_armor"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "leather_armor"
 
 
@@ -76,7 +76,7 @@ def test_accessory_item_generates_unique_drop():
 
     drops = generate_combat_loot(make_enemy_with_drop("magic_ring"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "magic_ring"
 
 
@@ -268,7 +268,7 @@ def test_unique_drop_generates_multiple_instances_when_chance_above_one():
 
     assert len(drops) == 2
     for drop in drops:
-        assert drop["kind"] == "unique"
+        assert drop["kind"] == "individual"
         assert drop["item"] == "iron_sword"
         assert "rarity" in drop
         assert "stats" in drop

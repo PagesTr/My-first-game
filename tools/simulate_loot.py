@@ -28,7 +28,7 @@ def simulate_enemy_loot(enemy, items):
             item_id = drop["item"]
             if drop.get("kind") == "stackable":
                 drop_counts[item_id] += drop.get("quantity", 1)
-            elif drop.get("kind") == "unique":
+            elif drop.get("kind") == "individual":
                 drop_counts[item_id] += 1
                 rarity = drop.get("rarity")
                 if rarity:

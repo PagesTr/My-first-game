@@ -20,7 +20,7 @@ def test_build_inventory_item_from_stackable_drop():
 
 def test_build_inventory_item_from_unique_drop_returns_copy():
     drop = {
-        "kind": "unique",
+        "kind": "individual",
         "item": "iron_sword",
         "rarity": "common",
         "stats": {"attack": 3},
@@ -29,7 +29,7 @@ def test_build_inventory_item_from_unique_drop_returns_copy():
     item = build_inventory_item_from_drop(drop)
     item["item"] = "changed"
 
-    assert item["kind"] == "unique"
+    assert item["kind"] == "individual"
     assert item["rarity"] == "common"
     assert item["stats"]["attack"] == 3
     assert drop["item"] == "iron_sword"
@@ -52,13 +52,13 @@ def test_claim_pending_drop_with_available_inventory_space():
 def test_claim_pending_drop_with_full_inventory_fails_without_modifying_inventory():
     inventory = {
         "slots": [
-            {"kind": "unique", "item": "old_sword"},
-            {"kind": "unique", "item": "old_helmet"},
+            {"kind": "individual", "item": "old_sword"},
+            {"kind": "individual", "item": "old_helmet"},
         ],
         "size": 2,
     }
     original_slots = [slot.copy() for slot in inventory["slots"]]
-    drop = {"kind": "unique", "item": "iron_sword", "rarity": "common"}
+    drop = {"kind": "individual", "item": "iron_sword", "rarity": "common"}
     inventory_result = {"added": [], "failed": [], "pending": [drop]}
 
     claimed = claim_pending_drop(inventory, inventory_result, 0)
@@ -73,7 +73,7 @@ def test_claim_all_pending_drops_with_enough_space():
     inventory = {"slots": [None, None, None], "size": 3}
     drops = [
         {"kind": "stackable", "item": "wolf_pelt", "quantity": 2},
-        {"kind": "unique", "item": "iron_sword", "rarity": "common"},
+        {"kind": "individual", "item": "iron_sword", "rarity": "common"},
     ]
     inventory_result = {"added": [], "failed": [], "pending": list(drops)}
 
@@ -88,12 +88,12 @@ def test_claim_all_pending_drops_with_enough_space():
 
 def test_claim_all_pending_drops_when_only_some_fit():
     inventory = {
-        "slots": [{"kind": "unique", "item": "old_sword"}, None],
+        "slots": [{"kind": "individual", "item": "old_sword"}, None],
         "size": 2,
     }
     drops = [
-        {"kind": "unique", "item": "iron_sword", "rarity": "common"},
-        {"kind": "unique", "item": "iron_helmet", "rarity": "common"},
+        {"kind": "individual", "item": "iron_sword", "rarity": "common"},
+        {"kind": "individual", "item": "iron_helmet", "rarity": "common"},
     ]
     inventory_result = {"added": [], "failed": [], "pending": list(drops)}
 
@@ -111,7 +111,7 @@ def test_swap_pending_drop_with_inventory_slot_keeps_replaced_item_pending():
         "size": 1,
     }
     drop = {
-        "kind": "unique",
+        "kind": "individual",
         "item": "iron_sword",
         "rarity": "common",
         "stats": {"attack": 3},
@@ -153,7 +153,7 @@ def test_move_inventory_slot_to_pending_returns_false_for_empty_slot():
 def test_game_discard_pending_combat_loot_moves_pending_to_discarded():
     game = Game()
     drop_1 = {"kind": "stackable", "item": "wolf_pelt", "quantity": 1}
-    drop_2 = {"kind": "unique", "item": "iron_sword", "rarity": "common"}
+    drop_2 = {"kind": "individual", "item": "iron_sword", "rarity": "common"}
     added = [{"kind": "stackable", "item": "herb", "quantity": 1}]
     game.last_combat_result = {
         "inventory_result": {
