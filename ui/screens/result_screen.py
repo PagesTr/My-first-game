@@ -26,10 +26,10 @@ class Button:
         self.text = text
 
     def draw(self, screen, font):
-        pygame.draw.rect(screen, (70, 70, 70), self.rect)
-        pygame.draw.rect(screen, (200, 200, 200), self.rect, 2)
+        pygame.draw.rect(screen, PALETTE["button"], self.rect)
+        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 2)
 
-        label = font.render(self.text, True, (255, 255, 255))
+        label = font.render(self.text, True, PALETTE["text"])
         screen.blit(label, (self.rect.x + 20, self.rect.y + 12))
 
     def is_clicked(self, pos):
@@ -120,6 +120,9 @@ class ResultScreen:
         for y in range(0, 600, 32):
             pygame.draw.line(screen, (20, 22, 31), (0, y), (800, y))
 
+        pygame.draw.rect(screen, (10, 11, 17), (0, 0, 800, 18))
+        pygame.draw.rect(screen, (10, 11, 17), (0, 582, 800, 18))
+
     def _draw_title(self, screen, title_text, title_color):
         shadow = self.title_font.render(title_text, True, PALETTE["panel_dark"])
         title = self.title_font.render(title_text, True, title_color)
@@ -144,7 +147,9 @@ class ResultScreen:
         pygame.draw.rect(screen, PALETTE["panel_dark"], button.rect.move(4, 4))
         pygame.draw.rect(screen, PALETTE["button"], button.rect)
         pygame.draw.rect(screen, PALETTE["button_border"], button.rect, 3)
-        pygame.draw.rect(screen, PALETTE["panel_light"], button.rect.inflate(-10, -10), 1)
+        pygame.draw.rect(
+            screen, PALETTE["panel_light"], button.rect.inflate(-10, -10), 1
+        )
 
         label = self.font.render(button.text, True, PALETTE["text"])
         label_rect = label.get_rect(center=button.rect.center)
@@ -167,21 +172,22 @@ class ResultScreen:
                 loot_text = self.font.render(
                     self._format_drop(drop), True, self._get_drop_color(drop)
                 )
-                screen.blit(loot_text, (300, loot_y + 35 + index * 28))
+                screen.blit(loot_text, (row_rect.x + 10, row_rect.y + 5))
+                y += 38
         else:
-            no_loot_text = self.font.render("Aucun loot", True, (200, 200, 200))
-            screen.blit(no_loot_text, (300, loot_y + 35))
-
-        self.continue_btn.draw(screen, self.font)
+            row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 42)
+            pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
+            pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
+            no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
+            screen.blit(no_loot_text, (row_rect.x + 10, row_rect.y + 10))
 
     def _draw_combat_report_mail(self, screen, result):
         mail = result.get("combat_report_mail")
         if not mail:
             return
 
-        small_font = pygame.font.Font(None, 22)
-        text = small_font.render(
-            "Combat report saved to Mailbox", True, (190, 200, 205)
+        text = self.small_font.render(
+            "Combat report saved to Mailbox", True, PALETTE["muted"]
         )
         screen.blit(text, (300, 480))
 
