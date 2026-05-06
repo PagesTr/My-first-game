@@ -2,21 +2,27 @@ import pygame
 
 
 PALETTE = {
-    "background_top": (14, 16, 24),
-    "background_bottom": (29, 24, 34),
-    "panel": (33, 35, 47),
-    "panel_dark": (22, 23, 32),
-    "panel_light": (48, 50, 64),
-    "border": (119, 108, 92),
-    "border_light": (194, 166, 100),
+    "sky_top": (18, 24, 32),
+    "sky_bottom": (20, 42, 35),
+    "forest_back": (18, 46, 37),
+    "forest_front": (12, 28, 24),
+    "ground": (17, 20, 22),
+    "ground_light": (36, 41, 34),
+    "panel": (37, 45, 54),
+    "panel_dark": (27, 34, 42),
+    "panel_light": (64, 73, 78),
+    "border": (92, 82, 58),
+    "border_light": (192, 172, 105),
     "text": (238, 232, 214),
-    "muted": (174, 168, 158),
-    "gold": (235, 184, 72),
-    "victory": (139, 215, 118),
-    "defeat": (170, 72, 72),
-    "level_up": (98, 226, 137),
-    "button": (64, 57, 66),
-    "button_border": (220, 190, 112),
+    "muted": (174, 184, 174),
+    "gold": (228, 188, 86),
+    "xp": (112, 146, 205),
+    "victory": (105, 198, 117),
+    "defeat": (194, 82, 76),
+    "level_up": (120, 217, 138),
+    "button": (42, 58, 54),
+    "button_border": (192, 172, 105),
+    "shadow": (8, 10, 13),
 }
 
 
@@ -26,11 +32,14 @@ class Button:
         self.text = text
 
     def draw(self, screen, font):
+        pygame.draw.rect(screen, PALETTE["shadow"], self.rect.move(4, 4))
         pygame.draw.rect(screen, PALETTE["button"], self.rect)
-        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 2)
+        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 3)
+        pygame.draw.rect(screen, PALETTE["panel_light"], self.rect.inflate(-10, -10), 1)
 
         label = font.render(self.text, True, PALETTE["text"])
-        screen.blit(label, (self.rect.x + 20, self.rect.y + 12))
+        label_rect = label.get_rect(center=self.rect.center)
+        screen.blit(label, label_rect)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -55,7 +64,7 @@ class ResultScreen:
 
         combat = self.game.combat
         victory = combat is not None and combat.winner == "player"
-        title_text = "Victoire !" if victory else "Defaite..."
+        title_text = "Victoire !" if victory else "Défaite..."
         title_color = PALETTE["victory"] if victory else PALETTE["defeat"]
 
         result = self.game.last_combat_result or {}
@@ -66,15 +75,15 @@ class ResultScreen:
 
         self._draw_title(screen, title_text, title_color)
 
-        summary_rect = pygame.Rect(70, 145, 310, 310)
-        loot_rect = pygame.Rect(420, 145, 310, 310)
-        self._draw_panel(screen, summary_rect, "Resume")
+        summary_rect = pygame.Rect(64, 138, 322, 318)
+        loot_rect = pygame.Rect(414, 138, 322, 318)
+        self._draw_panel(screen, summary_rect, "Résumé")
         self._draw_panel(screen, loot_rect, "Butin")
 
         y = summary_rect.y + 66
-        y = self._draw_summary_line(screen, "XP gagnee", exp_gained, y)
+        y = self._draw_summary_line(screen, "XP gagnée", exp_gained, y, PALETTE["xp"])
         y = self._draw_summary_line(
-            screen, "Gold gagne", gold_gained, y, PALETTE["gold"]
+            screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
         )
         y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
 
@@ -96,35 +105,52 @@ class ResultScreen:
         self._draw_button(screen, self.continue_btn)
 
     def _draw_background(self, screen):
-        screen.fill(PALETTE["background_top"])
         for y in range(0, 600, 4):
             blend = y / 600
             color = (
                 int(
-                    PALETTE["background_top"][0] * (1 - blend)
-                    + PALETTE["background_bottom"][0] * blend
+                    PALETTE["sky_top"][0] * (1 - blend)
+                    + PALETTE["sky_bottom"][0] * blend
                 ),
                 int(
-                    PALETTE["background_top"][1] * (1 - blend)
-                    + PALETTE["background_bottom"][1] * blend
+                    PALETTE["sky_top"][1] * (1 - blend)
+                    + PALETTE["sky_bottom"][1] * blend
                 ),
                 int(
-                    PALETTE["background_top"][2] * (1 - blend)
-                    + PALETTE["background_bottom"][2] * blend
+                    PALETTE["sky_top"][2] * (1 - blend)
+                    + PALETTE["sky_bottom"][2] * blend
                 ),
             )
             pygame.draw.rect(screen, color, (0, y, 800, 4))
 
-        for x in range(0, 800, 32):
-            pygame.draw.line(screen, (20, 22, 31), (x, 0), (x, 600))
-        for y in range(0, 600, 32):
-            pygame.draw.line(screen, (20, 22, 31), (0, y), (800, y))
+        moon_color = (216, 211, 172)
+        pygame.draw.rect(screen, moon_color, (620, 48, 44, 44))
+        pygame.draw.rect(screen, PALETTE["sky_top"], (610, 42, 22, 54))
 
-        pygame.draw.rect(screen, (10, 11, 17), (0, 0, 800, 18))
-        pygame.draw.rect(screen, (10, 11, 17), (0, 582, 800, 18))
+        back_points = [(0, 354), (70, 286), (140, 354)]
+        for x in range(-40, 840, 110):
+            points = [(px + x, py) for px, py in back_points]
+            pygame.draw.polygon(screen, PALETTE["forest_back"], points)
+            pygame.draw.rect(screen, PALETTE["forest_back"], (x + 54, 320, 30, 96))
+
+        front_points = [(0, 420), (52, 318), (104, 420)]
+        for x in range(-30, 850, 86):
+            points = [(px + x, py) for px, py in front_points]
+            pygame.draw.polygon(screen, PALETTE["forest_front"], points)
+            pygame.draw.rect(screen, PALETTE["forest_front"], (x + 43, 374, 18, 86))
+
+        pygame.draw.rect(screen, PALETTE["ground"], (0, 430, 800, 170))
+        pygame.draw.rect(screen, PALETTE["ground_light"], (0, 430, 800, 4))
+        for x in range(0, 800, 24):
+            pygame.draw.rect(screen, (12, 15, 15), (x, 468 + (x % 48), 16, 4))
 
     def _draw_title(self, screen, title_text, title_color):
-        shadow = self.title_font.render(title_text, True, PALETTE["panel_dark"])
+        banner_rect = pygame.Rect(250, 36, 300, 72)
+        pygame.draw.rect(screen, PALETTE["shadow"], banner_rect.move(4, 4))
+        pygame.draw.rect(screen, PALETTE["panel_dark"], banner_rect)
+        pygame.draw.rect(screen, PALETTE["border_light"], banner_rect, 3)
+
+        shadow = self.title_font.render(title_text, True, PALETTE["shadow"])
         title = self.title_font.render(title_text, True, title_color)
         title_rect = title.get_rect(center=(400, 72))
         shadow_rect = shadow.get_rect(center=(403, 75))
@@ -132,10 +158,17 @@ class ResultScreen:
         screen.blit(title, title_rect)
 
     def _draw_panel(self, screen, rect, title):
-        pygame.draw.rect(screen, PALETTE["panel_dark"], rect.move(5, 5))
+        pygame.draw.rect(screen, PALETTE["shadow"], rect.move(5, 5))
         pygame.draw.rect(screen, PALETTE["panel"], rect)
         pygame.draw.rect(screen, PALETTE["border"], rect, 3)
         pygame.draw.rect(screen, PALETTE["panel_light"], rect.inflate(-14, -14), 1)
+        pygame.draw.line(
+            screen,
+            PALETTE["border_light"],
+            (rect.x + 10, rect.y + 10),
+            (rect.right - 10, rect.y + 10),
+            2,
+        )
 
         title_bg = pygame.Rect(rect.x + 18, rect.y + 14, rect.width - 36, 34)
         pygame.draw.rect(screen, PALETTE["panel_dark"], title_bg)
@@ -144,7 +177,7 @@ class ResultScreen:
         screen.blit(title_text, (title_bg.x + 12, title_bg.y + 5))
 
     def _draw_button(self, screen, button):
-        pygame.draw.rect(screen, PALETTE["panel_dark"], button.rect.move(4, 4))
+        pygame.draw.rect(screen, PALETTE["shadow"], button.rect.move(4, 4))
         pygame.draw.rect(screen, PALETTE["button"], button.rect)
         pygame.draw.rect(screen, PALETTE["button_border"], button.rect, 3)
         pygame.draw.rect(
@@ -156,10 +189,13 @@ class ResultScreen:
         screen.blit(label, label_rect)
 
     def _draw_summary_line(self, screen, label, value, y, value_color=None):
+        row_rect = pygame.Rect(92, y - 5, 250, 31)
+        pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
+        pygame.draw.rect(screen, (58, 66, 66), row_rect, 1)
         label_text = self.font.render(f"{label} :", True, PALETTE["muted"])
         value_text = self.font.render(str(value), True, value_color or PALETTE["text"])
-        screen.blit(label_text, (95, y))
-        screen.blit(value_text, (270, y))
+        screen.blit(label_text, (row_rect.x + 10, y))
+        screen.blit(value_text, (row_rect.right - value_text.get_width() - 10, y))
         return y + 38
 
     def _draw_loot_section(self, screen, rect, drops):
@@ -169,10 +205,11 @@ class ResultScreen:
                 row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 30)
                 pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
                 pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
+                pygame.draw.rect(screen, self._get_drop_color(drop), (row_rect.x, row_rect.y, 4, row_rect.height))
                 loot_text = self.font.render(
                     self._format_drop(drop), True, self._get_drop_color(drop)
                 )
-                screen.blit(loot_text, (row_rect.x + 10, row_rect.y + 5))
+                screen.blit(loot_text, (row_rect.x + 12, row_rect.y + 5))
                 y += 38
         else:
             row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 42)
@@ -187,9 +224,10 @@ class ResultScreen:
             return
 
         text = self.small_font.render(
-            "Combat report saved to Mailbox", True, PALETTE["muted"]
+            "Rapport archivé dans la boîte aux lettres", True, PALETTE["muted"]
         )
-        screen.blit(text, (300, 480))
+        text_rect = text.get_rect(center=(400, 490))
+        screen.blit(text, text_rect)
 
     def _format_drop(self, drop):
         item_id = drop["item"]
