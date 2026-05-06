@@ -5,7 +5,12 @@ from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
-from systems.inventory import add_drops_to_inventory
+from systems.inventory import (
+    claim_all_pending_drops,
+    claim_pending_drop,
+    move_inventory_slot_to_pending,
+    swap_pending_drop_with_inventory_slot,
+)
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
@@ -83,17 +88,18 @@ class Game:
                     self.player,
                 )
                 self.last_combat_result["drops"] = drops
-                self.last_combat_result["inventory_result"] = add_drops_to_inventory(
-                    self.player["inventory"],
-                    drops,
-                )
+                self.last_combat_result["inventory_result"] = {
+                    "added": [],
+                    "failed": [],
+                    "pending": list(drops),
+                }
             else:
                 self.last_combat_result = {
                     "exp_gained": 0,
                     "gold_gained": 0,
                     "leveled_up": False,
                     "drops": [],
-                    "inventory_result": {"added": [], "failed": []},
+                    "inventory_result": {"added": [], "failed": [], "pending": []},
                 }
             combat_report = self.combat.get_combat_report()
             mail = create_combat_report_mail(combat_report, self.last_combat_result)
@@ -114,6 +120,94 @@ class Game:
         self.state = "town"
         self.combat = None
         self.auto_mode = False
+
+    def try_claim_combat_drop(self, drop_index):
+        if self.last_combat_result is None or self.player is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        return claim_pending_drop(inventory, inventory_result, drop_index)
+
+    def try_claim_all_combat_drops(self):
+        if self.last_combat_result is None or self.player is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        return claim_all_pending_drops(inventory, inventory_result)
+
+    def replace_inventory_item_with_pending_drop(self, drop_index, inventory_slot_index):
+        if self.player is None or self.last_combat_result is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        slots = inventory.get("slots")
+        if not isinstance(slots, list):
+            return False
+
+        if (
+            not isinstance(inventory_slot_index, int)
+            or inventory_slot_index < 0
+            or inventory_slot_index >= len(slots)
+        ):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        return swap_pending_drop_with_inventory_slot(
+            inventory,
+            inventory_result,
+            drop_index,
+            inventory_slot_index,
+        )
+
+    def move_inventory_item_to_pending_loot(self, slot_index):
+        if self.player is None or self.last_combat_result is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        return move_inventory_slot_to_pending(inventory, inventory_result, slot_index)
+
+    def discard_pending_combat_loot(self):
+        if self.last_combat_result is None:
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending")
+        if not isinstance(pending, list):
+            return False
+
+        inventory_result.setdefault("discarded", []).extend(list(pending))
+        pending.clear()
+        return True
 
     def spawn_enemy(self):
         if self.selected_zone:

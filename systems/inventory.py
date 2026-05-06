@@ -11,8 +11,17 @@ def create_inventory(size=DEFAULT_INVENTORY_SIZE):
     }
 
 
+def _is_inventory_valid(inventory):
+    return (
+        isinstance(inventory, dict)
+        and isinstance(inventory.get("slots"), list)
+        and isinstance(inventory.get("size"), int)
+        and len(inventory["slots"]) == inventory["size"]
+    )
+
+
 def is_valid_slot(inventory, index):
-    return isinstance(index, int) and 0 <= index < inventory["size"]
+    return _is_inventory_valid(inventory) and isinstance(index, int) and 0 <= index < inventory["size"]
 
 
 def find_first_empty_slot(inventory):
@@ -77,6 +86,133 @@ def add_drops_to_inventory(inventory, drops):
             result["failed"].append(drop)
 
     return result
+
+
+def build_inventory_item_from_drop(drop):
+    if not isinstance(drop, dict) or "item" not in drop:
+        return None
+
+    kind = drop.get("kind")
+    item_id = drop["item"]
+    if kind == "stackable":
+        return {
+            "kind": "stackable",
+            "item": item_id,
+            "quantity": drop.get("quantity", 1),
+        }
+
+    if kind == "unique":
+        item_instance = drop.copy()
+        item_instance["kind"] = "unique"
+        return item_instance
+
+    return None
+
+
+def claim_pending_drop(inventory, inventory_result, drop_index):
+    if not _is_inventory_valid(inventory):
+        return False
+    if not isinstance(inventory_result, dict):
+        return False
+
+    pending = inventory_result.get("pending")
+    if not isinstance(pending, list):
+        return False
+    if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
+        return False
+
+    drop = pending[drop_index]
+    kind = drop.get("kind")
+    item_id = drop["item"]
+    if kind == "stackable":
+        added = add_stackable_item(inventory, item_id, drop.get("quantity", 1))
+    elif kind == "unique":
+        added = add_unique_item(inventory, drop.copy())
+    else:
+        added = False
+
+    if added:
+        claimed_drop = pending.pop(drop_index)
+        inventory_result.setdefault("added", []).append(claimed_drop)
+        return True
+
+    failed = inventory_result.setdefault("failed", [])
+    if drop not in failed:
+        failed.append(drop)
+    return False
+
+
+def claim_all_pending_drops(inventory, inventory_result):
+    if not _is_inventory_valid(inventory):
+        return False
+    if not isinstance(inventory_result, dict):
+        return False
+
+    pending = inventory_result.get("pending")
+    if not isinstance(pending, list):
+        return True
+
+    index = 0
+    while index < len(pending):
+        if claim_pending_drop(inventory, inventory_result, index):
+            continue
+        index += 1
+
+    return len(pending) == 0
+
+
+def swap_pending_drop_with_inventory_slot(
+    inventory,
+    inventory_result,
+    drop_index,
+    slot_index,
+):
+    if not _is_inventory_valid(inventory):
+        return False
+    if not isinstance(inventory_result, dict):
+        return False
+
+    pending = inventory_result.get("pending")
+    if not isinstance(pending, list):
+        return False
+    if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
+        return False
+    if not is_valid_slot(inventory, slot_index):
+        return False
+
+    drop = pending[drop_index]
+    replacement = build_inventory_item_from_drop(drop)
+    if replacement is None:
+        return False
+
+    previous_slot = inventory["slots"][slot_index]
+    inventory["slots"][slot_index] = replacement
+    claimed_drop = pending.pop(drop_index)
+    if previous_slot is not None:
+        pending.append(previous_slot)
+    inventory_result.setdefault("added", []).append(claimed_drop)
+    return True
+
+
+def move_inventory_slot_to_pending(inventory, inventory_result, slot_index):
+    if not _is_inventory_valid(inventory):
+        return False
+    if not isinstance(inventory_result, dict):
+        return False
+
+    pending = inventory_result.get("pending")
+    if not isinstance(pending, list):
+        return False
+    if not is_valid_slot(inventory, slot_index):
+        return False
+
+    slot = inventory["slots"][slot_index]
+    if slot is None:
+        return False
+
+    pending.append(slot.copy())
+    inventory["slots"][slot_index] = None
+    return True
 
 
 def use_consumable_item(player, inventory, slot_index, items):

@@ -28,11 +28,11 @@
       },
       {
         "item": "iron_sword",
-        "chance": 0.58
+        "chance": 0.98
       },
       {
         "item": "rusty_sword",
-        "chance": 0.08
+        "chance": 20.08
       }
     ]
   },
@@ -98,7 +98,7 @@
       },
       {
         "item": "worn_leather_armor",
-        "chance": 0.08
+        "chance": 20.98
       }
     ]
   },
