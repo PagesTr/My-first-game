@@ -58,7 +58,7 @@ def add_unique_item(inventory, item_instance):
     if empty_index is None:
         return False
 
-    item_instance["kind"] = "unique"
+    item_instance["kind"] = "individual"
     inventory["slots"][empty_index] = item_instance
     return True
 
@@ -75,7 +75,7 @@ def add_drops_to_inventory(inventory, drops):
         if kind == "stackable":
             quantity = drop.get("quantity", 1)
             added = add_stackable_item(inventory, item_id, quantity)
-        elif kind == "unique":
+        elif kind == "individual":
             added = add_unique_item(inventory, drop.copy())
         else:
             added = False
@@ -101,9 +101,9 @@ def build_inventory_item_from_drop(drop):
             "quantity": drop.get("quantity", 1),
         }
 
-    if kind == "unique":
+    if kind == "individual":
         item_instance = drop.copy()
-        item_instance["kind"] = "unique"
+        item_instance["kind"] = "individual"
         return item_instance
 
     return None
@@ -126,7 +126,7 @@ def claim_pending_drop(inventory, inventory_result, drop_index):
     item_id = drop["item"]
     if kind == "stackable":
         added = add_stackable_item(inventory, item_id, drop.get("quantity", 1))
-    elif kind == "unique":
+    elif kind == "individual":
         added = add_unique_item(inventory, drop.copy())
     else:
         added = False

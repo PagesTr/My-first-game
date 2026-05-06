@@ -143,7 +143,7 @@ def generate_combat_loot(enemy, items, player=None):
                 rarity = generate_rarity(rarity_weights)
                 drops.append(
                     {
-                        "kind": "unique",
+                        "kind": "individual",
                         "item": item_id,
                         "rarity": rarity,
                         "stats": generate_randomized_stats(
