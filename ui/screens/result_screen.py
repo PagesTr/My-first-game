@@ -111,11 +111,9 @@ class ResultScreen:
                                     slot_index
                                 )
                                 if moved:
-                                    self.loot_message = (
-                                        "Objet déplacé vers le butin temporaire."
-                                    )
+                                    self.loot_message = "Place libérée."
                                 else:
-                                    self.loot_message = "Déplacement impossible."
+                                    self.loot_message = "Action impossible."
                                 return
 
                             replaced = self.game.replace_inventory_item_with_pending_drop(
@@ -131,7 +129,7 @@ class ResultScreen:
                                     self.replacement_mode = False
                                     self.loot_message = "Échange effectué."
                             else:
-                                self.loot_message = "Déplacement impossible."
+                                self.loot_message = "Action impossible."
                             return
 
                 for card_rect, drop_index, _drop in self.loot_cards:
@@ -147,7 +145,7 @@ class ResultScreen:
                             else:
                                 self.selected_pending_drop_index = drop_index
                                 self.loot_message = (
-                                    "Inventaire plein : choisis un slot à échanger."
+                                    "Inventaire plein : libère une place."
                                 )
                             return
                         if self.game.try_claim_combat_drop(drop_index):
@@ -255,7 +253,6 @@ class ResultScreen:
 
         self._draw_loot_section(screen, loot_rect, drops)
         self._draw_inventory_panel(screen, inventory_rect)
-        self._draw_selection_feedback(screen)
         self._draw_loot_tooltip(screen)
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
@@ -545,24 +542,6 @@ class ResultScreen:
             screen.blit(text, text_rect)
             y += 20
 
-    def _draw_selection_feedback(self, screen):
-        if self.selected_pending_drop_index is None:
-            message = "Clique un item de l'inventaire pour l'envoyer vers le butin."
-            color = PALETTE["muted"]
-        else:
-            message = "Butin sélectionné : choisis un slot d'inventaire."
-            color = PALETTE["gold"]
-            arrow = self.small_font.render("Butin -> Inventaire", True, PALETTE["gold"])
-            arrow_rect = arrow.get_rect(center=(385, 330))
-            screen.blit(arrow, arrow_rect)
-
-        rect = pygame.Rect(176, 456, 448, 28)
-        pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
-        pygame.draw.rect(screen, PALETTE["border"], rect, 1)
-        text = self.small_font.render(message, True, color)
-        text_rect = text.get_rect(center=rect.center)
-        screen.blit(text, text_rect)
-
     def _get_page_count(self, item_count, items_per_page):
         if item_count <= 0:
             return 1
@@ -704,17 +683,48 @@ class ResultScreen:
             line_y += 22
 
     def _draw_loot_message(self, screen):
-        if not self.loot_message:
+        if not self.loot_message and not self.replacement_mode:
             return
 
-        color = (
-            PALETTE["defeat"]
-            if "impossible" in self.loot_message or "plein" in self.loot_message
-            else PALETTE["level_up"]
-        )
-        message = self.small_font.render(self.loot_message, True, color)
-        center = (400, 488) if self.replacement_mode else (575, 430)
-        message_rect = message.get_rect(center=center)
+        text = self._get_replacement_status_message() if self.replacement_mode else self.loot_message
+        color = self._get_status_message_color(text)
+        if self.replacement_mode:
+            self._draw_replacement_status_bar(screen, text, color)
+            return
+
+        message = self.small_font.render(text, True, color)
+        message_rect = message.get_rect(center=(575, 430))
+        screen.blit(message, message_rect)
+
+    def _get_replacement_status_message(self):
+        if self.loot_message:
+            if self.loot_message == "Place libérée.":
+                return "Place libérée. Tu peux récupérer un butin."
+            if self.loot_message == "Butin sélectionné.":
+                return "Butin sélectionné : choisis un slot d'inventaire."
+            return self.loot_message
+
+        result = self.game.last_combat_result or {}
+        if self.selected_pending_drop_index is not None:
+            return "Butin sélectionné : choisis un slot d'inventaire."
+        if self._has_pending_drops(result):
+            return "Clique un butin pour le récupérer ou libère une place."
+        return "Tout le butin est récupéré."
+
+    def _get_status_message_color(self, text):
+        if "impossible" in text or "plein" in text:
+            return PALETTE["defeat"]
+        if "sélectionné" in text:
+            return PALETTE["gold"]
+        return PALETTE["level_up"]
+
+    def _draw_replacement_status_bar(self, screen, text, color):
+        rect = pygame.Rect(160, 482, 480, 30)
+        pygame.draw.rect(screen, PALETTE["shadow"], rect.move(3, 3))
+        pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
+        pygame.draw.rect(screen, PALETTE["border"], rect, 1)
+        message = self.small_font.render(text, True, color)
+        message_rect = message.get_rect(center=rect.center)
         screen.blit(message, message_rect)
 
     def _get_pending_drops(self, result):
