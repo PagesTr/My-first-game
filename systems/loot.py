@@ -21,6 +21,8 @@ RARITY_BONUS = {
     "unique": 5,
 }
 
+VALID_ITEM_KINDS = ("stackable", "individual")
+
 
 def is_unique_equipment(item_data):
     item_type = item_data.get("type")
@@ -31,6 +33,19 @@ def is_unique_equipment(item_data):
         item_type == "equipment"
         and item_data.get("category") in ("weapon", "armor", "accessory")
     )
+
+
+def get_default_item_kind(item_data):
+    if is_unique_equipment(item_data):
+        return "individual"
+    return "stackable"
+
+
+def get_item_kind(item_data):
+    item_kind = item_data.get("kind")
+    if item_kind in VALID_ITEM_KINDS:
+        return item_kind
+    return get_default_item_kind(item_data)
 
 
 def get_allowed_rarities(item_data):
@@ -133,8 +148,9 @@ def generate_combat_loot(enemy, items, player=None):
 
         item_id = drop["item"]
         item_data = items.get(item_id, {})
+        item_kind = get_item_kind(item_data)
 
-        if is_unique_equipment(item_data):
+        if item_kind == "individual":
             rarity_weights = apply_rare_find_bonus(
                 get_rarity_weights(item_data),
                 rare_find_bonus,
