@@ -211,15 +211,16 @@ class ResultScreen:
         self.loot_rows = []
         self.loot_cards = []
         if drops:
-            card_width = 82
-            card_height = 84
-            gap = 12
-            start_x = rect.x + 24
+            card_width = 48
+            card_height = 48
+            gap = 10
+            columns = 5
+            start_x = rect.x + 20
             start_y = rect.y + 72
 
-            for index, drop in enumerate(drops[:6]):
-                column = index % 3
-                row = index // 3
+            for index, drop in enumerate(drops[:10]):
+                column = index % columns
+                row = index // columns
                 card_rect = pygame.Rect(
                     start_x + column * (card_width + gap),
                     start_y + row * (card_height + gap),
@@ -239,20 +240,26 @@ class ResultScreen:
                 self.loot_rows.append((card_rect, drop))
 
                 icon = self._get_drop_icon(drop)
-                icon_rect = pygame.Rect(card_rect.x + 25, card_rect.y + 10, 32, 32)
+                icon_rect = pygame.Rect(0, 0, 32, 32)
+                icon_rect.center = card_rect.center
                 if icon is not None:
                     screen.blit(icon, icon_rect)
                 else:
                     self._draw_icon_fallback(screen, icon_rect)
 
-                short_drop = self._short_text(self._format_drop_short(drop), 12)
-                loot_text = self.small_font.render(
-                    short_drop, True, self._get_drop_color(drop)
-                )
-                text_rect = loot_text.get_rect(
-                    center=(card_rect.centerx, card_rect.y + 62)
-                )
-                screen.blit(loot_text, text_rect)
+                if drop.get("kind") == "stackable" and drop.get("quantity", 1) > 1:
+                    quantity_text = self.small_font.render(
+                        f"x{drop.get('quantity', 1)}", True, PALETTE["text"]
+                    )
+                    badge_rect = pygame.Rect(
+                        card_rect.right - quantity_text.get_width() - 8,
+                        card_rect.bottom - 18,
+                        quantity_text.get_width() + 6,
+                        16,
+                    )
+                    pygame.draw.rect(screen, PALETTE["shadow"], badge_rect)
+                    pygame.draw.rect(screen, PALETTE["border"], badge_rect, 1)
+                    screen.blit(quantity_text, (badge_rect.x + 3, badge_rect.y + 1))
         else:
             y = rect.y + 72
             row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 42)
