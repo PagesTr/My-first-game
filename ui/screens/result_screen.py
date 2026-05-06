@@ -56,6 +56,9 @@ class ResultScreen:
         self.loot_rows = []
         self.loot_cards = []
         self.loot_message = ""
+        self.selected_pending_drop_index = None
+        self.inventory_slot_rects = []
+        self.replacement_mode = False
         self.icons = {
             "unknown": self._load_icon("assets/icons/item_unknown.png"),
             "equipment": self._load_icon("assets/icons/equipment.png"),
@@ -71,18 +74,48 @@ class ResultScreen:
                     if self.game.try_claim_all_combat_drops():
                         self.game.continue_after_combat_result()
                     else:
-                        self.loot_message = "Inventaire plein : choisis quoi garder."
+                        self.replacement_mode = True
+                        self.loot_message = (
+                            "Inventaire plein : sélectionne un butin puis un objet à remplacer."
+                        )
                 else:
                     self.game.continue_after_combat_result()
                 return
 
             if event.button == 1:
+                if self.replacement_mode and self.selected_pending_drop_index is not None:
+                    for slot_rect, slot_index, _slot in self.inventory_slot_rects:
+                        if slot_rect.collidepoint(event.pos):
+                            replaced = self.game.replace_inventory_item_with_pending_drop(
+                                self.selected_pending_drop_index,
+                                slot_index,
+                            )
+                            if replaced:
+                                self.selected_pending_drop_index = None
+                                result = self.game.last_combat_result or {}
+                                if self._has_pending_drops(result):
+                                    self.loot_message = "Choisis le prochain butin à placer."
+                                else:
+                                    self.replacement_mode = False
+                                    self.loot_message = ""
+                            else:
+                                self.loot_message = "Remplacement impossible."
+                            return
+
                 for card_rect, drop_index, _drop in self.loot_cards:
                     if card_rect.collidepoint(event.pos):
+                        if self.replacement_mode:
+                            self.selected_pending_drop_index = drop_index
+                            self.loot_message = "Choisis un objet à remplacer."
+                            return
                         if self.game.try_claim_combat_drop(drop_index):
                             self.loot_message = ""
                         else:
-                            self.loot_message = "Inventaire plein"
+                            self.replacement_mode = True
+                            self.selected_pending_drop_index = drop_index
+                            self.loot_message = (
+                                "Inventaire plein : sélectionne un objet à remplacer."
+                            )
                         return
 
     def draw(self, screen):
@@ -130,9 +163,13 @@ class ResultScreen:
             )
 
         self._draw_loot_section(screen, loot_rect, drops)
+        if self.replacement_mode:
+            self._draw_inventory_replacement_grid(screen)
         self._draw_loot_tooltip(screen)
+        self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
-        self._draw_combat_report_mail(screen, result)
+        if not self.replacement_mode:
+            self._draw_combat_report_mail(screen, result)
         self._draw_button(screen, self.continue_btn)
 
     def _draw_background(self, screen):
@@ -255,6 +292,8 @@ class ResultScreen:
                     card_rect,
                 )
                 pygame.draw.rect(screen, self._get_drop_color(drop), card_rect, 2)
+                if index == self.selected_pending_drop_index:
+                    pygame.draw.rect(screen, PALETTE["border_light"], card_rect, 4)
                 pygame.draw.rect(
                     screen, PALETTE["panel_light"], card_rect.inflate(-8, -8), 1
                 )
@@ -290,6 +329,62 @@ class ResultScreen:
             no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
             screen.blit(no_loot_text, (row_rect.x + 10, row_rect.y + 10))
 
+    def _draw_inventory_replacement_grid(self, screen):
+        self.inventory_slot_rects = []
+        if self.game.player is None:
+            return
+
+        inventory = self.game.player.get("inventory", {})
+        slots = inventory.get("slots", [])
+        if not isinstance(slots, list):
+            return
+
+        slot_size = 20
+        gap = 3
+        columns = 15
+        start_x = 226
+        start_y = 462
+
+        for index, slot in enumerate(slots[:30]):
+            column = index % columns
+            row = index // columns
+            slot_rect = pygame.Rect(
+                start_x + column * (slot_size + gap),
+                start_y + row * (slot_size + gap),
+                slot_size,
+                slot_size,
+            )
+            pygame.draw.rect(screen, PALETTE["panel_dark"], slot_rect)
+            pygame.draw.rect(screen, PALETTE["border"], slot_rect, 1)
+            self.inventory_slot_rects.append((slot_rect, index, slot))
+
+            if slot is None:
+                continue
+
+            icon = self._get_slot_icon(slot)
+            icon_rect = pygame.Rect(0, 0, 16, 16)
+            icon_rect.center = slot_rect.center
+            if icon is not None:
+                screen.blit(pygame.transform.scale(icon, (16, 16)), icon_rect)
+            else:
+                self._draw_small_icon_fallback(screen, icon_rect)
+
+    def _draw_inventory_tooltip(self, screen):
+        if not self.replacement_mode:
+            return
+
+        mouse_pos = pygame.mouse.get_pos()
+        hovered_slot = None
+        for slot_rect, _slot_index, slot in self.inventory_slot_rects:
+            if slot is not None and slot_rect.collidepoint(mouse_pos):
+                hovered_slot = slot
+                break
+
+        if hovered_slot is None:
+            return
+
+        self._draw_tooltip(screen, self._get_slot_tooltip_lines(hovered_slot), mouse_pos)
+
     def _draw_loot_tooltip(self, screen):
         mouse_pos = pygame.mouse.get_pos()
         hovered_drop = None
@@ -301,9 +396,11 @@ class ResultScreen:
         if hovered_drop is None:
             return
 
-        lines = self._get_drop_tooltip_lines(hovered_drop)
+        self._draw_tooltip(screen, self._get_drop_tooltip_lines(hovered_drop), mouse_pos)
+
+    def _draw_tooltip(self, screen, lines, mouse_pos):
         rendered_lines = [
-            self.small_font.render(line, True, self._get_tooltip_line_color(hovered_drop, index))
+            self.small_font.render(line, True, self._get_tooltip_line_color(index))
             for index, line in enumerate(lines)
         ]
         width = max(line.get_width() for line in rendered_lines) + 24
@@ -374,10 +471,22 @@ class ResultScreen:
             return self.icons.get("material")
         return self.icons.get("unknown")
 
+    def _get_slot_icon(self, slot):
+        if slot is None:
+            return None
+        return self._get_drop_icon({"item": slot.get("item", "")})
+
     def _draw_icon_fallback(self, screen, rect):
         pygame.draw.rect(screen, PALETTE["panel"], rect)
         pygame.draw.rect(screen, PALETTE["border_light"], rect, 2)
         question = self.font.render("?", True, PALETTE["text"])
+        question_rect = question.get_rect(center=rect.center)
+        screen.blit(question, question_rect)
+
+    def _draw_small_icon_fallback(self, screen, rect):
+        pygame.draw.rect(screen, PALETTE["panel"], rect)
+        pygame.draw.rect(screen, PALETTE["border_light"], rect, 1)
+        question = self.small_font.render("?", True, PALETTE["text"])
         question_rect = question.get_rect(center=rect.center)
         screen.blit(question, question_rect)
 
@@ -428,9 +537,30 @@ class ResultScreen:
             lines.append(self._format_drop(drop))
         return lines
 
-    def _get_tooltip_line_color(self, drop, index):
+    def _get_slot_tooltip_lines(self, slot):
+        item_id = slot.get("item", "")
+        item_data = self.game.data.items.get(item_id, {})
+        item_name = item_data.get("name", item_id)
+        lines = [item_name]
+
+        kind = slot.get("kind")
+        if kind:
+            lines.append(f"Type: {kind}")
+        if "quantity" in slot:
+            lines.append(f"Quantity: {slot.get('quantity')}")
+
+        rarity = self._get_rarity_label(slot)
+        if rarity:
+            lines.append(f"Rarity: {rarity}")
+
+        stats_text = self._format_stats(slot.get("stats", {}))
+        if stats_text:
+            lines.append(f"Stats: {stats_text}")
+        return lines
+
+    def _get_tooltip_line_color(self, index):
         if index == 0:
-            return self._get_drop_color(drop)
+            return PALETTE["text"]
         return PALETTE["muted"]
 
     def _draw_combat_report_mail(self, screen, result):

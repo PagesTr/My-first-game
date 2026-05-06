@@ -174,6 +174,56 @@ class Game:
 
         return len(pending) == 0
 
+    def replace_inventory_item_with_pending_drop(self, drop_index, inventory_slot_index):
+        if self.player is None or self.last_combat_result is None:
+            return False
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            return False
+
+        slots = inventory.get("slots")
+        if not isinstance(slots, list):
+            return False
+
+        if (
+            not isinstance(inventory_slot_index, int)
+            or inventory_slot_index < 0
+            or inventory_slot_index >= len(slots)
+        ):
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending")
+        if not isinstance(pending, list):
+            return False
+
+        if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
+            return False
+
+        drop = pending[drop_index]
+        item_id = drop["item"]
+        kind = drop.get("kind")
+        if kind == "stackable":
+            replacement = {
+                "kind": "stackable",
+                "item": item_id,
+                "quantity": drop.get("quantity", 1),
+            }
+        elif kind == "unique":
+            replacement = drop.copy()
+            replacement["kind"] = "unique"
+        else:
+            return False
+
+        slots[inventory_slot_index] = replacement
+        claimed_drop = pending.pop(drop_index)
+        inventory_result.setdefault("added", []).append(claimed_drop)
+        return True
+
     def spawn_enemy(self):
         if self.selected_zone:
             zone = self.data.zones[self.selected_zone]
