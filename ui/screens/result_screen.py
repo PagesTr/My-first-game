@@ -53,6 +53,7 @@ class ResultScreen:
         self.font = pygame.font.Font(None, 28)
         self.small_font = pygame.font.Font(None, 22)
         self.continue_btn = Button((300, 530, 200, 50), "Continuer")
+        self.loot_rows = []
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -101,6 +102,7 @@ class ResultScreen:
             )
 
         self._draw_loot_section(screen, loot_rect, drops)
+        self._draw_loot_tooltip(screen)
         self._draw_combat_report_mail(screen, result)
         self._draw_button(screen, self.continue_btn)
 
@@ -199,15 +201,22 @@ class ResultScreen:
         return y + 38
 
     def _draw_loot_section(self, screen, rect, drops):
+        self.loot_rows = []
         y = rect.y + 72
         if drops:
             for drop in drops[:6]:
                 row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 30)
                 pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
                 pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
-                pygame.draw.rect(screen, self._get_drop_color(drop), (row_rect.x, row_rect.y, 4, row_rect.height))
+                pygame.draw.rect(
+                    screen,
+                    self._get_drop_color(drop),
+                    (row_rect.x, row_rect.y, 4, row_rect.height),
+                )
+                self.loot_rows.append((row_rect, drop))
+                short_drop = self._short_text(self._format_drop_short(drop), 28)
                 loot_text = self.font.render(
-                    self._format_drop(drop), True, self._get_drop_color(drop)
+                    short_drop, True, self._get_drop_color(drop)
                 )
                 screen.blit(loot_text, (row_rect.x + 12, row_rect.y + 5))
                 y += 38
@@ -217,6 +226,97 @@ class ResultScreen:
             pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
             no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
             screen.blit(no_loot_text, (row_rect.x + 10, row_rect.y + 10))
+
+    def _draw_loot_tooltip(self, screen):
+        mouse_pos = pygame.mouse.get_pos()
+        hovered_drop = None
+        for row_rect, drop in self.loot_rows:
+            if row_rect.collidepoint(mouse_pos):
+                hovered_drop = drop
+                break
+
+        if hovered_drop is None:
+            return
+
+        lines = self._get_drop_tooltip_lines(hovered_drop)
+        rendered_lines = [
+            self.small_font.render(line, True, self._get_tooltip_line_color(hovered_drop, index))
+            for index, line in enumerate(lines)
+        ]
+        width = max(line.get_width() for line in rendered_lines) + 24
+        height = len(rendered_lines) * 22 + 18
+
+        x = mouse_pos[0] + 16
+        y = mouse_pos[1] + 16
+        if x + width > 790:
+            x = 790 - width
+        if y + height > 590:
+            y = 590 - height
+        x = max(10, x)
+        y = max(10, y)
+
+        tooltip_rect = pygame.Rect(x, y, width, height)
+        pygame.draw.rect(screen, PALETTE["shadow"], tooltip_rect.move(4, 4))
+        pygame.draw.rect(screen, PALETTE["panel_dark"], tooltip_rect)
+        pygame.draw.rect(screen, PALETTE["border_light"], tooltip_rect, 2)
+        pygame.draw.rect(screen, PALETTE["panel_light"], tooltip_rect.inflate(-8, -8), 1)
+
+        line_y = tooltip_rect.y + 10
+        for line in rendered_lines:
+            screen.blit(line, (tooltip_rect.x + 12, line_y))
+            line_y += 22
+
+    def _format_drop_short(self, drop):
+        item_id = drop["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_name = item_data.get("name", item_id)
+        kind = drop.get("kind")
+
+        if kind == "stackable":
+            return f"- {item_name} x {drop.get('quantity', 1)}"
+
+        if kind == "unique":
+            rarity = self._get_rarity_label(drop)
+            display_name = f"[{rarity}] {item_name}" if rarity else item_name
+            return f"- {display_name}"
+
+        return f"- {item_name}"
+
+    def _short_text(self, text, max_length):
+        if len(text) <= max_length:
+            return text
+        if max_length <= 3:
+            return "." * max_length
+        return f"{text[:max_length - 3]}..."
+
+    def _get_drop_tooltip_lines(self, drop):
+        item_id = drop["item"]
+        item_data = self.game.data.items.get(item_id, {})
+        item_name = item_data.get("name", item_id)
+        lines = [item_name]
+
+        kind = drop.get("kind")
+        if kind:
+            lines.append(f"Type: {kind}")
+        if "quantity" in drop:
+            lines.append(f"Quantity: {drop.get('quantity')}")
+
+        rarity = self._get_rarity_label(drop)
+        if rarity:
+            lines.append(f"Rarity: {rarity}")
+
+        stats_text = self._format_stats(drop.get("stats", {}))
+        if stats_text:
+            lines.append(f"Stats: {stats_text}")
+
+        if len(lines) == 1:
+            lines.append(self._format_drop(drop))
+        return lines
+
+    def _get_tooltip_line_color(self, drop, index):
+        if index == 0:
+            return self._get_drop_color(drop)
+        return PALETTE["muted"]
 
     def _draw_combat_report_mail(self, screen, result):
         mail = result.get("combat_report_mail")
