@@ -36,13 +36,13 @@ def make_classes():
     }
 
 
-def test_unique_weapon_is_equipable():
+def test_individual_weapon_is_equipable():
     item = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}
 
     assert can_equip_item(item, make_items()) is True
 
 
-def test_unique_armor_is_equipable():
+def test_individual_armor_is_equipable():
     item = {"kind": "individual", "item": "leather_armor", "stats": {"defense": 3}}
 
     assert can_equip_item(item, make_items()) is True
@@ -54,7 +54,7 @@ def test_stackable_item_is_not_equipable():
     assert can_equip_item(item, make_items()) is False
 
 
-def test_unique_resource_or_consumable_is_not_equipable():
+def test_individual_resource_or_consumable_is_not_equipable():
     items = make_items()
     resource = {"kind": "individual", "item": "leather", "stats": {"value": 5}}
     consumable = {"kind": "individual", "item": "health_potion", "stats": {"hp": 10}}
@@ -111,7 +111,7 @@ def test_equip_item_returns_false_with_invalid_index():
     assert equip_item(player, inventory, 3, make_items()) is False
 
 
-def test_derive_stats_uses_unique_equipment_stats():
+def test_derive_stats_uses_individual_equipment_stats():
     player = make_player()
     player["equipment"]["weapon"] = {
         "kind": "individual",

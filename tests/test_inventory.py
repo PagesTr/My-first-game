@@ -50,7 +50,7 @@ def test_add_unique_item_uses_empty_slot():
     assert inventory["slots"][0]["item"] == "iron_sword"
 
 
-def test_identical_unique_items_use_different_slots():
+def test_identical_individual_items_use_different_slots():
     inventory = create_inventory(size=2)
 
     add_unique_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
@@ -129,7 +129,7 @@ def test_add_drops_to_inventory_adds_stackable_drop():
     assert inventory["slots"][0]["quantity"] == 2
 
 
-def test_add_drops_to_inventory_adds_unique_drop():
+def test_add_drops_to_inventory_adds_individual_drop_as_individual_item():
     inventory = create_inventory(size=2)
     drops = [{"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}]
 
@@ -469,18 +469,18 @@ def test_compact_inventory_preserves_relative_order():
     assert inventory["slots"][:3] == [item_a, item_b, item_c]
 
 
-def test_compact_inventory_preserves_unique_item_stats():
+def test_compact_inventory_preserves_individual_item_stats():
     inventory = create_inventory(size=3)
-    unique_item = {
+    individual_item = {
         "kind": "individual",
         "item": "iron_sword",
         "stats": {"attack": 4, "crit_chance": 0.1},
     }
-    inventory["slots"] = [None, unique_item, None]
+    inventory["slots"] = [None, individual_item, None]
 
     compact_inventory(inventory)
 
-    assert inventory["slots"][0] is unique_item
+    assert inventory["slots"][0] is individual_item
     assert inventory["slots"][0]["stats"] == {"attack": 4, "crit_chance": 0.1}
 
 

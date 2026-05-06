@@ -28,7 +28,7 @@ def stackable_recipe(item_id="leather", quantity=2, result_item="field_dressing"
     }
 
 
-def unique_recipe(item_id="rusty_sword", result_item="restored_sword"):
+def individual_recipe(item_id="rusty_sword", result_item="restored_sword"):
     return {
         "ingredients": [
             {"kind": "individual", "item": item_id, "quantity": 1}
@@ -196,17 +196,17 @@ def test_can_craft_returns_false_when_a_stackable_ingredient_is_missing():
     assert can_craft(inventory, stackable_recipe()) is False
 
 
-def test_can_craft_returns_true_when_a_unique_ingredient_is_available():
+def test_can_craft_returns_true_when_an_individual_ingredient_is_available():
     inventory = create_inventory()
     add_unique_item(inventory, {"item": "rusty_sword"})
 
-    assert can_craft(inventory, unique_recipe()) is True
+    assert can_craft(inventory, individual_recipe()) is True
 
 
-def test_can_craft_returns_false_when_a_unique_ingredient_is_missing():
+def test_can_craft_returns_false_when_an_individual_ingredient_is_missing():
     inventory = create_inventory()
 
-    assert can_craft(inventory, unique_recipe()) is False
+    assert can_craft(inventory, individual_recipe()) is False
 
 
 def test_craft_item_consumes_stackable_ingredients():
@@ -223,11 +223,11 @@ def test_craft_item_consumes_stackable_ingredients():
     }
 
 
-def test_craft_item_consumes_unique_ingredients():
+def test_craft_item_consumes_individual_ingredients():
     inventory = create_inventory()
     add_unique_item(inventory, {"item": "rusty_sword"})
 
-    crafted = craft_item(inventory, unique_recipe(), minimal_items())
+    crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
     assert crafted is True
     assert all(
@@ -250,11 +250,11 @@ def test_craft_item_adds_a_stackable_result():
     }
 
 
-def test_craft_item_adds_a_unique_result():
+def test_craft_item_adds_an_individual_result():
     inventory = create_inventory()
     add_unique_item(inventory, {"item": "rusty_sword"})
 
-    crafted = craft_item(inventory, unique_recipe(), minimal_items())
+    crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
     assert crafted is True
     assert inventory["slots"][0] == {

@@ -332,7 +332,7 @@ def test_sell_last_stackable_item_clears_slot():
     assert inventory["slots"][0] is None
 
 
-def test_sell_unique_item_clears_slot():
+def test_sell_individual_item_with_quantity_one_clears_slot():
     player = {"gold": 0}
     inventory = create_inventory(size=1)
     inventory["slots"][0] = {"kind": "individual", "item": "iron_sword"}
@@ -350,7 +350,7 @@ def test_sell_unique_item_clears_slot():
     assert inventory["slots"][0] is None
 
 
-def test_sell_unique_item_with_quantity_two_returns_false():
+def test_sell_individual_item_with_quantity_two_returns_false():
     player = {"gold": 0}
     inventory = create_inventory(size=1)
     inventory["slots"][0] = {"kind": "individual", "item": "iron_sword"}
