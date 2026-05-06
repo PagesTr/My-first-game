@@ -65,7 +65,7 @@ def test_consumable_item_generates_stackable_drop_by_default():
     assert drops[0]["quantity"] == 1
 
 
-def test_weapon_item_generates_unique_drop():
+def test_weapon_item_generates_individual_drop():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -89,7 +89,7 @@ def test_equipment_weapon_item_generates_individual_drop():
     assert drops[0]["item"] == "iron_sword"
 
 
-def test_armor_item_generates_unique_drop():
+def test_armor_item_generates_individual_drop():
     items = {"leather_armor": {"type": "armor", "stats": {"defense": 2}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("leather_armor"), items)
@@ -98,7 +98,7 @@ def test_armor_item_generates_unique_drop():
     assert drops[0]["item"] == "leather_armor"
 
 
-def test_accessory_item_generates_unique_drop():
+def test_accessory_item_generates_individual_drop():
     items = {"magic_ring": {"type": "accessory", "stats": {"intelligence": 1}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("magic_ring"), items)
@@ -170,7 +170,7 @@ def test_default_item_kind_uses_equipment_classification():
     assert get_default_item_kind(resource) == "stackable"
 
 
-def test_unique_drop_contains_stats_dict():
+def test_individual_drop_contains_stats_dict():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -190,7 +190,7 @@ def test_enemy_without_drops_returns_empty_list():
     assert generate_combat_loot({}, {}) == []
 
 
-def test_unique_drop_contains_rarity():
+def test_individual_drop_contains_rarity():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -351,7 +351,7 @@ def test_stackable_drop_uses_drop_count_as_quantity():
     assert drops[0]["quantity"] == 2
 
 
-def test_unique_drop_generates_multiple_instances_when_chance_above_one():
+def test_individual_drop_generates_multiple_instances_when_chance_above_one():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop_chance("iron_sword", 2.0), items)

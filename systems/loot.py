@@ -24,7 +24,7 @@ RARITY_BONUS = {
 VALID_ITEM_KINDS = ("stackable", "individual")
 
 
-def is_unique_equipment(item_data):
+def is_individual_equipment(item_data):
     item_type = item_data.get("type")
     if item_type in ("weapon", "armor", "accessory"):
         return True
@@ -36,7 +36,7 @@ def is_unique_equipment(item_data):
 
 
 def get_default_item_kind(item_data):
-    if is_unique_equipment(item_data):
+    if is_individual_equipment(item_data):
         return "individual"
     return "stackable"
 
