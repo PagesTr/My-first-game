@@ -546,8 +546,8 @@ class InventoryScreen:
 
         lines = [
             self._get_item_display_name(item_instance),
-            f"Type: {item_type}",
-            f"Kind: {item_kind}",
+            f"Type: {self._get_type_label(item_type)}",
+            f"Storage: {self._get_kind_label(item_kind)}",
         ]
 
         rarity = item_instance.get("rarity")
@@ -574,6 +574,25 @@ class InventoryScreen:
             lines.append("No stats")
 
         return lines
+
+    def _get_kind_label(self, item_kind):
+        labels = {
+            "stackable": "Stackable",
+            "individual": "Individual item",
+        }
+        return labels.get(item_kind, "Unknown")
+
+    def _get_type_label(self, item_type):
+        labels = {
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "resource": "Resource",
+            "currency": "Currency",
+            "quest": "Quest",
+        }
+        if not item_type:
+            return "Unknown"
+        return labels.get(item_type, str(item_type).capitalize())
 
     def _get_selected_comparison_item(self, item_instance):
         source = self.selected_item_source

@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from systems.inventory import add_stackable_item, add_unique_item
+from systems.inventory import add_individual_item, add_stackable_item
 
 
 def _is_valid_inventory(inventory):
@@ -136,7 +136,7 @@ def craft_item(inventory, recipe, items):
     result_quantity = result.get("quantity", 0)
 
     if _is_individual_result(result_item_id, items):
-        added = add_unique_item(updated_inventory, {"item": result_item_id})
+        added = add_individual_item(updated_inventory, {"item": result_item_id})
     else:
         added = add_stackable_item(updated_inventory, result_item_id, result_quantity)
 

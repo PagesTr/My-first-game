@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from systems.crafting import can_craft, craft_item
-from systems.inventory import add_stackable_item, add_unique_item, create_inventory
+from systems.inventory import add_individual_item, add_stackable_item, create_inventory
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -198,7 +198,7 @@ def test_can_craft_returns_false_when_a_stackable_ingredient_is_missing():
 
 def test_can_craft_returns_true_when_an_individual_ingredient_is_available():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
     assert can_craft(inventory, individual_recipe()) is True
 
@@ -225,7 +225,7 @@ def test_craft_item_consumes_stackable_ingredients():
 
 def test_craft_item_consumes_individual_ingredients():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
     crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
@@ -252,7 +252,7 @@ def test_craft_item_adds_a_stackable_result():
 
 def test_craft_item_adds_an_individual_result():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
     crafted = craft_item(inventory, individual_recipe(), minimal_items())
 

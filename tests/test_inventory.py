@@ -1,7 +1,7 @@
 from systems.inventory import (
     add_drops_to_inventory,
     add_stackable_item,
-    add_unique_item,
+    add_individual_item,
     compact_inventory,
     create_inventory,
     move_item,
@@ -39,11 +39,11 @@ def test_identical_stackable_items_stack_in_same_slot():
     assert inventory["slots"][1] is None
 
 
-def test_add_unique_item_uses_empty_slot():
+def test_add_individual_item_uses_empty_slot():
     inventory = create_inventory(size=2)
     item = {"item": "iron_sword", "stats": {"attack": 4}}
 
-    added = add_unique_item(inventory, item)
+    added = add_individual_item(inventory, item)
 
     assert added is True
     assert inventory["slots"][0]["kind"] == "individual"
@@ -53,8 +53,8 @@ def test_add_unique_item_uses_empty_slot():
 def test_identical_individual_items_use_different_slots():
     inventory = create_inventory(size=2)
 
-    add_unique_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
-    add_unique_item(inventory, {"item": "iron_sword", "stats": {"attack": 5}})
+    add_individual_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
+    add_individual_item(inventory, {"item": "iron_sword", "stats": {"attack": 5}})
 
     assert inventory["slots"][0]["item"] == "iron_sword"
     assert inventory["slots"][1]["item"] == "iron_sword"
@@ -79,11 +79,11 @@ def test_full_inventory_still_stacks_existing_stackable_item():
     assert inventory["slots"][0]["quantity"] == 3
 
 
-def test_add_unique_item_returns_false_when_inventory_is_full():
+def test_add_individual_item_returns_false_when_inventory_is_full():
     inventory = create_inventory(size=1)
-    add_unique_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
+    add_individual_item(inventory, {"item": "iron_sword", "stats": {"attack": 4}})
 
-    added = add_unique_item(inventory, {"item": "iron_helmet", "stats": {"defense": 2}})
+    added = add_individual_item(inventory, {"item": "iron_helmet", "stats": {"defense": 2}})
 
     assert added is False
     assert inventory["slots"][0]["item"] == "iron_sword"

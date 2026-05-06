@@ -53,7 +53,7 @@ def add_stackable_item(inventory, item_id, quantity=1):
     return True
 
 
-def add_unique_item(inventory, item_instance):
+def add_individual_item(inventory, item_instance):
     empty_index = find_first_empty_slot(inventory)
     if empty_index is None:
         return False
@@ -76,7 +76,7 @@ def add_drops_to_inventory(inventory, drops):
             quantity = drop.get("quantity", 1)
             added = add_stackable_item(inventory, item_id, quantity)
         elif kind == "individual":
-            added = add_unique_item(inventory, drop.copy())
+            added = add_individual_item(inventory, drop.copy())
         else:
             added = False
 
@@ -127,7 +127,7 @@ def claim_pending_drop(inventory, inventory_result, drop_index):
     if kind == "stackable":
         added = add_stackable_item(inventory, item_id, drop.get("quantity", 1))
     elif kind == "individual":
-        added = add_unique_item(inventory, drop.copy())
+        added = add_individual_item(inventory, drop.copy())
     else:
         added = False
 
