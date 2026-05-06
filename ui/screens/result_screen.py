@@ -52,7 +52,8 @@ class ResultScreen:
         self.header_font = pygame.font.Font(None, 34)
         self.font = pygame.font.Font(None, 28)
         self.small_font = pygame.font.Font(None, 22)
-        self.continue_btn = Button((300, 530, 200, 50), "Continuer")
+        self.continue_btn = Button((190, 530, 200, 50), "Continuer")
+        self.discard_btn = Button((420, 530, 220, 50), "Abandonner le reste")
         self.loot_rows = []
         self.loot_cards = []
         self.loot_message = ""
@@ -68,8 +69,16 @@ class ResultScreen:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
+            result = self.game.last_combat_result or {}
+            if self._has_pending_drops(result) and self.discard_btn.is_clicked(event.pos):
+                if self.game.discard_pending_combat_loot():
+                    self.replacement_mode = False
+                    self.selected_pending_drop_index = None
+                    self.loot_message = "Butin abandonné."
+                    self.game.continue_after_combat_result()
+                return
+
             if self.continue_btn.is_clicked(event.pos):
-                result = self.game.last_combat_result or {}
                 if self._has_pending_drops(result):
                     if self.game.try_claim_all_combat_drops():
                         self.game.continue_after_combat_result()
@@ -192,7 +201,7 @@ class ResultScreen:
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
         self._draw_combat_report_mail(screen, result)
-        self._draw_button(screen, self.continue_btn)
+        self._draw_result_buttons(screen, result)
 
     def _draw_replacement_layout(
         self,
@@ -225,7 +234,7 @@ class ResultScreen:
         self._draw_loot_tooltip(screen)
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
-        self._draw_button(screen, self.continue_btn)
+        self._draw_result_buttons(screen, result)
 
     def _draw_compact_summary(self, screen, exp_gained, gold_gained, current_level):
         rect = pygame.Rect(220, 174, 360, 28)
@@ -326,6 +335,17 @@ class ResultScreen:
         label = self.font.render(button.text, True, PALETTE["text"])
         label_rect = label.get_rect(center=button.rect.center)
         screen.blit(label, label_rect)
+
+    def _draw_result_buttons(self, screen, result):
+        if self._has_pending_drops(result):
+            self.continue_btn.rect = pygame.Rect(150, 530, 220, 50)
+            self.discard_btn.rect = pygame.Rect(420, 530, 240, 50)
+            self._draw_button(screen, self.continue_btn)
+            self._draw_button(screen, self.discard_btn)
+            return
+
+        self.continue_btn.rect = pygame.Rect(300, 530, 200, 50)
+        self._draw_button(screen, self.continue_btn)
 
     def _draw_summary_line(self, screen, label, value, y, value_color=None):
         row_rect = pygame.Rect(92, y - 5, 250, 31)

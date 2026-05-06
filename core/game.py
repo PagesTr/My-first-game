@@ -193,6 +193,22 @@ class Game:
 
         return move_inventory_slot_to_pending(inventory, inventory_result, slot_index)
 
+    def discard_pending_combat_loot(self):
+        if self.last_combat_result is None:
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending")
+        if not isinstance(pending, list):
+            return False
+
+        inventory_result.setdefault("discarded", []).extend(list(pending))
+        pending.clear()
+        return True
+
     def spawn_enemy(self):
         if self.selected_zone:
             zone = self.data.zones[self.selected_zone]
