@@ -76,7 +76,7 @@ class ResultScreen:
                     else:
                         self.replacement_mode = True
                         self.loot_message = (
-                            "Inventaire plein : sélectionne un butin puis un objet à remplacer."
+                            "Inventaire plein : sélectionne un butin puis un slot à échanger."
                         )
                 else:
                     self.game.continue_after_combat_result()
@@ -94,10 +94,10 @@ class ResultScreen:
                                 self.selected_pending_drop_index = None
                                 result = self.game.last_combat_result or {}
                                 if self._has_pending_drops(result):
-                                    self.loot_message = "Choisis le prochain butin à placer."
+                                    self.loot_message = "Échange effectué."
                                 else:
                                     self.replacement_mode = False
-                                    self.loot_message = ""
+                                    self.loot_message = "Échange effectué."
                             else:
                                 self.loot_message = "Remplacement impossible."
                             return
@@ -106,7 +106,7 @@ class ResultScreen:
                     if card_rect.collidepoint(event.pos):
                         if self.replacement_mode:
                             self.selected_pending_drop_index = drop_index
-                            self.loot_message = "Choisis un objet à remplacer."
+                            self.loot_message = "Choisis un slot à échanger."
                             return
                         if self.game.try_claim_combat_drop(drop_index):
                             self.loot_message = ""
@@ -114,7 +114,7 @@ class ResultScreen:
                             self.replacement_mode = True
                             self.selected_pending_drop_index = drop_index
                             self.loot_message = (
-                                "Inventaire plein : sélectionne un objet à remplacer."
+                                "Inventaire plein : choisis un slot à échanger."
                             )
                         return
 
@@ -339,11 +339,11 @@ class ResultScreen:
         if not isinstance(slots, list):
             return
 
-        slot_size = 20
-        gap = 3
-        columns = 15
-        start_x = 226
-        start_y = 462
+        slot_size = 30
+        gap = 4
+        columns = 10
+        start_x = 230
+        start_y = 458
 
         for index, slot in enumerate(slots[:30]):
             column = index % columns
@@ -362,10 +362,10 @@ class ResultScreen:
                 continue
 
             icon = self._get_slot_icon(slot)
-            icon_rect = pygame.Rect(0, 0, 16, 16)
+            icon_rect = pygame.Rect(0, 0, 24, 24)
             icon_rect.center = slot_rect.center
             if icon is not None:
-                screen.blit(pygame.transform.scale(icon, (16, 16)), icon_rect)
+                screen.blit(pygame.transform.scale(icon, (24, 24)), icon_rect)
             else:
                 self._draw_small_icon_fallback(screen, icon_rect)
 

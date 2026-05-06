@@ -219,8 +219,11 @@ class Game:
         else:
             return False
 
+        previous_slot = slots[inventory_slot_index]
         slots[inventory_slot_index] = replacement
         claimed_drop = pending.pop(drop_index)
+        if previous_slot is not None:
+            pending.append(previous_slot)
         inventory_result.setdefault("added", []).append(claimed_drop)
         return True
 
