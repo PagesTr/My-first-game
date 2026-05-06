@@ -6,6 +6,7 @@ def create_enemy(template, level):
     enemy_level = max(1, level + random.randint(-1, 1))
     return {
         'name': template['name'],
+        'behavior': template.get('behavior', 'balanced'),
         'level': enemy_level,
         'max_hp': stats['hp'] + enemy_level * 2,
         'current_hp': stats['hp'] + enemy_level * 2,

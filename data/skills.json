@@ -1,0 +1,94 @@
+{
+  "warrior_comeback_strike": {
+    "name": "Comeback Strike",
+    "class": "warrior",
+    "type": "active",
+    "trigger": "before_player_attack_after_damage_taken",
+    "description": "Deal a stronger attack after taking damage.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.25,
+        "cooldown": 4
+      },
+      "2": {
+        "damage_multiplier": 1.35,
+        "cooldown": 4
+      },
+      "3": {
+        "damage_multiplier": 1.45,
+        "cooldown": 3
+      },
+      "4": {
+        "damage_multiplier": 1.60,
+        "cooldown": 3
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.85,
+      "cooldown": 2
+    }
+  },
+  "warrior_execution_strike": {
+    "name": "Execution Strike",
+    "class": "warrior",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal more damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "enemy_hp_threshold": 0.25,
+        "damage_multiplier": 1.25
+      },
+      "2": {
+        "enemy_hp_threshold": 0.30,
+        "damage_multiplier": 1.30
+      },
+      "3": {
+        "enemy_hp_threshold": 0.35,
+        "damage_multiplier": 1.40
+      },
+      "4": {
+        "enemy_hp_threshold": 0.40,
+        "damage_multiplier": 1.50
+      }
+    },
+    "enhanced": {
+      "enemy_hp_threshold": 0.45,
+      "damage_multiplier": 1.75
+    }
+  },
+  "warrior_vitality_training": {
+    "name": "Vitality Training",
+    "class": "warrior",
+    "type": "passive",
+    "trigger": "always",
+    "description": "Increase max HP based on character level.",
+    "levels": {
+      "1": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 1
+        }
+      },
+      "2": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 2
+        }
+      },
+      "3": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 3
+        }
+      },
+      "4": {
+        "stat_modifiers_per_character_level": {
+          "max_hp": 4
+        }
+      }
+    },
+    "enhanced": {
+      "stat_modifiers_per_character_level": {
+        "max_hp": 6
+      }
+    }
+  }
+}

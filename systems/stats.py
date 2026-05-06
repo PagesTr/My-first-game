@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from systems.effects import get_active_stat_modifiers
+from systems.skills import get_passive_skill_stat_modifiers
 
 
 def load_stat_scaling():
@@ -22,7 +23,7 @@ def normalize_primary_stats(total):
     return total
 
 
-def derive_stats(player, items, classes):
+def derive_stats(player, items, classes, skills_data=None):
     """Calculate the player's final stats from class and equipment.
 
     This function starts with the class base stats and then adds any
@@ -51,6 +52,14 @@ def derive_stats(player, items, classes):
     for stat, value in active_modifiers.items():
         total[stat] = total.get(stat, 0) + value
 
+    passive_modifiers = get_passive_skill_stat_modifiers(skills_data, player)
+    final_stat_modifiers = {}
+    for stat, value in passive_modifiers.items():
+        if stat in ("max_hp", "hp"):
+            final_stat_modifiers[stat] = final_stat_modifiers.get(stat, 0) + value
+        else:
+            total[stat] = total.get(stat, 0) + value
+
     total = normalize_primary_stats(total)
     scaling = load_stat_scaling()
 
@@ -59,6 +68,12 @@ def derive_stats(player, items, classes):
         + scaling["progression_secondary_stats"]
     )
     final_stats = dict(scaling["base_values"])
+
+    for stat in ("max_hp", "hp"):
+        final_stats["max_hp"] = (
+            final_stats.get("max_hp", 0)
+            + final_stat_modifiers.get(stat, 0)
+        )
 
     for stat in secondary_stats:
         final_stats[stat] = final_stats.get(stat, 0) + total.get(stat, 0)
@@ -122,8 +137,8 @@ def derive_stats(player, items, classes):
     }
 
 
-def prepare_player_for_combat(player, items, classes):
-    stats = derive_stats(player, items, classes)
+def prepare_player_for_combat(player, items, classes, skills_data=None):
+    stats = derive_stats(player, items, classes, skills_data)
 
     player["force"] = stats["force"]
     player["agility"] = stats["agility"]

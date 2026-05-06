@@ -18,6 +18,11 @@ def create_player(char_class, classes, items):
         },
         'inventory': create_inventory(),
         'active_effects': [],
+        'skill_points': 1,
+        'enhanced_skill_points': 0,
+        'skills': {},
+        'equipped_skills': [],
+        'skill_cooldowns': {},
         'current_hp': 0,
     }
     # Temporary test items for buff effect validation.

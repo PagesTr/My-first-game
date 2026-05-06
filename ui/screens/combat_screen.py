@@ -1,5 +1,7 @@
 import pygame
 
+from ui.assets import draw_background, load_image
+
 
 class Button:
     def __init__(self, rect, text):
@@ -21,6 +23,7 @@ class CombatScreen:
     def __init__(self, game):
         self.game = game
         self.font = pygame.font.Font(None, 32)
+        self.combat_background = load_image("assets/backgrounds/combat.png", (800, 600))
 
         # boutons
         self.attack_btn = Button((50, 450, 150, 50), "Attaquer")
@@ -62,7 +65,7 @@ class CombatScreen:
     # ======================
 
     def draw(self, screen):
-        screen.fill((20, 20, 30))
+        draw_background(screen, self.combat_background, (20, 20, 30))
 
         combat = self.game.combat
         if combat is None:
@@ -76,6 +79,30 @@ class CombatScreen:
         )
         screen.blit(player_text, (50, 50))
 
+        active_effects = self.game.player.get("active_effects", [])
+        log_y = 180
+        if active_effects:
+            effects_title = self.font.render(
+                "Active effects:", True, (180, 220, 255)
+            )
+            screen.blit(effects_title, (50, 130))
+
+            effect_y = 160
+            for effect in active_effects[:4]:
+                effect_name = effect.get("name") or effect.get("id") or "Unknown effect"
+                duration_type = effect.get("duration_type")
+
+                if duration_type == "combat" and "remaining_combats" in effect:
+                    effect_name = f"{effect_name} ({effect['remaining_combats']} combats)"
+                elif duration_type == "time" and "remaining_seconds" in effect:
+                    effect_name = f"{effect_name} ({effect['remaining_seconds']}s)"
+
+                effect_text = self.font.render(effect_name, True, (210, 210, 210))
+                screen.blit(effect_text, (70, effect_y))
+                effect_y += 28
+
+            log_y = effect_y + 10
+
         # --- Enemy ---
         enemy_text = self.font.render(
             f"Enemy HP: {state['enemy_hp']}", True, (255, 100, 100)
@@ -83,7 +110,7 @@ class CombatScreen:
         screen.blit(enemy_text, (50, 100))
 
         # --- Log combat ---
-        y = 180
+        y = log_y
         for line in state["log"][-5:]:  # dernières lignes
             log_text = self.font.render(line, True, (200, 200, 200))
             screen.blit(log_text, (50, y))
