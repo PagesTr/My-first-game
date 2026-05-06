@@ -541,13 +541,11 @@ class InventoryScreen:
         item_id = item_instance.get("item")
         item_data = self.game.data.items.get(item_id, {})
         item_type = item_data.get("type", "unknown")
-        item_kind = item_instance.get("kind", "unknown")
         stats = item_instance.get("stats") or item_data.get("stats", {})
 
         lines = [
             self._get_item_display_name(item_instance),
             f"Type: {self._get_type_label(item_type)}",
-            f"Storage: {self._get_kind_label(item_kind)}",
         ]
 
         rarity = item_instance.get("rarity")
@@ -574,13 +572,6 @@ class InventoryScreen:
             lines.append("No stats")
 
         return lines
-
-    def _get_kind_label(self, item_kind):
-        labels = {
-            "stackable": "Stackable",
-            "individual": "Individual item",
-        }
-        return labels.get(item_kind, "Unknown")
 
     def _get_type_label(self, item_type):
         labels = {

@@ -812,9 +812,9 @@ class ResultScreen:
         item_name = item_data.get("name", item_id)
         lines = [item_name]
 
-        kind = drop.get("kind")
-        if kind:
-            lines.append(f"Type: {kind}")
+        item_type = item_data.get("type")
+        if item_type:
+            lines.append(f"Type: {self._get_type_label(item_type)}")
         if "quantity" in drop:
             lines.append(f"Quantity: {drop.get('quantity')}")
 
@@ -836,9 +836,9 @@ class ResultScreen:
         item_name = item_data.get("name", item_id)
         lines = [item_name]
 
-        kind = slot.get("kind")
-        if kind:
-            lines.append(f"Type: {kind}")
+        item_type = item_data.get("type")
+        if item_type:
+            lines.append(f"Type: {self._get_type_label(item_type)}")
         if "quantity" in slot:
             lines.append(f"Quantity: {slot.get('quantity')}")
 
@@ -855,6 +855,18 @@ class ResultScreen:
         if index == 0:
             return PALETTE["text"]
         return PALETTE["muted"]
+
+    def _get_type_label(self, item_type):
+        labels = {
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "resource": "Resource",
+            "currency": "Currency",
+            "quest": "Quest",
+        }
+        if not item_type:
+            return "Unknown"
+        return labels.get(item_type, str(item_type).capitalize())
 
     def _draw_combat_report_mail(self, screen, result):
         mail = result.get("combat_report_mail")
