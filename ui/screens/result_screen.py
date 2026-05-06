@@ -26,11 +26,14 @@ class Button:
         self.text = text
 
     def draw(self, screen, font):
+        pygame.draw.rect(screen, PALETTE["panel_dark"], self.rect.move(4, 4))
         pygame.draw.rect(screen, PALETTE["button"], self.rect)
-        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 2)
+        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 3)
+        pygame.draw.rect(screen, PALETTE["panel_light"], self.rect.inflate(-10, -10), 1)
 
         label = font.render(self.text, True, PALETTE["text"])
-        screen.blit(label, (self.rect.x + 20, self.rect.y + 12))
+        label_rect = label.get_rect(center=self.rect.center)
+        screen.blit(label, label_rect)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -55,7 +58,7 @@ class ResultScreen:
 
         combat = self.game.combat
         victory = combat is not None and combat.winner == "player"
-        title_text = "Victoire !" if victory else "Defaite..."
+        title_text = "Victoire !" if victory else "Défaite..."
         title_color = PALETTE["victory"] if victory else PALETTE["defeat"]
 
         result = self.game.last_combat_result or {}
@@ -68,13 +71,13 @@ class ResultScreen:
 
         summary_rect = pygame.Rect(70, 145, 310, 310)
         loot_rect = pygame.Rect(420, 145, 310, 310)
-        self._draw_panel(screen, summary_rect, "Resume")
+        self._draw_panel(screen, summary_rect, "Résumé")
         self._draw_panel(screen, loot_rect, "Butin")
 
         y = summary_rect.y + 66
-        y = self._draw_summary_line(screen, "XP gagnee", exp_gained, y)
+        y = self._draw_summary_line(screen, "XP gagnée", exp_gained, y)
         y = self._draw_summary_line(
-            screen, "Gold gagne", gold_gained, y, PALETTE["gold"]
+            screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
         )
         y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
 
