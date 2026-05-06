@@ -10,7 +10,8 @@ RECIPES_PATH = PROJECT_ROOT / "data" / "recipes.json"
 ITEMS_PATH = PROJECT_ROOT / "data" / "items.json"
 ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
-VALID_INGREDIENT_KINDS = {"stackable", "unique"}
+VALID_INGREDIENT_KINDS = {"stackable", "individual"}
+LEGACY_INGREDIENT_KIND_ALIASES = {"unique": "individual"}
 
 
 def load_json(path):
@@ -30,7 +31,7 @@ def stackable_recipe(item_id="leather", quantity=2, result_item="field_dressing"
 def unique_recipe(item_id="rusty_sword", result_item="restored_sword"):
     return {
         "ingredients": [
-            {"kind": "unique", "item": item_id, "quantity": 1}
+            {"kind": "individual", "item": item_id, "quantity": 1}
         ],
         "result": {"item": result_item, "quantity": 1},
     }
@@ -90,7 +91,11 @@ def test_ingredient_kind_is_valid():
 
     for recipe_id, recipe in recipes.items():
         for ingredient in recipe["ingredients"]:
-            assert ingredient["kind"] in VALID_INGREDIENT_KINDS, recipe_id
+            kind = LEGACY_INGREDIENT_KIND_ALIASES.get(
+                ingredient["kind"],
+                ingredient["kind"],
+            )
+            assert kind in VALID_INGREDIENT_KINDS, recipe_id
 
 
 def test_ingredient_quantity_is_positive_integer():
@@ -253,7 +258,7 @@ def test_craft_item_adds_a_unique_result():
 
     assert crafted is True
     assert inventory["slots"][0] == {
-        "kind": "unique",
+        "kind": "individual",
         "item": "restored_sword",
     }
 

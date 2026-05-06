@@ -12,6 +12,13 @@ def _is_valid_inventory(inventory):
     )
 
 
+def _get_ingredient_kind(ingredient):
+    kind = ingredient.get("kind")
+    if kind == "unique":
+        return "individual"
+    return kind
+
+
 def _count_stackable_item(inventory, item_id):
     total = 0
     for slot in inventory["slots"]:
@@ -24,12 +31,12 @@ def _count_stackable_item(inventory, item_id):
     return total
 
 
-def _count_unique_item(inventory, item_id):
+def _count_individual_item(inventory, item_id):
     total = 0
     for slot in inventory["slots"]:
         if (
             slot is not None
-            and slot.get("kind") == "unique"
+            and slot.get("kind") == "individual"
             and slot.get("item") == item_id
         ):
             total += 1
@@ -58,12 +65,12 @@ def _consume_stackable_item(inventory, item_id, quantity):
     return False
 
 
-def _consume_unique_item(inventory, item_id, quantity):
+def _consume_individual_item(inventory, item_id, quantity):
     remaining = quantity
     for index, slot in enumerate(inventory["slots"]):
         if (
             slot is not None
-            and slot.get("kind") == "unique"
+            and slot.get("kind") == "individual"
             and slot.get("item") == item_id
         ):
             inventory["slots"][index] = None
@@ -74,7 +81,7 @@ def _consume_unique_item(inventory, item_id, quantity):
     return False
 
 
-def _is_unique_result(item_id, items):
+def _is_individual_result(item_id, items):
     item_data = items.get(item_id, {})
     return (
         item_data.get("type") == "equipment"
@@ -90,13 +97,13 @@ def can_craft(inventory, recipe):
     for ingredient in recipe.get("ingredients", []):
         item_id = ingredient.get("item")
         quantity = ingredient.get("quantity", 0)
-        kind = ingredient.get("kind")
+        kind = _get_ingredient_kind(ingredient)
 
         if kind == "stackable":
             if _count_stackable_item(inventory, item_id) < quantity:
                 return False
-        elif kind == "unique":
-            if _count_unique_item(inventory, item_id) < quantity:
+        elif kind == "individual":
+            if _count_individual_item(inventory, item_id) < quantity:
                 return False
         else:
             return False
@@ -114,12 +121,12 @@ def craft_item(inventory, recipe, items):
     for ingredient in recipe.get("ingredients", []):
         item_id = ingredient["item"]
         quantity = ingredient["quantity"]
-        kind = ingredient["kind"]
+        kind = _get_ingredient_kind(ingredient)
 
         if kind == "stackable":
             consumed = _consume_stackable_item(updated_inventory, item_id, quantity)
         else:
-            consumed = _consume_unique_item(updated_inventory, item_id, quantity)
+            consumed = _consume_individual_item(updated_inventory, item_id, quantity)
 
         if not consumed:
             return False
@@ -128,7 +135,7 @@ def craft_item(inventory, recipe, items):
     result_item_id = result.get("item")
     result_quantity = result.get("quantity", 0)
 
-    if _is_unique_result(result_item_id, items):
+    if _is_individual_result(result_item_id, items):
         added = add_unique_item(updated_inventory, {"item": result_item_id})
     else:
         added = add_stackable_item(updated_inventory, result_item_id, result_quantity)
