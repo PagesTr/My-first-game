@@ -147,6 +147,19 @@ class ResultScreen:
             "Tout récupérer" if self._has_pending_drops(result) else "Continuer"
         )
 
+        if self.replacement_mode:
+            self._draw_replacement_layout(
+                screen,
+                result,
+                drops,
+                exp_gained,
+                gold_gained,
+                current_level,
+                title_text,
+                title_color,
+            )
+            return
+
         self._draw_title(screen, title_text, title_color)
 
         summary_rect = pygame.Rect(64, 138, 322, 318)
@@ -175,15 +188,60 @@ class ResultScreen:
             )
 
         self._draw_loot_section(screen, loot_rect, drops)
-        if self.replacement_mode:
-            self._draw_inventory_replacement_grid(screen)
-            self._draw_replacement_instructions(screen)
         self._draw_loot_tooltip(screen)
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
-        if not self.replacement_mode:
-            self._draw_combat_report_mail(screen, result)
+        self._draw_combat_report_mail(screen, result)
         self._draw_button(screen, self.continue_btn)
+
+    def _draw_replacement_layout(
+        self,
+        screen,
+        result,
+        drops,
+        exp_gained,
+        gold_gained,
+        current_level,
+        title_text,
+        title_color,
+    ):
+        self._draw_title(screen, title_text, title_color)
+
+        subtitle = self.header_font.render("Inventaire plein", True, PALETTE["gold"])
+        subtitle_rect = subtitle.get_rect(center=(400, 124))
+        screen.blit(subtitle, subtitle_rect)
+
+        self._draw_replacement_instructions(screen)
+
+        self._draw_compact_summary(screen, exp_gained, gold_gained, current_level)
+
+        loot_rect = pygame.Rect(42, 210, 328, 242)
+        inventory_rect = pygame.Rect(400, 210, 358, 242)
+        self._draw_panel(screen, loot_rect, "Butin temporaire")
+        self._draw_panel(screen, inventory_rect, "Inventaire")
+
+        self._draw_loot_section(screen, loot_rect, drops)
+        self._draw_inventory_panel(screen, inventory_rect)
+        self._draw_loot_tooltip(screen)
+        self._draw_inventory_tooltip(screen)
+        self._draw_loot_message(screen)
+        self._draw_button(screen, self.continue_btn)
+
+    def _draw_compact_summary(self, screen, exp_gained, gold_gained, current_level):
+        rect = pygame.Rect(220, 174, 360, 28)
+        pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
+        pygame.draw.rect(screen, PALETTE["border"], rect, 1)
+
+        summary = self.small_font.render(
+            f"XP +{exp_gained}   Gold +{gold_gained}   Niveau {current_level}",
+            True,
+            PALETTE["text"],
+        )
+        summary_rect = summary.get_rect(center=rect.center)
+        screen.blit(summary, summary_rect)
+
+    def _draw_inventory_panel(self, screen, rect):
+        self._draw_inventory_replacement_grid(screen, rect)
 
     def _draw_background(self, screen):
         for y in range(0, 600, 4):
@@ -342,7 +400,7 @@ class ResultScreen:
             no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
             screen.blit(no_loot_text, (row_rect.x + 10, row_rect.y + 10))
 
-    def _draw_inventory_replacement_grid(self, screen):
+    def _draw_inventory_replacement_grid(self, screen, rect):
         self.inventory_slot_rects = []
         if self.game.player is None:
             return
@@ -354,9 +412,9 @@ class ResultScreen:
 
         slot_size = 30
         gap = 4
-        columns = 10
-        start_x = 230
-        start_y = 458
+        columns = 6
+        start_x = rect.x + 24
+        start_y = rect.y + 68
 
         for index, slot in enumerate(slots[:30]):
             column = index % columns
@@ -384,10 +442,10 @@ class ResultScreen:
 
     def _draw_replacement_instructions(self, screen):
         lines = [
-            "Clique un objet de l'inventaire pour le déplacer vers le butin.",
+            "Clique un objet de l'inventaire pour l'envoyer dans le butin temporaire.",
             "Ou sélectionne un butin puis un slot pour échanger.",
         ]
-        y = 522
+        y = 146
         for line in lines:
             text = self.small_font.render(line, True, PALETTE["muted"])
             text_rect = text.get_rect(center=(400, y))
@@ -456,7 +514,8 @@ class ResultScreen:
             return
 
         message = self.small_font.render(self.loot_message, True, PALETTE["defeat"])
-        message_rect = message.get_rect(center=(575, 430))
+        center = (400, 488) if self.replacement_mode else (575, 430)
+        message_rect = message.get_rect(center=center)
         screen.blit(message, message_rect)
 
     def _get_pending_drops(self, result):
