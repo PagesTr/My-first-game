@@ -3,6 +3,7 @@ from core.game import Game
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
 from ui.screens.result_screen import ResultScreen
@@ -27,6 +28,7 @@ class PygameApp:
         self.crafting_screen = CraftingScreen(self.game)
         self.merchant_screen = MerchantScreen(self.game)
         self.skills_screen = SkillsScreen(self.game)
+        self.mailbox_screen = MailboxScreen(self.game)
 
     def run(self):
         while self.running:
@@ -56,6 +58,8 @@ class PygameApp:
                 self.merchant_screen.handle_event(event)
             elif self.game.state == "skills":
                 self.skills_screen.handle_event(event)
+            elif self.game.state == "mailbox":
+                self.mailbox_screen.handle_event(event)
 
     def update(self):
         if self.game.state == "combat":
@@ -76,5 +80,7 @@ class PygameApp:
             self.merchant_screen.draw(self.screen)
         elif self.game.state == "skills":
             self.skills_screen.draw(self.screen)
+        elif self.game.state == "mailbox":
+            self.mailbox_screen.draw(self.screen)
 
         pygame.display.flip()

@@ -1,5 +1,7 @@
 import pygame
 
+from ui.assets import draw_background, load_image
+
 
 class MenuButton:
     def __init__(self, rect, title, subtitle="", enabled=True):
@@ -34,6 +36,13 @@ class MenuScreen:
         self.title_font = pygame.font.Font(None, 46)
         self.option_font = pygame.font.Font(None, 30)
         self.body_font = pygame.font.Font(None, 24)
+        self.town_background = load_image("assets/backgrounds/town.png", (800, 600))
+        self.zone_background = load_image(
+            "assets/backgrounds/zone_select.png", (800, 600)
+        )
+        self.class_background = load_image(
+            "assets/backgrounds/class_select.png", (800, 600)
+        )
 
         self.class_buttons = self._build_class_buttons()
         self.zone_buttons = self._build_zone_buttons()
@@ -61,6 +70,11 @@ class MenuScreen:
             (80, 502, 300, 72),
             "Skills",
             "Learn and equip skills",
+        )
+        self.mailbox_button = MenuButton(
+            (400, 414, 300, 72),
+            "Mailbox",
+            "View combat reports",
         )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
 
@@ -130,6 +144,10 @@ class MenuScreen:
                 self.game.state = "skills"
                 return
 
+            if self.mailbox_button.is_clicked(pos):
+                self.game.state = "mailbox"
+                return
+
         if self.game.state == "zone_select":
             if self.zone_back_button.is_clicked(pos):
                 self.game.state = "town"
@@ -138,16 +156,17 @@ class MenuScreen:
             for zone_key, button in self.zone_buttons:
                 if button.is_clicked(pos):
                     self.game.select_zone(zone_key)
-                    return
+            return
 
     def draw(self, screen):
-        screen.fill((18, 24, 30))
-
         if self.game.state == "class_select":
+            draw_background(screen, self.class_background, (18, 24, 30))
             self._draw_class_select(screen)
         elif self.game.state == "town":
+            draw_background(screen, self.town_background, (18, 24, 30))
             self._draw_town(screen)
         elif self.game.state == "zone_select":
+            draw_background(screen, self.zone_background, (18, 24, 30))
             self._draw_zone_select(screen)
 
     def _draw_class_select(self, screen):
@@ -177,6 +196,7 @@ class MenuScreen:
         self.merchant_button.draw(screen, self.option_font, self.body_font)
         self.crafting_button.draw(screen, self.option_font, self.body_font)
         self.skills_button.draw(screen, self.option_font, self.body_font)
+        self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
 
     def _draw_town_player_panel(self, screen):

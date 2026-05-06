@@ -7,6 +7,7 @@ from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
 from systems.inventory import add_drops_to_inventory
 from systems.loot import generate_combat_loot
+from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
 from systems.stats import prepare_player_for_combat
 
@@ -22,6 +23,7 @@ class Game:
         self.auto_mode = False
         self.combat = None
         self.last_combat_result = None
+        self.mailbox = create_mailbox()
 
     def select_class(self, class_key):
         if class_key not in self.data.classes:
@@ -93,6 +95,10 @@ class Game:
                     "drops": [],
                     "inventory_result": {"added": [], "failed": []},
                 }
+            combat_report = self.combat.get_combat_report()
+            mail = create_combat_report_mail(combat_report, self.last_combat_result)
+            add_mail(self.mailbox, mail)
+            self.last_combat_result["combat_report_mail"] = mail
             self.state = "combat_result"
             self.auto_mode = False
 

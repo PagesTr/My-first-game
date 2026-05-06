@@ -243,7 +243,7 @@ def apply_comeback_strike(combat, actor):
     cooldown = skill_values.get("cooldown", 0)
     if cooldown > 0:
         cooldowns[WARRIOR_COMEBACK_STRIKE] = cooldown
-    combat.log.append("Comeback Strike activated!")
+    combat.add_combat_log("Comeback Strike activated!")
 
 
 def apply_execution_strike(combat, actor, target):
@@ -268,7 +268,7 @@ def apply_execution_strike(combat, actor, target):
         return
 
     combat.pending_damage_multiplier *= skill_values["damage_multiplier"]
-    combat.log.append("Execution Strike activated!")
+    combat.add_combat_log("Execution Strike activated!")
 
 
 def tick_skill_cooldowns(player):
