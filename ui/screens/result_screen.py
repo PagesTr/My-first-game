@@ -54,6 +54,14 @@ class ResultScreen:
         self.small_font = pygame.font.Font(None, 22)
         self.continue_btn = Button((190, 530, 200, 50), "Continuer")
         self.discard_btn = Button((420, 530, 220, 50), "Abandonner le reste")
+        self.loot_page = 0
+        self.loot_items_per_page = 10
+        self.loot_prev_btn = Button((0, 0, 28, 24), "<")
+        self.loot_next_btn = Button((0, 0, 28, 24), ">")
+        self.inventory_page = 0
+        self.inventory_items_per_page = 24
+        self.inventory_prev_btn = Button((0, 0, 28, 24), "<")
+        self.inventory_next_btn = Button((0, 0, 28, 24), ">")
         self.loot_rows = []
         self.loot_cards = []
         self.loot_message = ""
@@ -85,13 +93,16 @@ class ResultScreen:
                     else:
                         self.replacement_mode = True
                         self.loot_message = (
-                            "Inventaire plein : sélectionne un butin puis un slot à échanger."
+                            "Inventaire plein : libère une place."
                         )
                 else:
                     self.game.continue_after_combat_result()
                 return
 
             if event.button == 1:
+                if self._handle_pagination_click(event.pos):
+                    return
+
                 if self.replacement_mode:
                     for slot_rect, slot_index, _slot in self.inventory_slot_rects:
                         if slot_rect.collidepoint(event.pos):
@@ -120,22 +131,34 @@ class ResultScreen:
                                     self.replacement_mode = False
                                     self.loot_message = "Échange effectué."
                             else:
-                                self.loot_message = "Remplacement impossible."
+                                self.loot_message = "Déplacement impossible."
                             return
 
                 for card_rect, drop_index, _drop in self.loot_cards:
                     if card_rect.collidepoint(event.pos):
                         if self.replacement_mode:
-                            self.selected_pending_drop_index = drop_index
-                            self.loot_message = "Choisis un slot à échanger."
+                            if self.game.try_claim_combat_drop(drop_index):
+                                self.selected_pending_drop_index = None
+                                self.loot_message = "Objet récupéré."
+                                result = self.game.last_combat_result or {}
+                                if not self._has_pending_drops(result):
+                                    self.replacement_mode = False
+                                self._clamp_pages(self._get_pending_drops(result))
+                            else:
+                                self.selected_pending_drop_index = drop_index
+                                self.loot_message = (
+                                    "Inventaire plein : choisis un slot à échanger."
+                                )
                             return
                         if self.game.try_claim_combat_drop(drop_index):
                             self.loot_message = ""
+                            result = self.game.last_combat_result or {}
+                            self._clamp_pages(self._get_pending_drops(result))
                         else:
                             self.replacement_mode = True
                             self.selected_pending_drop_index = drop_index
                             self.loot_message = (
-                                "Inventaire plein : choisis un slot à échanger."
+                                "Inventaire plein : libère une place."
                             )
                         return
 
@@ -152,6 +175,7 @@ class ResultScreen:
         gold_gained = result.get("gold_gained", 0)
         drops = self._get_pending_drops(result)
         current_level = self.game.player.get("level", 1) if self.game.player else 1
+        self._clamp_pages(drops)
         self.continue_btn.text = (
             "Tout récupérer" if self._has_pending_drops(result) else "Continuer"
         )
@@ -231,13 +255,14 @@ class ResultScreen:
 
         self._draw_loot_section(screen, loot_rect, drops)
         self._draw_inventory_panel(screen, inventory_rect)
+        self._draw_selection_feedback(screen)
         self._draw_loot_tooltip(screen)
         self._draw_inventory_tooltip(screen)
         self._draw_loot_message(screen)
         self._draw_result_buttons(screen, result)
 
     def _draw_compact_summary(self, screen, exp_gained, gold_gained, current_level):
-        rect = pygame.Rect(220, 174, 360, 28)
+        rect = pygame.Rect(220, 180, 360, 26)
         pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
         pygame.draw.rect(screen, PALETTE["border"], rect, 1)
 
@@ -367,10 +392,13 @@ class ResultScreen:
             columns = 5
             start_x = rect.x + 20
             start_y = rect.y + 72
+            start_index = self.loot_page * self.loot_items_per_page
+            visible_drops = drops[start_index:start_index + self.loot_items_per_page]
 
-            for index, drop in enumerate(drops[:10]):
-                column = index % columns
-                row = index // columns
+            for visible_index, drop in enumerate(visible_drops):
+                real_drop_index = start_index + visible_index
+                column = visible_index % columns
+                row = visible_index // columns
                 card_rect = pygame.Rect(
                     start_x + column * (card_width + gap),
                     start_y + row * (card_height + gap),
@@ -383,12 +411,12 @@ class ResultScreen:
                     card_rect,
                 )
                 pygame.draw.rect(screen, self._get_drop_color(drop), card_rect, 2)
-                if index == self.selected_pending_drop_index:
+                if real_drop_index == self.selected_pending_drop_index:
                     pygame.draw.rect(screen, PALETTE["border_light"], card_rect, 4)
                 pygame.draw.rect(
                     screen, PALETTE["panel_light"], card_rect.inflate(-8, -8), 1
                 )
-                self.loot_cards.append((card_rect, index, drop))
+                self.loot_cards.append((card_rect, real_drop_index, drop))
                 self.loot_rows.append((card_rect, drop))
 
                 icon = self._get_drop_icon(drop)
@@ -417,8 +445,23 @@ class ResultScreen:
             row_rect = pygame.Rect(rect.x + 20, y - 4, rect.width - 40, 42)
             pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
             pygame.draw.rect(screen, (70, 66, 70), row_rect, 1)
-            no_loot_text = self.font.render("Aucun loot", True, PALETTE["muted"])
+            message = (
+                "Tout le butin est récupéré."
+                if self.replacement_mode
+                else "Aucun loot"
+            )
+            no_loot_text = self.font.render(message, True, PALETTE["muted"])
             screen.blit(no_loot_text, (row_rect.x + 10, row_rect.y + 10))
+
+        self._draw_page_controls(
+            screen,
+            rect,
+            len(drops),
+            self.loot_page,
+            self.loot_items_per_page,
+            self.loot_prev_btn,
+            self.loot_next_btn,
+        )
 
     def _draw_inventory_replacement_grid(self, screen, rect):
         self.inventory_slot_rects = []
@@ -435,10 +478,14 @@ class ResultScreen:
         columns = 6
         start_x = rect.x + 24
         start_y = rect.y + 68
+        mouse_pos = pygame.mouse.get_pos()
+        start_index = self.inventory_page * self.inventory_items_per_page
+        visible_slots = slots[start_index:start_index + self.inventory_items_per_page]
 
-        for index, slot in enumerate(slots[:30]):
-            column = index % columns
-            row = index // columns
+        for visible_index, slot in enumerate(visible_slots):
+            real_slot_index = start_index + visible_index
+            column = visible_index % columns
+            row = visible_index // columns
             slot_rect = pygame.Rect(
                 start_x + column * (slot_size + gap),
                 start_y + row * (slot_size + gap),
@@ -447,9 +494,14 @@ class ResultScreen:
             )
             pygame.draw.rect(screen, PALETTE["panel_dark"], slot_rect)
             pygame.draw.rect(screen, PALETTE["border"], slot_rect, 1)
-            self.inventory_slot_rects.append((slot_rect, index, slot))
+            self.inventory_slot_rects.append((slot_rect, real_slot_index, slot))
 
             if slot is None:
+                if (
+                    self.selected_pending_drop_index is not None
+                    and slot_rect.collidepoint(mouse_pos)
+                ):
+                    pygame.draw.rect(screen, PALETTE["gold"], slot_rect, 3)
                 continue
 
             icon = self._get_slot_icon(slot)
@@ -460,17 +512,139 @@ class ResultScreen:
             else:
                 self._draw_small_icon_fallback(screen, icon_rect)
 
+            if slot_rect.collidepoint(mouse_pos):
+                if self.selected_pending_drop_index is not None:
+                    pygame.draw.rect(screen, PALETTE["gold"], slot_rect, 3)
+                elif slot is not None:
+                    pygame.draw.rect(screen, PALETTE["level_up"], slot_rect, 3)
+
+        self._draw_page_controls(
+            screen,
+            rect,
+            len(slots),
+            self.inventory_page,
+            self.inventory_items_per_page,
+            self.inventory_prev_btn,
+            self.inventory_next_btn,
+        )
+
     def _draw_replacement_instructions(self, screen):
+        rect = pygame.Rect(128, 136, 544, 42)
+        pygame.draw.rect(screen, PALETTE["shadow"], rect.move(3, 3))
+        pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
+        pygame.draw.rect(screen, PALETTE["border"], rect, 1)
+
         lines = [
-            "Clique un objet de l'inventaire pour l'envoyer dans le butin temporaire.",
-            "Ou sélectionne un butin puis un slot pour échanger.",
+            "Clique un butin pour le récupérer.",
+            "Clique un item d'inventaire pour libérer une place.",
         ]
-        y = 146
+        y = rect.y + 5
         for line in lines:
             text = self.small_font.render(line, True, PALETTE["muted"])
             text_rect = text.get_rect(center=(400, y))
             screen.blit(text, text_rect)
             y += 20
+
+    def _draw_selection_feedback(self, screen):
+        if self.selected_pending_drop_index is None:
+            message = "Clique un item de l'inventaire pour l'envoyer vers le butin."
+            color = PALETTE["muted"]
+        else:
+            message = "Butin sélectionné : choisis un slot d'inventaire."
+            color = PALETTE["gold"]
+            arrow = self.small_font.render("Butin -> Inventaire", True, PALETTE["gold"])
+            arrow_rect = arrow.get_rect(center=(385, 330))
+            screen.blit(arrow, arrow_rect)
+
+        rect = pygame.Rect(176, 456, 448, 28)
+        pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
+        pygame.draw.rect(screen, PALETTE["border"], rect, 1)
+        text = self.small_font.render(message, True, color)
+        text_rect = text.get_rect(center=rect.center)
+        screen.blit(text, text_rect)
+
+    def _get_page_count(self, item_count, items_per_page):
+        if item_count <= 0:
+            return 1
+        return max(1, (item_count + items_per_page - 1) // items_per_page)
+
+    def _clamp_pages(self, drops):
+        loot_page_count = self._get_page_count(len(drops), self.loot_items_per_page)
+        self.loot_page = max(0, min(self.loot_page, loot_page_count - 1))
+
+        if self.game.player is None:
+            self.inventory_page = 0
+            return
+
+        inventory = self.game.player.get("inventory", {})
+        slots = inventory.get("slots", [])
+        slot_count = len(slots) if isinstance(slots, list) else 0
+        inventory_page_count = self._get_page_count(
+            slot_count,
+            self.inventory_items_per_page,
+        )
+        self.inventory_page = max(0, min(self.inventory_page, inventory_page_count - 1))
+
+    def _handle_pagination_click(self, pos):
+        result = self.game.last_combat_result or {}
+        drops = self._get_pending_drops(result)
+        loot_page_count = self._get_page_count(len(drops), self.loot_items_per_page)
+        if loot_page_count > 1:
+            if self.loot_prev_btn.is_clicked(pos):
+                self.loot_page = max(0, self.loot_page - 1)
+                return True
+            if self.loot_next_btn.is_clicked(pos):
+                self.loot_page = min(loot_page_count - 1, self.loot_page + 1)
+                return True
+
+        if self.replacement_mode:
+            slot_count = 0
+            if self.game.player is not None:
+                inventory = self.game.player.get("inventory", {})
+                slots = inventory.get("slots", [])
+                if isinstance(slots, list):
+                    slot_count = len(slots)
+            inventory_page_count = self._get_page_count(
+                slot_count,
+                self.inventory_items_per_page,
+            )
+            if inventory_page_count > 1:
+                if self.inventory_prev_btn.is_clicked(pos):
+                    self.inventory_page = max(0, self.inventory_page - 1)
+                    return True
+                if self.inventory_next_btn.is_clicked(pos):
+                    self.inventory_page = min(
+                        inventory_page_count - 1,
+                        self.inventory_page + 1,
+                    )
+                    return True
+
+        return False
+
+    def _draw_page_controls(
+        self,
+        screen,
+        rect,
+        item_count,
+        current_page,
+        items_per_page,
+        prev_btn,
+        next_btn,
+    ):
+        page_count = self._get_page_count(item_count, items_per_page)
+        if page_count <= 1:
+            return
+
+        prev_btn.rect = pygame.Rect(rect.right - 104, rect.y + 16, 28, 24)
+        next_btn.rect = pygame.Rect(rect.right - 34, rect.y + 16, 28, 24)
+        page_text = self.small_font.render(
+            f"{current_page + 1}/{page_count}", True, PALETTE["muted"]
+        )
+        page_rect = page_text.get_rect(center=(rect.right - 55, rect.y + 28))
+
+        self._draw_button(screen, prev_btn)
+        screen.blit(page_text, page_rect)
+        self._draw_button(screen, next_btn)
 
     def _draw_inventory_tooltip(self, screen):
         if not self.replacement_mode:
@@ -533,7 +707,12 @@ class ResultScreen:
         if not self.loot_message:
             return
 
-        message = self.small_font.render(self.loot_message, True, PALETTE["defeat"])
+        color = (
+            PALETTE["defeat"]
+            if "impossible" in self.loot_message or "plein" in self.loot_message
+            else PALETTE["level_up"]
+        )
+        message = self.small_font.render(self.loot_message, True, color)
         center = (400, 488) if self.replacement_mode else (575, 430)
         message_rect = message.get_rect(center=center)
         screen.blit(message, message_rect)
