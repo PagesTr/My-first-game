@@ -55,6 +55,7 @@ class ResultScreen:
         self.continue_btn = Button((300, 530, 200, 50), "Continuer")
         self.loot_rows = []
         self.loot_cards = []
+        self.loot_message = ""
         self.icons = {
             "unknown": self._load_icon("assets/icons/item_unknown.png"),
             "equipment": self._load_icon("assets/icons/equipment.png"),
@@ -66,6 +67,16 @@ class ResultScreen:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.continue_btn.is_clicked(event.pos):
                 self.game.continue_after_combat_result()
+                return
+
+            if event.button == 1:
+                for card_rect, drop_index, _drop in self.loot_cards:
+                    if card_rect.collidepoint(event.pos):
+                        if self.game.try_claim_combat_drop(drop_index):
+                            self.loot_message = ""
+                        else:
+                            self.loot_message = "Inventaire plein"
+                        return
 
     def draw(self, screen):
         self._draw_background(screen)
@@ -78,7 +89,7 @@ class ResultScreen:
         result = self.game.last_combat_result or {}
         exp_gained = result.get("exp_gained", 0)
         gold_gained = result.get("gold_gained", 0)
-        drops = result.get("drops", [])
+        drops = self._get_pending_drops(result)
         current_level = self.game.player.get("level", 1) if self.game.player else 1
 
         self._draw_title(screen, title_text, title_color)
@@ -110,6 +121,7 @@ class ResultScreen:
 
         self._draw_loot_section(screen, loot_rect, drops)
         self._draw_loot_tooltip(screen)
+        self._draw_loot_message(screen)
         self._draw_combat_report_mail(screen, result)
         self._draw_button(screen, self.continue_btn)
 
@@ -236,7 +248,7 @@ class ResultScreen:
                 pygame.draw.rect(
                     screen, PALETTE["panel_light"], card_rect.inflate(-8, -8), 1
                 )
-                self.loot_cards.append((card_rect, drop))
+                self.loot_cards.append((card_rect, index, drop))
                 self.loot_rows.append((card_rect, drop))
 
                 icon = self._get_drop_icon(drop)
@@ -271,7 +283,7 @@ class ResultScreen:
     def _draw_loot_tooltip(self, screen):
         mouse_pos = pygame.mouse.get_pos()
         hovered_drop = None
-        for card_rect, drop in self.loot_cards:
+        for card_rect, _drop_index, drop in self.loot_cards:
             if card_rect.collidepoint(mouse_pos):
                 hovered_drop = drop
                 break
@@ -306,6 +318,20 @@ class ResultScreen:
         for line in rendered_lines:
             screen.blit(line, (tooltip_rect.x + 12, line_y))
             line_y += 22
+
+    def _draw_loot_message(self, screen):
+        if not self.loot_message:
+            return
+
+        message = self.small_font.render(self.loot_message, True, PALETTE["defeat"])
+        message_rect = message.get_rect(center=(575, 430))
+        screen.blit(message, message_rect)
+
+    def _get_pending_drops(self, result):
+        inventory_result = result.get("inventory_result", {})
+        if isinstance(inventory_result, dict) and "pending" in inventory_result:
+            return inventory_result.get("pending", [])
+        return result.get("drops", [])
 
     def _load_icon(self, path):
         try:

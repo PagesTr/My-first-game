@@ -5,7 +5,7 @@ from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
-from systems.inventory import add_drops_to_inventory
+from systems.inventory import add_stackable_item, add_unique_item
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
@@ -83,17 +83,18 @@ class Game:
                     self.player,
                 )
                 self.last_combat_result["drops"] = drops
-                self.last_combat_result["inventory_result"] = add_drops_to_inventory(
-                    self.player["inventory"],
-                    drops,
-                )
+                self.last_combat_result["inventory_result"] = {
+                    "added": [],
+                    "failed": [],
+                    "pending": list(drops),
+                }
             else:
                 self.last_combat_result = {
                     "exp_gained": 0,
                     "gold_gained": 0,
                     "leveled_up": False,
                     "drops": [],
-                    "inventory_result": {"added": [], "failed": []},
+                    "inventory_result": {"added": [], "failed": [], "pending": []},
                 }
             combat_report = self.combat.get_combat_report()
             mail = create_combat_report_mail(combat_report, self.last_combat_result)
@@ -114,6 +115,44 @@ class Game:
         self.state = "town"
         self.combat = None
         self.auto_mode = False
+
+    def try_claim_combat_drop(self, drop_index):
+        if self.last_combat_result is None or self.player is None:
+            return False
+
+        inventory_result = self.last_combat_result.get("inventory_result")
+        if not isinstance(inventory_result, dict):
+            return False
+
+        pending = inventory_result.get("pending")
+        if not isinstance(pending, list):
+            return False
+        if not isinstance(drop_index, int) or drop_index < 0 or drop_index >= len(pending):
+            return False
+
+        drop = pending[drop_index]
+        kind = drop.get("kind")
+        item_id = drop["item"]
+        if kind == "stackable":
+            added = add_stackable_item(
+                self.player["inventory"],
+                item_id,
+                drop.get("quantity", 1),
+            )
+        elif kind == "unique":
+            added = add_unique_item(self.player["inventory"], drop.copy())
+        else:
+            added = False
+
+        if added:
+            claimed_drop = pending.pop(drop_index)
+            inventory_result.setdefault("added", []).append(claimed_drop)
+            return True
+
+        failed = inventory_result.setdefault("failed", [])
+        if drop not in failed:
+            failed.append(drop)
+        return False
 
     def spawn_enemy(self):
         if self.selected_zone:
