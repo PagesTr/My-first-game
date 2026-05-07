@@ -792,7 +792,7 @@ class ResultScreen:
         if kind == "stackable":
             return f"- {item_name} x {drop.get('quantity', 1)}"
 
-        if kind == "unique":
+        if kind == "individual":
             rarity = self._get_rarity_label(drop)
             display_name = f"[{rarity}] {item_name}" if rarity else item_name
             return f"- {display_name}"
@@ -812,9 +812,9 @@ class ResultScreen:
         item_name = item_data.get("name", item_id)
         lines = [item_name]
 
-        kind = drop.get("kind")
-        if kind:
-            lines.append(f"Type: {kind}")
+        item_type = item_data.get("type")
+        if item_type:
+            lines.append(f"Type: {self._get_type_label(item_type)}")
         if "quantity" in drop:
             lines.append(f"Quantity: {drop.get('quantity')}")
 
@@ -836,9 +836,9 @@ class ResultScreen:
         item_name = item_data.get("name", item_id)
         lines = [item_name]
 
-        kind = slot.get("kind")
-        if kind:
-            lines.append(f"Type: {kind}")
+        item_type = item_data.get("type")
+        if item_type:
+            lines.append(f"Type: {self._get_type_label(item_type)}")
         if "quantity" in slot:
             lines.append(f"Quantity: {slot.get('quantity')}")
 
@@ -855,6 +855,18 @@ class ResultScreen:
         if index == 0:
             return PALETTE["text"]
         return PALETTE["muted"]
+
+    def _get_type_label(self, item_type):
+        labels = {
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "resource": "Resource",
+            "currency": "Currency",
+            "quest": "Quest",
+        }
+        if not item_type:
+            return "Unknown"
+        return labels.get(item_type, str(item_type).capitalize())
 
     def _draw_combat_report_mail(self, screen, result):
         mail = result.get("combat_report_mail")
@@ -876,7 +888,7 @@ class ResultScreen:
         if kind == "stackable":
             return f"- {item_name} x {drop.get('quantity', 1)}"
 
-        if kind == "unique":
+        if kind == "individual":
             rarity = self._get_rarity_label(drop)
             display_name = f"[{rarity}] {item_name}" if rarity else item_name
             stats_text = self._format_stats(drop.get("stats", {}))
@@ -908,7 +920,7 @@ class ResultScreen:
         return colors.get(drop.get("rarity"), (200, 200, 200))
 
     def _get_drop_color(self, drop):
-        if drop.get("kind") == "unique":
+        if drop.get("kind") == "individual":
             return self._get_rarity_color(drop)
         return (200, 200, 200)
 

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from systems.crafting import can_craft, craft_item
-from systems.inventory import add_stackable_item, add_unique_item, create_inventory
+from systems.inventory import add_individual_item, add_stackable_item, create_inventory
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -10,7 +10,8 @@ RECIPES_PATH = PROJECT_ROOT / "data" / "recipes.json"
 ITEMS_PATH = PROJECT_ROOT / "data" / "items.json"
 ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
-VALID_INGREDIENT_KINDS = {"stackable", "unique"}
+VALID_INGREDIENT_KINDS = {"stackable", "individual"}
+LEGACY_INGREDIENT_KIND_ALIASES = {"unique": "individual"}
 
 
 def load_json(path):
@@ -27,10 +28,10 @@ def stackable_recipe(item_id="leather", quantity=2, result_item="field_dressing"
     }
 
 
-def unique_recipe(item_id="rusty_sword", result_item="restored_sword"):
+def individual_recipe(item_id="rusty_sword", result_item="restored_sword"):
     return {
         "ingredients": [
-            {"kind": "unique", "item": item_id, "quantity": 1}
+            {"kind": "individual", "item": item_id, "quantity": 1}
         ],
         "result": {"item": result_item, "quantity": 1},
     }
@@ -90,7 +91,11 @@ def test_ingredient_kind_is_valid():
 
     for recipe_id, recipe in recipes.items():
         for ingredient in recipe["ingredients"]:
-            assert ingredient["kind"] in VALID_INGREDIENT_KINDS, recipe_id
+            kind = LEGACY_INGREDIENT_KIND_ALIASES.get(
+                ingredient["kind"],
+                ingredient["kind"],
+            )
+            assert kind in VALID_INGREDIENT_KINDS, recipe_id
 
 
 def test_ingredient_quantity_is_positive_integer():
@@ -191,17 +196,17 @@ def test_can_craft_returns_false_when_a_stackable_ingredient_is_missing():
     assert can_craft(inventory, stackable_recipe()) is False
 
 
-def test_can_craft_returns_true_when_a_unique_ingredient_is_available():
+def test_can_craft_returns_true_when_an_individual_ingredient_is_available():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
-    assert can_craft(inventory, unique_recipe()) is True
+    assert can_craft(inventory, individual_recipe()) is True
 
 
-def test_can_craft_returns_false_when_a_unique_ingredient_is_missing():
+def test_can_craft_returns_false_when_an_individual_ingredient_is_missing():
     inventory = create_inventory()
 
-    assert can_craft(inventory, unique_recipe()) is False
+    assert can_craft(inventory, individual_recipe()) is False
 
 
 def test_craft_item_consumes_stackable_ingredients():
@@ -218,11 +223,11 @@ def test_craft_item_consumes_stackable_ingredients():
     }
 
 
-def test_craft_item_consumes_unique_ingredients():
+def test_craft_item_consumes_individual_ingredients():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
-    crafted = craft_item(inventory, unique_recipe(), minimal_items())
+    crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
     assert crafted is True
     assert all(
@@ -245,15 +250,15 @@ def test_craft_item_adds_a_stackable_result():
     }
 
 
-def test_craft_item_adds_a_unique_result():
+def test_craft_item_adds_an_individual_result():
     inventory = create_inventory()
-    add_unique_item(inventory, {"item": "rusty_sword"})
+    add_individual_item(inventory, {"item": "rusty_sword"})
 
-    crafted = craft_item(inventory, unique_recipe(), minimal_items())
+    crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
     assert crafted is True
     assert inventory["slots"][0] == {
-        "kind": "unique",
+        "kind": "individual",
         "item": "restored_sword",
     }
 

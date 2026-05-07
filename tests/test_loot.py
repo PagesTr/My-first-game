@@ -6,6 +6,8 @@ from systems.loot import (
     generate_randomized_stats,
     generate_rarity,
     get_allowed_rarities,
+    get_default_item_kind,
+    get_item_kind,
     get_rarity_weights,
     roll_drop_count,
 )
@@ -53,34 +55,122 @@ def test_currency_item_generates_stackable_drop():
     assert drops[0]["quantity"] == 1
 
 
-def test_weapon_item_generates_unique_drop():
+def test_consumable_item_generates_stackable_drop_by_default():
+    items = {"health_potion": {"type": "consumable", "stats": {"hp": 20}}}
+
+    drops = generate_combat_loot(make_enemy_with_drop("health_potion"), items)
+
+    assert drops[0]["kind"] == "stackable"
+    assert drops[0]["item"] == "health_potion"
+    assert drops[0]["quantity"] == 1
+
+
+def test_weapon_item_generates_individual_drop():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "iron_sword"
 
 
-def test_armor_item_generates_unique_drop():
+def test_equipment_weapon_item_generates_individual_drop():
+    items = {
+        "iron_sword": {
+            "type": "equipment",
+            "category": "weapon",
+            "stats": {"attack": 3},
+        }
+    }
+
+    drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
+
+    assert drops[0]["kind"] == "individual"
+    assert drops[0]["item"] == "iron_sword"
+
+
+def test_armor_item_generates_individual_drop():
     items = {"leather_armor": {"type": "armor", "stats": {"defense": 2}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("leather_armor"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "leather_armor"
 
 
-def test_accessory_item_generates_unique_drop():
+def test_accessory_item_generates_individual_drop():
     items = {"magic_ring": {"type": "accessory", "stats": {"intelligence": 1}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("magic_ring"), items)
 
-    assert drops[0]["kind"] == "unique"
+    assert drops[0]["kind"] == "individual"
     assert drops[0]["item"] == "magic_ring"
 
 
-def test_unique_drop_contains_stats_dict():
+def test_resource_with_individual_kind_override_generates_individual_drop():
+    items = {
+        "ancient_relic": {
+            "type": "resource",
+            "kind": "individual",
+            "stats": {"intelligence": 1},
+        }
+    }
+
+    drops = generate_combat_loot(make_enemy_with_drop("ancient_relic"), items)
+
+    assert drops[0]["kind"] == "individual"
+    assert drops[0]["item"] == "ancient_relic"
+    assert "rarity" in drops[0]
+    assert "stats" in drops[0]
+
+
+def test_equipment_with_stackable_kind_override_generates_stackable_drop():
+    items = {
+        "training_blade": {
+            "type": "equipment",
+            "category": "weapon",
+            "kind": "stackable",
+            "stats": {"attack": 1},
+        }
+    }
+
+    drops = generate_combat_loot(make_enemy_with_drop("training_blade"), items)
+
+    assert drops[0]["kind"] == "stackable"
+    assert drops[0]["item"] == "training_blade"
+    assert drops[0]["quantity"] == 1
+    assert "rarity" not in drops[0]
+
+
+def test_invalid_kind_falls_back_to_default_item_kind():
+    equipment = {
+        "type": "equipment",
+        "category": "weapon",
+        "kind": "invalid",
+    }
+    resource = {"type": "resource", "kind": "invalid"}
+
+    assert get_item_kind(equipment) == "individual"
+    assert get_item_kind(resource) == "stackable"
+
+
+def test_unique_rarity_is_valid_but_not_a_valid_item_kind():
+    item = {"type": "resource", "kind": "unique", "rarities": ["unique"]}
+
+    assert "unique" in RARITIES
+    assert get_allowed_rarities(item) == ("unique",)
+    assert get_item_kind(item) == "stackable"
+
+
+def test_default_item_kind_uses_equipment_classification():
+    weapon = {"type": "equipment", "category": "weapon"}
+    resource = {"type": "resource"}
+
+    assert get_default_item_kind(weapon) == "individual"
+    assert get_default_item_kind(resource) == "stackable"
+
+
+def test_individual_drop_contains_stats_dict():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -100,7 +190,7 @@ def test_enemy_without_drops_returns_empty_list():
     assert generate_combat_loot({}, {}) == []
 
 
-def test_unique_drop_contains_rarity():
+def test_individual_drop_contains_rarity():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop("iron_sword"), items)
@@ -261,14 +351,14 @@ def test_stackable_drop_uses_drop_count_as_quantity():
     assert drops[0]["quantity"] == 2
 
 
-def test_unique_drop_generates_multiple_instances_when_chance_above_one():
+def test_individual_drop_generates_multiple_instances_when_chance_above_one():
     items = {"iron_sword": {"type": "weapon", "stats": {"attack": 3}}}
 
     drops = generate_combat_loot(make_enemy_with_drop_chance("iron_sword", 2.0), items)
 
     assert len(drops) == 2
     for drop in drops:
-        assert drop["kind"] == "unique"
+        assert drop["kind"] == "individual"
         assert drop["item"] == "iron_sword"
         assert "rarity" in drop
         assert "stats" in drop

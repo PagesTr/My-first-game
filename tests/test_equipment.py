@@ -36,14 +36,14 @@ def make_classes():
     }
 
 
-def test_unique_weapon_is_equipable():
-    item = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+def test_individual_weapon_is_equipable():
+    item = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}
 
     assert can_equip_item(item, make_items()) is True
 
 
-def test_unique_armor_is_equipable():
-    item = {"kind": "unique", "item": "leather_armor", "stats": {"defense": 3}}
+def test_individual_armor_is_equipable():
+    item = {"kind": "individual", "item": "leather_armor", "stats": {"defense": 3}}
 
     assert can_equip_item(item, make_items()) is True
 
@@ -54,10 +54,10 @@ def test_stackable_item_is_not_equipable():
     assert can_equip_item(item, make_items()) is False
 
 
-def test_unique_resource_or_consumable_is_not_equipable():
+def test_individual_resource_or_consumable_is_not_equipable():
     items = make_items()
-    resource = {"kind": "unique", "item": "leather", "stats": {"value": 5}}
-    consumable = {"kind": "unique", "item": "health_potion", "stats": {"hp": 10}}
+    resource = {"kind": "individual", "item": "leather", "stats": {"value": 5}}
+    consumable = {"kind": "individual", "item": "health_potion", "stats": {"hp": 10}}
 
     assert can_equip_item(resource, items) is False
     assert can_equip_item(consumable, items) is False
@@ -66,7 +66,7 @@ def test_unique_resource_or_consumable_is_not_equipable():
 def test_equip_item_moves_weapon_from_inventory_to_equipment_slot():
     player = make_player()
     inventory = create_inventory(size=2)
-    weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+    weapon = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}
     inventory["slots"][0] = weapon
 
     equipped = equip_item(player, inventory, 0, make_items())
@@ -79,7 +79,7 @@ def test_inventory_slot_becomes_none_after_equipping():
     player = make_player()
     inventory = create_inventory(size=2)
     inventory["slots"][0] = {
-        "kind": "unique",
+        "kind": "individual",
         "item": "iron_sword",
         "stats": {"attack": 4},
     }
@@ -91,8 +91,8 @@ def test_inventory_slot_becomes_none_after_equipping():
 
 def test_replacing_equipment_puts_old_item_back_in_inventory():
     player = make_player()
-    old_weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 3}}
-    new_weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 5}}
+    old_weapon = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 3}}
+    new_weapon = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 5}}
     player["equipment"]["weapon"] = old_weapon
     inventory = create_inventory(size=2)
     inventory["slots"][0] = new_weapon
@@ -111,10 +111,10 @@ def test_equip_item_returns_false_with_invalid_index():
     assert equip_item(player, inventory, 3, make_items()) is False
 
 
-def test_derive_stats_uses_unique_equipment_stats():
+def test_derive_stats_uses_individual_equipment_stats():
     player = make_player()
     player["equipment"]["weapon"] = {
-        "kind": "unique",
+        "kind": "individual",
         "item": "iron_sword",
         "stats": {"attack": 5},
     }
@@ -137,7 +137,7 @@ def test_derive_stats_keeps_compatibility_with_old_equipment_list():
 
 def test_unequip_item_moves_equipped_item_to_inventory():
     player = make_player()
-    weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+    weapon = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}
     player["equipment"]["weapon"] = weapon
     inventory = create_inventory(size=2)
 
@@ -157,7 +157,7 @@ def test_unequip_item_returns_false_when_equipment_slot_is_empty():
 
 def test_unequip_item_returns_false_when_inventory_is_full():
     player = make_player()
-    weapon = {"kind": "unique", "item": "iron_sword", "stats": {"attack": 4}}
+    weapon = {"kind": "individual", "item": "iron_sword", "stats": {"attack": 4}}
     player["equipment"]["weapon"] = weapon
     inventory = create_inventory(size=1)
     inventory["slots"][0] = {"kind": "stackable", "item": "leather", "quantity": 1}

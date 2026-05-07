@@ -332,10 +332,10 @@ def test_sell_last_stackable_item_clears_slot():
     assert inventory["slots"][0] is None
 
 
-def test_sell_unique_item_clears_slot():
+def test_sell_individual_item_with_quantity_one_clears_slot():
     player = {"gold": 0}
     inventory = create_inventory(size=1)
-    inventory["slots"][0] = {"kind": "unique", "item": "iron_sword"}
+    inventory["slots"][0] = {"kind": "individual", "item": "iron_sword"}
     items = {
         "iron_sword": {
             "level": 1,
@@ -350,10 +350,10 @@ def test_sell_unique_item_clears_slot():
     assert inventory["slots"][0] is None
 
 
-def test_sell_unique_item_with_quantity_two_returns_false():
+def test_sell_individual_item_with_quantity_two_returns_false():
     player = {"gold": 0}
     inventory = create_inventory(size=1)
-    inventory["slots"][0] = {"kind": "unique", "item": "iron_sword"}
+    inventory["slots"][0] = {"kind": "individual", "item": "iron_sword"}
     items = {"iron_sword": {"manual_sell_price": 10}}
 
     sold = sell_inventory_item(player, inventory, 0, items, quantity=2)

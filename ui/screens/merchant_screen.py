@@ -359,7 +359,7 @@ class MerchantScreen:
     def _requires_sale_confirmation(self, item_instance):
         if item_instance is None:
             return False
-        if item_instance.get("kind") == "unique":
+        if item_instance.get("kind") == "individual":
             return True
 
         item_id = item_instance.get("item")

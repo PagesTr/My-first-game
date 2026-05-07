@@ -99,7 +99,7 @@ class InventoryScreen:
             )
             pygame.draw.rect(screen, (45, 50, 58), rect)
             border_color = (120, 130, 140)
-            if slot is not None and slot.get("kind") == "unique" and slot.get("rarity"):
+            if slot is not None and slot.get("kind") == "individual" and slot.get("rarity"):
                 border_color = self._get_rarity_color(slot)
             pygame.draw.rect(screen, border_color, rect, 2)
 
@@ -541,13 +541,11 @@ class InventoryScreen:
         item_id = item_instance.get("item")
         item_data = self.game.data.items.get(item_id, {})
         item_type = item_data.get("type", "unknown")
-        item_kind = item_instance.get("kind", "unknown")
         stats = item_instance.get("stats") or item_data.get("stats", {})
 
         lines = [
             self._get_item_display_name(item_instance),
-            f"Type: {item_type}",
-            f"Kind: {item_kind}",
+            f"Type: {self._get_type_label(item_type)}",
         ]
 
         rarity = item_instance.get("rarity")
@@ -575,8 +573,25 @@ class InventoryScreen:
 
         return lines
 
+    def _get_type_label(self, item_type):
+        labels = {
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "resource": "Resource",
+            "currency": "Currency",
+            "quest": "Quest",
+        }
+        if not item_type:
+            return "Unknown"
+        return labels.get(item_type, str(item_type).capitalize())
+
     def _get_selected_comparison_item(self, item_instance):
-        source = self.selected_item_source
+        return self._get_comparison_item_for_source(
+            item_instance,
+            self.selected_item_source,
+        )
+
+    def _get_comparison_item_for_source(self, item_instance, source):
         if source is None:
             return None
 
@@ -634,22 +649,11 @@ class InventoryScreen:
         return comparison_values
 
     def _draw_item_tooltip(self, screen):
-        item_instance = self.selected_item
-        source = self.selected_item_source
-        if item_instance is None or source is None or self.selected_item_position is None:
+        mouse_pos = pygame.mouse.get_pos()
+        item_instance, source = self._get_item_at_pos(mouse_pos)
+        if item_instance is None or source is None:
             return
 
-        source_type, source_key = source
-        if source_type == "inventory":
-            item_instance = self.game.player["inventory"]["slots"][source_key]
-        elif source_type == "equipment":
-            item_instance = self.game.player["equipment"].get(source_key)
-
-        if item_instance is None:
-            self._clear_selected_item()
-            return
-
-        self.selected_item = item_instance
         lines = self._get_tooltip_lines(item_instance)
         left_rendered_lines = [
             self.small_font.render(line, True, (220, 220, 220))
@@ -661,7 +665,7 @@ class InventoryScreen:
         padding = 10
         line_height = 18
         column_gap = 28
-        current_item = self._get_selected_comparison_item(item_instance)
+        current_item = self._get_comparison_item_for_source(item_instance, source)
         comparison_values = {}
         stat_line_indexes = {}
         right_header_lines = []
@@ -686,7 +690,7 @@ class InventoryScreen:
             width += column_gap + right_width
 
         height = len(left_rendered_lines) * line_height + padding * 2
-        x, y = self.selected_item_position
+        x, y = mouse_pos[0] + 14, mouse_pos[1] + 14
 
         if x + width > screen.get_width():
             x = max(0, screen.get_width() - width - 6)
@@ -736,7 +740,7 @@ class InventoryScreen:
     def _get_equipment_type(self, item_instance):
         if item_instance is None:
             return None
-        if item_instance.get("kind") != "unique":
+        if item_instance.get("kind") != "individual":
             return None
 
         item_id = item_instance["item"]
@@ -819,7 +823,7 @@ class InventoryScreen:
             quantity = slot.get("quantity")
             detail_text = f"x{quantity}" if quantity is not None else ""
             item_color = (245, 245, 245)
-        elif slot.get("kind") == "unique":
+        elif slot.get("kind") == "individual":
             item_name = self._get_item_display_name(slot)
             detail_text = self._format_short_stats(slot.get("stats", {}))
             item_color = self._get_rarity_color(slot)
