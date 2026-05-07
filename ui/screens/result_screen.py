@@ -202,46 +202,37 @@ class ResultScreen:
         self._draw_panel(screen, summary_rect, "Résumé")
         self._draw_panel(screen, loot_rect, "Butin")
 
-        y = summary_rect.y + 66
         if is_instance_result:
-            y = self._draw_summary_line(
+            self._draw_instance_summary(
                 screen,
-                "Zone",
-                self._short_text(result.get("zone_name", ""), 13),
-                y,
+                summary_rect,
+                result,
+                exp_gained,
+                gold_gained,
+                current_level,
+            )
+        else:
+            y = summary_rect.y + 66
+            y = self._draw_summary_line(
+                screen, "XP gagnée", exp_gained, y, PALETTE["xp"]
             )
             y = self._draw_summary_line(
-                screen,
-                "Combats gagnés",
-                result.get("combats_won", 0),
-                y,
-                PALETTE["victory"],
+                screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
             )
-            y = self._draw_summary_line(
-                screen,
-                "Mort contre",
-                self._short_text(result.get("death_enemy", ""), 13),
-                y,
-                PALETTE["defeat"],
-            )
-        y = self._draw_summary_line(screen, "XP gagnée", exp_gained, y, PALETTE["xp"])
-        y = self._draw_summary_line(
-            screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
-        )
-        y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
+            y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
 
-        if result.get("leveled_up", False):
-            y += 10
-            y = self._draw_summary_line(
-                screen, "Level up", "Oui", y, PALETTE["level_up"]
-            )
-            self._draw_summary_line(
-                screen,
-                "Nouveau niveau",
-                result.get("new_level", current_level),
-                y,
-                PALETTE["level_up"],
-            )
+            if result.get("leveled_up", False):
+                y += 10
+                y = self._draw_summary_line(
+                    screen, "Level up", "Oui", y, PALETTE["level_up"]
+                )
+                self._draw_summary_line(
+                    screen,
+                    "Nouveau niveau",
+                    result.get("new_level", current_level),
+                    y,
+                    PALETTE["level_up"],
+                )
 
         self._draw_loot_section(screen, loot_rect, drops)
         self._draw_loot_tooltip(screen)
@@ -295,6 +286,47 @@ class ResultScreen:
         )
         summary_rect = summary.get_rect(center=rect.center)
         screen.blit(summary, summary_rect)
+
+    def _draw_instance_summary(
+        self,
+        screen,
+        rect,
+        result,
+        exp_gained,
+        gold_gained,
+        current_level,
+    ):
+        lines = [
+            ("Zone", self._short_text(result.get("zone_name", ""), 13), None),
+            ("Combats", result.get("combats_won", 0), PALETTE["victory"]),
+            ("Mort", self._short_text(result.get("death_enemy", ""), 13), PALETTE["defeat"]),
+            ("Mode", result.get("simulation_mode", "exact"), PALETTE["gold"]),
+            ("Fin", result.get("end_reason", ""), PALETTE["muted"]),
+            ("Exact", result.get("exact_combats", 0), None),
+            ("Estimés", result.get("estimated_combats", 0), None),
+            ("Drops", result.get("total_drops_found", 0), None),
+            ("XP", exp_gained, PALETTE["xp"]),
+            ("Gold", gold_gained, PALETTE["gold"]),
+            ("Niveau", result.get("final_player_level", current_level), None),
+        ]
+
+        y = rect.y + 60
+        for label, value, color in lines:
+            y = self._draw_small_summary_line(screen, label, value, y, color)
+
+    def _draw_small_summary_line(self, screen, label, value, y, value_color=None):
+        row_rect = pygame.Rect(92, y - 3, 250, 22)
+        pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
+        pygame.draw.rect(screen, (58, 66, 66), row_rect, 1)
+        label_text = self.small_font.render(f"{label} :", True, PALETTE["muted"])
+        value_text = self.small_font.render(
+            str(value),
+            True,
+            value_color or PALETTE["text"],
+        )
+        screen.blit(label_text, (row_rect.x + 8, y))
+        screen.blit(value_text, (row_rect.right - value_text.get_width() - 8, y))
+        return y + 24
 
     def _draw_inventory_panel(self, screen, rect):
         self._draw_inventory_replacement_grid(screen, rect)
