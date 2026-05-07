@@ -1,3 +1,4 @@
+from entities.enemy import create_enemy
 from systems.combat import CombatSystem
 from systems.instance import run_instant_instance
 
@@ -87,6 +88,20 @@ def setup_scripted_combat(monkeypatch, outcomes):
     ScriptedCombat.actions = []
     ScriptedCombat.outcomes = list(outcomes)
     monkeypatch.setattr("systems.instance.CombatSystem", ScriptedCombat)
+
+
+def test_create_enemy_does_not_scale_with_player_level():
+    template = make_enemy_template()
+
+    level_one_enemy = create_enemy(template, level=1)
+    level_fifty_enemy = create_enemy(template, level=50)
+
+    for stat in ("max_hp", "attack", "defense", "exp", "gold"):
+        assert level_one_enemy[stat] == level_fifty_enemy[stat]
+        expected_value = template["stats"].get(stat, template.get(stat))
+        if stat == "max_hp":
+            expected_value = template["stats"]["hp"]
+        assert level_one_enemy[stat] == expected_value
 
 
 def test_small_instance_can_stay_exact(monkeypatch):
