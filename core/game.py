@@ -11,6 +11,7 @@ from systems.inventory import (
     move_inventory_slot_to_pending,
     swap_pending_drop_with_inventory_slot,
 )
+from systems.instance import run_instant_instance
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
@@ -28,6 +29,7 @@ class Game:
         self.auto_mode = False
         self.combat = None
         self.last_combat_result = None
+        self.last_instance_result = None
         self.mailbox = create_mailbox()
 
     def select_class(self, class_key):
@@ -57,7 +59,24 @@ class Game:
             return
 
         self.selected_zone = zone_key
-        self.start_combat()
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.last_instance_result = run_instant_instance(
+            self.player,
+            zone_key,
+            self.data.zones,
+            self.data.enemies,
+            self.data.items,
+            self.data.skills,
+        )
+        self.last_combat_result = self.last_instance_result
+        self.combat = None
+        self.auto_mode = False
+        self.state = "combat_result"
 
     def start_combat(self):
         enemy = self.spawn_enemy()

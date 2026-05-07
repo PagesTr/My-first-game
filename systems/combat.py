@@ -81,18 +81,16 @@ class CombatSystem:
                 self._add_log(f"{actor_name} attacks -> {dmg} damage")
 
         elif action == "heal":
-            heal = int(attacker.get("healing_power", 10))
-            attacker["current_hp"] = min(
-                attacker["max_hp"], attacker["current_hp"] + heal
-            )
-
-            self._add_log(f"{actor_name} heals -> +{heal} HP")
+            dmg = self._compute_damage(attacker, defender)
+            if dmg > 0:
+                defender["current_hp"] = max(0, defender["current_hp"] - dmg)
+                if is_player is False and defender is self.player:
+                    self.player_took_damage_since_last_action = True
+                self._add_log(f"{actor_name} attacks -> {dmg} damage")
 
         # Extensible here (skills, items, etc.)
 
     def _player_auto_action(self):
-        if self.player["current_hp"] <= self.player["max_hp"] * 0.30:
-            return "heal"
         return "attack"
 
     def _on_turn_start(self):

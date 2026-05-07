@@ -163,12 +163,16 @@ class ResultScreen:
     def draw(self, screen):
         self._draw_background(screen)
 
+        result = self.game.last_combat_result or {}
+        is_instance_result = result.get("is_instance_result") is True
         combat = self.game.combat
         victory = combat is not None and combat.winner == "player"
         title_text = "Victoire !" if victory else "Défaite..."
         title_color = PALETTE["victory"] if victory else PALETTE["defeat"]
+        if is_instance_result:
+            title_text = "Expédition terminée"
+            title_color = PALETTE["gold"]
 
-        result = self.game.last_combat_result or {}
         exp_gained = result.get("exp_gained", 0)
         gold_gained = result.get("gold_gained", 0)
         drops = self._get_pending_drops(result)
@@ -199,6 +203,27 @@ class ResultScreen:
         self._draw_panel(screen, loot_rect, "Butin")
 
         y = summary_rect.y + 66
+        if is_instance_result:
+            y = self._draw_summary_line(
+                screen,
+                "Zone",
+                self._short_text(result.get("zone_name", ""), 13),
+                y,
+            )
+            y = self._draw_summary_line(
+                screen,
+                "Combats gagnés",
+                result.get("combats_won", 0),
+                y,
+                PALETTE["victory"],
+            )
+            y = self._draw_summary_line(
+                screen,
+                "Mort contre",
+                self._short_text(result.get("death_enemy", ""), 13),
+                y,
+                PALETTE["defeat"],
+            )
         y = self._draw_summary_line(screen, "XP gagnée", exp_gained, y, PALETTE["xp"])
         y = self._draw_summary_line(
             screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
