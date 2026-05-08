@@ -1,7 +1,12 @@
 import json
 from pathlib import Path
 
-from systems.crafting import can_craft, craft_item
+from systems.crafting import (
+    can_craft,
+    can_craft_recipe,
+    craft_item,
+    craft_recipe,
+)
 from systems.inventory import add_individual_item, add_stackable_item, create_inventory
 
 
@@ -46,8 +51,25 @@ def minimal_items():
         "restored_sword": {
             "type": "equipment",
             "category": "weapon",
+            "rarity": "common",
+            "stats": {
+                "attack": 2,
+            },
+        },
+        "iron_helmet": {
+            "type": "equipment",
+            "category": "helmet",
+            "rarity": "common",
+            "stats": {
+                "vitality": 1,
+                "defense": 2,
+            },
         },
     }
+
+
+def copy_slots(inventory):
+    return [slot.copy() if slot is not None else None for slot in inventory["slots"]]
 
 
 def test_recipes_file_exists():
@@ -189,6 +211,21 @@ def test_can_craft_returns_true_when_all_stackable_ingredients_are_available():
     assert can_craft(inventory, stackable_recipe()) is True
 
 
+def test_can_craft_recipe_with_stackable_ingredients():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "leather", 2)
+    add_stackable_item(inventory, "iron_ore", 3)
+    recipe = {
+        "ingredients": [
+            {"kind": "stackable", "item": "leather", "quantity": 2},
+            {"kind": "stackable", "item": "iron_ore", "quantity": 3},
+        ],
+        "result": {"item": "iron_helmet", "quantity": 1},
+    }
+
+    assert can_craft_recipe(inventory, recipe) is True
+
+
 def test_can_craft_returns_false_when_a_stackable_ingredient_is_missing():
     inventory = create_inventory()
     add_stackable_item(inventory, "leather", 1)
@@ -196,11 +233,39 @@ def test_can_craft_returns_false_when_a_stackable_ingredient_is_missing():
     assert can_craft(inventory, stackable_recipe()) is False
 
 
+def test_cannot_craft_recipe_when_stackable_ingredient_is_missing():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "leather", 1)
+    recipe = stackable_recipe(item_id="leather", quantity=2)
+
+    assert can_craft_recipe(inventory, recipe) is False
+
+
 def test_can_craft_returns_true_when_an_individual_ingredient_is_available():
     inventory = create_inventory()
     add_individual_item(inventory, {"item": "rusty_sword"})
 
     assert can_craft(inventory, individual_recipe()) is True
+
+
+def test_can_craft_recipe_with_individual_ingredient():
+    inventory = create_inventory()
+    add_individual_item(inventory, {"item": "rusty_sword"})
+
+    assert can_craft_recipe(inventory, individual_recipe()) is True
+
+
+def test_unique_ingredient_kind_is_treated_as_individual():
+    inventory = create_inventory()
+    inventory["slots"][0] = {"kind": "unique", "item": "rusty_sword"}
+    recipe = {
+        "ingredients": [
+            {"kind": "unique", "item": "rusty_sword", "quantity": 1}
+        ],
+        "result": {"item": "restored_sword", "quantity": 1},
+    }
+
+    assert can_craft_recipe(inventory, recipe) is True
 
 
 def test_can_craft_returns_false_when_an_individual_ingredient_is_missing():
@@ -223,6 +288,21 @@ def test_craft_item_consumes_stackable_ingredients():
     }
 
 
+def test_craft_recipe_consumes_stackable_ingredients():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "leather", 3)
+    recipes = {"test_recipe": stackable_recipe()}
+
+    result = craft_recipe(inventory, recipes, "test_recipe", minimal_items())
+
+    assert result["crafted"] is True
+    assert inventory["slots"][0] == {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 1,
+    }
+
+
 def test_craft_item_consumes_individual_ingredients():
     inventory = create_inventory()
     add_individual_item(inventory, {"item": "rusty_sword"})
@@ -230,6 +310,20 @@ def test_craft_item_consumes_individual_ingredients():
     crafted = craft_item(inventory, individual_recipe(), minimal_items())
 
     assert crafted is True
+    assert all(
+        slot is None or slot.get("item") != "rusty_sword"
+        for slot in inventory["slots"]
+    )
+
+
+def test_craft_recipe_consumes_individual_ingredient():
+    inventory = create_inventory()
+    add_individual_item(inventory, {"item": "rusty_sword"})
+    recipes = {"test_recipe": individual_recipe()}
+
+    result = craft_recipe(inventory, recipes, "test_recipe", minimal_items())
+
+    assert result["crafted"] is True
     assert all(
         slot is None or slot.get("item") != "rusty_sword"
         for slot in inventory["slots"]
@@ -250,6 +344,26 @@ def test_craft_item_adds_a_stackable_result():
     }
 
 
+def test_craft_recipe_adds_stackable_result():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "goblin_ear", 1)
+    add_stackable_item(inventory, "wolf_pelt", 1)
+    recipes = load_json(RECIPES_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "brew_field_dressing",
+        load_json(ITEMS_PATH),
+    )
+
+    assert result["crafted"] is True
+    assert any(
+        slot == {"kind": "stackable", "item": "field_dressing", "quantity": 1}
+        for slot in inventory["slots"]
+    )
+
+
 def test_craft_item_adds_an_individual_result():
     inventory = create_inventory()
     add_individual_item(inventory, {"item": "rusty_sword"})
@@ -260,13 +374,41 @@ def test_craft_item_adds_an_individual_result():
     assert inventory["slots"][0] == {
         "kind": "individual",
         "item": "restored_sword",
+        "rarity": "common",
+        "stats": {
+            "attack": 2,
+        },
     }
+
+
+def test_craft_recipe_adds_equipment_result_as_individual():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "iron_ore", 2)
+    add_stackable_item(inventory, "bone", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(inventory, recipes, "craft_iron_helmet", items)
+
+    assert result["crafted"] is True
+    assert any(
+        slot == {
+            "kind": "individual",
+            "item": "iron_helmet",
+            "rarity": "common",
+            "stats": {
+                "vitality": 1,
+                "defense": 2,
+            },
+        }
+        for slot in inventory["slots"]
+    )
 
 
 def test_craft_item_does_not_modify_inventory_when_ingredients_are_missing():
     inventory = create_inventory()
     add_stackable_item(inventory, "leather", 1)
-    original_slots = [slot.copy() if slot is not None else None for slot in inventory["slots"]]
+    original_slots = copy_slots(inventory)
 
     crafted = craft_item(inventory, stackable_recipe(), minimal_items())
 
@@ -274,13 +416,63 @@ def test_craft_item_does_not_modify_inventory_when_ingredients_are_missing():
     assert inventory["slots"] == original_slots
 
 
+def test_crafting_missing_ingredients_does_not_modify_inventory():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "leather", 1)
+    original_slots = copy_slots(inventory)
+    recipes = {"test_recipe": stackable_recipe(item_id="leather", quantity=2)}
+
+    result = craft_recipe(inventory, recipes, "test_recipe", minimal_items())
+
+    assert result == {
+        "crafted": False,
+        "recipe_id": "test_recipe",
+        "reason": "missing_ingredients",
+    }
+    assert inventory["slots"] == original_slots
+
+
 def test_craft_item_does_not_consume_ingredients_when_the_result_cannot_be_added():
     inventory = create_inventory(size=1)
     add_stackable_item(inventory, "leather", 3)
-    original_slots = [slot.copy() if slot is not None else None for slot in inventory["slots"]]
+    original_slots = copy_slots(inventory)
     recipe = stackable_recipe(result_item="restored_sword")
 
     crafted = craft_item(inventory, recipe, minimal_items())
 
     assert crafted is False
     assert inventory["slots"] == original_slots
+
+
+def test_craft_recipe_is_atomic_when_inventory_is_full():
+    inventory = create_inventory(size=2)
+    add_stackable_item(inventory, "iron_ore", 2)
+    add_stackable_item(inventory, "bone", 1)
+    original_slots = copy_slots(inventory)
+    recipes = load_json(RECIPES_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "craft_iron_helmet",
+        load_json(ITEMS_PATH),
+    )
+
+    assert result == {
+        "crafted": False,
+        "recipe_id": "craft_iron_helmet",
+        "reason": "inventory_full",
+    }
+    assert inventory["slots"] == original_slots
+
+
+def test_unknown_recipe_returns_failure():
+    inventory = create_inventory()
+
+    result = craft_recipe(inventory, {}, "missing_recipe", minimal_items())
+
+    assert result == {
+        "crafted": False,
+        "recipe_id": "missing_recipe",
+        "reason": "unknown_recipe",
+    }
