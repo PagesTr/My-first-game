@@ -75,7 +75,7 @@
     "category": "helmet",
     "level": 1,
     "rarity": "common",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "vitality": 1,
       "defense": 2
@@ -109,7 +109,7 @@
     "category": "chest",
     "level": 1,
     "rarity": "uncommon",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "vitality": 2,
       "defense": 3,
@@ -145,7 +145,7 @@
     "category": "pants",
     "level": 1,
     "rarity": "common",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "vitality": 1,
       "initiative": 1
@@ -196,7 +196,7 @@
     "category": "gloves",
     "level": 1,
     "rarity": "common",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "defense": 1,
       "block_chance": 0.02
@@ -230,7 +230,7 @@
     "category": "boots",
     "level": 1,
     "rarity": "common",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "vitality": 1,
       "defense": 1
@@ -247,7 +247,7 @@
     "category": "amulet",
     "level": 1,
     "rarity": "rare",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "strength": 2,
       "attack": 2
@@ -264,7 +264,7 @@
     "category": "amulet",
     "level": 1,
     "rarity": "rare",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "vitality": 2,
       "max_hp": 4
@@ -281,7 +281,7 @@
     "category": "amulet",
     "level": 1,
     "rarity": "rare",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "wisdom": 2,
       "xp_bonus": 0.06
@@ -347,7 +347,7 @@
     "category": "ring",
     "level": 1,
     "rarity": "uncommon",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "xp_bonus": 0.05
     },
