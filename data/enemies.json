@@ -28,11 +28,19 @@
       },
       {
         "item": "iron_sword",
-        "chance": 0.98
+        "chance": 0.08
       },
       {
         "item": "rusty_sword",
-        "chance": 20.08
+        "chance": 0.20
+      },
+      {
+        "item": "ring_of_luck",
+        "chance": 0.04
+      },
+      {
+        "item": "goblin_totem",
+        "chance": 0.03
       }
     ]
   },
@@ -66,6 +74,14 @@
       {
         "item": "iron_sword",
         "chance": 0.06
+      },
+      {
+        "item": "bone_talisman",
+        "chance": 0.04
+      },
+      {
+        "item": "scout_hood",
+        "chance": 0.03
       }
     ]
   },
@@ -98,7 +114,15 @@
       },
       {
         "item": "worn_leather_armor",
-        "chance": 20.98
+        "chance": 0.18
+      },
+      {
+        "item": "swift_boots",
+        "chance": 0.06
+      },
+      {
+        "item": "wolf_fang_charm",
+        "chance": 0.04
       }
     ]
   },
@@ -132,6 +156,22 @@
       {
         "item": "leather_armor",
         "chance": 0.12
+      },
+      {
+        "item": "duelist_blade",
+        "chance": 0.05
+      },
+      {
+        "item": "duelist_gloves",
+        "chance": 0.06
+      },
+      {
+        "item": "ring_of_gold",
+        "chance": 0.05
+      },
+      {
+        "item": "ring_of_precision",
+        "chance": 0.04
       }
     ]
   },
@@ -169,6 +209,14 @@
       {
         "item": "steel_armor",
         "chance": 0.12
+      },
+      {
+        "item": "brutal_axe",
+        "chance": 0.06
+      },
+      {
+        "item": "duelist_pants",
+        "chance": 0.04
       }
     ]
   },
@@ -205,6 +253,18 @@
       },
       {
         "item": "legendary_sword",
+        "chance": 0.03
+      },
+      {
+        "item": "hunter_vest",
+        "chance": 0.05
+      },
+      {
+        "item": "ring_of_luck",
+        "chance": 0.05
+      },
+      {
+        "item": "wolf_fang_charm",
         "chance": 0.03
       }
     ]

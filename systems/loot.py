@@ -22,16 +22,43 @@ RARITY_BONUS = {
 }
 
 VALID_ITEM_KINDS = ("stackable", "individual")
+EQUIPMENT_CATEGORIES = (
+    "weapon",
+    "helmet",
+    "chest",
+    "armor",
+    "pants",
+    "gloves",
+    "boots",
+    "amulet",
+    "ring",
+    "trinket",
+    "accessory",
+)
+PERCENTAGE_STATS = {
+    "accuracy",
+    "dodge_chance",
+    "block_chance",
+    "crit_chance",
+    "status_resistance",
+    "loot_bonus",
+    "gold_bonus",
+    "rare_find_bonus",
+    "xp_bonus",
+}
+MULTIPLIER_STATS = {
+    "crit_damage",
+}
 
 
 def is_individual_equipment(item_data):
     item_type = item_data.get("type")
-    if item_type in ("weapon", "armor", "accessory"):
+    if item_type in EQUIPMENT_CATEGORIES:
         return True
 
     return (
         item_type == "equipment"
-        and item_data.get("category") in ("weapon", "armor", "accessory")
+        and item_data.get("category") in EQUIPMENT_CATEGORIES
     )
 
 
@@ -111,10 +138,16 @@ def generate_randomized_stats(base_stats, rarity="common"):
     stats = {}
     rarity_bonus = RARITY_BONUS.get(rarity, 0)
     for stat, value in base_stats.items():
-        if isinstance(value, (int, float)):
-            stats[stat] = value + random.randint(0, 2) + rarity_bonus
-        else:
+        if not isinstance(value, (int, float)):
             stats[stat] = value
+        elif stat in PERCENTAGE_STATS:
+            random_bonus = random.randint(0, 2) * 0.01
+            stats[stat] = round(value + random_bonus + rarity_bonus * 0.01, 4)
+        elif stat in MULTIPLIER_STATS:
+            random_bonus = random.randint(0, 2) * 0.05
+            stats[stat] = round(value + random_bonus + rarity_bonus * 0.05, 4)
+        else:
+            stats[stat] = value + random.randint(0, 2) + rarity_bonus
     return stats
 
 

@@ -1,0 +1,24 @@
+{
+  "wolf_stalker": {
+    "name": "Wolf Stalker",
+    "bonuses": {
+      "2": {
+        "dodge_chance": 0.03
+      },
+      "4": {
+        "crit_chance": 0.04
+      }
+    }
+  },
+  "goblin_scavenger": {
+    "name": "Goblin Scavenger",
+    "bonuses": {
+      "2": {
+        "loot_bonus": 0.03
+      },
+      "4": {
+        "gold_bonus": 0.05
+      }
+    }
+  }
+}

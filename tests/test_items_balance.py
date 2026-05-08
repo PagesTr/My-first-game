@@ -8,6 +8,20 @@ def load_json(relative_path):
         return json.load(json_file)
 
 
+VALID_EQUIPMENT_CATEGORIES = {
+    "weapon",
+    "helmet",
+    "chest",
+    "armor",
+    "pants",
+    "gloves",
+    "boots",
+    "amulet",
+    "ring",
+    "trinket",
+    "accessory",
+}
+
 
 def test_percentage_item_stats_are_reasonable():
     items = load_json("data/items.json")
@@ -45,7 +59,7 @@ def test_equipment_items_have_non_empty_stats():
 
     for item_id, item in items.items():
         if item.get("type") == "equipment":
-            assert item.get("category") in ("weapon", "armor", "accessory"), (
+            assert item.get("category") in VALID_EQUIPMENT_CATEGORIES, (
                 f"{item_id} should have an equipment category"
             )
             assert item.get("stats"), f"{item_id} should have stats"

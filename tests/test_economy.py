@@ -15,13 +15,35 @@ from systems.inventory import create_inventory
 
 VALID_ITEM_CATEGORIES = {
     "weapon",
+    "helmet",
+    "chest",
     "armor",
+    "pants",
+    "gloves",
+    "boots",
+    "amulet",
+    "ring",
+    "trinket",
     "accessory",
     "potion",
     "currency",
     "monster_drop",
     "gathering",
     "quest",
+}
+
+VALID_EQUIPMENT_CATEGORIES = {
+    "weapon",
+    "helmet",
+    "chest",
+    "armor",
+    "pants",
+    "gloves",
+    "boots",
+    "amulet",
+    "ring",
+    "trinket",
+    "accessory",
 }
 
 
@@ -210,7 +232,7 @@ def test_all_items_have_valid_category():
         assert item_data["category"], item_id
         assert item_data["category"] in VALID_ITEM_CATEGORIES, item_id
         if item_data["type"] == "equipment":
-            assert item_data["category"] in {"weapon", "armor", "accessory"}, item_id
+            assert item_data["category"] in VALID_EQUIPMENT_CATEGORIES, item_id
 
 
 def test_leather_has_positive_sell_price_from_items_data():
