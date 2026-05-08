@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from systems.effects import get_active_stat_modifiers
+from systems.equipment_sets import get_active_set_bonuses
 from systems.skills import get_passive_skill_stat_modifiers
 
 
@@ -47,6 +48,10 @@ def derive_stats(player, items, classes, skills_data=None):
                 continue
             for stat, value in item.get('stats', {}).items():
                 total[stat] = total.get(stat, 0) + value
+
+    set_bonuses = get_active_set_bonuses(player, items)
+    for stat, value in set_bonuses.items():
+        total[stat] = total.get(stat, 0) + value
 
     active_modifiers = get_active_stat_modifiers(player)
     for stat, value in active_modifiers.items():
