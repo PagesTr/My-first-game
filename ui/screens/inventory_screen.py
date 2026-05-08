@@ -8,6 +8,7 @@ from systems.equipment import (
     unequip_item,
 )
 from systems.economy import calculate_item_sell_price
+from systems.equipment_sets import load_equipment_sets, count_equipped_set_pieces
 from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
 
@@ -55,6 +56,7 @@ class InventoryScreen:
         self.equipment_slot_height = 43
         self.equipment_slot_gap = 5
         self.equipment_columns = 2
+        self.equipment_sets = load_equipment_sets()
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -309,17 +311,28 @@ class InventoryScreen:
 
         title = self.font.render("Equipment", True, (245, 245, 245))
         screen.blit(title, (560, 110))
+        set_counts = count_equipped_set_pieces(
+            self.game.player,
+            self.game.data.items,
+        )
 
         for slot_key in EQUIPMENT_SLOTS:
             label = labels[slot_key]
             rect = self._get_equipment_slot_rect(slot_key)
             pygame.draw.rect(screen, (45, 50, 58), rect)
-            pygame.draw.rect(screen, (120, 130, 140), rect, 2)
+            item = equipment.get(slot_key)
+            border_color = (120, 130, 140)
+            set_id = self._get_item_set_id(item)
+            if set_id:
+                if set_counts.get(set_id, 0) >= 2:
+                    border_color = (120, 220, 140)
+                else:
+                    border_color = (245, 220, 120)
+            pygame.draw.rect(screen, border_color, rect, 2)
 
             label_text = self.small_font.render(label, True, (220, 220, 220))
             screen.blit(label_text, (rect.x + 5, rect.y + 4))
 
-            item = equipment.get(slot_key)
             if item is None:
                 item_text = "Empty"
                 name_color = (245, 245, 245)
@@ -556,40 +569,169 @@ class InventoryScreen:
             y += 18
 
     def _get_tooltip_lines(self, item_instance):
-        item_id = item_instance.get("item")
-        item_data = self.game.data.items.get(item_id, {})
+        return [text for text, _ in self._get_tooltip_entries(item_instance)]
+
+    def _get_tooltip_entries(self, item_instance):
+        item_data = self._get_item_data(item_instance)
         item_type = item_data.get("type", "unknown")
         stats = item_instance.get("stats") or item_data.get("stats", {})
 
-        lines = [
-            self._get_item_display_name(item_instance),
-            f"Type: {self._get_type_label(item_type)}",
+        entries = [
+            (self._get_item_display_name(item_instance), "title"),
+            (f"Type: {self._get_type_label(item_type)}", "normal"),
         ]
 
         rarity = item_instance.get("rarity")
         if rarity:
-            lines.append(f"Rarity: {rarity.capitalize()}")
+            entries.append((f"Rarity: {rarity.capitalize()}", "rarity"))
 
         quantity = item_instance.get("quantity")
         if quantity is not None:
-            lines.append(f"Quantity: {quantity}")
+            entries.append((f"Quantity: {quantity}", "normal"))
 
         sell_price = calculate_item_sell_price(item_instance, item_data)
         if sell_price > 0:
-            lines.append(f"Sell price: {sell_price} gold")
+            entries.append((f"Sell price: {sell_price} gold", "normal"))
         else:
-            lines.append("Sell price: -")
+            entries.append(("Sell price: -", "normal"))
 
         if stats:
-            lines.append("Stats:")
+            entries.append(("Stats:", "section"))
             for stat, value in stats.items():
                 label = self._get_stat_label(stat)
                 formatted_value = self._format_stat_value(stat, value)
-                lines.append(f"{label}: {formatted_value}")
+                entries.append((f"{label}: {formatted_value}", "normal"))
         else:
-            lines.append("No stats")
+            entries.append(("No stats", "normal"))
 
-        return lines
+        entries.extend(self._get_set_tooltip_entries(item_instance))
+        return entries
+
+    def _get_item_data(self, item_instance):
+        if not isinstance(item_instance, dict):
+            return {}
+
+        item_id = item_instance.get("item")
+        item_data = self.game.data.items.get(item_id, {})
+        if not isinstance(item_data, dict):
+            return {}
+        return item_data
+
+    def _get_item_set_id(self, item_instance):
+        return self._get_item_data(item_instance).get("set_id")
+
+    def _get_set_data(self, set_id):
+        set_data = self.equipment_sets.get(set_id, {})
+        if not isinstance(set_data, dict):
+            return {}
+        return set_data
+
+    def _get_set_piece_ids(self, set_id):
+        piece_ids = []
+        for item_id, item_data in self.game.data.items.items():
+            if not isinstance(item_data, dict):
+                continue
+            if item_data.get("set_id") == set_id:
+                piece_ids.append(item_id)
+        return piece_ids
+
+    def _get_equipped_set_piece_ids(self, set_id):
+        equipped_piece_ids = set()
+        equipment = self.game.player.get("equipment", {})
+        if not isinstance(equipment, dict):
+            return equipped_piece_ids
+
+        for item_instance in equipment.values():
+            if not isinstance(item_instance, dict):
+                continue
+
+            item_id = item_instance.get("item")
+            item_data = self.game.data.items.get(item_id, {})
+            if not isinstance(item_data, dict):
+                continue
+            if item_data.get("set_id") == set_id:
+                equipped_piece_ids.add(item_id)
+
+        return equipped_piece_ids
+
+    def _get_set_progress(self, set_id):
+        piece_ids = self._get_set_piece_ids(set_id)
+        equipped_piece_ids = self._get_equipped_set_piece_ids(set_id)
+        return {
+            "piece_ids": piece_ids,
+            "equipped_piece_ids": equipped_piece_ids,
+            "equipped_count": len(equipped_piece_ids),
+            "total_count": len(piece_ids),
+        }
+
+    def _format_set_bonus_line(self, threshold, bonuses):
+        bonus_parts = []
+        if not isinstance(bonuses, dict):
+            bonuses = {}
+
+        for stat, value in bonuses.items():
+            if not isinstance(value, (int, float)):
+                continue
+
+            label = self._get_stat_label(stat)
+            sign = "+" if value > 0 else ""
+            formatted_value = self._format_stat_value(stat, value)
+            bonus_parts.append(f"{sign}{formatted_value} {label}")
+
+        bonus_text = ", ".join(bonus_parts) if bonus_parts else "No bonus"
+        return f"{threshold} pieces: {bonus_text}"
+
+    def _get_set_tooltip_entries(self, item_instance):
+        set_id = self._get_item_set_id(item_instance)
+        if not set_id:
+            return []
+
+        set_data = self._get_set_data(set_id)
+        progress = self._get_set_progress(set_id)
+        set_name = set_data.get("name", str(set_id))
+        equipped_count = progress["equipped_count"]
+        total_count = progress["total_count"]
+        equipped_piece_ids = progress["equipped_piece_ids"]
+
+        entries = [
+            ("", "normal"),
+            (f"Set: {set_name} ({equipped_count}/{total_count})", "set_title"),
+            ("Pieces:", "section"),
+        ]
+
+        for piece_id in progress["piece_ids"]:
+            piece_data = self.game.data.items.get(piece_id, {})
+            if isinstance(piece_data, dict):
+                piece_name = piece_data.get("name", piece_id)
+            else:
+                piece_name = piece_id
+            is_equipped = piece_id in equipped_piece_ids
+            marker = "✓" if is_equipped else "✗"
+            role = "active" if is_equipped else "inactive"
+            entries.append((f"{marker} {piece_name}", role))
+
+        bonuses = set_data.get("bonuses", {})
+        if not isinstance(bonuses, dict):
+            bonuses = {}
+
+        if bonuses:
+            entries.append(("Bonuses:", "section"))
+
+        sorted_bonus_entries = []
+        for threshold_key, threshold_bonuses in bonuses.items():
+            try:
+                threshold = int(threshold_key)
+            except (TypeError, ValueError):
+                continue
+            sorted_bonus_entries.append((threshold, threshold_bonuses))
+
+        for threshold, threshold_bonuses in sorted(sorted_bonus_entries):
+            marker = "✓" if equipped_count >= threshold else "✗"
+            role = "active" if equipped_count >= threshold else "inactive"
+            line = self._format_set_bonus_line(threshold, threshold_bonuses)
+            entries.append((f"{marker} {line}", role))
+
+        return entries
 
     def _get_type_label(self, item_type):
         labels = {
@@ -637,11 +779,19 @@ class InventoryScreen:
         stat_line_indexes = {}
         in_stats_section = False
 
-        for index, line in enumerate(lines):
+        for index, line_entry in enumerate(lines):
+            if isinstance(line_entry, tuple):
+                line, role = line_entry
+            else:
+                line = line_entry
+                role = "normal"
+
             if line == "Stats:":
                 in_stats_section = True
                 continue
-            if not in_stats_section or ":" not in line:
+            if in_stats_section and role in {"section", "set_title"}:
+                break
+            if not in_stats_section or role != "normal" or ":" not in line:
                 continue
 
             stat_label = line.split(":", 1)[0]
@@ -682,10 +832,23 @@ class InventoryScreen:
         if item_instance is None or source is None:
             return
 
-        lines = self._get_tooltip_lines(item_instance)
+        entries = self._get_tooltip_entries(item_instance)
+        tooltip_colors = {
+            "normal": (220, 220, 220),
+            "section": (220, 220, 160),
+            "set_title": (245, 220, 120),
+            "active": (120, 220, 140),
+            "inactive": (150, 155, 160),
+            "rarity": self._get_rarity_color(item_instance),
+            "title": self._get_rarity_color(item_instance),
+        }
         left_rendered_lines = [
-            self.small_font.render(line, True, (220, 220, 220))
-            for line in lines
+            self.small_font.render(
+                text,
+                True,
+                tooltip_colors.get(role, (220, 220, 220)),
+            )
+            for text, role in entries
         ]
         if not left_rendered_lines:
             return
@@ -701,7 +864,7 @@ class InventoryScreen:
 
         if current_item is not None:
             comparison_values = self._build_comparison_values(item_instance, current_item)
-            stat_line_indexes = self._get_tooltip_stat_line_indexes(lines)
+            stat_line_indexes = self._get_tooltip_stat_line_indexes(entries)
             right_header_lines = [
                 "Compared to equipped",
                 self._get_item_display_name(current_item),
@@ -729,13 +892,8 @@ class InventoryScreen:
         pygame.draw.rect(screen, (28, 34, 42), rect)
         pygame.draw.rect(screen, (180, 190, 200), rect, 2)
 
-        for index, line in enumerate(lines):
-            color = (220, 220, 220)
-            if index == 0:
-                color = self._get_rarity_color(item_instance)
-            elif line == "Stats:":
-                color = (220, 220, 160)
-
+        for index, (line, role) in enumerate(entries):
+            color = tooltip_colors.get(role, (220, 220, 220))
             text = self.small_font.render(line, True, color)
             screen.blit(text, (rect.x + padding, rect.y + padding + index * line_height))
 
@@ -827,6 +985,20 @@ class InventoryScreen:
             "force": "Strength",
             "agility": "Agility",
             "intelligence": "Intelligence",
+            "magic_attack": "Magic Attack",
+            "magic_defense": "Magic Defense",
+            "accuracy": "Accuracy",
+            "dodge_chance": "Dodge",
+            "block_chance": "Block",
+            "crit_chance": "Crit Chance",
+            "crit_damage": "Crit Damage",
+            "initiative": "Initiative",
+            "healing_power": "Healing Power",
+            "status_resistance": "Status Resist",
+            "loot_bonus": "Loot Bonus",
+            "gold_bonus": "Gold Bonus",
+            "rare_find_bonus": "Rare Find",
+            "xp_bonus": "XP Bonus",
         }
         return labels.get(stat, stat)
 
