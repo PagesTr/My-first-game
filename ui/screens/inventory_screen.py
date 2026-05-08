@@ -553,16 +553,15 @@ class InventoryScreen:
 
         y = rect.y + 76
         for label, new_value, current_value, diff in comparison_lines[:5]:
+            stat_key = self._get_stat_key_from_label(label)
             if diff > 0:
-                diff_text = f"+{diff}"
                 color = (120, 220, 140)
             elif diff < 0:
-                diff_text = str(diff)
                 color = (230, 110, 110)
             else:
-                diff_text = "="
                 color = (170, 170, 170)
 
+            diff_text = self._format_stat_difference(stat_key, diff)
             line = f"{label}: {new_value} vs {current_value} ({diff_text})"
             stat_text = self.small_font.render(line, True, color)
             screen.blit(stat_text, (rect.x + 10, y))
@@ -571,7 +570,7 @@ class InventoryScreen:
     def _get_tooltip_lines(self, item_instance):
         return [text for text, _ in self._get_tooltip_entries(item_instance)]
 
-    def _get_tooltip_entries(self, item_instance):
+    def _get_tooltip_entries(self, item_instance, current_item=None):
         item_data = self._get_item_data(item_instance)
         item_type = item_data.get("type", "unknown")
         stats = item_instance.get("stats") or item_data.get("stats", {})
@@ -604,6 +603,7 @@ class InventoryScreen:
         else:
             entries.append(("No stats", "normal"))
 
+        entries.extend(self._get_comparison_tooltip_entries(item_instance, current_item))
         entries.extend(self._get_set_tooltip_entries(item_instance))
         return entries
 
@@ -680,6 +680,130 @@ class InventoryScreen:
 
         bonus_text = ", ".join(bonus_parts) if bonus_parts else "No bonus"
         return f"{threshold} pieces: {bonus_text}"
+
+    def _format_stat_difference(self, stat_key, diff):
+        if not isinstance(diff, (int, float)):
+            return "="
+
+        rounded_diff = round(diff, 10)
+        if rounded_diff == 0:
+            return "="
+
+        sign = "+" if rounded_diff > 0 else "-"
+        absolute_diff = abs(rounded_diff)
+        percent_stats = {
+            "accuracy",
+            "dodge_chance",
+            "block_chance",
+            "crit_chance",
+            "status_resistance",
+            "loot_bonus",
+            "gold_bonus",
+            "rare_find_bonus",
+            "xp_bonus",
+        }
+
+        if stat_key in percent_stats:
+            return f"{sign}{absolute_diff * 100:.1f}%"
+        if stat_key == "crit_damage":
+            return f"{sign}{absolute_diff:.2f}"
+        if float(absolute_diff).is_integer():
+            return f"{sign}{int(absolute_diff)}"
+        return f"{sign}{absolute_diff:.2f}".rstrip("0").rstrip(".")
+
+    def _get_stat_key_from_label(self, label):
+        for stat_key in self._get_known_stat_labels():
+            if self._get_stat_label(stat_key) == label:
+                return stat_key
+        return label
+
+    def _get_known_stat_labels(self):
+        return {
+            "attack",
+            "defense",
+            "hp",
+            "max_hp",
+            "force",
+            "agility",
+            "intelligence",
+            "magic_attack",
+            "magic_defense",
+            "accuracy",
+            "dodge_chance",
+            "block_chance",
+            "crit_chance",
+            "crit_damage",
+            "initiative",
+            "healing_power",
+            "status_resistance",
+            "loot_bonus",
+            "gold_bonus",
+            "rare_find_bonus",
+            "xp_bonus",
+        }
+
+    def _get_item_stats(self, item_instance):
+        item_data = self._get_item_data(item_instance)
+        stats = item_instance.get("stats") if isinstance(item_instance, dict) else None
+        if stats is None:
+            stats = item_data.get("stats", {})
+        if not isinstance(stats, dict):
+            return {}
+        return stats
+
+    def _get_comparison_tooltip_entries(self, item_instance, current_item):
+        if current_item is None:
+            return []
+
+        new_stats = self._get_item_stats(item_instance)
+        current_stats = self._get_item_stats(current_item)
+        stat_keys = sorted(set(new_stats) | set(current_stats), key=self._get_stat_label)
+        if not stat_keys:
+            return []
+
+        comparison_entries = []
+
+        for stat_key in stat_keys:
+            new_value = new_stats.get(stat_key, 0)
+            current_value = current_stats.get(stat_key, 0)
+            if not isinstance(new_value, (int, float)):
+                continue
+            if not isinstance(current_value, (int, float)):
+                continue
+
+            diff = new_value - current_value
+            if diff > 0:
+                role = "comparison_positive"
+            elif diff < 0:
+                role = "comparison_negative"
+            else:
+                role = "comparison_neutral"
+
+            label = self._get_stat_label(stat_key)
+            new_text = self._format_stat_value(stat_key, new_value)
+            current_text = self._format_stat_value(stat_key, current_value)
+            diff_text = self._format_stat_difference(stat_key, diff)
+            comparison_entries.append(
+                (
+                    f"{label}: {new_text} vs {current_text} ({diff_text})",
+                    role,
+                )
+            )
+            if len(comparison_entries) >= 6:
+                break
+
+        if not comparison_entries:
+            return []
+
+        return [
+            ("", "normal"),
+            ("Comparison:", "section"),
+            (
+                f"Compared with: {self._get_item_display_name(current_item)}",
+                "normal",
+            ),
+            *comparison_entries,
+        ]
 
     def _get_set_tooltip_entries(self, item_instance):
         set_id = self._get_item_set_id(item_instance)
@@ -812,17 +936,7 @@ class InventoryScreen:
             current_value = current_stats.get(stat, 0)
             diff = new_value - current_value
             label = self._get_stat_label(stat)
-            if stat == "crit_damage":
-                formatted_diff = str(abs(diff))
-            else:
-                formatted_diff = self._format_stat_value(stat, abs(diff))
-
-            if diff > 0:
-                comparison_values[label] = f"+{formatted_diff}"
-            elif diff < 0:
-                comparison_values[label] = f"-{formatted_diff}"
-            else:
-                comparison_values[label] = "="
+            comparison_values[label] = self._format_stat_difference(stat, diff)
 
         return comparison_values
 
@@ -832,13 +946,17 @@ class InventoryScreen:
         if item_instance is None or source is None:
             return
 
-        entries = self._get_tooltip_entries(item_instance)
+        current_item = self._get_comparison_item_for_source(item_instance, source)
+        entries = self._get_tooltip_entries(item_instance, current_item)
         tooltip_colors = {
             "normal": (220, 220, 220),
             "section": (220, 220, 160),
             "set_title": (245, 220, 120),
             "active": (120, 220, 140),
             "inactive": (150, 155, 160),
+            "comparison_positive": (120, 220, 140),
+            "comparison_negative": (230, 110, 110),
+            "comparison_neutral": (170, 170, 170),
             "rarity": self._get_rarity_color(item_instance),
             "title": self._get_rarity_color(item_instance),
         }
@@ -855,30 +973,8 @@ class InventoryScreen:
 
         padding = 10
         line_height = 18
-        column_gap = 28
-        current_item = self._get_comparison_item_for_source(item_instance, source)
-        comparison_values = {}
-        stat_line_indexes = {}
-        right_header_lines = []
-        right_width = 0
-
-        if current_item is not None:
-            comparison_values = self._build_comparison_values(item_instance, current_item)
-            stat_line_indexes = self._get_tooltip_stat_line_indexes(entries)
-            right_header_lines = [
-                "Compared to equipped",
-                self._get_item_display_name(current_item),
-            ]
-            right_texts = right_header_lines + list(comparison_values.values())
-            right_width = max(
-                self.small_font.render(text, True, (220, 220, 220)).get_width()
-                for text in right_texts
-            )
-
         left_width = max(line.get_width() for line in left_rendered_lines)
         width = left_width + padding * 2
-        if current_item is not None:
-            width += column_gap + right_width
 
         height = len(left_rendered_lines) * line_height + padding * 2
         x, y = mouse_pos[0] + 14, mouse_pos[1] + 14
@@ -896,32 +992,6 @@ class InventoryScreen:
             color = tooltip_colors.get(role, (220, 220, 220))
             text = self.small_font.render(line, True, color)
             screen.blit(text, (rect.x + padding, rect.y + padding + index * line_height))
-
-        if current_item is None:
-            return
-
-        right_x = rect.x + padding + left_width + column_gap
-        for index, line in enumerate(right_header_lines):
-            color = (220, 220, 220)
-            if index == 1:
-                color = self._get_rarity_color(current_item)
-            text = self.small_font.render(line, True, color)
-            screen.blit(text, (right_x, rect.y + padding + index * line_height))
-
-        for stat_label, diff_text in comparison_values.items():
-            line_index = stat_line_indexes.get(stat_label)
-            if line_index is None:
-                continue
-
-            if diff_text.startswith("+"):
-                color = (120, 220, 140)
-            elif diff_text.startswith("-"):
-                color = (230, 110, 110)
-            else:
-                color = (170, 170, 170)
-
-            text = self.small_font.render(diff_text, True, color)
-            screen.blit(text, (right_x, rect.y + padding + line_index * line_height))
 
     def _get_equipment_type(self, item_instance):
         if item_instance is None:
