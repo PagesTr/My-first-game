@@ -1,10 +1,24 @@
 {
-  "forest": {
-    "name": "Mystic Forest",
-    "description": "A dense forest filled with weak but numerous enemies.",
+  "forest_goblin": {
+    "name": "Goblin Forest",
+    "description": "A forest expedition focused on goblins.",
     "unlock_level": 1,
     "enemy_pool": [
-      "goblin",
+      "goblin"
+    ],
+    "loot_table": [
+      "health_potion",
+      "copper_coin",
+      "leather_armor"
+    ],
+    "difficulty_multiplier": 1.0,
+    "farming_rate": 10
+  },
+  "forest_wolf": {
+    "name": "Wolf Forest",
+    "description": "A forest expedition focused on wolves.",
+    "unlock_level": 1,
+    "enemy_pool": [
       "wolf"
     ],
     "loot_table": [
@@ -15,12 +29,26 @@
     "difficulty_multiplier": 1.0,
     "farming_rate": 10
   },
-  "caves": {
-    "name": "Shadow Caves",
-    "description": "Deep caverns inhabited by stronger creatures.",
+  "caves_skeleton": {
+    "name": "Skeleton Caves",
+    "description": "A cave expedition focused on skeletons.",
     "unlock_level": 5,
     "enemy_pool": [
-      "skeleton",
+      "skeleton"
+    ],
+    "loot_table": [
+      "iron_sword",
+      "gold_coin",
+      "magic_ring"
+    ],
+    "difficulty_multiplier": 1.5,
+    "farming_rate": 8
+  },
+  "caves_bandit": {
+    "name": "Bandit Caves",
+    "description": "A cave expedition focused on bandits.",
+    "unlock_level": 5,
+    "enemy_pool": [
       "bandit"
     ],
     "loot_table": [
@@ -31,12 +59,26 @@
     "difficulty_multiplier": 1.5,
     "farming_rate": 8
   },
-  "mountains": {
-    "name": "Frozen Peaks",
-    "description": "Perilous mountains guarded by elite enemies.",
+  "mountains_orc": {
+    "name": "Orc Mountains",
+    "description": "A mountain expedition focused on orcs.",
     "unlock_level": 10,
     "enemy_pool": [
-      "orc",
+      "orc"
+    ],
+    "loot_table": [
+      "steel_armor",
+      "rare_gem",
+      "legendary_sword"
+    ],
+    "difficulty_multiplier": 2.0,
+    "farming_rate": 5
+  },
+  "mountains_troll": {
+    "name": "Troll Mountains",
+    "description": "A mountain expedition focused on trolls.",
+    "unlock_level": 10,
+    "enemy_pool": [
       "troll"
     ],
     "loot_table": [
