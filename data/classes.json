@@ -3,7 +3,7 @@
     "name": "Warrior",
     "description": "A hardy melee fighter, resilient and straightforward.",
     "base_stats": {
-      "strength": 4000000000,
+      "strength": 4,
       "dexterity": 1,
       "intelligence": 0,
       "vitality": 4,

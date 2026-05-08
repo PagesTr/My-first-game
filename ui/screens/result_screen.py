@@ -299,7 +299,7 @@ class ResultScreen:
         x = rect.x + 28
         y = rect.y + 58
 
-        y = self._draw_summary_section_title(screen, "Performance", x, y)
+        y = self._draw_summary_section_title(screen, "Expédition", x, y)
         y = self._draw_small_summary_line(
             screen,
             "Zone",
@@ -308,85 +308,56 @@ class ResultScreen:
         )
         y = self._draw_small_summary_line(
             screen,
+            "Ennemi fatal",
+            self._short_text(result.get("death_enemy", ""), 13),
+            y,
+            PALETTE["defeat"],
+        )
+        y = self._draw_small_summary_line(
+            screen,
             "Combats gagnés",
             self._format_large_number(result.get("combats_won", 0)),
             y,
             PALETTE["victory"],
         )
-        y = self._draw_small_summary_line(
-            screen,
-            "Mort contre",
-            self._short_text(result.get("death_enemy", ""), 13),
-            y,
-            PALETTE["defeat"],
-        )
 
-        y += 4
-        y = self._draw_summary_section_title(screen, "Gains", x, y)
+        y += 16
+        y = self._draw_summary_section_title(screen, "Récompenses", x, y)
         y = self._draw_small_summary_line(
             screen,
-            "XP",
+            "XP gagnée",
             self._format_large_number(exp_gained),
             y,
             PALETTE["xp"],
         )
         y = self._draw_small_summary_line(
             screen,
-            "Gold",
+            "Gold gagné",
             self._format_large_number(gold_gained),
             y,
             PALETTE["gold"],
         )
         y = self._draw_small_summary_line(
             screen,
-            "Drops",
+            "Butin trouvé",
             self._format_large_number(result.get("total_drops_found", 0)),
             y,
         )
         y = self._draw_small_summary_line(
             screen,
-            "Niveau",
+            "Niveau actuel",
             self._format_large_number(
                 result.get("final_player_level", current_level)
             ),
             y,
         )
-
-        y += 4
-        y = self._draw_summary_section_title(screen, "Simulation", x, y)
-        y = self._draw_small_summary_line(
-            screen,
-            "Mode",
-            self._format_simulation_mode(result.get("simulation_mode")),
-            y,
-            PALETTE["gold"],
-        )
-        y = self._draw_small_summary_line(
-            screen,
-            "Exact",
-            self._format_large_number(result.get("exact_combats", 0)),
-            y,
-        )
-        y = self._draw_small_summary_line(
-            screen,
-            "Estimés",
-            self._format_large_number(result.get("estimated_combats", 0)),
-            y,
-        )
-        if result.get("highest_enemy_multiplier") is not None:
-            y = self._draw_small_summary_line(
-                screen,
-                "Mult. final",
-                self._format_multiplier(result.get("highest_enemy_multiplier")),
-                y,
-            )
-        if result.get("end_reason") is not None:
+        if result.get("leveled_up", False):
             self._draw_small_summary_line(
                 screen,
-                "Fin",
-                self._format_end_reason(result.get("end_reason")),
+                "Level up",
+                f"+{self._format_large_number(result.get('levels_gained', 0))}",
                 y,
-                PALETTE["muted"],
+                PALETTE["level_up"],
             )
 
     def _draw_summary_section_title(self, screen, text, x, y):
