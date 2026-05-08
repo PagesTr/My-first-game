@@ -1,5 +1,10 @@
 import pygame
 
+try:
+    from systems.crafting import can_craft_recipe
+except ImportError:
+    from systems.crafting import can_craft as can_craft_recipe
+
 from ui.assets import draw_background, load_image
 
 
@@ -194,10 +199,46 @@ class MenuScreen:
         self.expedition_button.draw(screen, self.option_font, self.body_font)
         self.inventory_button.draw(screen, self.option_font, self.body_font)
         self.merchant_button.draw(screen, self.option_font, self.body_font)
+        has_available_recipe = self._has_available_crafting_recipe()
+        if has_available_recipe:
+            self.crafting_button.subtitle = "Recipes available"
+        else:
+            self.crafting_button.subtitle = "Use resources"
         self.crafting_button.draw(screen, self.option_font, self.body_font)
+        if has_available_recipe:
+            self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
+
+    def _has_available_crafting_recipe(self):
+        if not self.game.player:
+            return False
+
+        recipes = getattr(self.game.data, "recipes", {}) or {}
+        if not isinstance(recipes, dict):
+            return False
+
+        inventory = self.game.player.get("inventory")
+        for recipe in recipes.values():
+            if not isinstance(recipe, dict):
+                continue
+            if can_craft_recipe(inventory, recipe):
+                return True
+        return False
+
+    def _draw_crafting_ready_badge(self, screen):
+        badge_rect = pygame.Rect(
+            self.crafting_button.rect.right - 76,
+            self.crafting_button.rect.y + 14,
+            58,
+            24,
+        )
+        pygame.draw.rect(screen, (78, 104, 50), badge_rect, border_radius=10)
+        pygame.draw.rect(screen, (220, 220, 120), badge_rect, 2, border_radius=10)
+
+        label = self.body_font.render("Ready", True, (245, 245, 245))
+        screen.blit(label, (badge_rect.x + 8, badge_rect.y + 3))
 
     def _draw_town_player_panel(self, screen):
         rect = pygame.Rect(470, 150, 250, 220)
