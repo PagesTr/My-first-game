@@ -34,6 +34,380 @@
       "rare": 5
     }
   },
+  "brutal_axe": {
+    "name": "Brutal Axe",
+    "type": "equipment",
+    "category": "weapon",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "strength": 2,
+      "attack": 4
+    },
+    "rarity_weights": {
+      "common": 45,
+      "uncommon": 40,
+      "rare": 15
+    }
+  },
+  "duelist_blade": {
+    "name": "Duelist Blade",
+    "type": "equipment",
+    "category": "weapon",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dexterity": 2,
+      "attack": 3,
+      "crit_chance": 0.04
+    },
+    "rarity_weights": {
+      "common": 50,
+      "uncommon": 35,
+      "rare": 15
+    }
+  },
+  "iron_helmet": {
+    "name": "Iron Helmet",
+    "type": "equipment",
+    "category": "helmet",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "vitality": 1,
+      "defense": 2
+    },
+    "rarity_weights": {
+      "common": 70,
+      "uncommon": 25,
+      "rare": 5
+    }
+  },
+  "scout_hood": {
+    "name": "Scout Hood",
+    "type": "equipment",
+    "category": "helmet",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dexterity": 1,
+      "dodge_chance": 0.02
+    },
+    "rarity_weights": {
+      "common": 70,
+      "uncommon": 25,
+      "rare": 5
+    }
+  },
+  "reinforced_chestplate": {
+    "name": "Reinforced Chestplate",
+    "type": "equipment",
+    "category": "chest",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "vitality": 2,
+      "defense": 3,
+      "block_chance": 0.02
+    },
+    "rarity_weights": {
+      "common": 45,
+      "uncommon": 40,
+      "rare": 15
+    }
+  },
+  "hunter_vest": {
+    "name": "Hunter Vest",
+    "type": "equipment",
+    "category": "chest",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dexterity": 1,
+      "defense": 1,
+      "loot_bonus": 0.04
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "traveler_pants": {
+    "name": "Traveler Pants",
+    "type": "equipment",
+    "category": "pants",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "vitality": 1,
+      "initiative": 1
+    },
+    "rarity_weights": {
+      "common": 75,
+      "uncommon": 20,
+      "rare": 5
+    }
+  },
+  "duelist_pants": {
+    "name": "Duelist Pants",
+    "type": "equipment",
+    "category": "pants",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dexterity": 1,
+      "crit_chance": 0.03
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "duelist_gloves": {
+    "name": "Duelist Gloves",
+    "type": "equipment",
+    "category": "gloves",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dexterity": 1,
+      "crit_chance": 0.03
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "guard_gauntlets": {
+    "name": "Guard Gauntlets",
+    "type": "equipment",
+    "category": "gloves",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "defense": 1,
+      "block_chance": 0.02
+    },
+    "rarity_weights": {
+      "common": 70,
+      "uncommon": 25,
+      "rare": 5
+    }
+  },
+  "swift_boots": {
+    "name": "Swift Boots",
+    "type": "equipment",
+    "category": "boots",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "dodge_chance": 0.03,
+      "initiative": 2
+    },
+    "rarity_weights": {
+      "common": 70,
+      "uncommon": 25,
+      "rare": 5
+    }
+  },
+  "heavy_boots": {
+    "name": "Heavy Boots",
+    "type": "equipment",
+    "category": "boots",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_item",
+    "stats": {
+      "vitality": 1,
+      "defense": 1
+    },
+    "rarity_weights": {
+      "common": 75,
+      "uncommon": 20,
+      "rare": 5
+    }
+  },
+  "amulet_of_power": {
+    "name": "Amulet of Power",
+    "type": "equipment",
+    "category": "amulet",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "strength": 2,
+      "attack": 2
+    },
+    "rarity_weights": {
+      "uncommon": 60,
+      "rare": 30,
+      "epic": 10
+    }
+  },
+  "amulet_of_life": {
+    "name": "Amulet of Life",
+    "type": "equipment",
+    "category": "amulet",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "vitality": 2,
+      "max_hp": 4
+    },
+    "rarity_weights": {
+      "uncommon": 60,
+      "rare": 30,
+      "epic": 10
+    }
+  },
+  "amulet_of_wisdom": {
+    "name": "Amulet of Wisdom",
+    "type": "equipment",
+    "category": "amulet",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "wisdom": 2,
+      "xp_bonus": 0.06
+    },
+    "rarity_weights": {
+      "uncommon": 60,
+      "rare": 30,
+      "epic": 10
+    }
+  },
+  "ring_of_precision": {
+    "name": "Ring of Precision",
+    "type": "equipment",
+    "category": "ring",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "crit_chance": 0.03
+    },
+    "rarity_weights": {
+      "common": 60,
+      "uncommon": 30,
+      "rare": 10
+    }
+  },
+  "ring_of_luck": {
+    "name": "Ring of Luck",
+    "type": "equipment",
+    "category": "ring",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "luck": 1,
+      "rare_find_bonus": 0.02
+    },
+    "rarity_weights": {
+      "common": 60,
+      "uncommon": 30,
+      "rare": 10
+    }
+  },
+  "ring_of_gold": {
+    "name": "Ring of Gold",
+    "type": "equipment",
+    "category": "ring",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "gold_bonus": 0.05
+    },
+    "rarity_weights": {
+      "common": 60,
+      "uncommon": 30,
+      "rare": 10
+    }
+  },
+  "ring_of_learning": {
+    "name": "Ring of Learning",
+    "type": "equipment",
+    "category": "ring",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "stats": {
+      "xp_bonus": 0.05
+    },
+    "rarity_weights": {
+      "common": 60,
+      "uncommon": 30,
+      "rare": 10
+    }
+  },
+  "goblin_totem": {
+    "name": "Goblin Totem",
+    "type": "equipment",
+    "category": "trinket",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "loot_bonus": 0.05,
+      "gold_bonus": 0.03
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
+  "wolf_fang_charm": {
+    "name": "Wolf Fang Charm",
+    "type": "equipment",
+    "category": "trinket",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "crit_chance": 0.03,
+      "crit_damage": 0.10
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
+  "bone_talisman": {
+    "name": "Bone Talisman",
+    "type": "equipment",
+    "category": "trinket",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "stats": {
+      "defense": 1,
+      "status_resistance": 0.04
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
   "health_potion": {
     "name": "Health Potion",
     "type": "consumable",
