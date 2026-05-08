@@ -1,6 +1,12 @@
 import pygame
 
-from systems.equipment import equip_item, unequip_item
+from systems.equipment import (
+    CATEGORY_TO_SLOT,
+    EQUIPMENT_SLOTS,
+    RING_SLOTS,
+    equip_item,
+    unequip_item,
+)
 from systems.economy import calculate_item_sell_price
 from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
@@ -43,6 +49,12 @@ class InventoryScreen:
         self.slot_size = 70
         self.gap = 10
         self.columns = 6
+        self.equipment_panel_x = 550
+        self.equipment_panel_y = 135
+        self.equipment_slot_width = 95
+        self.equipment_slot_height = 43
+        self.equipment_slot_gap = 5
+        self.equipment_columns = 2
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -135,15 +147,23 @@ class InventoryScreen:
         return None
 
     def _get_equipment_slot_at_pos(self, pos):
-        for slot_key in ("weapon", "armor", "accessory"):
+        for slot_key in EQUIPMENT_SLOTS:
             if self._get_equipment_slot_rect(slot_key).collidepoint(pos):
                 return slot_key
         return None
 
     def _get_equipment_slot_rect(self, slot_key):
-        slot_order = ("weapon", "armor", "accessory")
-        index = slot_order.index(slot_key)
-        return pygame.Rect(550, 150 + index * 95, 200, 80)
+        index = EQUIPMENT_SLOTS.index(slot_key)
+        col = index % self.equipment_columns
+        row = index // self.equipment_columns
+        return pygame.Rect(
+            self.equipment_panel_x
+            + col * (self.equipment_slot_width + self.equipment_slot_gap),
+            self.equipment_panel_y
+            + row * (self.equipment_slot_height + self.equipment_slot_gap),
+            self.equipment_slot_width,
+            self.equipment_slot_height,
+        )
 
     def _get_item_at_pos(self, pos):
         if not self.game.player:
@@ -275,44 +295,42 @@ class InventoryScreen:
         equipment = self.game.player["equipment"]
         labels = {
             "weapon": "Weapon",
-            "armor": "Armor",
-            "accessory": "Accessory",
+            "helmet": "Helmet",
+            "chest": "Chest",
+            "pants": "Pants",
+            "gloves": "Gloves",
+            "boots": "Boots",
+            "amulet": "Amulet",
+            "ring_1": "Ring 1",
+            "ring_2": "Ring 2",
+            "ring_3": "Ring 3",
+            "trinket": "Trinket",
         }
 
         title = self.font.render("Equipment", True, (245, 245, 245))
         screen.blit(title, (560, 110))
 
-        y = 150
-        for slot_key, label in labels.items():
+        for slot_key in EQUIPMENT_SLOTS:
+            label = labels[slot_key]
             rect = self._get_equipment_slot_rect(slot_key)
             pygame.draw.rect(screen, (45, 50, 58), rect)
             pygame.draw.rect(screen, (120, 130, 140), rect, 2)
 
             label_text = self.small_font.render(label, True, (220, 220, 220))
-            screen.blit(label_text, (rect.x + 8, rect.y + 8))
+            screen.blit(label_text, (rect.x + 5, rect.y + 4))
 
             item = equipment.get(slot_key)
             if item is None:
                 item_text = "Empty"
-                detail_text = ""
                 name_color = (245, 245, 245)
             else:
                 item_text = self._get_item_display_name(item)
-                detail_text = self._format_short_stats(item.get("stats", {}))
                 name_color = self._get_rarity_color(item)
 
             name_label = self.small_font.render(
-                self._short_text(item_text, 18), True, name_color
+                self._short_text(item_text, 11), True, name_color
             )
-            screen.blit(name_label, (rect.x + 8, rect.y + 32))
-
-            if detail_text:
-                detail_label = self.small_font.render(
-                    self._short_text(detail_text, 18), True, (220, 220, 160)
-                )
-                screen.blit(detail_label, (rect.x + 8, rect.y + 54))
-
-            y += 95
+            screen.blit(name_label, (rect.x + 5, rect.y + 22))
 
     def _draw_player_stats_panel(self, screen):
         player = self.game.player
@@ -494,7 +512,7 @@ class InventoryScreen:
         if equipment_type is None:
             return
 
-        current_item = self.game.player["equipment"].get(equipment_type)
+        current_item = self._get_comparison_item_for_equipment_type(equipment_type)
         comparison_lines = self._build_stats_comparison(
             item.get("stats", {}),
             current_item.get("stats", {}) if current_item else {},
@@ -603,7 +621,17 @@ class InventoryScreen:
         if equipment_type is None:
             return None
 
-        return self.game.player["equipment"].get(equipment_type)
+        return self._get_comparison_item_for_equipment_type(equipment_type)
+
+    def _get_comparison_item_for_equipment_type(self, equipment_type):
+        equipment = self.game.player["equipment"]
+        if equipment_type != "ring":
+            return equipment.get(equipment_type)
+
+        for ring_slot in RING_SLOTS:
+            if equipment.get(ring_slot) is None:
+                return None
+        return equipment.get(RING_SLOTS[0])
 
     def _get_tooltip_stat_line_indexes(self, lines):
         stat_line_indexes = {}
@@ -745,12 +773,12 @@ class InventoryScreen:
 
         item_id = item_instance["item"]
         item_data = self.game.data.items.get(item_id, {})
-        if item_data.get("type") != "equipment":
-            return None
-
-        item_category = item_data.get("category")
-        if item_category in ("weapon", "armor", "accessory"):
-            return item_category
+        item_type = item_data.get("type")
+        item_category = item_data.get("category") if item_type == "equipment" else item_type
+        if item_category == "ring":
+            return "ring"
+        if item_category in CATEGORY_TO_SLOT:
+            return CATEGORY_TO_SLOT[item_category]
         return None
 
     def _get_item_name(self, item_instance):

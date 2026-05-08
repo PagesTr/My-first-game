@@ -22,16 +22,29 @@ RARITY_BONUS = {
 }
 
 VALID_ITEM_KINDS = ("stackable", "individual")
+EQUIPMENT_CATEGORIES = (
+    "weapon",
+    "helmet",
+    "chest",
+    "armor",
+    "pants",
+    "gloves",
+    "boots",
+    "amulet",
+    "ring",
+    "trinket",
+    "accessory",
+)
 
 
 def is_individual_equipment(item_data):
     item_type = item_data.get("type")
-    if item_type in ("weapon", "armor", "accessory"):
+    if item_type in EQUIPMENT_CATEGORIES:
         return True
 
     return (
         item_type == "equipment"
-        and item_data.get("category") in ("weapon", "armor", "accessory")
+        and item_data.get("category") in EQUIPMENT_CATEGORIES
     )
 
 
