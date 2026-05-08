@@ -83,18 +83,20 @@ def test_attack_reduces_enemy_hp(monkeypatch):
     assert enemy["current_hp"] < 20
 
 
-def test_heal_restores_player_hp(monkeypatch):
+def test_heal_action_does_not_restore_player_hp(monkeypatch):
     monkeypatch.setattr("systems.combat.random.random", lambda: 0.5)
     player = make_player()
     player["current_hp"] = 5
     player["healing_power"] = 20
-    enemy = make_enemy("aggressive", current_hp=20)
+    enemy = make_enemy("aggressive", current_hp=1)
     enemy["accuracy"] = 0.0
     combat = CombatSystem(player, enemy)
 
     combat.step("heal")
 
-    assert player["current_hp"] == player["max_hp"]
+    assert player["current_hp"] == 5
+    assert combat.is_over is True
+    assert combat.winner == "player"
 
 
 def test_combat_ends_when_enemy_dies(monkeypatch):
@@ -127,12 +129,12 @@ def test_combat_ends_when_player_dies(monkeypatch):
     assert combat.winner == "enemy"
 
 
-def test_player_auto_action_returns_heal_when_player_hp_is_low():
+def test_player_auto_action_returns_attack_when_player_hp_is_low():
     player = make_player()
     player["current_hp"] = 6
     combat = CombatSystem(player, make_enemy("aggressive", current_hp=20))
 
-    assert combat._player_auto_action() == "heal"
+    assert combat._player_auto_action() == "attack"
 
 
 def test_player_auto_action_returns_attack_when_player_hp_is_high():
@@ -152,7 +154,8 @@ def test_step_uses_player_auto_action_when_action_is_none(monkeypatch):
 
     combat.step(None)
 
-    assert player["current_hp"] > 6
+    assert player["current_hp"] <= 6
+    assert enemy["current_hp"] < 20
 
 
 def test_combat_hooks_do_not_change_attack_step_behavior(monkeypatch):
