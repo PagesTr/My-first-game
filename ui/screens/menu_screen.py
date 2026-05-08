@@ -99,16 +99,16 @@ class MenuScreen:
 
     def _build_zone_buttons(self):
         buttons = []
-        y = 140
+        y = 128
         for zone_key, zone_data in self.game.data.zones.items():
             subtitle = (
                 f"Niveau {zone_data['unlock_level']} - "
                 f"Difficulte x{zone_data['difficulty_multiplier']}"
             )
             buttons.append(
-                (zone_key, MenuButton((80, y, 640, 80), zone_data["name"], subtitle))
+                (zone_key, MenuButton((80, y, 640, 64), zone_data["name"], subtitle))
             )
-            y += 100
+            y += 72
         return buttons
 
     def handle_event(self, event):

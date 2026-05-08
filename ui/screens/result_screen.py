@@ -163,12 +163,16 @@ class ResultScreen:
     def draw(self, screen):
         self._draw_background(screen)
 
+        result = self.game.last_combat_result or {}
+        is_instance_result = result.get("is_instance_result") is True
         combat = self.game.combat
         victory = combat is not None and combat.winner == "player"
         title_text = "Victoire !" if victory else "Défaite..."
         title_color = PALETTE["victory"] if victory else PALETTE["defeat"]
+        if is_instance_result:
+            title_text = "Expédition terminée"
+            title_color = PALETTE["gold"]
 
-        result = self.game.last_combat_result or {}
         exp_gained = result.get("exp_gained", 0)
         gold_gained = result.get("gold_gained", 0)
         drops = self._get_pending_drops(result)
@@ -198,25 +202,37 @@ class ResultScreen:
         self._draw_panel(screen, summary_rect, "Résumé")
         self._draw_panel(screen, loot_rect, "Butin")
 
-        y = summary_rect.y + 66
-        y = self._draw_summary_line(screen, "XP gagnée", exp_gained, y, PALETTE["xp"])
-        y = self._draw_summary_line(
-            screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
-        )
-        y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
-
-        if result.get("leveled_up", False):
-            y += 10
-            y = self._draw_summary_line(
-                screen, "Level up", "Oui", y, PALETTE["level_up"]
-            )
-            self._draw_summary_line(
+        if is_instance_result:
+            self._draw_instance_summary(
                 screen,
-                "Nouveau niveau",
-                result.get("new_level", current_level),
-                y,
-                PALETTE["level_up"],
+                summary_rect,
+                result,
+                exp_gained,
+                gold_gained,
+                current_level,
             )
+        else:
+            y = summary_rect.y + 66
+            y = self._draw_summary_line(
+                screen, "XP gagnée", exp_gained, y, PALETTE["xp"]
+            )
+            y = self._draw_summary_line(
+                screen, "Gold gagné", gold_gained, y, PALETTE["gold"]
+            )
+            y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
+
+            if result.get("leveled_up", False):
+                y += 10
+                y = self._draw_summary_line(
+                    screen, "Level up", "Oui", y, PALETTE["level_up"]
+                )
+                self._draw_summary_line(
+                    screen,
+                    "Nouveau niveau",
+                    result.get("new_level", current_level),
+                    y,
+                    PALETTE["level_up"],
+                )
 
         self._draw_loot_section(screen, loot_rect, drops)
         self._draw_loot_tooltip(screen)
@@ -270,6 +286,130 @@ class ResultScreen:
         )
         summary_rect = summary.get_rect(center=rect.center)
         screen.blit(summary, summary_rect)
+
+    def _draw_instance_summary(
+        self,
+        screen,
+        rect,
+        result,
+        exp_gained,
+        gold_gained,
+        current_level,
+    ):
+        x = rect.x + 28
+        y = rect.y + 58
+
+        y = self._draw_summary_section_title(screen, "Expédition", x, y)
+        y = self._draw_small_summary_line(
+            screen,
+            "Zone",
+            self._short_text(result.get("zone_name", ""), 13),
+            y,
+        )
+        y = self._draw_small_summary_line(
+            screen,
+            "Ennemi fatal",
+            self._short_text(result.get("death_enemy", ""), 13),
+            y,
+            PALETTE["defeat"],
+        )
+        y = self._draw_small_summary_line(
+            screen,
+            "Combats gagnés",
+            self._format_large_number(result.get("combats_won", 0)),
+            y,
+            PALETTE["victory"],
+        )
+
+        y += 16
+        y = self._draw_summary_section_title(screen, "Récompenses", x, y)
+        y = self._draw_small_summary_line(
+            screen,
+            "XP gagnée",
+            self._format_large_number(exp_gained),
+            y,
+            PALETTE["xp"],
+        )
+        y = self._draw_small_summary_line(
+            screen,
+            "Gold gagné",
+            self._format_large_number(gold_gained),
+            y,
+            PALETTE["gold"],
+        )
+        y = self._draw_small_summary_line(
+            screen,
+            "Butin trouvé",
+            self._format_large_number(result.get("total_drops_found", 0)),
+            y,
+        )
+        y = self._draw_small_summary_line(
+            screen,
+            "Niveau actuel",
+            self._format_large_number(
+                result.get("final_player_level", current_level)
+            ),
+            y,
+        )
+        if result.get("leveled_up", False):
+            self._draw_small_summary_line(
+                screen,
+                "Level up",
+                f"+{self._format_large_number(result.get('levels_gained', 0))}",
+                y,
+                PALETTE["level_up"],
+            )
+
+    def _draw_summary_section_title(self, screen, text, x, y):
+        title = self.small_font.render(text, True, PALETTE["border_light"])
+        screen.blit(title, (x, y))
+        return y + 18
+
+    def _draw_small_summary_line(self, screen, label, value, y, value_color=None):
+        row_rect = pygame.Rect(92, y - 3, 250, 22)
+        pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
+        pygame.draw.rect(screen, (58, 66, 66), row_rect, 1)
+        label_text = self.small_font.render(f"{label} :", True, PALETTE["muted"])
+        value_text = self.small_font.render(
+            str(value),
+            True,
+            value_color or PALETTE["text"],
+        )
+        screen.blit(label_text, (row_rect.x + 8, y))
+        screen.blit(value_text, (row_rect.right - value_text.get_width() - 8, y))
+        return y + 24
+
+    def _format_large_number(self, value):
+        try:
+            return f"{int(value):,}".replace(",", " ")
+        except (TypeError, ValueError):
+            return str(value)
+
+    def _format_multiplier(self, value):
+        try:
+            return f"x{float(value):.2f}"
+        except (TypeError, ValueError):
+            return "x1.00"
+
+    def _format_end_reason(self, value):
+        labels = {
+            "death": "Mort",
+            "estimated_death": "Mort estimée",
+            "turn_limit_death": "Limite de tours",
+            "absolute_limit": "Limite technique",
+        }
+        if value is None:
+            return "Inconnue"
+        return labels.get(value, str(value) or "Inconnue")
+
+    def _format_simulation_mode(self, value):
+        labels = {
+            "exact": "Exact",
+            "batched": "Par blocs",
+        }
+        if value is None:
+            return "Inconnu"
+        return labels.get(value, str(value) or "Inconnu")
 
     def _draw_inventory_panel(self, screen, rect):
         self._draw_inventory_replacement_grid(screen, rect)
