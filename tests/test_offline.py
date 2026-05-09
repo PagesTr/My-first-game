@@ -330,7 +330,7 @@ def test_resolve_offline_activity_keeps_activity_active_after_resolution(monkeyp
     assert player["offline_activity"] is not None
 
 
-def test_resolve_offline_activity_returns_inventory_full_when_no_rewards_can_be_added(monkeypatch):
+def test_resolve_offline_activity_inventory_full_includes_tick_seconds(monkeypatch):
     activity = create_offline_gathering_activity(
         "forest_goblin",
         "druid",

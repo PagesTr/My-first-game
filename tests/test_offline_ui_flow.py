@@ -149,6 +149,18 @@ def test_return_to_main_menu_does_not_create_offline_activity(monkeypatch):
     assert game.player["offline_activity"] is None
 
 
+def test_return_to_main_menu_stops_active_gathering(monkeypatch):
+    game = Game()
+    game.player = {"inventory": {}, "offline_activity": None}
+    game.active_gathering = {"type": "gathering"}
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+
+    game.return_to_main_menu()
+
+    assert game.state == "main_menu"
+    assert game.active_gathering is None
+
+
 def test_send_current_player_offline_gathering_is_only_way_to_start_offline(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
