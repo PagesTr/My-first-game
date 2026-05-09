@@ -92,19 +92,36 @@ class CraftingScreen:
         self.detail_panel = pygame.Rect(342, 88, 410, 410)
         self.recipes = getattr(self.game.data, "recipes", {}) or {}
         self.recipe_buttons = []
+        self.filter_buttons = []
         self.selected_recipe_id = None
+        self.selected_filter = "All"
+        self.recipe_scroll_offset = 0
+        self.max_visible_recipes = 8
         self.message = ""
         self.message_success = None
         self.message_until = 0
+        self._build_filter_buttons()
         self._build_recipe_buttons()
 
     def handle_event(self, event):
+        if event.type == pygame.MOUSEWHEEL:
+            self._scroll_recipes(-event.y)
+            return
+
         if event.type != pygame.MOUSEBUTTONDOWN:
             return
 
         if self.back_btn.is_clicked(event.pos):
             self.game.state = "town"
             return
+
+        for filter_name, button in self.filter_buttons:
+            if button.is_clicked(event.pos):
+                self.selected_filter = filter_name
+                self.recipe_scroll_offset = 0
+                self._select_first_filtered_recipe()
+                self.message = ""
+                return
 
         for recipe_id, button in self.recipe_buttons:
             if button.is_clicked(event.pos):
@@ -113,6 +130,9 @@ class CraftingScreen:
                 return
 
         if self.craft_btn.is_clicked(event.pos):
+            if not self._is_selected_recipe_available():
+                self._set_message("Missing ingredients", False)
+                return
             self._try_craft()
             return
 
@@ -128,19 +148,38 @@ class CraftingScreen:
         self.back_btn.draw(screen, self.font)
         self._draw_craft_button(screen)
 
+    def _build_filter_buttons(self):
+        filter_specs = [
+            ("All", (50, 122, 42, 28)),
+            ("Ready", (98, 122, 58, 28)),
+            ("Consumables", (162, 122, 96, 28)),
+            ("Equipment", (50, 154, 88, 28)),
+            ("Profession", (144, 154, 98, 28)),
+        ]
+        self.filter_buttons = [
+            (filter_name, Button(rect, filter_name))
+            for filter_name, rect in filter_specs
+        ]
+
     def _build_recipe_buttons(self):
         self.recipe_buttons = []
         if not isinstance(self.recipes, dict):
             self.recipes = {}
 
-        for index, recipe_id in enumerate(list(self.recipes)[:8]):
-            rect = (50, 110 + index * 46, 250, 38)
+        filtered_recipe_ids = self._get_filtered_recipe_ids()
+        self._clamp_recipe_scroll_offset(filtered_recipe_ids)
+        visible_recipe_ids = filtered_recipe_ids[
+            self.recipe_scroll_offset : self.recipe_scroll_offset + self.max_visible_recipes
+        ]
+
+        for index, recipe_id in enumerate(visible_recipe_ids):
+            rect = (50, 194 + index * 36, 250, 32)
             self.recipe_buttons.append(
                 (recipe_id, Button(rect, self._format_recipe_name(recipe_id)))
             )
 
-        if self.recipe_buttons and self.selected_recipe_id is None:
-            self.selected_recipe_id = self.recipe_buttons[0][0]
+        if self.selected_recipe_id not in filtered_recipe_ids:
+            self.selected_recipe_id = filtered_recipe_ids[0] if filtered_recipe_ids else None
 
     def _try_craft(self):
         if not self.game.player or self.selected_recipe_id is None:
@@ -157,6 +196,7 @@ class CraftingScreen:
         if result.get("crafted") is True:
             result_name = self._get_recipe_result_name(self._get_selected_recipe())
             self._set_message(f"Crafted: {result_name}", True)
+            self._build_recipe_buttons()
         else:
             self._set_message(self._get_craft_failure_message(result), False)
 
@@ -166,13 +206,26 @@ class CraftingScreen:
         self.message_until = pygame.time.get_ticks() + 1800
 
     def _draw_recipe_list(self, screen):
+        self._build_recipe_buttons()
         self._draw_panel(screen, self.recipe_panel)
         list_title = self.font.render("Recipes", True, (245, 245, 245))
         screen.blit(list_title, (self.recipe_panel.x + 12, self.recipe_panel.y + 12))
 
+        for filter_name, button in self.filter_buttons:
+            selected = filter_name == self.selected_filter
+            self._draw_filter_button(screen, button, selected)
+
+        filtered_recipe_ids = self._get_filtered_recipe_ids()
+        showing_text = self.small_font.render(
+            f"Showing: {self.selected_filter} ({len(filtered_recipe_ids)})",
+            True,
+            (190, 200, 205),
+        )
+        screen.blit(showing_text, (self.recipe_panel.x + 12, self.recipe_panel.y + 96))
+
         if not self.recipe_buttons:
             empty_text = self.small_font.render("No recipes", True, (150, 155, 160))
-            screen.blit(empty_text, (self.recipe_panel.x + 12, self.recipe_panel.y + 50))
+            screen.blit(empty_text, (self.recipe_panel.x + 12, self.recipe_panel.y + 128))
             return
 
         for recipe_id, button in self.recipe_buttons:
@@ -186,12 +239,24 @@ class CraftingScreen:
             pygame.draw.rect(screen, bg_color, button.rect)
             pygame.draw.rect(screen, border_color, button.rect, 2)
 
-            name = self._short_text(self._format_recipe_name(recipe_id), 20)
+            name = self._truncate_to_width(
+                self._get_recipe_result_name(recipe),
+                self.small_font,
+                168,
+            )
             name_text = self.small_font.render(name, True, text_color)
-            screen.blit(name_text, (button.rect.x + 8, button.rect.y + 9))
+            screen.blit(name_text, (button.rect.x + 8, button.rect.y + 4))
 
             status_text = self.small_font.render(status, True, text_color)
-            screen.blit(status_text, (button.rect.right - 58, button.rect.y + 9))
+            screen.blit(status_text, (button.rect.right - 58, button.rect.y + 4))
+
+            summary = "Can craft" if is_available else self._get_recipe_missing_summary(recipe)
+            summary_text = self.small_font.render(
+                self._truncate_to_width(summary, self.small_font, 230),
+                True,
+                (185, 195, 190) if is_available else (205, 150, 110),
+            )
+            screen.blit(summary_text, (button.rect.x + 8, button.rect.y + 18))
 
             if recipe_id == self.selected_recipe_id:
                 pygame.draw.rect(screen, (220, 220, 120), button.rect, 2)
@@ -211,8 +276,9 @@ class CraftingScreen:
         name_text = self.font.render(name, True, (245, 245, 245))
         screen.blit(name_text, (x, y))
 
+        is_available = self._is_recipe_available(recipe)
         status = self._get_recipe_status_text(recipe)
-        status_color = (120, 190, 130) if self._is_recipe_available(recipe) else (210, 120, 90)
+        status_color = (120, 190, 130) if is_available else (210, 120, 90)
         status_text = self.small_font.render(status, True, status_color)
         screen.blit(status_text, (x, y + 28))
 
@@ -235,10 +301,12 @@ class CraftingScreen:
             item_name = self._get_item_name(ingredient.get("item"))
             required_quantity = ingredient.get("quantity", 0)
             owned_quantity = self._count_owned_ingredient(ingredient)
-            line = f"{item_name}: {owned_quantity} / {required_quantity}"
+            has_ingredient = owned_quantity >= required_quantity
+            prefix = "✓" if has_ingredient else "✗"
+            line = f"{prefix} {item_name}: {owned_quantity} / {required_quantity}"
             color = (
                 (120, 190, 130)
-                if owned_quantity >= required_quantity
+                if has_ingredient
                 else (220, 130, 80)
             )
             text = self.small_font.render(line, True, color)
@@ -275,8 +343,8 @@ class CraftingScreen:
         screen.blit(category_text, (x, line_y + 84))
 
         stats = result_data.get("stats", {}) if isinstance(result_data, dict) else {}
-        if result_data.get("type") == "equipment" and isinstance(stats, dict) and stats:
-            stats_title = self.small_font.render("Result stats", True, (220, 220, 160))
+        if isinstance(stats, dict) and stats:
+            stats_title = self.small_font.render("Stats", True, (220, 220, 160))
             screen.blit(stats_title, (x, line_y + 116))
             stats_text = self._format_item_stats(stats)
             stats_y = line_y + 140
@@ -317,9 +385,98 @@ class CraftingScreen:
         label = self.font.render("Craft", True, text_color)
         screen.blit(label, (self.craft_btn.rect.x + 12, self.craft_btn.rect.y + 10))
 
+    def _draw_filter_button(self, screen, button, selected):
+        bg_color = (72, 82, 58) if selected else (48, 54, 62)
+        border_color = (220, 220, 120) if selected else (110, 120, 130)
+        pygame.draw.rect(screen, bg_color, button.rect, border_radius=4)
+        pygame.draw.rect(screen, border_color, button.rect, 2, border_radius=4)
+        label = self.small_font.render(button.text, True, (245, 245, 245))
+        screen.blit(label, (button.rect.x + 6, button.rect.y + 6))
+
     def _draw_panel(self, screen, rect):
         pygame.draw.rect(screen, (28, 34, 42), rect)
         pygame.draw.rect(screen, (120, 130, 140), rect, 2)
+
+    def _scroll_recipes(self, direction):
+        filtered_recipe_ids = self._get_filtered_recipe_ids()
+        max_offset = max(0, len(filtered_recipe_ids) - self.max_visible_recipes)
+        self.recipe_scroll_offset = max(
+            0,
+            min(max_offset, self.recipe_scroll_offset + direction),
+        )
+
+    def _clamp_recipe_scroll_offset(self, recipe_ids):
+        max_offset = max(0, len(recipe_ids) - self.max_visible_recipes)
+        self.recipe_scroll_offset = max(0, min(max_offset, self.recipe_scroll_offset))
+
+    def _select_first_filtered_recipe(self):
+        filtered_recipe_ids = self._get_filtered_recipe_ids()
+        self.selected_recipe_id = filtered_recipe_ids[0] if filtered_recipe_ids else None
+        self._build_recipe_buttons()
+
+    def _get_recipe_result_type(self, recipe):
+        result_item_id = self._get_recipe_result_item_id(recipe)
+        return self._get_item_data(result_item_id).get("type", "unknown")
+
+    def _recipe_uses_gathered_resource(self, recipe):
+        ingredients = recipe.get("ingredients", []) if isinstance(recipe, dict) else []
+        if not isinstance(ingredients, list):
+            return False
+        for ingredient in ingredients:
+            if not isinstance(ingredient, dict):
+                continue
+            item_data = self._get_item_data(ingredient.get("item"))
+            if item_data.get("economic_source") == "gathered_resource":
+                return True
+        return False
+
+    def _get_filtered_recipe_ids(self):
+        if not isinstance(self.recipes, dict):
+            return []
+        return [
+            recipe_id
+            for recipe_id, recipe in self.recipes.items()
+            if self._recipe_matches_filter(recipe_id, recipe)
+        ]
+
+    def _recipe_matches_filter(self, recipe_id, recipe):
+        if not isinstance(recipe, dict):
+            return False
+        if self.selected_filter == "All":
+            return True
+        if self.selected_filter == "Ready":
+            return self._is_recipe_available(recipe)
+        if self.selected_filter == "Consumables":
+            return self._get_recipe_result_type(recipe) == "consumable"
+        if self.selected_filter == "Equipment":
+            return self._get_recipe_result_type(recipe) == "equipment"
+        if self.selected_filter == "Profession":
+            return self._recipe_uses_gathered_resource(recipe)
+        return True
+
+    def _get_recipe_missing_summary(self, recipe):
+        ingredients = recipe.get("ingredients", []) if isinstance(recipe, dict) else []
+        if not isinstance(ingredients, list):
+            return "Need: ingredients"
+
+        missing = []
+        for ingredient in ingredients:
+            if not isinstance(ingredient, dict):
+                continue
+            required_quantity = ingredient.get("quantity", 0)
+            owned_quantity = self._count_owned_ingredient(ingredient)
+            if owned_quantity < required_quantity:
+                missing.append((ingredient, owned_quantity, required_quantity))
+
+        if not missing:
+            return "Can craft"
+
+        ingredient, owned_quantity, required_quantity = missing[0]
+        item_name = self._get_item_name(ingredient.get("item"))
+        summary = f"Need: {item_name} {owned_quantity}/{required_quantity}"
+        if len(missing) > 1:
+            summary += f" +{len(missing) - 1}"
+        return summary
 
     def _format_recipe_name(self, recipe_id):
         recipe = self.recipes.get(recipe_id, {})
@@ -464,3 +621,20 @@ class CraftingScreen:
         if len(text) <= max_length:
             return text
         return text[: max_length - 1] + "."
+
+    def _truncate_to_width(self, text, font, max_width):
+        text = str(text or "")
+        if max_width <= 0:
+            return ""
+
+        if font.size(text)[0] <= max_width:
+            return text
+
+        ellipsis = "..."
+        if font.size(ellipsis)[0] > max_width:
+            return ""
+
+        while text and font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+
+        return text + ellipsis if text else ellipsis
