@@ -792,10 +792,11 @@
   "iron_ore": {
     "name": "Iron Ore",
     "type": "resource",
-    "category": "monster_drop",
+    "category": "gathering_prospecting",
     "level": 1,
     "rarity": "uncommon",
-    "economic_source": "dropped_resource",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 8,
     "stats": {
       "value": 8
     }

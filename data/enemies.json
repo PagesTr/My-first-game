@@ -64,10 +64,6 @@
         "chance": 0.1
       },
       {
-        "item": "iron_ore",
-        "chance": 0.25
-      },
-      {
         "item": "health_potion",
         "chance": 0.1
       },
@@ -193,10 +189,6 @@
       {
         "item": "warrior_trophy",
         "chance": 0.1
-      },
-      {
-        "item": "iron_ore",
-        "chance": 0.4
       },
       {
         "item": "gold_coin",
