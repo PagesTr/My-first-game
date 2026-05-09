@@ -1,0 +1,23 @@
+{
+  "prospector": {
+    "name": "Prospector",
+    "description": "Extract ores, stones and rare minerals.",
+    "primary_stat": "strength",
+    "mastery_bonus_stat": "prospector_mastery",
+    "xp_bonus_stat": "prospector_xp_bonus"
+  },
+  "archaeologist": {
+    "name": "Archaeologist",
+    "description": "Excavate bones, relics and traces of fallen adventurers.",
+    "primary_stat": "dexterity",
+    "mastery_bonus_stat": "archaeologist_mastery",
+    "xp_bonus_stat": "archaeologist_xp_bonus"
+  },
+  "druid": {
+    "name": "Druid",
+    "description": "Gather herbs, roots and natural essences.",
+    "primary_stat": "intelligence",
+    "mastery_bonus_stat": "druid_mastery",
+    "xp_bonus_stat": "druid_xp_bonus"
+  }
+}

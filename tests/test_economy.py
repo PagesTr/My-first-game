@@ -29,7 +29,14 @@ VALID_ITEM_CATEGORIES = {
     "currency",
     "monster_drop",
     "gathering",
+    "gathering_prospecting",
+    "gathering_archaeology",
+    "gathering_druid",
     "quest",
+}
+
+VALID_ECONOMIC_SOURCES = set(SOURCE_MULTIPLIERS) | {
+    "gathered_resource",
 }
 
 VALID_EQUIPMENT_CATEGORIES = {
@@ -216,7 +223,7 @@ def test_all_items_have_valid_economic_valuation_fields():
 
         assert has_manual_price or has_formula_fields, item_id
         if "economic_source" in item_data:
-            assert item_data["economic_source"] in SOURCE_MULTIPLIERS, item_id
+            assert item_data["economic_source"] in VALID_ECONOMIC_SOURCES, item_id
         if "rarity" in item_data:
             assert item_data["rarity"] in RARITY_MULTIPLIERS, item_id
 

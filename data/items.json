@@ -800,6 +800,66 @@
       "value": 8
     }
   },
+  "rough_gem": {
+    "name": "Rough Gem",
+    "type": "resource",
+    "category": "gathering_prospecting",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 18,
+    "stats": {
+      "value": 18
+    }
+  },
+  "buried_bones": {
+    "name": "Buried Bones",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 5,
+    "stats": {
+      "value": 5
+    }
+  },
+  "fossil_fragment": {
+    "name": "Fossil Fragment",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 12,
+    "stats": {
+      "value": 12
+    }
+  },
+  "healing_herb": {
+    "name": "Healing Herb",
+    "type": "resource",
+    "category": "gathering_druid",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 4,
+    "stats": {
+      "value": 4
+    }
+  },
+  "wild_root": {
+    "name": "Wild Root",
+    "type": "resource",
+    "category": "gathering_druid",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "gathered_resource",
+    "manual_sell_price": 10,
+    "stats": {
+      "value": 10
+    }
+  },
   "sealed_quest_letter": {
     "name": "Sealed Quest Letter",
     "type": "quest",
