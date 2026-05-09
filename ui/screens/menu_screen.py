@@ -115,6 +115,7 @@ class MenuScreen:
         self.combat_action_buttons = []
         self.gathering_action_buttons = []
         self.gathering_popups = []
+        self.selected_gathering_action = None
 
     def _build_class_buttons(self):
         buttons = []
@@ -386,8 +387,8 @@ class MenuScreen:
 
         self._draw_combat_actions(screen, region_zones, 60, 130)
         self._draw_gathering_actions(screen, region_zones, 410, 130)
-        self._draw_last_gathering_result(screen, region_zones, 410, 438)
-        self._draw_gathering_popups(screen, 60, 438)
+        self._draw_gathering_detail_panel(screen, region_zones, 60, 410, 670, 145)
+        self._draw_gathering_popups(screen, 410, 350)
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
@@ -417,6 +418,10 @@ class MenuScreen:
 
         for zone_key, profession_id, button in self.gathering_action_buttons:
             if button.is_clicked(pos):
+                self.selected_gathering_action = {
+                    "zone_key": zone_key,
+                    "profession_id": profession_id,
+                }
                 if self._is_active_gathering_action(zone_key, profession_id):
                     self.game.stop_active_gathering()
                 else:
@@ -456,14 +461,11 @@ class MenuScreen:
         button_y = y + 42
         visible_count = 0
         for zone_key in region_zones:
-            zone = self.game.data.zones.get(zone_key, {})
             for profession_id, node_data in self.game.get_available_gathering_professions(zone_key).items():
                 if visible_count >= 4:
                     return
                 profession_name = self._get_profession_name(profession_id)
                 node_name = node_data.get("name", "Gathering node")
-                reward_preview = self._get_node_reward_preview(node_data)
-                zone_name = zone.get("name", zone_key)
                 mastery = 0
                 if self.game.player:
                     mastery = get_profession_mastery(
@@ -473,44 +475,90 @@ class MenuScreen:
                     )
                 is_active = self._is_active_gathering_action(zone_key, profession_id)
                 action_label = "Stop" if is_active else "Start"
-                title = f"{action_label} {profession_name} - {node_name}"
+                title = f"{action_label} {profession_name}"
                 rate = format_tick_rate(node_data.get("tick_seconds", 5))
-                if is_active:
-                    remaining_ms = self.game.get_active_gathering_remaining_ms(
-                        pygame.time.get_ticks(),
-                    )
-                    rate = f"Active | Next: {self._format_remaining_time(remaining_ms)}"
-                subtitle = f"{zone_name} | {reward_preview} | M:{mastery} | {rate}"
-                button = MenuButton((x, button_y, 320, 54), title, subtitle)
+                subtitle = f"{node_name} | {rate} | M:{mastery}"
+                button = MenuButton((x, button_y, 320, 44), title, subtitle)
                 self.gathering_action_buttons.append((zone_key, profession_id, button))
                 button.draw(screen, self.body_font, self.body_font)
-                button_y += 64
+                if is_active:
+                    pygame.draw.rect(screen, (170, 210, 120), button.rect, 3, border_radius=6)
+                button_y += 50
                 visible_count += 1
 
         if visible_count == 0:
             empty_text = self.body_font.render("No gathering node", True, (145, 145, 150))
             screen.blit(empty_text, (x, button_y))
 
-    def _draw_last_gathering_result(self, screen, region_zones, x, y):
-        result = self.game.last_gathering_result
-        if not isinstance(result, dict):
-            return
-
-        result_zone = result.get("zone_id")
-        if result_zone is not None and result_zone not in region_zones:
-            return
-
-        panel = pygame.Rect(x, y, 320, 112)
+    def _draw_gathering_detail_panel(self, screen, region_zones, x, y, width, height):
+        panel = pygame.Rect(x, y, width, height)
+        activity = getattr(self.game, "active_gathering", None)
+        is_active = isinstance(activity, dict)
+        border = (170, 210, 120) if is_active else (120, 130, 140)
         pygame.draw.rect(screen, (35, 40, 48), panel, border_radius=6)
-        pygame.draw.rect(screen, (120, 130, 140), panel, 2, border_radius=6)
-        heading = self.body_font.render("Last gathering result", True, (245, 245, 245))
-        screen.blit(heading, (panel.x + 12, panel.y + 10))
+        pygame.draw.rect(screen, border, panel, 2, border_radius=6)
 
-        line_y = panel.y + 36
-        for line in self._format_gathering_result(result)[:4]:
-            text = self.body_font.render(line, True, (210, 220, 205))
-            screen.blit(text, (panel.x + 12, line_y))
-            line_y += 20
+        zone_key, profession_id = self._get_displayed_gathering_action(region_zones)
+        title = "Active Gathering" if is_active else "Gathering Preview"
+        title_text = self.body_font.render(title, True, (245, 245, 245))
+        screen.blit(title_text, (panel.x + 14, panel.y + 12))
+
+        if zone_key is None or profession_id is None:
+            empty_text = self.body_font.render("Select a gathering action", True, (150, 155, 160))
+            screen.blit(empty_text, (panel.x + 14, panel.y + 46))
+            return
+
+        node_data = self._get_gathering_node_data(zone_key, profession_id)
+        profession_name = self._get_profession_name(profession_id)
+        node_name = node_data.get("name", "Gathering node")
+        zone_name = self._get_zone_name(zone_key)
+        rate = format_tick_rate(node_data.get("tick_seconds", 5))
+        mastery = 0
+        if self.game.player:
+            mastery = get_profession_mastery(
+                self.game.player,
+                profession_id,
+                self.game.data.professions,
+            )
+
+        left_lines = [
+            f"{profession_name} - {node_name}",
+            f"Zone: {zone_name}",
+            f"Rate: {rate}",
+            f"Mastery: {mastery}",
+        ]
+        if is_active:
+            remaining_ms = 0
+            if hasattr(self.game, "get_active_gathering_remaining_ms"):
+                remaining_ms = self.game.get_active_gathering_remaining_ms(
+                    pygame.time.get_ticks(),
+                )
+            left_lines[2] = f"Rate: {rate} | Next: {self._format_remaining_time(remaining_ms)}"
+
+        right_lines = [
+            f"Rewards: {self._get_node_reward_preview(node_data)}",
+            self._format_recent_gathering_summary(self.game.last_gathering_result),
+        ]
+
+        line_y = panel.y + 42
+        for line in left_lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, 320),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (panel.x + 14, line_y))
+            line_y += 22
+
+        line_y = panel.y + 42
+        for line in right_lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, 300),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (panel.x + 350, line_y))
+            line_y += 24
 
     def _is_active_gathering_action(self, zone_key, profession_id):
         activity = getattr(self.game, "active_gathering", None)
@@ -523,9 +571,27 @@ class MenuScreen:
     def _format_remaining_time(self, remaining_ms):
         if remaining_ms <= 0:
             return "Ready"
-        if remaining_ms >= 1000:
-            return f"{int((remaining_ms + 999) / 1000)}s"
-        return f"{int(remaining_ms)}ms"
+        seconds = max(1, int((remaining_ms + 999) / 1000))
+        return f"{seconds}s"
+
+    def _get_displayed_gathering_action(self, region_zones):
+        activity = getattr(self.game, "active_gathering", None)
+        if isinstance(activity, dict):
+            return activity.get("zone_id"), activity.get("profession_id")
+
+        action = self.selected_gathering_action
+        if isinstance(action, dict) and action.get("zone_key") in region_zones:
+            return action.get("zone_key"), action.get("profession_id")
+        return None, None
+
+    def _get_gathering_node_data(self, zone_key, profession_id):
+        if not hasattr(self.game, "get_available_gathering_professions"):
+            return {}
+        zone_nodes = self.game.get_available_gathering_professions(zone_key)
+        if not isinstance(zone_nodes, dict):
+            return {}
+        node_data = zone_nodes.get(profession_id, {})
+        return node_data if isinstance(node_data, dict) else {}
 
     def add_gathering_popup(self, result):
         if not isinstance(result, dict):
@@ -553,7 +619,7 @@ class MenuScreen:
                 "text": text,
                 "type": popup_type,
                 "created_at": created_at,
-                "duration_ms": 1800,
+                "duration_ms": 1200,
             })
 
     def _draw_gathering_popups(self, screen, x, y):
@@ -564,10 +630,20 @@ class MenuScreen:
             if current_time - popup.get("created_at", 0) <= popup.get("duration_ms", 0)
         ]
 
-        for index, popup in enumerate(self.gathering_popups[-4:]):
+        for index, popup in enumerate(self.gathering_popups[-3:]):
+            popup_y = y + index * 18
+            if popup_y > 405:
+                break
             color = (125, 220, 145) if popup.get("type") == "success" else (230, 160, 90)
-            text = self.body_font.render(popup.get("text", ""), True, color)
-            screen.blit(text, (x, y + index * 22))
+            popup_text = self._truncate_text(popup.get("text", ""), self.body_font, 310)
+            text = self.body_font.render(popup_text, True, color)
+            screen.blit(text, (x, popup_y))
+
+    def _get_zone_name(self, zone_key):
+        zone = self.game.data.zones.get(zone_key, {})
+        if isinstance(zone, dict):
+            return zone.get("name", zone_key or "Unknown zone")
+        return zone_key or "Unknown zone"
 
     def _get_zone_enemy_label(self, zone_key):
         zone = self.game.data.zones.get(zone_key, {})
@@ -578,6 +654,8 @@ class MenuScreen:
 
     def _get_node_reward_preview(self, node_data):
         rewards = []
+        if not isinstance(node_data, dict):
+            return "Unknown rewards"
         for reward in node_data.get("rewards", [])[:2]:
             rewards.append(self._get_item_name(reward.get("item")))
         return ", ".join(rewards) if rewards else "Rewards"
@@ -601,6 +679,32 @@ class MenuScreen:
             lines.append("Level up!")
         return lines[:6]
 
+    def _format_recent_gathering_summary(self, result):
+        if not isinstance(result, dict):
+            return "Recent: -"
+        if result.get("gathered") is not True:
+            if result.get("reason") == "inventory_full":
+                return "Recent: Inventory full. Stopped."
+            return f"Recent: {self._get_gathering_failure_message(result.get('reason'))}"
+
+        parts = []
+        for reward in result.get("rewards", []):
+            item_name = self._get_item_name(reward.get("item"))
+            quantity = reward.get("quantity", 1)
+            parts.append(f"+{quantity} {item_name}")
+        xp_gain = result.get("profession_xp", 0)
+        if xp_gain:
+            profession_name = self._get_profession_name(result.get("profession_id"))
+            parts.append(f"+{xp_gain} {profession_name} XP")
+        if result.get("leveled_up"):
+            parts.append("Level up!")
+        if not parts:
+            return "Recent: -"
+        visible_parts = parts[:2]
+        if len(parts) > 2:
+            visible_parts.append(f"+{len(parts) - 2} more")
+        return f"Recent: {', '.join(visible_parts)}"
+
     def _get_item_name(self, item_id):
         items = getattr(self.game.data, "items", {}) or {}
         item_data = items.get(item_id, {})
@@ -619,3 +723,22 @@ class MenuScreen:
             "locked_zone": "Zone locked",
         }
         return messages.get(reason, "Gathering failed")
+
+    def _short_line(self, text, max_length):
+        text = str(text)
+        if len(text) <= max_length:
+            return text
+        return text[: max_length - 3] + "..."
+
+    def _truncate_text(self, text, font, max_width):
+        text = str(text or "")
+        if max_width <= 0:
+            return ""
+        if font.size(text)[0] <= max_width:
+            return text
+        ellipsis = "..."
+        if font.size(ellipsis)[0] > max_width:
+            return ""
+        while text and font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+        return text + ellipsis if text else ellipsis
