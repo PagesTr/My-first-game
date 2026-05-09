@@ -46,7 +46,9 @@ class Game:
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
+        self.last_offline_result = None
         self.active_gathering = None
+        self.main_menu_message = ""
         self.mailbox = create_mailbox()
 
     def start_new_game(self):
@@ -58,7 +60,9 @@ class Game:
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
+        self.last_offline_result = None
         self.active_gathering = None
+        self.main_menu_message = ""
         self.mailbox = create_mailbox()
         self.state = "class_select"
 
@@ -89,10 +93,15 @@ class Game:
             self.data.classes,
             self.data.skills,
         )
+        offline_result = self.resolve_offline_progress()
+        self.last_offline_result = offline_result
         self.state = "town"
         return True
 
     def return_to_main_menu(self):
+        if self.player is not None:
+            self.save_current_game()
+        self.active_gathering = None
         self.state = "main_menu"
 
     def select_class(self, class_key):
@@ -299,6 +308,14 @@ class Game:
         if stopped:
             self.save_current_game()
         return stopped
+
+    def send_current_player_offline_gathering(self, zone_key, profession_id):
+        self.active_gathering = None
+        result = self.start_offline_gathering_activity(zone_key, profession_id)
+        if result.get("started") is True:
+            self.main_menu_message = "Offline gathering started"
+            self.state = "main_menu"
+        return result
 
     def start_combat(self):
         enemy = self.spawn_enemy()

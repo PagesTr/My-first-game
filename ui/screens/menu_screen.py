@@ -151,6 +151,11 @@ class MenuScreen:
         return buttons
 
     def handle_event(self, event):
+        if event.type == pygame.KEYDOWN and self.game.state == "zone_actions":
+            if event.key == pygame.K_o:
+                self._start_selected_gathering_offline()
+            return
+
         if event.type != pygame.MOUSEBUTTONDOWN:
             return
 
@@ -164,31 +169,38 @@ class MenuScreen:
 
         if self.game.state == "town":
             if self.expedition_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "zone_select"
                 self.selected_region = None
                 return
 
             if self.inventory_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "inventory"
                 return
 
             if self.merchant_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "merchant"
                 return
 
             if self.crafting_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "crafting"
                 return
 
             if self.skills_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "skills"
                 return
 
             if self.professions_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "professions"
                 return
 
             if self.mailbox_button.is_clicked(pos):
+                self._clear_offline_result()
                 self.game.state = "mailbox"
                 return
 
@@ -251,6 +263,7 @@ class MenuScreen:
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
+        self._draw_offline_result_panel(screen)
 
     def _has_available_crafting_recipe(self):
         if not self.game.player:
@@ -307,6 +320,61 @@ class MenuScreen:
             text = self.body_font.render(line, True, (190, 200, 205))
             screen.blit(text, (rect.x + 18, y))
             y += 34
+
+    def _draw_offline_result_panel(self, screen):
+        result = getattr(self.game, "last_offline_result", None)
+        lines = self._format_offline_result_lines(result)
+        if not lines:
+            return
+
+        rect = pygame.Rect(400, 64, 320, 78)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (155, 170, 110), rect, 2, border_radius=6)
+
+        title = self.body_font.render("Offline Progress", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 14, rect.y + 10))
+
+        y = rect.y + 30
+        for line in lines[:3]:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, rect.w - 28),
+                True,
+                (200, 210, 195),
+            )
+            screen.blit(text, (rect.x + 14, y))
+            y += 18
+
+    def _format_offline_result_lines(self, result):
+        if not isinstance(result, dict):
+            return []
+        reason = result.get("reason")
+        if reason in (None, "no_activity", "not_enough_time"):
+            if result.get("resolved") is not True:
+                return []
+        if reason == "inventory_full":
+            return ["Inventory full", "Gathering stopped"]
+        if result.get("resolved") is not True:
+            return []
+
+        profession_name = self._get_profession_name(result.get("profession_id"))
+        lines = [f"{profession_name} returned", f"Ticks: {result.get('ticks', 0)}"]
+        rewards = result.get("rewards", [])
+        if isinstance(rewards, list):
+            for reward in rewards[:2]:
+                item_name = self._get_item_name(reward.get("item"))
+                quantity = reward.get("quantity", 1)
+                lines.append(f"+{quantity} {item_name}")
+            if len(rewards) > 2:
+                lines.append(f"+{len(rewards) - 2} more")
+
+        xp_gain = result.get("profession_xp", 0)
+        if xp_gain:
+            lines.append(f"+{xp_gain} {profession_name} XP")
+        return lines[:4]
+
+    def _clear_offline_result(self):
+        if hasattr(self.game, "last_offline_result"):
+            self.game.last_offline_result = None
 
     def _get_zone_region_id(self, zone_key):
         if not isinstance(zone_key, str) or "_" not in zone_key:
@@ -433,6 +501,47 @@ class MenuScreen:
                 return True
         return False
 
+    def _start_selected_gathering_offline(self):
+        activity = getattr(self.game, "active_gathering", None)
+        if isinstance(activity, dict):
+            zone_key = activity.get("zone_id")
+            profession_id = activity.get("profession_id")
+        else:
+            action = self.selected_gathering_action
+            if not isinstance(action, dict):
+                self._add_gathering_popup_text(
+                    "Select a gathering action first",
+                    "failure",
+                )
+                return False
+            zone_key = action.get("zone_key")
+            profession_id = action.get("profession_id")
+
+        if not hasattr(self.game, "send_current_player_offline_gathering"):
+            self._add_gathering_popup_text("Offline unavailable", "failure")
+            return False
+
+        result = self.game.send_current_player_offline_gathering(
+            zone_key,
+            profession_id,
+        )
+        if result.get("started") is True:
+            self._add_gathering_popup_text("Offline gathering started", "success")
+            return True
+
+        messages = {
+            "activity_already_active": "Offline activity already active",
+            "unknown_node": "No gathering node",
+            "locked_zone": "Zone locked",
+            "invalid_zone": "Invalid zone",
+            "invalid_player": "No player",
+        }
+        self._add_gathering_popup_text(
+            messages.get(result.get("reason"), "Offline gathering failed"),
+            "failure",
+        )
+        return False
+
     def _draw_combat_actions(self, screen, region_zones, x, y):
         heading = self.option_font.render("Combat", True, (245, 245, 245))
         screen.blit(heading, (x, y))
@@ -538,6 +647,7 @@ class MenuScreen:
         right_lines = [
             f"Rewards: {self._get_node_reward_preview(node_data)}",
             self._format_recent_gathering_summary(self.game.last_gathering_result),
+            "Offline: already active" if self._has_offline_activity() else "Press O: send offline",
         ]
 
         line_y = panel.y + 42
@@ -566,6 +676,13 @@ class MenuScreen:
             isinstance(activity, dict)
             and activity.get("zone_id") == zone_key
             and activity.get("profession_id") == profession_id
+        )
+
+    def _has_offline_activity(self):
+        player = getattr(self.game, "player", None)
+        return isinstance(player, dict) and isinstance(
+            player.get("offline_activity"),
+            dict,
         )
 
     def _format_remaining_time(self, remaining_ms):
@@ -621,6 +738,14 @@ class MenuScreen:
                 "created_at": created_at,
                 "duration_ms": 1200,
             })
+
+    def _add_gathering_popup_text(self, text, popup_type="failure"):
+        self.gathering_popups.append({
+            "text": text,
+            "type": popup_type,
+            "created_at": pygame.time.get_ticks(),
+            "duration_ms": 1200,
+        })
 
     def _draw_gathering_popups(self, screen, x, y):
         current_time = pygame.time.get_ticks()

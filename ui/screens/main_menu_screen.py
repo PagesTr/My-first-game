@@ -60,6 +60,10 @@ class MainMenuScreen:
     def draw(self, screen):
         screen.fill((18, 24, 30))
         self.continue_button.enabled = has_save_file()
+        game_message = getattr(self.game, "main_menu_message", "")
+        if game_message and not self.message:
+            self._set_message(game_message)
+            self.game.main_menu_message = ""
 
         title = self.title_font.render("My First Game", True, (245, 245, 245))
         title_rect = title.get_rect(center=(400, 120))
