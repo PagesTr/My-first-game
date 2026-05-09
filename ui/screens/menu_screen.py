@@ -99,9 +99,14 @@ class MenuScreen:
             "Learn and equip skills",
         )
         self.mailbox_button = MenuButton(
-            (400, 414, 300, 72),
+            (400, 474, 300, 72),
             "Mailbox",
             "View combat reports",
+        )
+        self.professions_button = MenuButton(
+            (400, 386, 300, 72),
+            "Professions",
+            "View gathering progress",
         )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
         self.selected_region = None
@@ -176,6 +181,10 @@ class MenuScreen:
                 self.game.state = "skills"
                 return
 
+            if self.professions_button.is_clicked(pos):
+                self.game.state = "professions"
+                return
+
             if self.mailbox_button.is_clicked(pos):
                 self.game.state = "mailbox"
                 return
@@ -236,6 +245,7 @@ class MenuScreen:
         if has_available_recipe:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
+        self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
 
