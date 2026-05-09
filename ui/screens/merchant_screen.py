@@ -449,6 +449,8 @@ class MerchantScreen:
             self.message_color = (230, 160, 120)
             return False
 
+        self._save_current_game()
+
         if self.sell_quantity == 1:
             self.message = f"Sold {item_name} for {total_price} gold."
         else:
@@ -465,6 +467,10 @@ class MerchantScreen:
         self.quantity_input_text = str(self.sell_quantity)
 
         return True
+
+    def _save_current_game(self):
+        if hasattr(self.game, "save_current_game"):
+            self.game.save_current_game()
 
     def _draw_inventory_slots(self, screen):
         slots = self.game.player["inventory"]["slots"]

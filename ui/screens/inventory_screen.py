@@ -69,6 +69,7 @@ class InventoryScreen:
 
             if self.compact_btn.is_clicked(event.pos):
                 compact_inventory(self.game.player["inventory"])
+                self._save_current_game()
                 self._clear_selected_item()
                 return
 
@@ -236,6 +237,7 @@ class InventoryScreen:
                         self.game.data.classes,
                         self.game.data.skills,
                     )
+                    self._save_current_game()
             else:
                 action_done = equip_item(
                     self.game.player,
@@ -250,6 +252,7 @@ class InventoryScreen:
                         self.game.data.classes,
                         self.game.data.skills,
                     )
+                    self._save_current_game()
         elif source_type == "equipment":
             action_done = self._unequip_item(source_key)
 
@@ -286,7 +289,12 @@ class InventoryScreen:
                 self.game.data.classes,
                 self.game.data.skills,
             )
+            self._save_current_game()
         return unequipped
+
+    def _save_current_game(self):
+        if hasattr(self.game, "save_current_game"):
+            self.game.save_current_game()
 
     def _draw_gold_panel(self, screen):
         gold = self.game.player.get("gold", 0)
