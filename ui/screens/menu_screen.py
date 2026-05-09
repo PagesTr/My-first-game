@@ -6,6 +6,7 @@ except ImportError:
     from systems.crafting import can_craft as can_craft_recipe
 
 from systems.professions import get_profession_mastery
+from systems.active_gathering import format_tick_rate
 from ui.assets import draw_background, load_image
 
 
@@ -113,6 +114,7 @@ class MenuScreen:
         self.region_buttons = []
         self.combat_action_buttons = []
         self.gathering_action_buttons = []
+        self.gathering_popups = []
 
     def _build_class_buttons(self):
         buttons = []
@@ -385,6 +387,7 @@ class MenuScreen:
         self._draw_combat_actions(screen, region_zones, 60, 130)
         self._draw_gathering_actions(screen, region_zones, 410, 130)
         self._draw_last_gathering_result(screen, region_zones, 410, 438)
+        self._draw_gathering_popups(screen, 60, 438)
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
@@ -414,7 +417,14 @@ class MenuScreen:
 
         for zone_key, profession_id, button in self.gathering_action_buttons:
             if button.is_clicked(pos):
-                self.game.gather_in_zone(zone_key, profession_id)
+                if self._is_active_gathering_action(zone_key, profession_id):
+                    self.game.stop_active_gathering()
+                else:
+                    self.game.start_active_gathering(
+                        zone_key,
+                        profession_id,
+                        pygame.time.get_ticks(),
+                    )
                 return True
         return False
 
@@ -461,8 +471,16 @@ class MenuScreen:
                         profession_id,
                         self.game.data.professions,
                     )
-                title = f"{profession_name} - {node_name}"
-                subtitle = f"{zone_name} | {reward_preview} | M:{mastery}"
+                is_active = self._is_active_gathering_action(zone_key, profession_id)
+                action_label = "Stop" if is_active else "Start"
+                title = f"{action_label} {profession_name} - {node_name}"
+                rate = format_tick_rate(node_data.get("tick_seconds", 5))
+                if is_active:
+                    remaining_ms = self.game.get_active_gathering_remaining_ms(
+                        pygame.time.get_ticks(),
+                    )
+                    rate = f"Active | Next: {self._format_remaining_time(remaining_ms)}"
+                subtitle = f"{zone_name} | {reward_preview} | M:{mastery} | {rate}"
                 button = MenuButton((x, button_y, 320, 54), title, subtitle)
                 self.gathering_action_buttons.append((zone_key, profession_id, button))
                 button.draw(screen, self.body_font, self.body_font)
@@ -493,6 +511,63 @@ class MenuScreen:
             text = self.body_font.render(line, True, (210, 220, 205))
             screen.blit(text, (panel.x + 12, line_y))
             line_y += 20
+
+    def _is_active_gathering_action(self, zone_key, profession_id):
+        activity = getattr(self.game, "active_gathering", None)
+        return (
+            isinstance(activity, dict)
+            and activity.get("zone_id") == zone_key
+            and activity.get("profession_id") == profession_id
+        )
+
+    def _format_remaining_time(self, remaining_ms):
+        if remaining_ms <= 0:
+            return "Ready"
+        if remaining_ms >= 1000:
+            return f"{int((remaining_ms + 999) / 1000)}s"
+        return f"{int(remaining_ms)}ms"
+
+    def add_gathering_popup(self, result):
+        if not isinstance(result, dict):
+            return
+
+        popup_type = "success" if result.get("gathered") is True else "failure"
+        texts = []
+        if result.get("gathered") is True:
+            for reward in result.get("rewards", []):
+                item_name = self._get_item_name(reward.get("item"))
+                quantity = reward.get("quantity", 1)
+                texts.append(f"+{quantity} {item_name}")
+            profession_xp = result.get("profession_xp", 0)
+            if profession_xp > 0:
+                profession_name = self._get_profession_name(result.get("profession_id"))
+                texts.append(f"+{profession_xp} {profession_name} XP")
+        elif result.get("reason") == "inventory_full":
+            texts.append("Inventory full. Gathering stopped.")
+        else:
+            texts.append(self._get_gathering_failure_message(result.get("reason")))
+
+        created_at = pygame.time.get_ticks()
+        for text in texts:
+            self.gathering_popups.append({
+                "text": text,
+                "type": popup_type,
+                "created_at": created_at,
+                "duration_ms": 1800,
+            })
+
+    def _draw_gathering_popups(self, screen, x, y):
+        current_time = pygame.time.get_ticks()
+        self.gathering_popups = [
+            popup
+            for popup in self.gathering_popups
+            if current_time - popup.get("created_at", 0) <= popup.get("duration_ms", 0)
+        ]
+
+        for index, popup in enumerate(self.gathering_popups[-4:]):
+            color = (125, 220, 145) if popup.get("type") == "success" else (230, 160, 90)
+            text = self.body_font.render(popup.get("text", ""), True, color)
+            screen.blit(text, (x, y + index * 22))
 
     def _get_zone_enemy_label(self, zone_key):
         zone = self.game.data.zones.get(zone_key, {})

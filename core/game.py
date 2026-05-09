@@ -3,6 +3,14 @@ import random
 from core.dataManager import DataManager
 from entities.enemy import create_enemy
 from entities.players import create_player
+from systems.active_gathering import (
+    advance_active_gathering_tick,
+    create_active_gathering_activity,
+    get_active_gathering_remaining_ms as get_active_gathering_remaining_time_ms,
+    get_node_tick_seconds,
+    is_active_gathering_tick_ready,
+    resolve_active_gathering_tick,
+)
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
 from systems.gathering import gather_from_zone
@@ -38,6 +46,7 @@ class Game:
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
+        self.active_gathering = None
         self.mailbox = create_mailbox()
 
     def start_new_game(self):
@@ -49,6 +58,7 @@ class Game:
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
+        self.active_gathering = None
         self.mailbox = create_mailbox()
         self.state = "class_select"
 
@@ -72,6 +82,7 @@ class Game:
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
+        self.active_gathering = None
         prepare_player_for_combat(
             self.player,
             self.data.items,
@@ -181,6 +192,71 @@ class Game:
         if not isinstance(zone_nodes, dict):
             return {}
         return zone_nodes
+
+    def start_active_gathering(self, zone_key, profession_id, current_time_ms):
+        if not self.player:
+            return {"started": False, "reason": "invalid_player"}
+        if zone_key not in self.data.zones:
+            return {"started": False, "reason": "invalid_zone"}
+
+        zone = self.data.zones[zone_key]
+        if self.player["level"] < zone.get("unlock_level", 1):
+            return {"started": False, "reason": "locked_zone"}
+
+        node = self.get_available_gathering_professions(zone_key).get(profession_id)
+        if not isinstance(node, dict):
+            return {"started": False, "reason": "unknown_node"}
+        if self.active_gathering is not None:
+            return {"started": False, "reason": "activity_already_active"}
+
+        tick_seconds = get_node_tick_seconds(node)
+        self.active_gathering = create_active_gathering_activity(
+            zone_key,
+            profession_id,
+            current_time_ms,
+            tick_seconds,
+        )
+        self.selected_zone = zone_key
+        self.state = "zone_actions"
+        return {"started": True, "activity": dict(self.active_gathering)}
+
+    def stop_active_gathering(self):
+        self.active_gathering = None
+        return True
+
+    def update_active_gathering(self, current_time_ms):
+        if self.active_gathering is None:
+            return None
+        if not is_active_gathering_tick_ready(self.active_gathering, current_time_ms):
+            return None
+
+        result = resolve_active_gathering_tick(
+            self.player,
+            self.active_gathering,
+            self.data.gathering_nodes,
+            self.data.professions,
+            self.data.items,
+        )
+        self.last_gathering_result = result
+        if result.get("gathered") is True:
+            advance_active_gathering_tick(self.active_gathering, current_time_ms)
+            self.save_current_game()
+            return result
+        if result.get("reason") == "inventory_full":
+            self.active_gathering = None
+            self.save_current_game()
+            return result
+
+        self.active_gathering = None
+        return result
+
+    def get_active_gathering_remaining_ms(self, current_time_ms):
+        if self.active_gathering is None:
+            return 0
+        return get_active_gathering_remaining_time_ms(
+            self.active_gathering,
+            current_time_ms,
+        )
 
     def start_offline_gathering_activity(self, zone_key, profession_id):
         if not self.player:

@@ -3,6 +3,7 @@
     "druid": {
       "name": "Forest Herbs",
       "description": "Useful herbs grow between goblin trails.",
+      "tick_seconds": 3,
       "xp": 4,
       "rewards": [
         {
@@ -23,6 +24,7 @@
     "archaeologist": {
       "name": "Buried Remains",
       "description": "Old remains are buried near abandoned camps.",
+      "tick_seconds": 10,
       "xp": 4,
       "rewards": [
         {
@@ -45,6 +47,7 @@
     "druid": {
       "name": "Wild Grove",
       "description": "Hardy plants grow in the wolf hunting grounds.",
+      "tick_seconds": 4,
       "xp": 5,
       "rewards": [
         {
@@ -67,6 +70,7 @@
     "archaeologist": {
       "name": "Ancient Remains",
       "description": "Bones and fossil traces lie in the old cave dust.",
+      "tick_seconds": 12,
       "xp": 6,
       "rewards": [
         {
@@ -87,6 +91,7 @@
     "prospector": {
       "name": "Cave Veins",
       "description": "Ore veins run through the cave walls.",
+      "tick_seconds": 6,
       "xp": 6,
       "rewards": [
         {
@@ -109,6 +114,7 @@
     "archaeologist": {
       "name": "Abandoned Cache",
       "description": "Forgotten supplies hide traces of older travelers.",
+      "tick_seconds": 11,
       "xp": 6,
       "rewards": [
         {
@@ -129,6 +135,7 @@
     "prospector": {
       "name": "Hidden Veins",
       "description": "Small mineral veins are hidden behind loose stone.",
+      "tick_seconds": 7,
       "xp": 6,
       "rewards": [
         {
@@ -151,6 +158,7 @@
     "prospector": {
       "name": "Mountain Ore",
       "description": "Cold mountain rock holds useful ore.",
+      "tick_seconds": 8,
       "xp": 7,
       "rewards": [
         {
@@ -173,6 +181,7 @@
     "prospector": {
       "name": "Deep Minerals",
       "description": "Dense mineral pockets lie deep in troll territory.",
+      "tick_seconds": 10,
       "xp": 8,
       "rewards": [
         {
@@ -193,6 +202,7 @@
     "druid": {
       "name": "Mountain Roots",
       "description": "Resilient roots grow between the mountain stones.",
+      "tick_seconds": 6,
       "xp": 7,
       "rewards": [
         {
