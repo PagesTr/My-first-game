@@ -9,6 +9,13 @@ from systems.professions import get_profession_mastery
 from ui.assets import draw_background, load_image
 
 
+REGION_LABELS = {
+    "forest": "Forest",
+    "caves": "Caves",
+    "mountains": "Mountains",
+}
+
+
 class MenuButton:
     def __init__(self, rect, title, subtitle="", enabled=True):
         self.rect = pygame.Rect(rect)
@@ -25,15 +32,29 @@ class MenuButton:
         pygame.draw.rect(screen, bg, self.rect, border_radius=6)
         pygame.draw.rect(screen, border, self.rect, 2, border_radius=6)
 
-        title = title_font.render(self.title, True, text_color)
-        screen.blit(title, (self.rect.x + 16, self.rect.y + 14))
+        title_y = self.rect.y + (9 if self.rect.h <= 58 and self.subtitle else 14)
+        subtitle_y = self.rect.y + (31 if self.rect.h <= 58 else 48)
+
+        title = self._render_fitted_text(title_font, self.title, text_color)
+        screen.blit(title, (self.rect.x + 16, title_y))
 
         if self.subtitle:
-            subtitle = body_font.render(self.subtitle, True, sub_color)
-            screen.blit(subtitle, (self.rect.x + 16, self.rect.y + 48))
+            subtitle = self._render_fitted_text(body_font, self.subtitle, sub_color)
+            screen.blit(subtitle, (self.rect.x + 16, subtitle_y))
 
     def is_clicked(self, pos):
         return self.enabled and self.rect.collidepoint(pos)
+
+    def _render_fitted_text(self, font, text, color):
+        max_width = max(20, self.rect.w - 32)
+        text = str(text)
+        if font.size(text)[0] <= max_width:
+            return font.render(text, True, color)
+
+        ellipsis = "..."
+        while text and font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+        return font.render(text + ellipsis, True, color)
 
 
 class MenuScreen:
@@ -83,12 +104,10 @@ class MenuScreen:
             "View combat reports",
         )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
-        self.start_expedition_button = MenuButton(
-            (490, 238, 220, 52),
-            "Start expedition",
-            "Combat",
-        )
-        self.gather_action_buttons = []
+        self.selected_region = None
+        self.region_buttons = []
+        self.combat_action_buttons = []
+        self.gathering_action_buttons = []
 
     def _build_class_buttons(self):
         buttons = []
@@ -138,6 +157,7 @@ class MenuScreen:
         if self.game.state == "town":
             if self.expedition_button.is_clicked(pos):
                 self.game.state = "zone_select"
+                self.selected_region = None
                 return
 
             if self.inventory_button.is_clicked(pos):
@@ -161,23 +181,12 @@ class MenuScreen:
                 return
 
         if self.game.state == "zone_select":
-            if self.zone_back_button.is_clicked(pos):
-                self.game.state = "town"
-                return
-
-            for zone_key, button in self.zone_buttons:
-                if button.is_clicked(pos):
-                    self.game.select_zone_for_actions(zone_key)
+            self._handle_region_select_click(pos)
             return
 
         if self.game.state == "zone_actions":
-            if self._handle_zone_actions_click(pos):
-                return
-
-            for zone_key, button in self.zone_buttons:
-                if button.is_clicked(pos):
-                    self.game.select_zone_for_actions(zone_key)
-                    return
+            self._handle_region_actions_click(pos)
+            return
 
     def draw(self, screen):
         if self.game.state == "class_select":
@@ -188,7 +197,10 @@ class MenuScreen:
             self._draw_town(screen)
         elif self.game.state in ("zone_select", "zone_actions"):
             draw_background(screen, self.zone_background, (18, 24, 30))
-            self._draw_zone_select(screen)
+            if self.game.state == "zone_select":
+                self._draw_region_select(screen)
+            else:
+                self._draw_region_actions(screen)
 
     def _draw_class_select(self, screen):
         title = self.title_font.render("Choisis ta classe", True, (245, 245, 245))
@@ -283,70 +295,155 @@ class MenuScreen:
             screen.blit(text, (rect.x + 18, y))
             y += 34
 
-    def _draw_zone_select(self, screen):
-        player_level = self.game.player["level"] if self.game.player else 1
-        has_actions_panel = self.game.state == "zone_actions"
+    def _get_zone_region_id(self, zone_key):
+        if not isinstance(zone_key, str) or "_" not in zone_key:
+            return None
+        return zone_key.split("_", 1)[0]
 
-        title = self.title_font.render("Choisis ta zone", True, (245, 245, 245))
+    def _get_available_regions(self):
+        regions = []
+        for region_id in REGION_LABELS:
+            if self._get_zones_for_region(region_id):
+                regions.append(region_id)
+        return regions
+
+    def _get_zones_for_region(self, region_id):
+        zones = getattr(self.game.data, "zones", {}) or {}
+        return [
+            zone_key
+            for zone_key in zones
+            if self._get_zone_region_id(zone_key) == region_id
+        ]
+
+    def _build_region_buttons(self):
+        buttons = []
+        y = 150
+        for region_id in self._get_available_regions():
+            region_zones = self._get_zones_for_region(region_id)
+            zone_names = [self._get_zone_enemy_label(zone_key) for zone_key in region_zones]
+            has_gathering = any(
+                self.game.get_available_gathering_professions(zone_key)
+                for zone_key in region_zones
+            )
+            if has_gathering:
+                zone_names.append("gathering")
+            subtitle = ", ".join(zone_names[:4])
+            buttons.append(
+                (
+                    region_id,
+                    MenuButton(
+                        (80, y, 640, 72),
+                        REGION_LABELS.get(region_id, region_id.title()),
+                        subtitle,
+                    ),
+                )
+            )
+            y += 88
+        return buttons
+
+    def _draw_region_select(self, screen):
+        player_level = self.game.player["level"] if self.game.player else 1
+        title = self.title_font.render("Expedition", True, (245, 245, 245))
         screen.blit(title, (80, 64))
 
-        if self.game.selected_class:
-            class_name = self.game.data.classes[self.game.selected_class]["name"]
-        else:
-            class_name = "Adventurer"
         subtitle = self.body_font.render(
-            f"{class_name} - Niveau {player_level}", True, (190, 200, 205)
+            "Choose a region", True, (190, 200, 205)
         )
         screen.blit(subtitle, (82, 105))
         self.zone_back_button.draw(screen, self.option_font, self.body_font)
 
-        for zone_key, button in self.zone_buttons:
-            zone = self.game.data.zones[zone_key]
-            button.enabled = player_level >= zone["unlock_level"]
-            if has_actions_panel:
-                button.rect.x = 60
-                button.rect.w = 380
-            else:
-                button.rect.x = 80
-                button.rect.w = 640
+        self.region_buttons = self._build_region_buttons()
+        for region_id, button in self.region_buttons:
+            region_zones = self._get_zones_for_region(region_id)
+            button.enabled = any(
+                self.game.data.zones[zone_key].get("unlock_level", 1) <= player_level
+                for zone_key in region_zones
+            )
             button.draw(screen, self.option_font, self.body_font)
-            if has_actions_panel and zone_key == self.game.selected_zone:
-                pygame.draw.rect(screen, (230, 210, 110), button.rect, 3, border_radius=6)
 
-        if has_actions_panel:
-            self._draw_zone_actions_panel(screen)
+    def _draw_region_actions(self, screen):
+        region_id = self.selected_region
+        if region_id is None and self.game.selected_zone:
+            region_id = self._get_zone_region_id(self.game.selected_zone)
+        region_label = REGION_LABELS.get(region_id, "Region")
+        region_zones = self._get_zones_for_region(region_id)
 
-    def _draw_zone_actions_panel(self, screen):
-        panel = pygame.Rect(470, 128, 260, 410)
-        pygame.draw.rect(screen, (35, 40, 48), panel, border_radius=6)
-        pygame.draw.rect(screen, (120, 130, 140), panel, 2, border_radius=6)
+        title = self.title_font.render(f"Expedition > {region_label}", True, (245, 245, 245))
+        screen.blit(title, (60, 54))
+        self.zone_back_button.draw(screen, self.option_font, self.body_font)
 
-        zone_key = self.game.selected_zone
-        zone = self.game.data.zones.get(zone_key, {}) if zone_key else {}
-        zone_name = zone.get("name", "No zone selected")
-        zone_description = zone.get("description", "")
+        self._draw_combat_actions(screen, region_zones, 60, 130)
+        self._draw_gathering_actions(screen, region_zones, 410, 130)
+        self._draw_last_gathering_result(screen, region_zones, 410, 438)
 
-        title = self.option_font.render(zone_name, True, (245, 245, 245))
-        screen.blit(title, (panel.x + 16, panel.y + 16))
+    def _handle_region_select_click(self, pos):
+        if self.zone_back_button.is_clicked(pos):
+            self.game.state = "town"
+            return True
 
-        if zone_description:
-            description = self.body_font.render(zone_description[:34], True, (190, 200, 205))
-            screen.blit(description, (panel.x + 16, panel.y + 48))
+        if not self.region_buttons:
+            self.region_buttons = self._build_region_buttons()
 
-        self.start_expedition_button.rect = pygame.Rect(panel.x + 20, panel.y + 92, 220, 52)
-        self.start_expedition_button.enabled = zone_key in self.game.data.zones
-        self.start_expedition_button.draw(screen, self.body_font, self.body_font)
+        for region_id, button in self.region_buttons:
+            if button.is_clicked(pos):
+                self.selected_region = region_id
+                self.game.state = "zone_actions"
+                return True
+        return False
 
-        gathering_title = self.body_font.render("Gathering", True, (245, 245, 245))
-        screen.blit(gathering_title, (panel.x + 20, panel.y + 158))
+    def _handle_region_actions_click(self, pos):
+        if self.zone_back_button.is_clicked(pos):
+            self.game.state = "zone_select"
+            self.selected_region = None
+            return True
 
-        self.gather_action_buttons = []
-        available_professions = self.game.get_available_gathering_professions(zone_key)
-        y = panel.y + 188
-        if available_professions:
-            for profession_id, node_data in available_professions.items():
+        for zone_key, button in self.combat_action_buttons:
+            if button.is_clicked(pos):
+                self.game.select_zone(zone_key)
+                return True
+
+        for zone_key, profession_id, button in self.gathering_action_buttons:
+            if button.is_clicked(pos):
+                self.game.gather_in_zone(zone_key, profession_id)
+                return True
+        return False
+
+    def _draw_combat_actions(self, screen, region_zones, x, y):
+        heading = self.option_font.render("Combat", True, (245, 245, 245))
+        screen.blit(heading, (x, y))
+        self.combat_action_buttons = []
+
+        player_level = self.game.player["level"] if self.game.player else 0
+        button_y = y + 42
+        for zone_key in region_zones[:4]:
+            zone = self.game.data.zones.get(zone_key, {})
+            unlock_level = zone.get("unlock_level", 1)
+            button = MenuButton(
+                (x, button_y, 300, 54),
+                zone.get("name", zone_key),
+                f"Level {unlock_level}",
+                enabled=player_level >= unlock_level,
+            )
+            self.combat_action_buttons.append((zone_key, button))
+            button.draw(screen, self.body_font, self.body_font)
+            button_y += 64
+
+    def _draw_gathering_actions(self, screen, region_zones, x, y):
+        heading = self.option_font.render("Gathering", True, (245, 245, 245))
+        screen.blit(heading, (x, y))
+        self.gathering_action_buttons = []
+
+        button_y = y + 42
+        visible_count = 0
+        for zone_key in region_zones:
+            zone = self.game.data.zones.get(zone_key, {})
+            for profession_id, node_data in self.game.get_available_gathering_professions(zone_key).items():
+                if visible_count >= 4:
+                    return
                 profession_name = self._get_profession_name(profession_id)
                 node_name = node_data.get("name", "Gathering node")
+                reward_preview = self._get_node_reward_preview(node_data)
+                zone_name = zone.get("name", zone_key)
                 mastery = 0
                 if self.game.player:
                     mastery = get_profession_mastery(
@@ -354,46 +451,51 @@ class MenuScreen:
                         profession_id,
                         self.game.data.professions,
                     )
-                button = MenuButton(
-                    (panel.x + 20, y, 220, 48),
-                    profession_name,
-                    f"{node_name} - Mastery: {mastery}",
-                )
-                self.gather_action_buttons.append((profession_id, button))
+                title = f"{profession_name} - {node_name}"
+                subtitle = f"{zone_name} | {reward_preview} | M:{mastery}"
+                button = MenuButton((x, button_y, 320, 54), title, subtitle)
+                self.gathering_action_buttons.append((zone_key, profession_id, button))
                 button.draw(screen, self.body_font, self.body_font)
-                y += 56
-        else:
+                button_y += 64
+                visible_count += 1
+
+        if visible_count == 0:
             empty_text = self.body_font.render("No gathering node", True, (145, 145, 150))
-            screen.blit(empty_text, (panel.x + 20, y))
-            y += 34
+            screen.blit(empty_text, (x, button_y))
 
+    def _draw_last_gathering_result(self, screen, region_zones, x, y):
         result = self.game.last_gathering_result
-        if isinstance(result, dict):
-            result_zone = result.get("zone_id", zone_key)
-            if result_zone == zone_key:
-                self._draw_gathering_result(screen, result, panel.x + 20, max(y + 8, panel.y + 310))
+        if not isinstance(result, dict):
+            return
 
-    def _draw_gathering_result(self, screen, result, x, y):
-        for line in self._format_gathering_result(result):
+        result_zone = result.get("zone_id")
+        if result_zone is not None and result_zone not in region_zones:
+            return
+
+        panel = pygame.Rect(x, y, 320, 112)
+        pygame.draw.rect(screen, (35, 40, 48), panel, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), panel, 2, border_radius=6)
+        heading = self.body_font.render("Last gathering result", True, (245, 245, 245))
+        screen.blit(heading, (panel.x + 12, panel.y + 10))
+
+        line_y = panel.y + 36
+        for line in self._format_gathering_result(result)[:4]:
             text = self.body_font.render(line, True, (210, 220, 205))
-            screen.blit(text, (x, y))
-            y += 22
+            screen.blit(text, (panel.x + 12, line_y))
+            line_y += 20
 
-    def _handle_zone_actions_click(self, pos):
-        if self.zone_back_button.is_clicked(pos):
-            self.game.state = "town"
-            return True
+    def _get_zone_enemy_label(self, zone_key):
+        zone = self.game.data.zones.get(zone_key, {})
+        zone_name = zone.get("name", zone_key)
+        region_id = self._get_zone_region_id(zone_key)
+        region_label = REGION_LABELS.get(region_id, "")
+        return zone_name.replace(region_label, "").strip() or zone_name
 
-        if self.start_expedition_button.is_clicked(pos):
-            if self.game.selected_zone:
-                self.game.select_zone(self.game.selected_zone)
-            return True
-
-        for profession_id, button in self.gather_action_buttons:
-            if button.is_clicked(pos):
-                self.game.gather_in_zone(self.game.selected_zone, profession_id)
-                return True
-        return False
+    def _get_node_reward_preview(self, node_data):
+        rewards = []
+        for reward in node_data.get("rewards", [])[:2]:
+            rewards.append(self._get_item_name(reward.get("item")))
+        return ", ".join(rewards) if rewards else "Rewards"
 
     def _format_gathering_result(self, result):
         if result.get("gathered") is not True:
@@ -415,11 +517,13 @@ class MenuScreen:
         return lines[:6]
 
     def _get_item_name(self, item_id):
-        item_data = self.game.data.items.get(item_id, {})
+        items = getattr(self.game.data, "items", {}) or {}
+        item_data = items.get(item_id, {})
         return item_data.get("name", item_id or "Unknown item")
 
     def _get_profession_name(self, profession_id):
-        profession_data = self.game.data.professions.get(profession_id, {})
+        professions = getattr(self.game.data, "professions", {}) or {}
+        profession_data = professions.get(profession_id, {})
         return profession_data.get("name", profession_id or "Unknown profession")
 
     def _get_gathering_failure_message(self, reason):

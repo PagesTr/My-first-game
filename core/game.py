@@ -58,7 +58,7 @@ class Game:
             return False
 
         zone = self.data.zones[zone_key]
-        if self.player["level"] < zone["unlock_level"]:
+        if self.player["level"] < zone.get("unlock_level", 1):
             return False
 
         self.selected_zone = zone_key
@@ -100,7 +100,7 @@ class Game:
             return result
 
         zone = self.data.zones[zone_key]
-        if self.player["level"] < zone["unlock_level"]:
+        if self.player["level"] < zone.get("unlock_level", 1):
             result = {"gathered": False, "reason": "locked_zone"}
             self.last_gathering_result = result
             return result

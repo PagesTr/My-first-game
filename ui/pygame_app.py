@@ -44,7 +44,7 @@ class PygameApp:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.game.state in ("class_select", "town", "zone_select"):
+            if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
                 self.menu_screen.handle_event(event)
             elif self.game.state == "combat":
                 self.combat_screen.handle_event(event)
@@ -66,7 +66,7 @@ class PygameApp:
             self.combat_screen.update()
 
     def render(self):
-        if self.game.state in ("class_select", "town", "zone_select"):
+        if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
             self.menu_screen.draw(self.screen)
         elif self.game.state == "combat":
             self.combat_screen.draw(self.screen)
