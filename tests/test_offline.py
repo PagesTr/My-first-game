@@ -2,8 +2,10 @@ import systems.gathering as gathering
 from core.game import Game
 from systems.inventory import create_inventory
 from systems.offline import (
+    calculate_offline_tick_seconds,
     calculate_offline_ticks,
     create_offline_gathering_activity,
+    get_node_online_tick_seconds,
     get_offline_elapsed_seconds,
     resolve_offline_activity,
     start_offline_gathering,
@@ -23,6 +25,7 @@ GATHERING_NODES = {
     "forest_goblin": {
         "druid": {
             "name": "Forest Herbs",
+            "tick_seconds": 3,
             "xp": 4,
             "rewards": [
                 {
@@ -107,15 +110,36 @@ def test_stop_offline_activity_clears_activity():
     assert player["offline_activity"] is None
 
 
-def test_calculate_offline_ticks_caps_ticks():
-    result = calculate_offline_ticks(600 * 20, max_ticks=12)
+def test_get_node_online_tick_seconds_returns_node_tick_seconds():
+    assert get_node_online_tick_seconds({"tick_seconds": 3}) == 3.0
 
-    assert result["ticks"] == 12
-    assert result["capped"] is True
+
+def test_get_node_online_tick_seconds_uses_default_for_invalid_value():
+    assert get_node_online_tick_seconds({"tick_seconds": -1}) == 5.0
+    assert get_node_online_tick_seconds({"tick_seconds": "bad"}) == 5.0
+    assert get_node_online_tick_seconds({}) == 5.0
+
+
+def test_calculate_offline_tick_seconds_uses_25_percent_efficiency():
+    assert calculate_offline_tick_seconds({"tick_seconds": 3}) == 12.0
+    assert calculate_offline_tick_seconds({"tick_seconds": 10}) == 40.0
+
+
+def test_calculate_offline_ticks_does_not_cap_ticks():
+    result = calculate_offline_ticks(1200, tick_seconds=12)
+
+    assert result["ticks"] == 100
+    assert "capped" not in result
+
+
+def test_calculate_offline_ticks_uses_float_tick_seconds():
+    result = calculate_offline_ticks(10, tick_seconds=0.25)
+
+    assert result["ticks"] == 40
 
 
 def test_calculate_offline_ticks_returns_zero_when_not_enough_time():
-    result = calculate_offline_ticks(599)
+    result = calculate_offline_ticks(19)
 
     assert result["ticks"] == 0
 
@@ -153,15 +177,58 @@ def test_resolve_offline_activity_returns_not_enough_time():
         GATHERING_NODES,
         PROFESSIONS_DATA,
         {},
-        current_time=1500,
+        current_time=1011,
     )
 
     assert result == {
         "resolved": False,
         "reason": "not_enough_time",
-        "elapsed_seconds": 500,
+        "elapsed_seconds": 11,
         "ticks": 0,
+        "tick_seconds": 12.0,
+        "online_tick_seconds": 3.0,
+        "offline_efficiency": 0.25,
     }
+
+
+def test_resolve_offline_activity_returns_not_enough_time_with_node_tick():
+    activity = create_offline_gathering_activity(
+        "forest_goblin",
+        "druid",
+        current_time=1000,
+    )
+    player = make_player(activity)
+    gathering_nodes = {
+        "forest_goblin": {
+            "druid": {
+                "name": "Slow Grove",
+                "tick_seconds": 10,
+                "xp": 4,
+                "rewards": [
+                    {
+                        "item": "healing_herb",
+                        "chance": 1.0,
+                        "min_quantity": 1,
+                        "max_quantity": 1,
+                    }
+                ],
+            }
+        }
+    }
+
+    result = resolve_offline_activity(
+        player,
+        gathering_nodes,
+        PROFESSIONS_DATA,
+        {},
+        current_time=1039,
+    )
+
+    assert result["resolved"] is False
+    assert result["reason"] == "not_enough_time"
+    assert result["ticks"] == 0
+    assert result["tick_seconds"] == 40.0
+    assert result["online_tick_seconds"] == 10.0
 
 
 def test_resolve_offline_activity_runs_gathering_ticks(monkeypatch):
@@ -179,11 +246,14 @@ def test_resolve_offline_activity_runs_gathering_ticks(monkeypatch):
         GATHERING_NODES,
         PROFESSIONS_DATA,
         {},
-        current_time=2200,
+        current_time=1024,
     )
 
     assert result["resolved"] is True
     assert result["ticks"] == 2
+    assert result["tick_seconds"] == 12.0
+    assert result["online_tick_seconds"] == 3.0
+    assert result["offline_efficiency"] == 0.25
     assert result["rewards"] == [
         {"kind": "stackable", "item": "healing_herb", "quantity": 2}
     ]
@@ -193,7 +263,50 @@ def test_resolve_offline_activity_runs_gathering_ticks(monkeypatch):
         "item": "healing_herb",
         "quantity": 2,
     }
-    assert player["offline_activity"]["last_claimed_at"] == 2200
+    assert player["offline_activity"]["last_claimed_at"] == 1024
+
+
+def test_resolve_offline_activity_uses_node_tick_seconds(monkeypatch):
+    activity = create_offline_gathering_activity(
+        "forest_goblin",
+        "druid",
+        current_time=1000,
+    )
+    player = make_player(activity)
+    monkeypatch.setattr(gathering.random, "random", lambda: 1.0)
+    monkeypatch.setattr(gathering.random, "randint", lambda minimum, maximum: minimum)
+
+    result = resolve_offline_activity(
+        player,
+        GATHERING_NODES,
+        PROFESSIONS_DATA,
+        {},
+        current_time=1024,
+    )
+
+    assert result["ticks"] == 2
+    assert result["tick_seconds"] == 12.0
+    assert result["online_tick_seconds"] == 3.0
+    assert result["offline_efficiency"] == 0.25
+
+
+def test_resolve_offline_activity_returns_unknown_node():
+    activity = create_offline_gathering_activity(
+        "forest_goblin",
+        "prospector",
+        current_time=1000,
+    )
+    player = make_player(activity)
+
+    result = resolve_offline_activity(
+        player,
+        GATHERING_NODES,
+        PROFESSIONS_DATA,
+        {},
+        current_time=1024,
+    )
+
+    assert result == {"resolved": False, "reason": "unknown_node"}
 
 
 def test_resolve_offline_activity_keeps_activity_active_after_resolution(monkeypatch):
@@ -211,7 +324,7 @@ def test_resolve_offline_activity_keeps_activity_active_after_resolution(monkeyp
         GATHERING_NODES,
         PROFESSIONS_DATA,
         {},
-        current_time=1600,
+        current_time=1024,
     )
 
     assert player["offline_activity"] is not None
@@ -237,12 +350,13 @@ def test_resolve_offline_activity_returns_inventory_full_when_no_rewards_can_be_
         GATHERING_NODES,
         PROFESSIONS_DATA,
         {},
-        current_time=1600,
+        current_time=1012,
     )
 
     assert result["resolved"] is False
     assert result["reason"] == "inventory_full"
-    assert player["offline_activity"]["last_claimed_at"] == 1600
+    assert result["tick_seconds"] == 12.0
+    assert player["offline_activity"]["last_claimed_at"] == 1012
 
 
 def select_first_class(game, monkeypatch):
