@@ -4,3 +4,4 @@ __pycache__/
 .env
 obsidian_reports/craftability/*.md
 !obsidian_reports/craftability/.gitkeep
+/saves

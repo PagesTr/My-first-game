@@ -43,7 +43,8 @@ class MainMenuScreen:
 
         self.continue_button.enabled = has_save_file()
         if self.continue_button.is_clicked(event.pos):
-            self._set_message("Continue will be available with Save/Load V1")
+            if not self.game.load_saved_game():
+                self._set_message("Failed to load save")
             return
 
         if self.new_game_button.is_clicked(event.pos):

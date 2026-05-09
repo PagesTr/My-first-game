@@ -16,6 +16,7 @@ from systems.instance import run_instant_instance
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
 from systems.progression import apply_combat_rewards
+from systems.save_load import load_data_from_file, save_game, validate_save_data
 from systems.stats import prepare_player_for_combat
 
 
@@ -46,6 +47,38 @@ class Game:
         self.mailbox = create_mailbox()
         self.state = "class_select"
 
+    def save_current_game(self):
+        if self.player is None:
+            return False
+        save_game(self)
+        return True
+
+    def load_saved_game(self):
+        save_data = load_data_from_file()
+        if not validate_save_data(save_data):
+            return False
+
+        self.selected_class = save_data.get("selected_class")
+        self.selected_zone = save_data.get("selected_zone")
+        self.player = save_data.get("player")
+        self.mailbox = save_data.get("mailbox") or create_mailbox()
+        self.combat = None
+        self.auto_mode = False
+        self.last_combat_result = None
+        self.last_instance_result = None
+        self.last_gathering_result = None
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.state = "town"
+        return True
+
+    def return_to_main_menu(self):
+        self.state = "main_menu"
+
     def select_class(self, class_key):
         if class_key not in self.data.classes:
             return
@@ -64,6 +97,7 @@ class Game:
             self.data.skills,
         )
         self.state = "town"
+        self.save_current_game()
 
     def select_zone_for_actions(self, zone_key):
         if not self.player or zone_key not in self.data.zones:
@@ -129,6 +163,8 @@ class Game:
         self.last_gathering_result = result
         self.selected_zone = zone_key
         self.state = "zone_actions"
+        if result.get("gathered") is True:
+            self.save_current_game()
         return result
 
     def get_available_gathering_professions(self, zone_key):
@@ -202,6 +238,7 @@ class Game:
         self.state = "town"
         self.combat = None
         self.auto_mode = False
+        self.save_current_game()
 
     def try_claim_combat_drop(self, drop_index):
         if self.last_combat_result is None or self.player is None:
