@@ -1,11 +1,12 @@
 import time
 from copy import deepcopy
 
-from systems.gathering import gather_from_zone
+from systems.gathering import gather_from_zone, get_gathering_node
 
 
-OFFLINE_TICK_SECONDS = 600
-MAX_OFFLINE_TICKS = 12
+DEFAULT_OFFLINE_TICK_SECONDS = 20.0
+OFFLINE_EFFICIENCY = 0.25
+OFFLINE_TICK_SECONDS = DEFAULT_OFFLINE_TICK_SECONDS
 
 
 def get_current_timestamp():
@@ -65,31 +66,47 @@ def get_offline_elapsed_seconds(player, current_time=None):
     return max(0, int(current_time - last_claimed_at))
 
 
+def get_node_online_tick_seconds(node_data):
+    if not isinstance(node_data, dict):
+        return 5.0
+    tick_seconds = node_data.get("tick_seconds", 5.0)
+    if not isinstance(tick_seconds, (int, float)) or tick_seconds <= 0:
+        return 5.0
+    return float(tick_seconds)
+
+
+def calculate_offline_tick_seconds(
+    node_data,
+    offline_efficiency=OFFLINE_EFFICIENCY,
+):
+    online_tick_seconds = get_node_online_tick_seconds(node_data)
+    if not isinstance(offline_efficiency, (int, float)) or offline_efficiency <= 0:
+        offline_efficiency = OFFLINE_EFFICIENCY
+    return online_tick_seconds / offline_efficiency
+
+
 def calculate_offline_ticks(
     elapsed_seconds,
-    tick_seconds=OFFLINE_TICK_SECONDS,
-    max_ticks=MAX_OFFLINE_TICKS,
+    tick_seconds=DEFAULT_OFFLINE_TICK_SECONDS,
+    max_ticks=None,
 ):
-    if tick_seconds <= 0:
-        tick_seconds = OFFLINE_TICK_SECONDS
-    if max_ticks < 0:
-        max_ticks = 0
+    if not isinstance(tick_seconds, (int, float)) or tick_seconds <= 0:
+        tick_seconds = DEFAULT_OFFLINE_TICK_SECONDS
+    tick_seconds = float(tick_seconds)
 
     elapsed_seconds = max(0, elapsed_seconds)
     if elapsed_seconds <= 0:
         return {
             "ticks": 0,
-            "capped": False,
             "elapsed_seconds": int(elapsed_seconds),
+            "tick_seconds": tick_seconds,
         }
 
-    ticks = elapsed_seconds // tick_seconds
-    capped = ticks > max_ticks
-    ticks = min(ticks, max_ticks)
+    ticks = int(elapsed_seconds // tick_seconds)
     return {
         "ticks": int(ticks),
-        "capped": capped,
         "elapsed_seconds": int(elapsed_seconds),
+        "tick_seconds": tick_seconds,
     }
 
 
@@ -128,10 +145,18 @@ def resolve_offline_activity(
     if activity.get("type") != "gathering":
         return {"resolved": False, "reason": "unsupported_activity"}
 
+    zone_id = activity.get("zone_id")
+    profession_id = activity.get("profession_id")
+    node_data = get_gathering_node(gathering_nodes, zone_id, profession_id)
+    if node_data is None:
+        return {"resolved": False, "reason": "unknown_node"}
+
     if current_time is None:
         current_time = get_current_timestamp()
     elapsed_seconds = get_offline_elapsed_seconds(player, current_time)
-    tick_result = calculate_offline_ticks(elapsed_seconds)
+    online_tick_seconds = get_node_online_tick_seconds(node_data)
+    offline_tick_seconds = calculate_offline_tick_seconds(node_data)
+    tick_result = calculate_offline_ticks(elapsed_seconds, offline_tick_seconds)
     ticks = tick_result["ticks"]
     if ticks <= 0:
         return {
@@ -139,10 +164,11 @@ def resolve_offline_activity(
             "reason": "not_enough_time",
             "elapsed_seconds": elapsed_seconds,
             "ticks": 0,
+            "tick_seconds": offline_tick_seconds,
+            "online_tick_seconds": online_tick_seconds,
+            "offline_efficiency": OFFLINE_EFFICIENCY,
         }
 
-    zone_id = activity.get("zone_id")
-    profession_id = activity.get("profession_id")
     rewards = []
     failed = []
     total_xp = 0
@@ -176,6 +202,9 @@ def resolve_offline_activity(
             "reason": "inventory_full",
             "elapsed_seconds": elapsed_seconds,
             "ticks": ticks,
+            "tick_seconds": offline_tick_seconds,
+            "online_tick_seconds": online_tick_seconds,
+            "offline_efficiency": OFFLINE_EFFICIENCY,
         }
 
     return {
@@ -185,7 +214,9 @@ def resolve_offline_activity(
         "profession_id": profession_id,
         "elapsed_seconds": elapsed_seconds,
         "ticks": ticks,
-        "capped": tick_result["capped"],
+        "tick_seconds": offline_tick_seconds,
+        "online_tick_seconds": online_tick_seconds,
+        "offline_efficiency": OFFLINE_EFFICIENCY,
         "rewards": _merge_rewards(rewards),
         "failed": _merge_rewards(failed),
         "profession_xp": total_xp,

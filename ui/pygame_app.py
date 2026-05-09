@@ -72,6 +72,11 @@ class PygameApp:
     def update(self):
         if self.game.state == "combat":
             self.combat_screen.update()
+        if self.game.state == "zone_actions":
+            current_time_ms = pygame.time.get_ticks()
+            result = self.game.update_active_gathering(current_time_ms)
+            if result is not None and hasattr(self.menu_screen, "add_gathering_popup"):
+                self.menu_screen.add_gathering_popup(result)
 
     def render(self):
         if self.game.state == "main_menu":
