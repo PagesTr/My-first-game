@@ -4,6 +4,7 @@ from ui.screens.combat_screen import CombatScreen
 from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.inventory_screen import InventoryScreen
 from ui.screens.mailbox_screen import MailboxScreen
+from ui.screens.main_menu_screen import MainMenuScreen
 from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
 from ui.screens.professions_screen import ProfessionsScreen
@@ -22,6 +23,7 @@ class PygameApp:
         self.running = True
 
         self.game = Game()
+        self.main_menu_screen = MainMenuScreen(self.game, self)
         self.menu_screen = MenuScreen(self.game)
         self.combat_screen = CombatScreen(self.game)
         self.result_screen = ResultScreen(self.game)
@@ -46,7 +48,9 @@ class PygameApp:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
+            if self.game.state == "main_menu":
+                self.main_menu_screen.handle_event(event)
+            elif self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
                 self.menu_screen.handle_event(event)
             elif self.game.state == "combat":
                 self.combat_screen.handle_event(event)
@@ -70,7 +74,9 @@ class PygameApp:
             self.combat_screen.update()
 
     def render(self):
-        if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
+        if self.game.state == "main_menu":
+            self.main_menu_screen.draw(self.screen)
+        elif self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
             self.menu_screen.draw(self.screen)
         elif self.game.state == "combat":
             self.combat_screen.draw(self.screen)

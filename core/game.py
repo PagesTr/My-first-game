@@ -26,13 +26,25 @@ class Game:
         self.player = None
         self.selected_class = None
         self.selected_zone = None
-        self.state = "class_select"
+        self.state = "main_menu"
         self.auto_mode = False
         self.combat = None
         self.last_combat_result = None
         self.last_instance_result = None
         self.last_gathering_result = None
         self.mailbox = create_mailbox()
+
+    def start_new_game(self):
+        self.player = None
+        self.selected_class = None
+        self.selected_zone = None
+        self.auto_mode = False
+        self.combat = None
+        self.last_combat_result = None
+        self.last_instance_result = None
+        self.last_gathering_result = None
+        self.mailbox = create_mailbox()
+        self.state = "class_select"
 
     def select_class(self, class_key):
         if class_key not in self.data.classes:
