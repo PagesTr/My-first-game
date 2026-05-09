@@ -194,11 +194,16 @@ class CraftingScreen:
         )
 
         if result.get("crafted") is True:
+            self._save_current_game()
             result_name = self._get_recipe_result_name(self._get_selected_recipe())
             self._set_message(f"Crafted: {result_name}", True)
             self._build_recipe_buttons()
         else:
             self._set_message(self._get_craft_failure_message(result), False)
+
+    def _save_current_game(self):
+        if hasattr(self.game, "save_current_game"):
+            self.game.save_current_game()
 
     def _set_message(self, message, success=None):
         self.message = message
