@@ -93,8 +93,15 @@ class Game:
             self.data.classes,
             self.data.skills,
         )
+        had_offline_activity = (
+            isinstance(self.player, dict)
+            and isinstance(self.player.get("offline_activity"), dict)
+        )
         offline_result = self.resolve_offline_progress()
         self.last_offline_result = offline_result
+        if had_offline_activity:
+            self.player["offline_activity"] = None
+            self.save_current_game()
         self.state = "town"
         return True
 
