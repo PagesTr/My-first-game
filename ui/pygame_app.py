@@ -6,6 +6,7 @@ from ui.screens.inventory_screen import InventoryScreen
 from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
+from ui.screens.professions_screen import ProfessionsScreen
 from ui.screens.result_screen import ResultScreen
 from ui.screens.skills_screen import SkillsScreen
 
@@ -29,6 +30,7 @@ class PygameApp:
         self.merchant_screen = MerchantScreen(self.game)
         self.skills_screen = SkillsScreen(self.game)
         self.mailbox_screen = MailboxScreen(self.game)
+        self.professions_screen = ProfessionsScreen(self.game)
 
     def run(self):
         while self.running:
@@ -44,7 +46,7 @@ class PygameApp:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.game.state in ("class_select", "town", "zone_select"):
+            if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
                 self.menu_screen.handle_event(event)
             elif self.game.state == "combat":
                 self.combat_screen.handle_event(event)
@@ -58,6 +60,8 @@ class PygameApp:
                 self.merchant_screen.handle_event(event)
             elif self.game.state == "skills":
                 self.skills_screen.handle_event(event)
+            elif self.game.state == "professions":
+                self.professions_screen.handle_event(event)
             elif self.game.state == "mailbox":
                 self.mailbox_screen.handle_event(event)
 
@@ -66,7 +70,7 @@ class PygameApp:
             self.combat_screen.update()
 
     def render(self):
-        if self.game.state in ("class_select", "town", "zone_select"):
+        if self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
             self.menu_screen.draw(self.screen)
         elif self.game.state == "combat":
             self.combat_screen.draw(self.screen)
@@ -80,6 +84,8 @@ class PygameApp:
             self.merchant_screen.draw(self.screen)
         elif self.game.state == "skills":
             self.skills_screen.draw(self.screen)
+        elif self.game.state == "professions":
+            self.professions_screen.draw(self.screen)
         elif self.game.state == "mailbox":
             self.mailbox_screen.draw(self.screen)
 

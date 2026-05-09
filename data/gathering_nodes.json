@@ -1,0 +1,214 @@
+{
+  "forest_goblin": {
+    "druid": {
+      "name": "Forest Herbs",
+      "description": "Useful herbs grow between goblin trails.",
+      "xp": 4,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "archaeologist": {
+      "name": "Buried Remains",
+      "description": "Old remains are buried near abandoned camps.",
+      "xp": 4,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "fossil_fragment",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_wolf": {
+    "druid": {
+      "name": "Wild Grove",
+      "description": "Hardy plants grow in the wolf hunting grounds.",
+      "xp": 5,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.4,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "caves_skeleton": {
+    "archaeologist": {
+      "name": "Ancient Remains",
+      "description": "Bones and fossil traces lie in the old cave dust.",
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "fossil_fragment",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "prospector": {
+      "name": "Cave Veins",
+      "description": "Ore veins run through the cave walls.",
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "iron_ore",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "rough_gem",
+          "chance": 0.2,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "caves_bandit": {
+    "archaeologist": {
+      "name": "Abandoned Cache",
+      "description": "Forgotten supplies hide traces of older travelers.",
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "fossil_fragment",
+          "chance": 0.3,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "prospector": {
+      "name": "Hidden Veins",
+      "description": "Small mineral veins are hidden behind loose stone.",
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "iron_ore",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "rough_gem",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "mountains_orc": {
+    "prospector": {
+      "name": "Mountain Ore",
+      "description": "Cold mountain rock holds useful ore.",
+      "xp": 7,
+      "rewards": [
+        {
+          "item": "iron_ore",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "rough_gem",
+          "chance": 0.3,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "mountains_troll": {
+    "prospector": {
+      "name": "Deep Minerals",
+      "description": "Dense mineral pockets lie deep in troll territory.",
+      "xp": 8,
+      "rewards": [
+        {
+          "item": "iron_ore",
+          "chance": 1.0,
+          "min_quantity": 2,
+          "max_quantity": 3
+        },
+        {
+          "item": "rough_gem",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "druid": {
+      "name": "Mountain Roots",
+      "description": "Resilient roots grow between the mountain stones.",
+      "xp": 7,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.45,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  }
+}

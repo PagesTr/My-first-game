@@ -178,5 +178,95 @@
       "item": "ring_of_learning",
       "quantity": 1
     }
+  },
+  "craft_herbal_field_dressing": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "healing_herb",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "wild_root",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "field_dressing",
+      "quantity": 2
+    }
+  },
+  "craft_bone_talisman": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "buried_bones",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "fossil_fragment",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "bone_talisman",
+      "quantity": 1
+    }
+  },
+  "craft_ring_of_learning_from_relics": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "fossil_fragment",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "rough_gem",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "ring_of_learning",
+      "quantity": 1
+    }
+  },
+  "craft_amulet_of_power_from_ore": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 3
+      },
+      {
+        "kind": "stackable",
+        "item": "rough_gem",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "amulet_of_power",
+      "quantity": 1
+    }
+  },
+  "craft_amulet_of_wisdom_from_roots": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "wild_root",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "fossil_fragment",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "amulet_of_wisdom",
+      "quantity": 1
+    }
   }
 }

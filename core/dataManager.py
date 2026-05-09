@@ -12,6 +12,8 @@ class DataManager:
         self.recipes = self.load("data/recipes.json")
         self.zones = self.load("data/zones.json")
         self.skills = self.load("data/skills.json")
+        self.professions = self.load("data/professions.json")
+        self.gathering_nodes = self.load("data/gathering_nodes.json")
 
     def load(self, path):
         with open(path, encoding="utf-8") as f:

@@ -66,6 +66,14 @@ VALID_STATS = {
     "gold_bonus",
     "rare_find_bonus",
     "xp_bonus",
+    "gathering_mastery",
+    "prospector_mastery",
+    "archaeologist_mastery",
+    "druid_mastery",
+    "gathering_xp_bonus",
+    "prospector_xp_bonus",
+    "archaeologist_xp_bonus",
+    "druid_xp_bonus",
 }
 
 

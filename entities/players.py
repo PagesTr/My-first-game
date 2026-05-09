@@ -1,8 +1,12 @@
 from systems.inventory import add_stackable_item, create_inventory
+from systems.professions import create_player_professions
 from systems.stats import derive_stats
 
-def create_player(char_class, classes, items):
+def create_player(char_class, classes, items, professions_data=None):
     """Create a new player using a chosen character class."""
+    if professions_data is None:
+        professions_data = {}
+
     player = {
         'name': 'Hero',
         'class': char_class,
@@ -31,6 +35,7 @@ def create_player(char_class, classes, items):
         'skills': {},
         'equipped_skills': [],
         'skill_cooldowns': {},
+        'professions': create_player_professions(professions_data),
         'current_hp': 0,
     }
     # Temporary test items for buff effect validation.

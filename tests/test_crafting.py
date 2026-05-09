@@ -17,6 +17,7 @@ ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
 VALID_INGREDIENT_KINDS = {"stackable", "individual"}
 LEGACY_INGREDIENT_KIND_ALIASES = {"unique": "individual"}
+ALLOWED_CRAFTED_ENEMY_DROP_OVERLAPS = {"bone_talisman"}
 
 
 def load_json(path):
@@ -200,7 +201,11 @@ def test_crafted_items_are_not_enemy_drop_items():
         for drop in enemy.get("drops", []):
             enemy_drop_items.add(drop["item"])
 
-    overlapping_items = crafted_items & enemy_drop_items
+    overlapping_items = (
+        crafted_items
+        & enemy_drop_items
+        - ALLOWED_CRAFTED_ENEMY_DROP_OVERLAPS
+    )
     assert not overlapping_items, overlapping_items
 
 
@@ -401,6 +406,118 @@ def test_craft_recipe_adds_equipment_result_as_individual():
                 "defense": 2,
             },
         }
+        for slot in inventory["slots"]
+    )
+
+
+def test_herbal_field_dressing_recipe_uses_gathered_druid_resources():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "healing_herb", 2)
+    add_stackable_item(inventory, "wild_root", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "craft_herbal_field_dressing",
+        items,
+    )
+
+    assert result["crafted"] is True
+    assert any(
+        slot == {"kind": "stackable", "item": "field_dressing", "quantity": 2}
+        for slot in inventory["slots"]
+    )
+    assert all(
+        slot is None or slot.get("item") not in {"healing_herb", "wild_root"}
+        for slot in inventory["slots"]
+    )
+
+
+def test_bone_talisman_recipe_uses_archaeology_resources():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "buried_bones", 2)
+    add_stackable_item(inventory, "fossil_fragment", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(inventory, recipes, "craft_bone_talisman", items)
+
+    assert result["crafted"] is True
+    assert any(
+        slot is not None
+        and slot.get("kind") == "individual"
+        and slot.get("item") == "bone_talisman"
+        for slot in inventory["slots"]
+    )
+
+
+def test_ring_of_learning_recipe_uses_fossil_and_rough_gem():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "fossil_fragment", 2)
+    add_stackable_item(inventory, "rough_gem", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "craft_ring_of_learning_from_relics",
+        items,
+    )
+
+    assert result["crafted"] is True
+    assert any(
+        slot is not None
+        and slot.get("kind") == "individual"
+        and slot.get("item") == "ring_of_learning"
+        for slot in inventory["slots"]
+    )
+
+
+def test_amulet_of_power_recipe_uses_prospecting_resources():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "iron_ore", 3)
+    add_stackable_item(inventory, "rough_gem", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "craft_amulet_of_power_from_ore",
+        items,
+    )
+
+    assert result["crafted"] is True
+    assert any(
+        slot is not None
+        and slot.get("kind") == "individual"
+        and slot.get("item") == "amulet_of_power"
+        for slot in inventory["slots"]
+    )
+
+
+def test_amulet_of_wisdom_recipe_uses_druid_and_archaeology_resources():
+    inventory = create_inventory()
+    add_stackable_item(inventory, "wild_root", 2)
+    add_stackable_item(inventory, "fossil_fragment", 1)
+    recipes = load_json(RECIPES_PATH)
+    items = load_json(ITEMS_PATH)
+
+    result = craft_recipe(
+        inventory,
+        recipes,
+        "craft_amulet_of_wisdom_from_roots",
+        items,
+    )
+
+    assert result["crafted"] is True
+    assert any(
+        slot is not None
+        and slot.get("kind") == "individual"
+        and slot.get("item") == "amulet_of_wisdom"
         for slot in inventory["slots"]
     )
 

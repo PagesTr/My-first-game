@@ -5,6 +5,7 @@ from entities.enemy import create_enemy
 from entities.players import create_player
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
+from systems.gathering import gather_from_zone
 from systems.inventory import (
     claim_all_pending_drops,
     claim_pending_drop,
@@ -30,6 +31,7 @@ class Game:
         self.combat = None
         self.last_combat_result = None
         self.last_instance_result = None
+        self.last_gathering_result = None
         self.mailbox = create_mailbox()
 
     def select_class(self, class_key):
@@ -41,6 +43,7 @@ class Game:
             char_class=class_key,
             classes=self.data.classes,
             items=self.data.items,
+            professions_data=self.data.professions,
         )
         prepare_player_for_combat(
             self.player,
@@ -49,6 +52,18 @@ class Game:
             self.data.skills,
         )
         self.state = "town"
+
+    def select_zone_for_actions(self, zone_key):
+        if not self.player or zone_key not in self.data.zones:
+            return False
+
+        zone = self.data.zones[zone_key]
+        if self.player["level"] < zone.get("unlock_level", 1):
+            return False
+
+        self.selected_zone = zone_key
+        self.state = "zone_actions"
+        return True
 
     def select_zone(self, zone_key):
         if not self.player or zone_key not in self.data.zones:
@@ -77,6 +92,42 @@ class Game:
         self.combat = None
         self.auto_mode = False
         self.state = "combat_result"
+
+    def gather_in_zone(self, zone_key, profession_id):
+        if not self.player or zone_key not in self.data.zones:
+            result = {"gathered": False, "reason": "invalid_zone"}
+            self.last_gathering_result = result
+            return result
+
+        zone = self.data.zones[zone_key]
+        if self.player["level"] < zone.get("unlock_level", 1):
+            result = {"gathered": False, "reason": "locked_zone"}
+            self.last_gathering_result = result
+            return result
+
+        result = gather_from_zone(
+            self.player,
+            self.player["inventory"],
+            zone_key,
+            profession_id,
+            self.data.gathering_nodes,
+            self.data.professions,
+            self.data.items,
+        )
+        self.last_gathering_result = result
+        self.selected_zone = zone_key
+        self.state = "zone_actions"
+        return result
+
+    def get_available_gathering_professions(self, zone_key):
+        gathering_nodes = getattr(self.data, "gathering_nodes", {}) or {}
+        if not isinstance(gathering_nodes, dict):
+            return {}
+
+        zone_nodes = gathering_nodes.get(zone_key, {})
+        if not isinstance(zone_nodes, dict):
+            return {}
+        return zone_nodes
 
     def start_combat(self):
         enemy = self.spawn_enemy()
