@@ -52,5 +52,131 @@
       "item": "patched_leather_armor",
       "quantity": 1
     }
+  },
+  "craft_iron_helmet": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "bone",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "iron_helmet",
+      "quantity": 1
+    }
+  },
+  "craft_reinforced_chestplate": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 3
+      },
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 2
+      }
+    ],
+    "result": {
+      "item": "reinforced_chestplate",
+      "quantity": 1
+    }
+  },
+  "craft_traveler_pants": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "wolf_pelt",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "traveler_pants",
+      "quantity": 1
+    }
+  },
+  "craft_guard_gauntlets": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "guard_gauntlets",
+      "quantity": 1
+    }
+  },
+  "craft_heavy_boots": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "iron_ore",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "heavy_boots",
+      "quantity": 1
+    }
+  },
+  "craft_amulet_of_life": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "troll_heart",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "rare_gem",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "amulet_of_life",
+      "quantity": 1
+    }
+  },
+  "craft_ring_of_learning": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "ancient_bone",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "rare_gem",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "ring_of_learning",
+      "quantity": 1
+    }
   }
 }
