@@ -36,6 +36,7 @@ def create_player(char_class, classes, items, professions_data=None):
         'equipped_skills': [],
         'skill_cooldowns': {},
         'professions': create_player_professions(professions_data),
+        'offline_activity': None,
         'current_hp': 0,
     }
     # Temporary test items for buff effect validation.

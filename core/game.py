@@ -15,6 +15,11 @@ from systems.inventory import (
 from systems.instance import run_instant_instance
 from systems.loot import generate_combat_loot
 from systems.mailbox import add_mail, create_combat_report_mail, create_mailbox
+from systems.offline import (
+    resolve_offline_activity,
+    start_offline_gathering,
+    stop_offline_activity,
+)
 from systems.progression import apply_combat_rewards
 from systems.save_load import load_data_from_file, save_game, validate_save_data
 from systems.stats import prepare_player_for_combat
@@ -176,6 +181,48 @@ class Game:
         if not isinstance(zone_nodes, dict):
             return {}
         return zone_nodes
+
+    def start_offline_gathering_activity(self, zone_key, profession_id):
+        if not self.player:
+            return {"started": False, "reason": "invalid_player"}
+        if zone_key not in self.data.zones:
+            return {"started": False, "reason": "invalid_zone"}
+
+        zone = self.data.zones[zone_key]
+        if self.player["level"] < zone.get("unlock_level", 1):
+            return {"started": False, "reason": "locked_zone"}
+
+        zone_nodes = self.get_available_gathering_professions(zone_key)
+        if profession_id not in zone_nodes:
+            return {"started": False, "reason": "unknown_node"}
+
+        result = start_offline_gathering(self.player, zone_key, profession_id)
+        if result.get("started") is True:
+            self.save_current_game()
+        return result
+
+    def resolve_offline_progress(self):
+        if not self.player:
+            return {"resolved": False, "reason": "no_player"}
+
+        result = resolve_offline_activity(
+            self.player,
+            self.data.gathering_nodes,
+            self.data.professions,
+            self.data.items,
+        )
+        if result.get("resolved") is True or result.get("reason") == "inventory_full":
+            self.save_current_game()
+        return result
+
+    def stop_offline_progress(self):
+        if not self.player:
+            return False
+
+        stopped = stop_offline_activity(self.player)
+        if stopped:
+            self.save_current_game()
+        return stopped
 
     def start_combat(self):
         enemy = self.spawn_enemy()
