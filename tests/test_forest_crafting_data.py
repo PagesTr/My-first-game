@@ -29,7 +29,6 @@ REQUIRED_FOREST_RECIPE_IDS = {
     "craft_wolf_stalker_gloves",
     "craft_scavenger_badge",
     "craft_lucky_goblin_totem",
-    "craft_goblin_ritual_amulet",
     "craft_bone_signet",
 }
 
@@ -228,6 +227,27 @@ def test_forest_required_recipes_are_craft_only():
     for recipe_id in REQUIRED_FOREST_RECIPE_IDS:
         result_item = recipes[recipe_id]["result"]["item"]
         assert result_item not in enemy_drops, recipe_id
+
+
+def test_goblin_ritual_amulet_is_not_craftable():
+    recipes = load_json("data/recipes.json")
+
+    assert "craft_goblin_ritual_amulet" not in recipes
+
+
+def test_goblin_ritual_amulet_is_reserved_for_dungeon_or_enemy_drop():
+    items = load_json("data/items.json")
+    recipes = load_json("data/recipes.json")
+    enemies = load_json("data/enemies.json")
+    enemy_drops = {
+        drop_id
+        for enemy in enemies.values()
+        for drop_id in get_enemy_drop_ids(enemy)
+    }
+
+    assert "goblin_ritual_amulet" in items
+    assert "craft_goblin_ritual_amulet" not in recipes
+    assert "goblin_ritual_amulet" in enemy_drops
 
 
 def test_forest_remnant_items_use_forest_remnant_set():
