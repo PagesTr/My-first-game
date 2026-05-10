@@ -110,6 +110,31 @@ def test_resolve_dungeon_combat_step_advances_on_win(monkeypatch):
     assert game.active_dungeon["step_index"] == 1
 
 
+def test_dungeon_tracks_room_rewards_on_combat_win(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    game.start_dungeon("forest_goblin_camp")
+    drops = [{"kind": "stackable", "item": "goblin_ear", "quantity": 2}]
+    monkeypatch.setattr(
+        game,
+        "_run_single_dungeon_combat",
+        lambda enemy_id, multiplier=1.0: {
+            "won": True,
+            "enemy_id": enemy_id,
+            "drops": drops,
+            "exp": 7,
+            "gold": 3,
+        },
+    )
+
+    game.resolve_dungeon_combat_step()
+
+    assert game.active_dungeon["rooms_cleared"] == 1
+    assert game.active_dungeon["total_gold"] == 3
+    assert game.active_dungeon["total_exp"] == 7
+    assert game.active_dungeon["loot"] == drops
+
+
 def test_resolve_dungeon_combat_step_marks_failed_on_loss(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
@@ -181,6 +206,54 @@ def test_resolve_dungeon_boss_step_completes_on_loss(monkeypatch):
     assert result["won"] is False
     assert result["completed"] is True
     assert game.active_dungeon is None
+
+
+def test_dungeon_result_created_on_boss_loss(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    game.start_dungeon("forest_buried_grove")
+    set_boss_step(game)
+    game.active_dungeon["boss_victories"] = 2
+    game.active_dungeon["rooms_cleared"] = 4
+    game.active_dungeon["total_gold"] = 30
+    game.active_dungeon["total_exp"] = 42
+    game.active_dungeon["loot"] = [
+        {"kind": "stackable", "item": "chewed_bone", "quantity": 1}
+    ]
+    monkeypatch.setattr(
+        game,
+        "_run_single_dungeon_combat",
+        lambda enemy_id, multiplier=1.0: {
+            "won": False,
+            "enemy_id": enemy_id,
+            "drops": [],
+            "exp": 0,
+            "gold": 0,
+        },
+    )
+
+    result = game.resolve_dungeon_boss_step()
+
+    assert result["completed"] is True
+    assert game.last_dungeon_result["completed"] is True
+    assert game.last_dungeon_result["reason"] == "boss_defeat"
+    assert game.last_dungeon_result["boss_victories"] == 2
+    assert game.last_dungeon_result["rooms_cleared"] == 4
+    assert game.last_dungeon_result["total_gold"] == 30
+    assert game.last_dungeon_result["total_exp"] == 42
+    assert game.active_dungeon is None
+
+
+def test_rest_choice_is_stored_for_summary(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    game.start_dungeon("forest_goblin_camp")
+    set_rest_step(game)
+
+    result = game.apply_dungeon_rest_choice("heal")
+
+    assert result["applied"] is True
+    assert game.active_dungeon["rest_choice"] == "heal"
 
 
 def test_boss_multiplier_increases_between_victories(monkeypatch):

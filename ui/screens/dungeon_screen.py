@@ -54,6 +54,8 @@ class DungeonScreen:
 
         pos = event.pos
         if self.back_button.is_clicked(pos):
+            if not isinstance(getattr(self.game, "active_dungeon", None), dict):
+                self.game.last_dungeon_result = None
             self.game.active_dungeon = None
             self.game.state = "town"
             return
@@ -96,10 +98,56 @@ class DungeonScreen:
             "get_active_dungeon_summary",
         ) else {"active": False}
 
+        if not summary.get("active"):
+            result = self.game.get_last_dungeon_result() if hasattr(
+                self.game,
+                "get_last_dungeon_result",
+            ) else getattr(self.game, "last_dungeon_result", None)
+            if isinstance(result, dict):
+                self._draw_dungeon_summary(screen, result)
+                return
+
         self._draw_summary_panel(screen, summary)
         self._draw_route_panel(screen, summary)
         self._draw_result_panel(screen)
         self._draw_action_buttons(screen, summary)
+
+    def _draw_dungeon_summary(self, screen, result):
+        title = self.title_font.render("Dungeon Summary", True, (245, 245, 245))
+        screen.blit(title, (80, 112))
+
+        rect = pygame.Rect(80, 170, 640, 330)
+        self._draw_panel(screen, rect, self._get_dungeon_name(result.get("dungeon_id")))
+        lines = [
+            "Result: Defeated" if result.get("won") is False else "Result: Completed",
+            f"Defeated by: {self._get_enemy_name(result.get('defeated_by'))}",
+            f"Rooms cleared: {result.get('rooms_cleared', 0)}",
+            f"Boss victories: {result.get('boss_victories', 0)}",
+            f"Rest choice: {self._format_rest_choice(result.get('rest_choice'))}",
+            f"XP gained: {result.get('total_exp', 0)}",
+            f"Gold gained: {result.get('total_gold', 0)}",
+        ]
+        y = rect.y + 48
+        for line in lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, 290),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (rect.x + 18, y))
+            y += 24
+
+        loot_title = self.body_font.render("Loot:", True, (245, 245, 245))
+        screen.blit(loot_title, (rect.x + 340, rect.y + 48))
+        loot_y = rect.y + 74
+        for line in self._format_loot_lines(result.get("loot", []))[:6]:
+            text = self.body_font.render(
+                self._truncate_text(f"- {line}", self.body_font, 250),
+                True,
+                (190, 200, 210),
+            )
+            screen.blit(text, (rect.x + 340, loot_y))
+            loot_y += 24
 
     def _draw_summary_panel(self, screen, summary):
         rect = pygame.Rect(80, 120, 310, 180)
@@ -245,6 +293,45 @@ class DungeonScreen:
         if result.get("reason"):
             return [str(result.get("reason")).replace("_", " ").title()]
         return []
+
+    def _format_loot_lines(self, loot):
+        if not isinstance(loot, list) or not loot:
+            return ["No loot found"]
+        quantities_by_item = {}
+        for drop in loot:
+            if not isinstance(drop, dict):
+                continue
+            item_id = drop.get("item")
+            if not item_id:
+                continue
+            quantity = int(drop.get("quantity", 1))
+            quantities_by_item[item_id] = quantities_by_item.get(item_id, 0) + quantity
+        if not quantities_by_item:
+            return ["No loot found"]
+        return [
+            f"{self._get_item_name(item_id)} x{quantity}"
+            for item_id, quantity in quantities_by_item.items()
+        ]
+
+    def _get_dungeon_name(self, dungeon_id):
+        dungeons = getattr(self.game.data, "dungeons", {}) or {}
+        dungeon = dungeons.get(dungeon_id, {}) if isinstance(dungeons, dict) else {}
+        return dungeon.get("name", dungeon_id or "Dungeon")
+
+    def _get_enemy_name(self, enemy_id):
+        enemies = getattr(self.game.data, "enemies", {}) or {}
+        enemy = enemies.get(enemy_id, {}) if isinstance(enemies, dict) else {}
+        return enemy.get("name", enemy_id or "Unknown")
+
+    def _get_item_name(self, item_id):
+        items = getattr(self.game.data, "items", {}) or {}
+        item = items.get(item_id, {}) if isinstance(items, dict) else {}
+        return item.get("name", item_id or "Unknown item")
+
+    def _format_rest_choice(self, choice):
+        if not choice:
+            return "None"
+        return str(choice).replace("_", " ").title()
 
     def _get_boss_multiplier(self, summary):
         dungeon = self._get_active_dungeon_data(summary)

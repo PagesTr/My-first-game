@@ -257,7 +257,9 @@ class Game:
         if self.player.get("level", 1) < dungeon.get("unlock_level", 1):
             return {"started": False, "reason": "locked_dungeon"}
 
+        self.last_dungeon_result = None
         self.active_dungeon = create_dungeon_state(dungeon_id)
+        self._ensure_active_dungeon_run_counters()
         self.player["current_hp"] = self.player.get("max_hp", self.player.get("current_hp", 0))
         if hasattr(self, "save_current_game"):
             self.save_current_game()
@@ -293,6 +295,7 @@ class Game:
         result = self._run_single_dungeon_combat(enemy_id)
         result["resolved"] = True
         if result.get("won") is True:
+            self._record_dungeon_victory(result, enemy_id)
             self.active_dungeon["step_index"] += 1
             self.record_quest_event({
                 "type": "kill_enemy",
@@ -301,8 +304,14 @@ class Game:
             })
         else:
             self.active_dungeon["failed"] = True
+            self.last_dungeon_result = self._build_dungeon_result(
+                "combat_defeat",
+                enemy_id,
+                won=False,
+            )
 
-        self.last_dungeon_result = result
+        if result.get("won") is True:
+            self.last_dungeon_result = result
         if hasattr(self, "save_current_game"):
             self.save_current_game()
         return result
@@ -324,6 +333,7 @@ class Game:
         result = apply_rest_choice(self.player, choice)
         if result.get("applied") is True:
             self.active_dungeon["rest_choice_used"] = True
+            self.active_dungeon["rest_choice"] = choice
             self.active_dungeon["step_index"] += 1
             if hasattr(self, "save_current_game"):
                 self.save_current_game()
@@ -357,6 +367,7 @@ class Game:
                 dungeon.get("reward_multiplier_per_victory", 0),
             )
             self._apply_extra_dungeon_reward_multiplier(result, reward_multiplier)
+            self._record_dungeon_victory(result, boss_enemy_id)
             self.active_dungeon["boss_victories"] = victories + 1
             result["boss_victories"] = self.active_dungeon["boss_victories"]
             result["reward_multiplier"] = reward_multiplier
@@ -369,11 +380,60 @@ class Game:
         self.active_dungeon["completed"] = True
         result["completed"] = True
         result["boss_victories"] = victories
-        self.last_dungeon_result = result
+        self.last_dungeon_result = self._build_dungeon_result(
+            "boss_defeat",
+            boss_enemy_id,
+            won=False,
+        )
+        self.last_dungeon_result.update({
+            "resolved": True,
+            "enemy_id": result.get("enemy_id"),
+            "enemy_name": result.get("enemy_name"),
+        })
         self.active_dungeon = None
+        self.state = "dungeon"
         if hasattr(self, "save_current_game"):
             self.save_current_game()
         return result
+
+    def get_last_dungeon_result(self):
+        return self.last_dungeon_result
+
+    def _ensure_active_dungeon_run_counters(self):
+        if not isinstance(self.active_dungeon, dict):
+            return
+        self.active_dungeon.setdefault("rooms_cleared", 0)
+        self.active_dungeon.setdefault("total_gold", 0)
+        self.active_dungeon.setdefault("total_exp", 0)
+        self.active_dungeon.setdefault("loot", [])
+        self.active_dungeon.setdefault("rest_choice", None)
+        self.active_dungeon.setdefault("last_enemy", None)
+
+    def _record_dungeon_victory(self, result, enemy_id):
+        if not isinstance(self.active_dungeon, dict) or not isinstance(result, dict):
+            return
+        self._ensure_active_dungeon_run_counters()
+        self.active_dungeon["rooms_cleared"] += 1
+        self.active_dungeon["total_gold"] += int(result.get("gold", 0))
+        self.active_dungeon["total_exp"] += int(result.get("exp", 0))
+        self.active_dungeon["loot"].extend(list(result.get("drops", [])))
+        self.active_dungeon["last_enemy"] = enemy_id
+
+    def _build_dungeon_result(self, reason, defeated_by, won=False):
+        dungeon = self.active_dungeon if isinstance(self.active_dungeon, dict) else {}
+        return {
+            "completed": True,
+            "won": won,
+            "reason": reason,
+            "dungeon_id": dungeon.get("dungeon_id"),
+            "defeated_by": defeated_by,
+            "rooms_cleared": dungeon.get("rooms_cleared", 0),
+            "boss_victories": dungeon.get("boss_victories", 0),
+            "total_gold": dungeon.get("total_gold", 0),
+            "total_exp": dungeon.get("total_exp", 0),
+            "loot": list(dungeon.get("loot", [])),
+            "rest_choice": dungeon.get("rest_choice"),
+        }
 
     def _run_single_dungeon_combat(self, enemy_id, multiplier=1.0):
         if not self.player or enemy_id not in self.data.enemies:
