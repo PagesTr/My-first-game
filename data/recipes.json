@@ -268,5 +268,156 @@
       "item": "amulet_of_wisdom",
       "quantity": 1
     }
+  },
+  "craft_herbal_poultice": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "healing_herb",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "forest_spore",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "field_dressing",
+      "quantity": 2
+    }
+  },
+  "craft_wolf_stalker_gloves": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "wolf_fang",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "forest_spore",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 2
+      }
+    ],
+    "result": {
+      "item": "wolf_stalker_gloves",
+      "quantity": 1
+    }
+  },
+  "craft_scavenger_badge": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "scout_badge",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "old_charm_fragment",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "torn_cloth",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "scavenger_badge",
+      "quantity": 1
+    }
+  },
+  "craft_lucky_goblin_totem": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "shaman_totem",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "crude_charm",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "cracked_skull",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "lucky_goblin_totem",
+      "quantity": 1
+    }
+  },
+  "craft_goblin_ritual_amulet": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "shaman_totem",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "ritual_paint",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "old_charm_fragment",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "goblin_ritual_amulet",
+      "quantity": 1
+    }
+  },
+  "craft_bone_signet": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "buried_bones",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "cracked_skull",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "bone_signet",
+      "quantity": 1
+    }
+  },
+  "craft_wolf_fang_charm": {
+    "ingredients": [
+      {
+        "kind": "stackable",
+        "item": "wolf_fang",
+        "quantity": 2
+      },
+      {
+        "kind": "stackable",
+        "item": "wild_root",
+        "quantity": 1
+      },
+      {
+        "kind": "stackable",
+        "item": "leather",
+        "quantity": 1
+      }
+    ],
+    "result": {
+      "item": "wolf_fang_charm",
+      "quantity": 1
+    }
   }
 }

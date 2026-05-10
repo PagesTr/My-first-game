@@ -1,0 +1,160 @@
+{
+  "forest_secure_outskirts": {
+    "name": "Secure the Outskirts",
+    "description": "The forest begins with rats, goblins, and decisions nobody will brag about.",
+    "chapter": "forest",
+    "order": 1,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "forest_rat",
+        "required": 5
+      },
+      {
+        "type": "kill_enemy",
+        "target": "young_goblin",
+        "required": 3
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 25
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_first_harvest"
+    ]
+  },
+  "forest_first_harvest": {
+    "name": "First Forest Harvest",
+    "description": "Helpful plants grow near the path. Naturally, someone wants them before they become suspicious.",
+    "chapter": "forest",
+    "order": 2,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "healing_herb",
+        "required": 5
+      },
+      {
+        "type": "gather_item",
+        "target": "wild_root",
+        "required": 2
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 20
+      },
+      {
+        "type": "item",
+        "item": "forest_spore",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_pack_watches"
+    ]
+  },
+  "forest_pack_watches": {
+    "name": "The Pack Watches",
+    "description": "The wolves are studying your footwork. The official report says they are unimpressed.",
+    "chapter": "forest",
+    "order": 3,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "forest_wolf",
+        "required": 5
+      },
+      {
+        "type": "craft_recipe",
+        "target": "craft_wolf_fang_charm",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      },
+      {
+        "type": "item",
+        "item": "wolf_fang",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_bones_under_roots"
+    ]
+  },
+  "forest_bones_under_roots": {
+    "name": "Bones Under the Roots",
+    "description": "Someone buried too many adventurers here. The archaeologist calls it an opportunity.",
+    "chapter": "forest",
+    "order": 4,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "buried_bones",
+        "required": 5
+      },
+      {
+        "type": "kill_enemy",
+        "target": "bone_gnawer",
+        "required": 2
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 45
+      },
+      {
+        "type": "item",
+        "item": "cracked_skull",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_smoke_above_trees"
+    ]
+  },
+  "forest_smoke_above_trees": {
+    "name": "Smoke Above the Trees",
+    "description": "Goblin smoke rises between the trees. This implies organization, which is rude.",
+    "chapter": "forest",
+    "order": 5,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "goblin_scout",
+        "required": 8
+      },
+      {
+        "type": "gather_item",
+        "target": "old_charm_fragment",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 60
+      },
+      {
+        "type": "item",
+        "item": "scout_badge",
+        "quantity": 2
+      }
+    ],
+    "next_quests": []
+  }
+}

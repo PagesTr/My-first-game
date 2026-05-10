@@ -109,6 +109,11 @@ class MenuScreen:
             "Professions",
             "View gathering progress",
         )
+        self.quests_button = MenuButton(
+            (400, 298, 300, 72),
+            "Quests",
+            "Track forest objectives",
+        )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
         self.selected_region = None
         self.region_buttons = []
@@ -116,6 +121,28 @@ class MenuScreen:
         self.gathering_action_buttons = []
         self.gathering_popups = []
         self.selected_gathering_action = None
+        self.zone_action_tab = "combat"
+        self.combat_page = 0
+        self.gathering_page = 0
+        self.selected_combat_zone = None
+        self.combat_tab_rect = pygame.Rect(60, 104, 150, 38)
+        self.gathering_tab_rect = pygame.Rect(218, 104, 150, 38)
+        self.combat_page_prev_rect = pygame.Rect(60, 500, 44, 38)
+        self.combat_page_next_rect = pygame.Rect(346, 500, 44, 38)
+        self.combat_start_button = MenuButton(
+            (420, 430, 310, 54),
+            "Start Expedition",
+        )
+        self.gathering_page_prev_rect = pygame.Rect(60, 500, 44, 38)
+        self.gathering_page_next_rect = pygame.Rect(346, 500, 44, 38)
+        self.gathering_online_button = MenuButton(
+            (420, 470, 150, 50),
+            "Start Online",
+        )
+        self.gathering_offline_button = MenuButton(
+            (580, 470, 150, 50),
+            "Send Offline",
+        )
 
     def _build_class_buttons(self):
         buttons = []
@@ -199,6 +226,11 @@ class MenuScreen:
                 self.game.state = "professions"
                 return
 
+            if self.quests_button.is_clicked(pos):
+                self._clear_offline_result()
+                self.game.state = "quests"
+                return
+
             if self.mailbox_button.is_clicked(pos):
                 self._clear_offline_result()
                 self.game.state = "mailbox"
@@ -260,6 +292,7 @@ class MenuScreen:
         if has_available_recipe:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
+        self.quests_button.draw(screen, self.option_font, self.body_font)
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
@@ -295,7 +328,7 @@ class MenuScreen:
         screen.blit(label, (badge_rect.x + 8, badge_rect.y + 3))
 
     def _draw_town_player_panel(self, screen):
-        rect = pygame.Rect(470, 150, 250, 220)
+        rect = pygame.Rect(470, 150, 250, 132)
         pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
         pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
 
@@ -311,15 +344,14 @@ class MenuScreen:
         lines = [
             f"Class: {class_name}",
             f"Level: {player.get('level', 1)}",
-            f"HP: {player.get('current_hp', 0)} / {player.get('max_hp', 0)}",
             f"Gold: {player.get('gold', 0)}",
         ]
 
-        y = rect.y + 62
+        y = rect.y + 52
         for line in lines:
             text = self.body_font.render(line, True, (190, 200, 205))
             screen.blit(text, (rect.x + 18, y))
-            y += 34
+            y += 24
 
     def _draw_offline_result_panel(self, screen):
         result = getattr(self.game, "last_offline_result", None)
@@ -396,6 +428,59 @@ class MenuScreen:
             if self._get_zone_region_id(zone_key) == region_id
         ]
 
+    def _get_region_combat_zones(self, region_id):
+        zones = getattr(self.game.data, "zones", {}) or {}
+        return [
+            zone_key
+            for zone_key in self._get_zones_for_region(region_id)
+            if zones.get(zone_key, {}).get("enemy_pool")
+        ]
+
+    def _get_region_gathering_actions(self, region_id):
+        actions = []
+        if not hasattr(self.game, "get_available_gathering_professions"):
+            return actions
+        for zone_key in self._get_zones_for_region(region_id):
+            zone_nodes = self.game.get_available_gathering_professions(zone_key)
+            if not isinstance(zone_nodes, dict):
+                continue
+            for profession_id, node_data in zone_nodes.items():
+                actions.append({
+                    "zone_key": zone_key,
+                    "profession_id": profession_id,
+                    "node_data": node_data if isinstance(node_data, dict) else {},
+                })
+        return actions
+
+    def _paginate_items(self, items, page, page_size):
+        total_pages = max(1, (len(items) + page_size - 1) // page_size)
+        page = self._clamp_page(page, total_pages)
+        start = page * page_size
+        return items[start:start + page_size], total_pages
+
+    def _clamp_page(self, page, total_pages):
+        total_pages = max(1, total_pages)
+        return max(0, min(page, total_pages - 1))
+
+    def _draw_tab_button(self, screen, rect, label, is_active):
+        bg = (78, 92, 72) if is_active else (45, 52, 60)
+        border = (210, 220, 145) if is_active else (105, 115, 125)
+        pygame.draw.rect(screen, bg, rect, border_radius=6)
+        pygame.draw.rect(screen, border, rect, 2, border_radius=6)
+        text = self.body_font.render(label, True, (245, 245, 245))
+        text_rect = text.get_rect(center=rect.center)
+        screen.blit(text, text_rect)
+
+    def _draw_small_nav_button(self, screen, rect, label, enabled=True):
+        bg = (58, 68, 78) if enabled else (42, 42, 46)
+        border = (180, 190, 195) if enabled else (85, 85, 90)
+        color = (245, 245, 245) if enabled else (120, 120, 125)
+        pygame.draw.rect(screen, bg, rect, border_radius=6)
+        pygame.draw.rect(screen, border, rect, 2, border_radius=6)
+        text = self.option_font.render(label, True, color)
+        text_rect = text.get_rect(center=rect.center)
+        screen.blit(text, text_rect)
+
     def _build_region_buttons(self):
         buttons = []
         y = 150
@@ -447,16 +532,28 @@ class MenuScreen:
         if region_id is None and self.game.selected_zone:
             region_id = self._get_zone_region_id(self.game.selected_zone)
         region_label = REGION_LABELS.get(region_id, "Region")
-        region_zones = self._get_zones_for_region(region_id)
 
         title = self.title_font.render(f"Expedition > {region_label}", True, (245, 245, 245))
         screen.blit(title, (60, 54))
         self.zone_back_button.draw(screen, self.option_font, self.body_font)
 
-        self._draw_combat_actions(screen, region_zones, 60, 130)
-        self._draw_gathering_actions(screen, region_zones, 410, 130)
-        self._draw_gathering_detail_panel(screen, region_zones, 60, 410, 670, 145)
-        self._draw_gathering_popups(screen, 410, 350)
+        self._draw_tab_button(
+            screen,
+            self.combat_tab_rect,
+            "Combat",
+            self.zone_action_tab == "combat",
+        )
+        self._draw_tab_button(
+            screen,
+            self.gathering_tab_rect,
+            "Gathering",
+            self.zone_action_tab == "gathering",
+        )
+
+        if self.zone_action_tab == "combat":
+            self._draw_combat_tab(screen, region_id)
+        else:
+            self._draw_gathering_tab(screen, region_id)
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
@@ -469,6 +566,11 @@ class MenuScreen:
         for region_id, button in self.region_buttons:
             if button.is_clicked(pos):
                 self.selected_region = region_id
+                self.zone_action_tab = "combat"
+                self.combat_page = 0
+                self.gathering_page = 0
+                self.selected_combat_zone = None
+                self.selected_gathering_action = None
                 self.game.state = "zone_actions"
                 return True
         return False
@@ -479,27 +581,314 @@ class MenuScreen:
             self.selected_region = None
             return True
 
-        for zone_key, button in self.combat_action_buttons:
-            if button.is_clicked(pos):
-                self.game.select_zone(zone_key)
+        if self.combat_tab_rect.collidepoint(pos):
+            self.zone_action_tab = "combat"
+            return True
+
+        if self.gathering_tab_rect.collidepoint(pos):
+            self.zone_action_tab = "gathering"
+            return True
+
+        region_id = self.selected_region
+        if region_id is None and self.game.selected_zone:
+            region_id = self._get_zone_region_id(self.game.selected_zone)
+
+        if self.zone_action_tab == "combat":
+            combat_zones = self._get_region_combat_zones(region_id)
+            _, total_pages = self._paginate_items(combat_zones, self.combat_page, 6)
+            if self.combat_page_prev_rect.collidepoint(pos) and self.combat_page > 0:
+                self.combat_page -= 1
+                return True
+            if self.combat_page_next_rect.collidepoint(pos) and self.combat_page < total_pages - 1:
+                self.combat_page += 1
                 return True
 
-        for zone_key, profession_id, button in self.gathering_action_buttons:
-            if button.is_clicked(pos):
-                self.selected_gathering_action = {
-                    "zone_key": zone_key,
-                    "profession_id": profession_id,
-                }
-                if self._is_active_gathering_action(zone_key, profession_id):
-                    self.game.stop_active_gathering()
-                else:
-                    self.game.start_active_gathering(
-                        zone_key,
-                        profession_id,
-                        pygame.time.get_ticks(),
-                    )
+            for zone_key, button in self.combat_action_buttons:
+                if button.rect.collidepoint(pos):
+                    self.selected_combat_zone = zone_key
+                    return True
+
+            selected_zone = self.selected_combat_zone
+            if self.combat_start_button.is_clicked(pos) and selected_zone:
+                self.game.select_zone(selected_zone)
                 return True
+            return False
+
+        gathering_actions = self._get_region_gathering_actions(region_id)
+        _, total_pages = self._paginate_items(gathering_actions, self.gathering_page, 6)
+        if self.gathering_page_prev_rect.collidepoint(pos) and self.gathering_page > 0:
+            self.gathering_page -= 1
+            return True
+        if self.gathering_page_next_rect.collidepoint(pos) and self.gathering_page < total_pages - 1:
+            self.gathering_page += 1
+            return True
+
+        for action, button in self.gathering_action_buttons:
+            if button.rect.collidepoint(pos):
+                self.selected_gathering_action = {
+                    "zone_key": action["zone_key"],
+                    "profession_id": action["profession_id"],
+                }
+                return True
+
+        zone_key, profession_id = self._get_displayed_gathering_action(
+            self._get_zones_for_region(region_id),
+        )
+        if self.gathering_online_button.is_clicked(pos) and zone_key and profession_id:
+            if self._is_active_gathering_action(zone_key, profession_id):
+                self.game.stop_active_gathering()
+            else:
+                self.game.start_active_gathering(
+                    zone_key,
+                    profession_id,
+                    pygame.time.get_ticks(),
+                )
+            return True
+
+        if self.gathering_offline_button.is_clicked(pos):
+            self._start_selected_gathering_offline()
+            return True
         return False
+
+    def _draw_combat_tab(self, screen, region_id):
+        combat_zones = self._get_region_combat_zones(region_id)
+        self.combat_page = self._clamp_page(
+            self.combat_page,
+            max(1, (len(combat_zones) + 5) // 6),
+        )
+        visible_zones, total_pages = self._paginate_items(
+            combat_zones,
+            self.combat_page,
+            6,
+        )
+        player_level = self.game.player.get("level", 0) if self.game.player else 0
+        if self.selected_combat_zone not in combat_zones:
+            self.selected_combat_zone = None
+        if self.selected_combat_zone is None:
+            for zone_key in visible_zones:
+                if self.game.data.zones[zone_key].get("unlock_level", 1) <= player_level:
+                    self.selected_combat_zone = zone_key
+                    break
+            if self.selected_combat_zone is None and visible_zones:
+                self.selected_combat_zone = visible_zones[0]
+
+        self.combat_action_buttons = []
+        x, y = 60, 150
+        for index, zone_key in enumerate(visible_zones):
+            zone = self.game.data.zones.get(zone_key, {})
+            unlock_level = zone.get("unlock_level", 1)
+            button = MenuButton(
+                (x, y + index * 60, 330, 52),
+                zone.get("name", zone_key),
+                f"Level {unlock_level}",
+                enabled=player_level >= unlock_level,
+            )
+            self.combat_action_buttons.append((zone_key, button))
+            button.draw(screen, self.body_font, self.body_font)
+            if zone_key == self.selected_combat_zone:
+                pygame.draw.rect(screen, (210, 220, 145), button.rect, 3, border_radius=6)
+
+        self._draw_combat_detail_panel(screen, self.selected_combat_zone)
+        can_start = self._can_start_selected_combat_zone()
+        self.combat_start_button.enabled = can_start
+        self.combat_start_button.draw(screen, self.option_font, self.body_font)
+
+        self._draw_small_nav_button(
+            screen,
+            self.combat_page_prev_rect,
+            "<",
+            self.combat_page > 0,
+        )
+        self._draw_small_nav_button(
+            screen,
+            self.combat_page_next_rect,
+            ">",
+            self.combat_page < total_pages - 1,
+        )
+        page_text = self.body_font.render(
+            f"Page {self.combat_page + 1} / {total_pages}",
+            True,
+            (190, 200, 205),
+        )
+        screen.blit(page_text, (120, 508))
+
+    def _draw_combat_detail_panel(self, screen, zone_key):
+        rect = pygame.Rect(420, 150, 310, 260)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+        title = self.option_font.render("Zone Details", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 14, rect.y + 14))
+        if not zone_key:
+            text = self.body_font.render("Select a combat zone", True, (150, 155, 160))
+            screen.blit(text, (rect.x + 14, rect.y + 58))
+            return
+
+        zone = self.game.data.zones.get(zone_key, {})
+        enemy_id = (zone.get("enemy_pool") or [""])[0]
+        enemy = self.game.data.enemies.get(enemy_id, {})
+        loot_names = [self._get_item_name(item_id) for item_id in zone.get("loot_table", [])[:3]]
+        lines = [
+            zone.get("name", zone_key),
+            f"Unlock: Level {zone.get('unlock_level', 1)}",
+            f"Enemy: {enemy.get('name', enemy_id or 'Unknown')}",
+            f"Difficulty: x{zone.get('difficulty_multiplier', 1.0)}",
+            f"Loot: {', '.join(loot_names) if loot_names else '-'}",
+            zone.get("description", ""),
+        ]
+        line_y = rect.y + 54
+        for line in lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, rect.w - 28),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (rect.x + 14, line_y))
+            line_y += 28
+
+    def _can_start_selected_combat_zone(self):
+        zone_key = self.selected_combat_zone
+        if not zone_key or not self.game.player:
+            return False
+        zone = self.game.data.zones.get(zone_key)
+        if not isinstance(zone, dict):
+            return False
+        return self.game.player.get("level", 0) >= zone.get("unlock_level", 1)
+
+    def _draw_gathering_tab(self, screen, region_id):
+        actions = self._get_region_gathering_actions(region_id)
+        self.gathering_page = self._clamp_page(
+            self.gathering_page,
+            max(1, (len(actions) + 5) // 6),
+        )
+        visible_actions, total_pages = self._paginate_items(
+            actions,
+            self.gathering_page,
+            6,
+        )
+        if not self._selected_gathering_action_exists(actions):
+            self.selected_gathering_action = None
+        if self.selected_gathering_action is None and visible_actions:
+            first = visible_actions[0]
+            self.selected_gathering_action = {
+                "zone_key": first["zone_key"],
+                "profession_id": first["profession_id"],
+            }
+
+        self.gathering_action_buttons = []
+        x, y = 60, 150
+        for index, action in enumerate(visible_actions):
+            profession_name = self._get_profession_name(action["profession_id"])
+            zone_name = self._get_zone_name(action["zone_key"])
+            rate = format_tick_rate(action["node_data"].get("tick_seconds", 5))
+            title = profession_name
+            subtitle = f"{zone_name} | {rate}"
+            button = MenuButton((x, y + index * 60, 330, 52), title, subtitle)
+            self.gathering_action_buttons.append((action, button))
+            button.draw(screen, self.body_font, self.body_font)
+            if self._is_selected_gathering_action(action):
+                pygame.draw.rect(screen, (210, 220, 145), button.rect, 3, border_radius=6)
+            if self._is_active_gathering_action(action["zone_key"], action["profession_id"]):
+                pygame.draw.rect(screen, (120, 210, 120), button.rect, 2, border_radius=6)
+
+        self._draw_gathering_tab_detail(screen, self._get_zones_for_region(region_id))
+        zone_key, profession_id = self._get_displayed_gathering_action(
+            self._get_zones_for_region(region_id),
+        )
+        is_active = bool(zone_key and profession_id and self._is_active_gathering_action(zone_key, profession_id))
+        self.gathering_online_button.title = "Stop Online" if is_active else "Start Online"
+        self.gathering_online_button.enabled = bool(zone_key and profession_id)
+        self.gathering_offline_button.enabled = bool(zone_key and profession_id)
+        self.gathering_online_button.draw(screen, self.body_font, self.body_font)
+        self.gathering_offline_button.draw(screen, self.body_font, self.body_font)
+
+        self._draw_small_nav_button(
+            screen,
+            self.gathering_page_prev_rect,
+            "<",
+            self.gathering_page > 0,
+        )
+        self._draw_small_nav_button(
+            screen,
+            self.gathering_page_next_rect,
+            ">",
+            self.gathering_page < total_pages - 1,
+        )
+        page_text = self.body_font.render(
+            f"Page {self.gathering_page + 1} / {total_pages}",
+            True,
+            (190, 200, 205),
+        )
+        screen.blit(page_text, (120, 508))
+        self._draw_gathering_popups(screen, 420, 532)
+
+    def _draw_gathering_tab_detail(self, screen, region_zones):
+        rect = pygame.Rect(420, 150, 310, 300)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+        title = self.option_font.render("Gathering", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 14, rect.y + 14))
+
+        zone_key, profession_id = self._get_displayed_gathering_action(region_zones)
+        if not zone_key or not profession_id:
+            text = self.body_font.render("Select a gathering action", True, (150, 155, 160))
+            screen.blit(text, (rect.x + 14, rect.y + 58))
+            return
+
+        node_data = self._get_gathering_node_data(zone_key, profession_id)
+        profession_name = self._get_profession_name(profession_id)
+        node_name = node_data.get("name", "Gathering node")
+        rate = format_tick_rate(node_data.get("tick_seconds", 5))
+        mastery = 0
+        if self.game.player:
+            mastery = get_profession_mastery(
+                self.game.player,
+                profession_id,
+                self.game.data.professions,
+            )
+        lines = [
+            f"{profession_name} - {node_name}",
+            f"Zone: {self._get_zone_name(zone_key)}",
+            f"Rate: {rate}",
+            f"Mastery: {mastery}",
+            f"Rewards: {self._get_node_reward_preview(node_data)}",
+            self._format_recent_gathering_summary(getattr(self.game, "last_gathering_result", None)),
+            "Offline: already active" if self._has_offline_activity() else "Press O: send offline",
+        ]
+        if self._is_active_gathering_action(zone_key, profession_id):
+            remaining_ms = 0
+            if hasattr(self.game, "get_active_gathering_remaining_ms"):
+                remaining_ms = self.game.get_active_gathering_remaining_ms(
+                    pygame.time.get_ticks(),
+                )
+            lines.insert(4, f"Next: {self._format_remaining_time(remaining_ms)}")
+
+        line_y = rect.y + 54
+        for line in lines[:9]:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, rect.w - 28),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (rect.x + 14, line_y))
+            line_y += 25
+
+    def _selected_gathering_action_exists(self, actions):
+        action = self.selected_gathering_action
+        if not isinstance(action, dict):
+            return False
+        return any(
+            candidate["zone_key"] == action.get("zone_key")
+            and candidate["profession_id"] == action.get("profession_id")
+            for candidate in actions
+        )
+
+    def _is_selected_gathering_action(self, action):
+        selected = self.selected_gathering_action
+        return (
+            isinstance(selected, dict)
+            and selected.get("zone_key") == action.get("zone_key")
+            and selected.get("profession_id") == action.get("profession_id")
+        )
 
     def _start_selected_gathering_offline(self):
         activity = getattr(self.game, "active_gathering", None)
@@ -757,7 +1146,7 @@ class MenuScreen:
 
         for index, popup in enumerate(self.gathering_popups[-3:]):
             popup_y = y + index * 18
-            if popup_y > 405:
+            if popup_y > 575:
                 break
             color = (125, 220, 145) if popup.get("type") == "success" else (230, 160, 90)
             popup_text = self._truncate_text(popup.get("text", ""), self.body_font, 310)

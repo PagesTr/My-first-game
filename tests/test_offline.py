@@ -1,4 +1,4 @@
-import systems.gathering as gathering
+﻿import systems.gathering as gathering
 from core.game import Game
 from systems.inventory import create_inventory
 from systems.offline import (
@@ -22,7 +22,7 @@ PROFESSIONS_DATA = {
 }
 
 GATHERING_NODES = {
-    "forest_goblin": {
+    "forest_rat_outskirts": {
         "druid": {
             "name": "Forest Herbs",
             "tick_seconds": 3,
@@ -53,14 +53,14 @@ def make_player(activity=None, inventory_size=10):
 
 def test_create_offline_gathering_activity_contains_expected_fields():
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
 
     assert activity == {
         "type": "gathering",
-        "zone_id": "forest_goblin",
+        "zone_id": "forest_rat_outskirts",
         "profession_id": "druid",
         "started_at": 1000,
         "last_claimed_at": 1000,
@@ -72,7 +72,7 @@ def test_start_offline_gathering_sets_player_activity():
 
     result = start_offline_gathering(
         player,
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -84,13 +84,13 @@ def test_start_offline_gathering_sets_player_activity():
 def test_start_offline_gathering_rejects_existing_activity():
     player = {
         "offline_activity": create_offline_gathering_activity(
-            "forest_goblin",
+            "forest_rat_outskirts",
             "druid",
             current_time=1000,
         )
     }
 
-    result = start_offline_gathering(player, "forest_goblin", "druid")
+    result = start_offline_gathering(player, "forest_rat_outskirts", "druid")
 
     assert result == {"started": False, "reason": "activity_already_active"}
 
@@ -98,7 +98,7 @@ def test_start_offline_gathering_rejects_existing_activity():
 def test_stop_offline_activity_clears_activity():
     player = {
         "offline_activity": create_offline_gathering_activity(
-            "forest_goblin",
+            "forest_rat_outskirts",
             "druid",
             current_time=1000,
         )
@@ -147,7 +147,7 @@ def test_calculate_offline_ticks_returns_zero_when_not_enough_time():
 def test_get_offline_elapsed_seconds_uses_last_claimed_at():
     player = {
         "offline_activity": create_offline_gathering_activity(
-            "forest_goblin",
+            "forest_rat_outskirts",
             "druid",
             current_time=1000,
         )
@@ -166,7 +166,7 @@ def test_resolve_offline_activity_returns_no_activity():
 
 def test_resolve_offline_activity_returns_not_enough_time():
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -193,13 +193,13 @@ def test_resolve_offline_activity_returns_not_enough_time():
 
 def test_resolve_offline_activity_returns_not_enough_time_with_node_tick():
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
     player = make_player(activity)
     gathering_nodes = {
-        "forest_goblin": {
+        "forest_rat_outskirts": {
             "druid": {
                 "name": "Slow Grove",
                 "tick_seconds": 10,
@@ -233,7 +233,7 @@ def test_resolve_offline_activity_returns_not_enough_time_with_node_tick():
 
 def test_resolve_offline_activity_runs_gathering_ticks(monkeypatch):
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -268,7 +268,7 @@ def test_resolve_offline_activity_runs_gathering_ticks(monkeypatch):
 
 def test_resolve_offline_activity_uses_node_tick_seconds(monkeypatch):
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -292,7 +292,7 @@ def test_resolve_offline_activity_uses_node_tick_seconds(monkeypatch):
 
 def test_resolve_offline_activity_returns_unknown_node():
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "prospector",
         current_time=1000,
     )
@@ -311,7 +311,7 @@ def test_resolve_offline_activity_returns_unknown_node():
 
 def test_resolve_offline_activity_keeps_activity_active_after_resolution(monkeypatch):
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -332,7 +332,7 @@ def test_resolve_offline_activity_keeps_activity_active_after_resolution(monkeyp
 
 def test_resolve_offline_activity_inventory_full_includes_tick_seconds(monkeypatch):
     activity = create_offline_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time=1000,
     )
@@ -369,7 +369,7 @@ def test_game_start_offline_gathering_activity_rejects_unknown_node(monkeypatch)
     game = Game()
     select_first_class(game, monkeypatch)
 
-    result = game.start_offline_gathering_activity("forest_goblin", "prospector")
+    result = game.start_offline_gathering_activity("forest_rat_outskirts", "prospector")
 
     assert result == {"started": False, "reason": "unknown_node"}
 
@@ -378,7 +378,7 @@ def test_game_start_offline_gathering_activity_stores_activity(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
 
-    result = game.start_offline_gathering_activity("forest_goblin", "druid")
+    result = game.start_offline_gathering_activity("forest_rat_outskirts", "druid")
 
     assert result["started"] is True
     assert isinstance(game.player["offline_activity"], dict)

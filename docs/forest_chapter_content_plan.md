@@ -525,6 +525,13 @@ Bonus possibles :
 
 Note : certaines recettes peuvent produire des alternatives craftables a des items de set droppables. Cela permet de limiter la frustration du joueur.
 
+### Temporary legacy overlap
+
+- `wolf_fang_charm` is currently both craftable and dropped by legacy enemies `wolf` / `troll`.
+- This is accepted temporarily because old forest content has not been migrated yet.
+- When the forest transition is implemented, old generic `wolf` / `troll` drops should be reviewed.
+- New Forest narrative enemies should avoid crafting/drop overlaps unless explicitly designed.
+
 ---
 
 ## Quetes Foret V1

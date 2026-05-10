@@ -194,6 +194,8 @@ class CraftingScreen:
         )
 
         if result.get("crafted") is True:
+            if hasattr(self.game, "record_craft_quest_progress"):
+                self.game.record_craft_quest_progress(self.selected_recipe_id, result)
             self._save_current_game()
             result_name = self._get_recipe_result_name(self._get_selected_recipe())
             self._set_message(f"Crafted: {result_name}", True)

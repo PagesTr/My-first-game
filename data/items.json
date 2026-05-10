@@ -388,10 +388,10 @@
     "set_id": "wolf_stalker",
     "level": 1,
     "rarity": "rare",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "crit_chance": 0.03,
-      "crit_damage": 0.10
+      "crit_damage": 0.1
     },
     "rarity_weights": {
       "uncommon": 65,
@@ -590,11 +590,11 @@
       "dexterity": 2,
       "luck": 1,
       "attack": 10,
-      "crit_chance": 0.10,
-      "crit_damage": 0.50,
+      "crit_chance": 0.1,
+      "crit_damage": 0.5,
       "initiative": 2,
-      "gold_bonus": 0.10,
-      "xp_bonus": 0.10,
+      "gold_bonus": 0.1,
+      "xp_bonus": 0.1,
       "rare_find_bonus": 0.05
     },
     "rarity_weights": {
@@ -657,17 +657,6 @@
       "value": 2
     }
   },
-  "goblin_charm": {
-    "name": "Goblin Charm",
-    "type": "resource",
-    "category": "monster_drop",
-    "level": 1,
-    "rarity": "rare",
-    "economic_source": "dropped_resource",
-    "stats": {
-      "value": 15
-    }
-  },
   "ancient_bone": {
     "name": "Ancient Bone",
     "type": "resource",
@@ -688,17 +677,6 @@
     "economic_source": "dropped_resource",
     "stats": {
       "value": 6
-    }
-  },
-  "sharp_fang": {
-    "name": "Sharp Fang",
-    "type": "resource",
-    "category": "monster_drop",
-    "level": 1,
-    "rarity": "rare",
-    "economic_source": "dropped_resource",
-    "stats": {
-      "value": 20
     }
   },
   "bandit_badge": {
@@ -859,6 +837,500 @@
     "manual_sell_price": 10,
     "stats": {
       "value": 10
+    }
+  },
+  "rat_tail": {
+    "name": "Rat Tail",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "Proof that even the smallest forest resident can become paperwork.",
+    "manual_sell_price": 2,
+    "stats": {
+      "value": 2
+    }
+  },
+  "small_fang": {
+    "name": "Small Fang",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "Tiny, sharp, and proud of both facts.",
+    "manual_sell_price": 3,
+    "stats": {
+      "value": 3
+    }
+  },
+  "torn_cloth": {
+    "name": "Torn Cloth",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "Formerly clothing. Currently evidence.",
+    "manual_sell_price": 3,
+    "stats": {
+      "value": 3
+    }
+  },
+  "crude_charm": {
+    "name": "Crude Charm",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
+    "description": "It might be magical. It is definitely ugly.",
+    "manual_sell_price": 9,
+    "stats": {
+      "value": 9
+    }
+  },
+  "scout_badge": {
+    "name": "Scout Badge",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "A badge awarded for looking busy near danger.",
+    "manual_sell_price": 6,
+    "stats": {
+      "value": 6
+    }
+  },
+  "goblin_map_scrap": {
+    "name": "Goblin Map Scrap",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
+    "description": "The route is wrong, but the confidence is inspiring.",
+    "manual_sell_price": 12,
+    "stats": {
+      "value": 12
+    }
+  },
+  "wolf_fang": {
+    "name": "Wolf Fang",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
+    "description": "A practical reminder that wolves negotiate poorly.",
+    "manual_sell_price": 8,
+    "stats": {
+      "value": 8
+    }
+  },
+  "wild_heart": {
+    "name": "Wild Heart",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
+    "description": "Still warm. The forest is being dramatic again.",
+    "manual_sell_price": 24,
+    "stats": {
+      "value": 24
+    }
+  },
+  "thorn_essence": {
+    "name": "Thorn Essence",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "Pure spite, conveniently bottled by violence.",
+    "manual_sell_price": 6,
+    "stats": {
+      "value": 6
+    }
+  },
+  "forest_spore": {
+    "name": "Forest Spore",
+    "type": "resource",
+    "category": "gathering_druid",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "gathered_resource",
+    "description": "It glows softly. Nothing worrying ever glows softly.",
+    "manual_sell_price": 11,
+    "stats": {
+      "value": 11
+    }
+  },
+  "chewed_bone": {
+    "name": "Chewed Bone",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "common",
+    "economic_source": "dropped_resource",
+    "description": "The previous owner is not available for comment.",
+    "manual_sell_price": 4,
+    "stats": {
+      "value": 4
+    }
+  },
+  "cracked_skull": {
+    "name": "Cracked Skull",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "description": "A grim little bowl for bad decisions.",
+    "manual_sell_price": 20,
+    "stats": {
+      "value": 20
+    }
+  },
+  "old_charm_fragment": {
+    "name": "Old Charm Fragment",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "gathered_resource",
+    "description": "Half a charm, all of the ominous energy.",
+    "manual_sell_price": 10,
+    "stats": {
+      "value": 10
+    }
+  },
+  "broken_adventurer_tag": {
+    "name": "Broken Adventurer Tag",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "description": "The name is unreadable. The outcome is not.",
+    "manual_sell_price": 18,
+    "stats": {
+      "value": 18
+    }
+  },
+  "rusted_ring": {
+    "name": "Rusted Ring",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
+    "description": "Romance, tragedy, or just poor storage conditions.",
+    "manual_sell_price": 22,
+    "stats": {
+      "value": 22
+    }
+  },
+  "shaman_totem": {
+    "name": "Shaman Totem",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
+    "description": "Carved with care, painted with panic.",
+    "manual_sell_price": 12,
+    "stats": {
+      "value": 12
+    }
+  },
+  "ritual_paint": {
+    "name": "Ritual Paint",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
+    "description": "Mostly mud. Probably not only mud.",
+    "manual_sell_price": 21,
+    "stats": {
+      "value": 21
+    }
+  },
+  "alpha_fang": {
+    "name": "Alpha Fang",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_resource",
+    "description": "Large enough to explain the confidence.",
+    "manual_sell_price": 14,
+    "stats": {
+      "value": 14
+    }
+  },
+  "rootbound_relic": {
+    "name": "Rootbound Relic",
+    "type": "resource",
+    "category": "gathering_archaeology",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "description": "A relic wrapped in roots, because the forest has boundary issues.",
+    "manual_sell_price": 24,
+    "stats": {
+      "value": 24
+    }
+  },
+  "briar_sap": {
+    "name": "Briar Sap",
+    "type": "resource",
+    "category": "gathering_druid",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "description": "Sticky, sharp-smelling, and quietly judgmental.",
+    "manual_sell_price": 20,
+    "stats": {
+      "value": 20
+    }
+  },
+  "rootcaller_totem": {
+    "name": "Rootcaller Totem",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_resource",
+    "description": "It still hums with orders the roots are tired of hearing.",
+    "manual_sell_price": 30,
+    "stats": {
+      "value": 30
+    }
+  },
+  "corrupted_root": {
+    "name": "Corrupted Root",
+    "type": "resource",
+    "category": "gathering_druid",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "gathered_resource",
+    "description": "A root that made several poor lifestyle choices.",
+    "manual_sell_price": 26,
+    "stats": {
+      "value": 26
+    }
+  },
+  "forest_core": {
+    "name": "Forest Core",
+    "type": "resource",
+    "category": "monster_drop",
+    "level": 1,
+    "rarity": "epic",
+    "economic_source": "dropped_resource",
+    "description": "A pulsing piece of the forest's anger. It is warm, which is rarely reassuring.",
+    "manual_sell_price": 55,
+    "stats": {
+      "value": 55
+    }
+  },
+  "scavenger_gloves": {
+    "name": "Scavenger Gloves",
+    "type": "equipment",
+    "category": "gloves",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "description": "Good for grabbing loot and ignoring hygiene.",
+    "stats": {
+      "luck": 1,
+      "loot_bonus": 0.03
+    }
+  },
+  "scavenger_badge": {
+    "name": "Scavenger Badge",
+    "type": "equipment",
+    "category": "trinket",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "A badge for professional rummaging and amateur survival.",
+    "stats": {
+      "luck": 1,
+      "loot_bonus": 0.02
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "lucky_goblin_totem": {
+    "name": "Lucky Goblin Totem",
+    "type": "equipment",
+    "category": "trinket",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "crafted_item",
+    "description": "Lucky by goblin standards, which is a negotiable claim.",
+    "stats": {
+      "luck": 1,
+      "gold_bonus": 0.03,
+      "loot_bonus": 0.02
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
+  "goblin_ritual_amulet": {
+    "name": "Goblin Ritual Amulet",
+    "type": "equipment",
+    "category": "amulet",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "crafted_item",
+    "description": "Smells like smoke, roots, and bad leadership.",
+    "stats": {
+      "wisdom": 1,
+      "loot_bonus": 0.03,
+      "rare_find_bonus": 0.01
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
+  "wolf_stalker_boots": {
+    "name": "Wolf Stalker Boots",
+    "type": "equipment",
+    "category": "boots",
+    "set_id": "wolf_stalker",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "description": "Quiet enough for stalking, loud enough for bad ideas.",
+    "stats": {
+      "dodge_chance": 0.02,
+      "initiative": 1
+    }
+  },
+  "wolf_stalker_gloves": {
+    "name": "Wolf Stalker Gloves",
+    "type": "equipment",
+    "category": "gloves",
+    "set_id": "wolf_stalker",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "For gripping fangs, leather, and terrible plans.",
+    "stats": {
+      "dexterity": 1,
+      "crit_chance": 0.02
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "forest_gatherer_gloves": {
+    "name": "Forest Gatherer Gloves",
+    "type": "equipment",
+    "category": "gloves",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "dropped_item",
+    "description": "The thorns still win, but less often.",
+    "stats": {
+      "druid_mastery": 1,
+      "gathering_xp_bonus": 0.02
+    }
+  },
+  "adventurer_relic_ring": {
+    "name": "Adventurer Relic Ring",
+    "type": "equipment",
+    "category": "ring",
+    "set_id": "forest_remnant",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "description": "Someone else's lucky ring. Results were mixed.",
+    "stats": {
+      "wisdom": 1,
+      "xp_bonus": 0.03
+    }
+  },
+  "wolf_stalker_hood": {
+    "name": "Wolf Stalker Hood",
+    "type": "equipment",
+    "category": "helmet",
+    "set_id": "wolf_stalker",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "description": "Smells faintly of wolf. That is somehow the point.",
+    "stats": {
+      "dexterity": 1,
+      "crit_chance": 0.03
+    }
+  },
+  "rootbound_amulet": {
+    "name": "Rootbound Amulet",
+    "type": "equipment",
+    "category": "amulet",
+    "set_id": "forest_remnant",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "description": "It pulls toward buried things. Polite people call that a feature.",
+    "stats": {
+      "wisdom": 1,
+      "archaeologist_mastery": 1
+    }
+  },
+  "bone_signet": {
+    "name": "Bone Signet",
+    "type": "equipment",
+    "category": "ring",
+    "set_id": "forest_remnant",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "A ring made from bones. Subtlety died nearby.",
+    "stats": {
+      "wisdom": 1,
+      "defense": 1
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "forest_remnant_trinket": {
+    "name": "Forest Remnant Trinket",
+    "type": "equipment",
+    "category": "trinket",
+    "set_id": "forest_remnant",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "dropped_item",
+    "description": "A keepsake from a place that keeps too much.",
+    "stats": {
+      "wisdom": 1,
+      "xp_bonus": 0.03,
+      "gathering_xp_bonus": 0.03
     }
   },
   "sealed_quest_letter": {
