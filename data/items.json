@@ -1174,6 +1174,65 @@
       "loot_bonus": 0.03
     }
   },
+  "scavenger_badge": {
+    "name": "Scavenger Badge",
+    "type": "equipment",
+    "category": "trinket",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "A badge for professional rummaging and amateur survival.",
+    "stats": {
+      "luck": 1,
+      "loot_bonus": 0.02
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
+    }
+  },
+  "lucky_goblin_totem": {
+    "name": "Lucky Goblin Totem",
+    "type": "equipment",
+    "category": "trinket",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "crafted_item",
+    "description": "Lucky by goblin standards, which is a negotiable claim.",
+    "stats": {
+      "luck": 1,
+      "gold_bonus": 0.03,
+      "loot_bonus": 0.02
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
+  "goblin_ritual_amulet": {
+    "name": "Goblin Ritual Amulet",
+    "type": "equipment",
+    "category": "amulet",
+    "set_id": "goblin_scavenger",
+    "level": 1,
+    "rarity": "rare",
+    "economic_source": "crafted_item",
+    "description": "Smells like smoke, roots, and bad leadership.",
+    "stats": {
+      "wisdom": 1,
+      "loot_bonus": 0.03,
+      "rare_find_bonus": 0.01
+    },
+    "rarity_weights": {
+      "uncommon": 65,
+      "rare": 30,
+      "epic": 5
+    }
+  },
   "wolf_stalker_boots": {
     "name": "Wolf Stalker Boots",
     "type": "equipment",
@@ -1186,6 +1245,25 @@
     "stats": {
       "dodge_chance": 0.02,
       "initiative": 1
+    }
+  },
+  "wolf_stalker_gloves": {
+    "name": "Wolf Stalker Gloves",
+    "type": "equipment",
+    "category": "gloves",
+    "set_id": "wolf_stalker",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "For gripping fangs, leather, and terrible plans.",
+    "stats": {
+      "dexterity": 1,
+      "crit_chance": 0.02
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
     }
   },
   "forest_gatherer_gloves": {
@@ -1241,6 +1319,25 @@
     "stats": {
       "wisdom": 1,
       "archaeologist_mastery": 1
+    }
+  },
+  "bone_signet": {
+    "name": "Bone Signet",
+    "type": "equipment",
+    "category": "ring",
+    "set_id": "forest_remnant",
+    "level": 1,
+    "rarity": "uncommon",
+    "economic_source": "crafted_item",
+    "description": "A ring made from bones. Subtlety died nearby.",
+    "stats": {
+      "wisdom": 1,
+      "defense": 1
+    },
+    "rarity_weights": {
+      "common": 55,
+      "uncommon": 35,
+      "rare": 10
     }
   },
   "forest_remnant_trinket": {
