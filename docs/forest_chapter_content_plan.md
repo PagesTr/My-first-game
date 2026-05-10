@@ -10,6 +10,32 @@ Le chapitre Foret doit servir de modele pour les futurs chapitres : Caves, Mount
 
 ---
 
+## Ton narratif du chapitre
+
+Le chapitre Foret doit suivre les principes de `docs/narrative_tone_guidelines.md` :
+
+```text
+humour sarcastique / taquin
+fantasy absurde controlee
+epique ponctuel
+mort des aventuriers traitee comme une memoire du monde
+```
+
+La Foret commence avec un ton leger : rats, gobelins maladroits, loups opportunistes, premieres recoltes. Puis elle devient progressivement plus inquietante : ossements, anciens aventuriers, racines anormales, totems, boss Rootcaller.
+
+Exemples de tonalite attendue :
+
+```text
+"La lisiere de la foret est infestee de rats, de gobelins et de mauvaises decisions."
+"Un autre aventurier est tombe ici. Bonne nouvelle : il avait laisse des ossements exploitables."
+"Le camp gobelin est silencieux. Trop silencieux. Ou alors ils dorment. Dans les deux cas, c'est l'occasion de faire une erreur heroique."
+"Grubfang leve son totem. La foret repond. Mauvaise nouvelle : elle repond fort."
+```
+
+Regle importante : l'humour ne doit jamais masquer les objectifs, les recompenses ou la lisibilite gameplay.
+
+---
+
 ## Vision du chapitre Foret
 
 La Foret doit raconter une progression complete :
@@ -18,8 +44,9 @@ La Foret doit raconter une progression complete :
 Town
 -> Forest Outskirts
 -> Deeper Trails
--> Buried Grove
+-> Buried Paths
 -> Goblin Camp
+-> Buried Grove
 -> Forest boss
 -> unlock next chapter
 ```
@@ -61,79 +88,130 @@ Goblin Shaman -> shaman_totem
 Alpha Wolf -> alpha_fang
 ```
 
-Certains ennemis peuvent aussi avoir une ressource rare.
+### 2. Ressources rares selectives
 
-Exemples :
+Tous les ennemis ne doivent pas avoir une ressource rare.
+
+Les ressources rares doivent rester excitantes, lisibles et memorables. Elles doivent etre reservees a certains ennemis marquants, mini-boss, boss, ou ennemis de transition narrative.
+
+Bon usage :
 
 ```text
 Forest Wolf -> wild_heart
-Goblin Shaman -> ritual_paint
 Lost Adventurer -> rusted_ring
+Goblin Shaman -> ritual_paint
 Alpha Wolf -> alpha_fang
 Boss -> forest_core
 ```
 
-Objectif : chaque ennemi doit donner envie d'etre farme pour une raison precise.
+Mauvais usage :
+
+```text
+chaque rat a un drop rare
+chaque gobelin a une relique unique
+chaque ennemi a trois composants rares
+```
+
+### 3. Certains items de set peuvent dropper directement
+
+Tous les items de set ne doivent pas venir du craft.
+
+Pour rendre le farm plus satisfaisant :
+
+```text
+certains items de set peuvent dropper directement sur des ennemis specifiques
+certains items de set viennent du craft
+certains items de set viennent de quetes
+certains items de set viennent de donjons ou boss
+```
+
+Priorite : faire dropper des pieces de set sur des ennemis hors donjon, pour donner de l'interet aux zones generiques.
+
+Exemples :
+
+```text
+Forest Wolf -> Wolf Stalker Boots
+Goblin Scout -> Scavenger Gloves
+Lost Adventurer -> Adventurer Relic Ring
+Thorn Sprite -> Forest Gatherer Gloves
+```
+
+Les donjons doivent plutot donner :
+
+```text
+composants rares
+pieces plus fortes
+recettes
+items de fin de set
+```
+
+### 4. Certaines pieces viennent des quetes
+
+Les quetes peuvent donner une piece de set ou un composant cible pour guider le joueur sans le forcer a farmer aveuglement.
+
+Exemples :
+
+```text
+The Pack Watches -> Wolf Fang Charm
+Smoke Above the Trees -> Scavenger Badge
+Bones Under the Roots -> Bone Signet
+The Buried Grove -> Rootbound Amulet recipe or component
+```
+
+### 5. PNJ a prevoir
+
+Le monde doit contenir des PNJ. Leur implementation n'est pas encore actee, mais le contenu narratif doit les anticiper.
+
+Roles possibles :
+
+```text
+Quest giver
+merchant specialiste
+profession trainer
+lore narrator
+sarcastic camp attendant
+dungeon guide
+achievement keeper
+```
+
+PNJ Foret potentiels :
+
+| PNJ id propose | Nom visible | Role | Ton |
+|---|---|---|---|
+| camp_quartermaster | Quartermaster Brindle | Donne les premieres quetes et recompenses | pragmatique, pince-sans-rire |
+| old_herbalist | Maela the Herbalist | Introduit Druid et consommables | douce mais sarcastique |
+| bone_scribe | Archivist Osric | Introduit Archaeologist et ossements | morbide poli |
+| retired_scout | Fen the One-Time Scout | Donne des infos sur loups/gobelins | bravache, peu credible |
+| dungeon_warden | Gatekeeper Marn | Introduit donjons | solennel, fatigue |
+
+Note technique future : les PNJ pourront etre ajoutes dans un fichier dedie, par exemple `data/npcs.json`, quand un systeme de quetes/dialogues existera.
 
 ---
 
-### 2. Separation claire des sources
-
-Les ressources doivent rester separees par origine.
+## Separation claire des sources
 
 | Source | Role | Exemples |
 |---|---|---|
 | Enemy drops | Identite des monstres | goblin_ear, wolf_fang, scout_badge |
-| Rare enemy drops | Objectifs de farm plus excitants | wild_heart, ritual_paint, rusted_ring |
+| Rare enemy drops | Objectifs de farm ponctuels | wild_heart, ritual_paint, rusted_ring |
 | Gathering resources | Identite des metiers et zones | healing_herb, buried_bones, forest_spore |
+| Direct set drops | Surprise et satisfaction de farm | wolf_stalker_boots, scavenger_gloves |
+| Quest rewards | Guidage intelligent | bone_signet, wolf_fang_charm |
 | Hybrid crafts | Lien combat + metier | wolf_fang + wild_root, goblin_totem + old_charm_fragment |
 | Boss resources | Progression majeure | forest_core, rootcaller_totem |
 
 ---
 
-### 3. Les quetes guident, les succes recompensent
-
-Les quetes doivent guider le joueur dans le contenu.
-
-Les succes doivent recompenser l'exploration, la repetition et la maitrise.
-
-```text
-Quests = progression, histoire, debloquage.
-Achievements = objectifs optionnels, bonus permanents legers.
-```
-
----
-
-### 4. Le joueur doit etre pousse sans etre frustre
-
-Mauvaise logique :
-
-```text
-Tue 200 loups sinon tu bloques.
-```
-
-Bonne logique :
-
-```text
-Si tu chasses les loups, tu progresses vers un set crit/dodge utile.
-Si tu recoltes dans la foret, tu obtiens des composants pour des consommables et objets hybrides.
-Si tu explores les ossements, tu debloques du lore et des bonus XP/metier.
-```
-
----
-
 ## Chronologie du chapitre Foret
-
-### Vue d'ensemble
 
 | Palier | Zone / contenu | Role gameplay | Role narratif |
 |---|---|---|---|
-| 1 | Forest Outskirts | Introduction combat, drops simples | La foret semble banale |
-| 2 | Deeper Trails | Builds crit/dodge/loot | La foret devient hostile |
-| 3 | Buried Grove | Archaeology, traces de morts | Les anciens aventuriers sont enfouis ici |
-| 4 | Goblin Camp | Premier donjon simple | Les gobelins organisent la foret |
-| 5 | Rootbound Grove | Donjon nature/relique | La corruption est ancienne |
-| 6 | Forest Boss | Fin de chapitre | La racine du probleme est revelee |
+| 1 | Forest Outskirts | Introduction combat, drops simples | La foret semble banale, donc suspecte |
+| 2 | Deeper Trails | Builds crit/dodge/loot | La foret devient hostile et se moque un peu du joueur |
+| 3 | Buried Paths | Archaeology, traces de morts | Les anciens aventuriers sont enfouis ici, parfois avec leurs affaires |
+| 4 | Goblin Camp | Premier donjon simple | Les gobelins organisent la foret, ce qui est inquietant pour tout le monde |
+| 5 | Buried Grove | Donjon nature/relique | La corruption est ancienne, les racines ont de la memoire |
+| 6 | Forest Boss | Fin de chapitre | La racine du probleme est revelee, litteralement |
 
 ---
 
@@ -141,28 +219,29 @@ Si tu explores les ossements, tu debloques du lore et des bonus XP/metier.
 
 ### Liste longue d'ennemis
 
-| Ordre | Enemy id propose | Nom visible | Famille | Role gameplay | Drop specifique | Drop rare potentiel |
-|---:|---|---|---|---|---|---|
-| 1 | forest_rat | Forest Rat | beast | Ennemi tres simple | rat_tail | small_fang |
-| 2 | young_goblin | Young Goblin | goblin | Introduction gobelin | goblin_ear | crude_charm |
-| 3 | stray_wolf | Stray Wolf | wolf | Introduction bete rapide | wolf_pelt | small_fang |
-| 4 | goblin_scout | Goblin Scout | goblin | Loot/gold/luck | scout_badge | goblin_map_scrap |
-| 5 | forest_wolf | Forest Wolf | wolf | Crit/dodge | wolf_fang | wild_heart |
-| 6 | thorn_sprite | Thorn Sprite | nature | Lien druid/craft nature | thorn_essence | forest_spore |
-| 7 | bone_gnawer | Bone Gnawer | scavenger | Lien ossements | chewed_bone | cracked_skull |
-| 8 | lost_adventurer | Lost Adventurer | fallen | Lore boucle de mort | broken_adventurer_tag | rusted_ring |
-| 9 | goblin_shaman | Goblin Shaman | goblin | Magie primitive/totems | shaman_totem | ritual_paint |
-| 10 | alpha_wolf | Alpha Wolf | wolf | Mini-boss / pre-boss | alpha_fang | wild_heart |
-| 11 | rootbound_remnant | Rootbound Remnant | nature/fallen | Mini-boss donjon | rootbound_relic | briar_sap |
-| 12 | grubfang_rootcaller | Grubfang, Rootcaller | boss | Boss Foret | rootcaller_totem | forest_core |
+| Ordre | Enemy id propose | Nom visible | Famille | Role gameplay | Drop specifique | Drop rare selectif | Piece de set directe possible |
+|---:|---|---|---|---|---|---|---|
+| 1 | forest_rat | Forest Rat | beast | Ennemi tres simple | rat_tail | - | - |
+| 2 | young_goblin | Young Goblin | goblin | Introduction gobelin | goblin_ear | - | - |
+| 3 | stray_wolf | Stray Wolf | wolf | Introduction bete rapide | wolf_pelt | - | - |
+| 4 | goblin_scout | Goblin Scout | goblin | Loot/gold/luck | scout_badge | goblin_map_scrap | scavenger_gloves |
+| 5 | forest_wolf | Forest Wolf | wolf | Crit/dodge | wolf_fang | wild_heart | wolf_stalker_boots |
+| 6 | thorn_sprite | Thorn Sprite | nature | Lien druid/craft nature | thorn_essence | - | forest_gatherer_gloves |
+| 7 | bone_gnawer | Bone Gnawer | scavenger | Lien ossements | chewed_bone | cracked_skull | - |
+| 8 | lost_adventurer | Lost Adventurer | fallen | Lore boucle de mort | broken_adventurer_tag | rusted_ring | adventurer_relic_ring |
+| 9 | goblin_shaman | Goblin Shaman | goblin | Magie primitive/totems | shaman_totem | ritual_paint | - |
+| 10 | alpha_wolf | Alpha Wolf | wolf | Mini-boss / pre-boss | alpha_fang | wild_heart | wolf_stalker_hood |
+| 11 | rootbound_remnant | Rootbound Remnant | nature/fallen | Mini-boss donjon | rootbound_relic | briar_sap | rootbound_amulet |
+| 12 | grubfang_rootcaller | Grubfang, Rootcaller | boss | Boss Foret | rootcaller_totem | forest_core | forest_remnant_trinket |
 
 Notes :
 
-- Tous ces ennemis ne doivent pas forcement etre disponibles en meme temps.
 - Les ennemis 1 a 3 servent d'introduction.
 - Les ennemis 4 a 6 ouvrent les premiers builds.
 - Les ennemis 7 a 8 installent le theme des morts et de l'archeologie.
 - Les ennemis 9 a 12 structurent les donjons et le boss.
+- Les pieces de set directes doivent rester rares, mais visibles dans les objectifs du joueur.
+- Les ennemis hors donjon doivent recevoir quelques drops de set pour eviter que tout l'interet soit concentre dans les donjons.
 
 ---
 
@@ -202,6 +281,7 @@ Recommandation technique future : garder les zones actuelles tant que necessaire
 | Mini-boss | goblin_quartermaster |
 | Set lie | Goblin Scavenger |
 | Ressources cles | goblin_ear, scout_badge, shaman_totem, goblin_map_scrap |
+| Ton | sarcastique, gobelins trop organises pour etre rassurants |
 
 #### Route fixe V1
 
@@ -215,6 +295,12 @@ Room 5: Goblin Quartermaster
 
 V1 technique possible : une route fixe de combats successifs, sans carte visuelle.
 
+Exemple d'intro :
+
+```text
+De la fumee monte entre les arbres. Quelque part, un gobelin a decouvert le feu, l'organisation et probablement la fraude fiscale.
+```
+
 ---
 
 ### Donjon 2 — Buried Grove
@@ -227,8 +313,9 @@ V1 technique possible : une route fixe de combats successifs, sans carte visuell
 | Role gameplay | donjon hybride druid + archaeologist + lore |
 | Ennemis | thorn_sprite, bone_gnawer, lost_adventurer |
 | Mini-boss | rootbound_remnant |
-| Set lie | Rootbound Relic / Forest Remnant |
+| Set lie | Forest Remnant |
 | Ressources cles | buried_bones, cracked_skull, broken_adventurer_tag, rootbound_relic |
+| Ton | plus epique, sarcastique noir leger |
 
 #### Route fixe V1
 
@@ -241,6 +328,12 @@ Room 5: Rootbound Remnant
 ```
 
 Ce donjon est important pour raconter que les personnages qui meurent laissent des traces exploitables par l'archeologue.
+
+Exemple d'intro :
+
+```text
+Sous les racines, les noms des anciens heros murmurent encore. Certains murmurent surtout qu'ils auraient du rester en ville.
+```
 
 ---
 
@@ -257,7 +350,14 @@ Ce donjon est important pour raconter que les personnages qui meurent laissent d
 | Role gameplay | fin de chapitre Foret |
 | Drops principaux | rootcaller_totem, corrupted_root |
 | Drop rare | forest_core |
+| Piece de set directe | forest_remnant_trinket |
 | Unlock | Caves / prochain chapitre |
+
+Exemple d'intro :
+
+```text
+Les racines se tordent sous ses pieds. Son totem pulse d'une energie ancienne. Il va probablement crier quelque chose de dramatique.
+```
 
 ### Idee a garder : boss qui tue le joueur en fin de donjon
 
@@ -335,21 +435,21 @@ Le prospector doit rester secondaire en Foret. Il brillera surtout dans les Cave
 | Fantaisie | chasseur rapide, predateur |
 | Pieces possibles | hood, gloves, boots, ring |
 
+Distribution recommandee :
+
+| Piece | Source recommandee |
+|---|---|
+| wolf_stalker_boots | drop Forest Wolf hors donjon |
+| wolf_stalker_gloves | craft wolf_fang + forest_spore |
+| wolf_stalker_hood | drop Alpha Wolf |
+| alpha_stalker_ring | craft alpha_fang + wild_heart |
+
 Bonus possibles :
 
 ```text
 2 pieces: +dexterity
 3 pieces: +crit_chance
 4 pieces: +dodge_chance or initiative
-```
-
-Crafts possibles :
-
-```text
-wolf_pelt + wild_root -> Wolf Stalker Hood
-wolf_fang + forest_spore -> Wolf Fang Charm
-sharp_claw + leather -> Wolf Stalker Gloves
-alpha_fang + wild_heart -> Alpha Stalker Ring
 ```
 
 ---
@@ -363,21 +463,21 @@ alpha_fang + wild_heart -> Alpha Stalker Ring
 | Fantaisie | recup, vol, butin |
 | Pieces possibles | trinket, gloves, boots, amulet |
 
+Distribution recommandee :
+
+| Piece | Source recommandee |
+|---|---|
+| scavenger_gloves | drop Goblin Scout hors donjon |
+| scavenger_badge | recompense de quete Smoke Above the Trees ou craft scout_badge + old_charm_fragment |
+| lucky_goblin_totem | craft goblin_totem + cracked_skull |
+| goblin_ritual_amulet | donjon Goblin Camp / Goblin Shaman |
+
 Bonus possibles :
 
 ```text
 2 pieces: +luck
 3 pieces: +gold_bonus
 4 pieces: +loot_bonus
-```
-
-Crafts possibles :
-
-```text
-goblin_ear + torn_cloth -> Scavenger Gloves
-scout_badge + old_charm_fragment -> Scavenger Badge
-goblin_totem + cracked_skull -> Lucky Goblin Totem
-shaman_totem + ritual_paint -> Goblin Ritual Amulet
 ```
 
 ---
@@ -391,6 +491,15 @@ shaman_totem + ritual_paint -> Goblin Ritual Amulet
 | Fantaisie | traces des anciens personnages morts |
 | Pieces possibles | ring, amulet, trinket, pants |
 
+Distribution recommandee :
+
+| Piece | Source recommandee |
+|---|---|
+| adventurer_relic_ring | drop Lost Adventurer hors donjon |
+| bone_signet | recompense de quete Bones Under the Roots ou craft buried_bones + cracked_skull |
+| rootbound_amulet | donjon Buried Grove |
+| forest_remnant_trinket | boss Grubfang, Rootcaller |
+
 Bonus possibles :
 
 ```text
@@ -399,29 +508,22 @@ Bonus possibles :
 4 pieces: +wisdom or xp_bonus
 ```
 
-Crafts possibles :
-
-```text
-buried_bones + cracked_skull -> Bone Signet
-broken_adventurer_tag + old_charm_fragment -> Adventurer Relic
-rootbound_relic + briar_sap -> Rootbound Amulet
-forest_core + rootcaller_totem -> Forest Remnant Trinket
-```
-
 ---
 
 ## Crafts Foret proposes
 
-| Recipe id propose | Resultat | Ingredients | Role |
-|---|---|---|---|
-| craft_herbal_poultice | Herbal Poultice | healing_herb + forest_spore | consommable soin |
-| craft_wolf_fang_charm | Wolf Fang Charm | wolf_fang + wild_root | crit/dodge early |
-| craft_scavenger_badge | Scavenger Badge | scout_badge + old_charm_fragment | loot/gold |
-| craft_bone_signet | Bone Signet | buried_bones + cracked_skull | relic ring |
-| craft_forest_gatherer_gloves | Forest Gatherer Gloves | wild_root + forest_spore | druid mastery |
-| craft_goblin_lucky_totem | Lucky Goblin Totem | goblin_totem + cracked_skull | luck/loot |
-| craft_rootbound_amulet | Rootbound Amulet | rootbound_relic + briar_sap | dungeon reward |
-| craft_forest_core_trinket | Forest Core Trinket | forest_core + rootcaller_totem | boss craft |
+| Recipe id propose | Resultat | Ingredients | Role | Source principale |
+|---|---|---|---|---|
+| craft_herbal_poultice | Herbal Poultice | healing_herb + forest_spore | consommable soin | Druid |
+| craft_wolf_fang_charm | Wolf Fang Charm | wolf_fang + wild_root | crit/dodge early | Wolf + Druid |
+| craft_scavenger_badge | Scavenger Badge | scout_badge + old_charm_fragment | loot/gold | Goblin + Archaeologist |
+| craft_bone_signet | Bone Signet | buried_bones + cracked_skull | relic ring | Archaeologist |
+| craft_forest_gatherer_gloves | Forest Gatherer Gloves | wild_root + forest_spore | druid mastery | Druid |
+| craft_goblin_lucky_totem | Lucky Goblin Totem | goblin_totem + cracked_skull | luck/loot | Goblin + Archaeologist |
+| craft_rootbound_amulet | Rootbound Amulet | rootbound_relic + briar_sap | dungeon reward | Buried Grove |
+| craft_forest_core_trinket | Forest Core Trinket | forest_core + rootcaller_totem | boss craft | Boss |
+
+Note : certaines recettes peuvent produire des alternatives craftables a des items de set droppables. Cela permet de limiter la frustration du joueur.
 
 ---
 
@@ -433,12 +535,25 @@ forest_core + rootcaller_totem -> Forest Remnant Trinket
 |---:|---|---|---|---|---|
 | 1 | forest_secure_outskirts | Secure the Outskirts | Kill forest_rat x5, young_goblin x3 | gold, recipe herbal_poultice | Deep Trails |
 | 2 | forest_first_harvest | First Forest Harvest | Gather healing_herb x5, wild_root x2 | druid XP, forest_spore | basic druid crafts |
-| 3 | forest_pack_watches | The Pack Watches | Kill forest_wolf x5, craft wolf_fang_charm | wolf_fang, recipe wolf set piece | Wolf Stalker craft |
-| 4 | forest_bones_under_roots | Bones Under the Roots | Gather buried_bones x5, kill bone_gnawer x2 | archaeologist XP, old_charm_fragment | Buried Grove |
-| 5 | forest_smoke_above_trees | Smoke Above the Trees | Kill goblin_scout x8, collect scout_badge x3 | gold, recipe scavenger_badge | Goblin Camp |
+| 3 | forest_pack_watches | The Pack Watches | Kill forest_wolf x5, craft wolf_fang_charm | Wolf Fang Charm or wolf_fang bundle | Wolf Stalker craft |
+| 4 | forest_bones_under_roots | Bones Under the Roots | Gather buried_bones x5, kill bone_gnawer x2 | Bone Signet or old_charm_fragment | Buried Grove |
+| 5 | forest_smoke_above_trees | Smoke Above the Trees | Kill goblin_scout x8, collect scout_badge x3 | Scavenger Badge or recipe | Goblin Camp |
 | 6 | forest_clear_goblin_camp | Break the Goblin Camp | Clear Goblin Camp once | shaman_totem, Goblin Scavenger recipe | Ritual Grounds |
 | 7 | forest_buried_grove | The Buried Grove | Clear Buried Grove once, find rootbound_relic | rootbound craft | Boss access |
 | 8 | forest_silence_rootcaller | Silence the Rootcaller | Defeat Grubfang, Rootcaller | forest_core, permanent bonus | Caves |
+
+### Exemple de ton de quete
+
+```text
+Secure the Outskirts
+La lisiere de la foret est infestee de rats, de gobelins et de mauvaises decisions.
+
+Bones Under the Roots
+Quelqu'un a enterre beaucoup trop d'aventuriers ici. L'archeologue appelle ca une opportunite.
+
+Silence the Rootcaller
+La foret a trouve une voix. Mauvaise nouvelle : elle chante faux et invoque des racines.
+```
 
 ### Recompenses permanentes legeres possibles
 
@@ -493,6 +608,34 @@ A utiliser avec moderation :
 ---
 
 ## Architecture systeme a prevoir plus tard
+
+### NPCs V1
+
+Fichiers probables :
+
+```text
+data/npcs.json
+systems/dialogues.py or systems/npcs.py
+tests/test_npcs.py
+```
+
+Structure simple possible :
+
+```json
+{
+  "bone_scribe": {
+    "name": "Archivist Osric",
+    "role": "archaeologist_trainer",
+    "location": "town",
+    "intro_text": "Les os parlent, si on sait ecouter. Et si on accepte l'odeur.",
+    "related_quests": ["forest_bones_under_roots"]
+  }
+}
+```
+
+Ne pas implementer maintenant, mais prevoir les hooks narratifs dans les quetes.
+
+---
 
 ### Quests V1
 
@@ -696,6 +839,19 @@ systems/achievements.py
 tests/test_achievements.py
 ```
 
+### Bloc 6 — NPCs V1
+
+Objectif : ajouter des personnages du monde pour porter quetes, ton et lore.
+
+Fichiers probables :
+
+```text
+data/npcs.json
+systems/npcs.py or systems/dialogues.py
+ui/screens/dialogue_panel.py or simple town panel later
+tests/test_npcs.py
+```
+
 ---
 
 ## Decision recommandee pour le prochain bloc
@@ -717,8 +873,8 @@ Pourquoi :
 ```text
 pas de nouveau gros systeme
 pose la chronologie du monde
-alimente les futurs crafts, sets, quetes et donjons
+alimente les futurs crafts, sets, quetes, donjons et PNJ
 permet de tester les incoherences de data
 ```
 
-Ne pas commencer par les quetes ou les donjons tant que les ennemis, drops et ressources de Foret ne sont pas propres.
+Ne pas commencer par les quetes, donjons ou PNJ tant que les ennemis, drops et ressources de Foret ne sont pas propres.
