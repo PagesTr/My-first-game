@@ -8,6 +8,7 @@ SUPPORTED_EVENT_TYPES = {
     "gather_item",
     "craft_recipe",
     "clear_dungeon",
+    "defeat_boss",
 }
 
 

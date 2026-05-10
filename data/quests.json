@@ -209,6 +209,38 @@
         "quantity": 1
       }
     ],
+    "next_quests": [
+      "forest_silence_rootcaller"
+    ]
+  },
+  "forest_silence_rootcaller": {
+    "name": "Silence the Rootcaller",
+    "description": "The forest has found a voice. Bad news: it chants, commands roots, and has terrible timing.",
+    "chapter": "forest",
+    "order": 8,
+    "objectives": [
+      {
+        "type": "defeat_boss",
+        "target": "grubfang_rootcaller",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 150
+      },
+      {
+        "type": "item",
+        "item": "forest_core",
+        "quantity": 1
+      },
+      {
+        "type": "item",
+        "item": "rootcaller_totem",
+        "quantity": 1
+      }
+    ],
     "next_quests": []
   }
 }

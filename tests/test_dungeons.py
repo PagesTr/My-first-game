@@ -17,7 +17,11 @@ from systems.dungeons import (
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DUNGEONS_PATH = PROJECT_ROOT / "data" / "dungeons.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
-FOREST_DUNGEON_IDS = {"forest_goblin_camp", "forest_buried_grove"}
+FOREST_DUNGEON_IDS = {
+    "forest_goblin_camp",
+    "forest_buried_grove",
+    "forest_rootcaller_lair",
+}
 
 
 def load_json(path):
@@ -137,8 +141,22 @@ def test_forest_dungeons_have_required_fields():
         assert isinstance(dungeon["route"], list)
         assert dungeon["route"]
         assert dungeon["boss_enemy_id"]
-        assert dungeon["scaling_rate"] == 0.15
-        assert dungeon["reward_multiplier_per_victory"] == 0.20
+        assert isinstance(dungeon["scaling_rate"], (int, float))
+        assert dungeon["scaling_rate"] > 0
+        assert isinstance(dungeon["reward_multiplier_per_victory"], (int, float))
+        assert dungeon["reward_multiplier_per_victory"] > 0
+
+
+def test_forest_rootcaller_lair_exists():
+    dungeons = load_json(DUNGEONS_PATH)
+    dungeon = dungeons["forest_rootcaller_lair"]
+    route = get_dungeon_route(dungeon)
+    boss_steps = [step for step in route if is_boss_loop_step(step)]
+
+    assert dungeon["boss_enemy_id"] == "grubfang_rootcaller"
+    assert any(is_rest_choice_step(step) for step in route)
+    assert len(boss_steps) == 1
+    assert boss_steps[0]["enemy_id"] == "grubfang_rootcaller"
 
 
 def test_dungeon_route_enemy_ids_are_valid():

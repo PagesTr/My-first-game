@@ -66,5 +66,23 @@
     "boss_enemy_id": "rootbound_remnant",
     "scaling_rate": 0.15,
     "reward_multiplier_per_victory": 0.20
+  },
+  "forest_rootcaller_lair": {
+    "name": "Rootcaller Lair",
+    "chapter": "forest",
+    "unlock_level": 5,
+    "description": "The forest has found a voice. Unfortunately, it chose a goblin with a flair for drama.",
+    "route": [
+      {
+        "type": "rest_choice"
+      },
+      {
+        "type": "boss_loop",
+        "enemy_id": "grubfang_rootcaller"
+      }
+    ],
+    "boss_enemy_id": "grubfang_rootcaller",
+    "scaling_rate": 0.20,
+    "reward_multiplier_per_victory": 0.25
   }
 }

@@ -372,6 +372,12 @@ class Game:
             result["boss_victories"] = self.active_dungeon["boss_victories"]
             result["reward_multiplier"] = reward_multiplier
             self.last_dungeon_result = result
+            if boss_enemy_id == "grubfang_rootcaller":
+                self.record_quest_event({
+                    "type": "defeat_boss",
+                    "target": "grubfang_rootcaller",
+                    "amount": 1,
+                })
             if hasattr(self, "save_current_game"):
                 self.save_current_game()
             return result
