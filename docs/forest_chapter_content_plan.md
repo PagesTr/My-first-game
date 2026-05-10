@@ -1,0 +1,724 @@
+# Forest Chapter Content Plan
+
+## Objectif du document
+
+Ce document cadre le premier vrai chapitre de contenu du jeu : la Foret.
+
+L'objectif n'est pas encore d'equilibrer les chiffres finement. L'objectif est de structurer le contenu pour obtenir une boucle RPG idle coherente, lisible et satisfaisante.
+
+Le chapitre Foret doit servir de modele pour les futurs chapitres : Caves, Mountains, puis zones plus avancees.
+
+---
+
+## Vision du chapitre Foret
+
+La Foret doit raconter une progression complete :
+
+```text
+Town
+-> Forest Outskirts
+-> Deeper Trails
+-> Buried Grove
+-> Goblin Camp
+-> Forest boss
+-> unlock next chapter
+```
+
+Le joueur doit progressivement exploiter :
+
+```text
+combat
+active gathering
+offline gathering
+craft
+sets
+professions
+quests
+achievements
+dungeons
+boss progression
+```
+
+La Foret ne doit pas etre juste une zone de depart. Elle doit devenir un premier chapitre complet, avec une identite claire.
+
+---
+
+## Principes de design retenus
+
+### 1. Ressource specifique par ennemi
+
+Chaque ennemi important doit avoir au moins une ressource specifique.
+
+Exemples :
+
+```text
+Young Goblin -> goblin_ear
+Goblin Scout -> scout_badge
+Forest Wolf -> wolf_fang
+Thorn Sprite -> thorn_essence
+Lost Adventurer -> broken_adventurer_tag
+Goblin Shaman -> shaman_totem
+Alpha Wolf -> alpha_fang
+```
+
+Certains ennemis peuvent aussi avoir une ressource rare.
+
+Exemples :
+
+```text
+Forest Wolf -> wild_heart
+Goblin Shaman -> ritual_paint
+Lost Adventurer -> rusted_ring
+Alpha Wolf -> alpha_fang
+Boss -> forest_core
+```
+
+Objectif : chaque ennemi doit donner envie d'etre farme pour une raison precise.
+
+---
+
+### 2. Separation claire des sources
+
+Les ressources doivent rester separees par origine.
+
+| Source | Role | Exemples |
+|---|---|---|
+| Enemy drops | Identite des monstres | goblin_ear, wolf_fang, scout_badge |
+| Rare enemy drops | Objectifs de farm plus excitants | wild_heart, ritual_paint, rusted_ring |
+| Gathering resources | Identite des metiers et zones | healing_herb, buried_bones, forest_spore |
+| Hybrid crafts | Lien combat + metier | wolf_fang + wild_root, goblin_totem + old_charm_fragment |
+| Boss resources | Progression majeure | forest_core, rootcaller_totem |
+
+---
+
+### 3. Les quetes guident, les succes recompensent
+
+Les quetes doivent guider le joueur dans le contenu.
+
+Les succes doivent recompenser l'exploration, la repetition et la maitrise.
+
+```text
+Quests = progression, histoire, debloquage.
+Achievements = objectifs optionnels, bonus permanents legers.
+```
+
+---
+
+### 4. Le joueur doit etre pousse sans etre frustre
+
+Mauvaise logique :
+
+```text
+Tue 200 loups sinon tu bloques.
+```
+
+Bonne logique :
+
+```text
+Si tu chasses les loups, tu progresses vers un set crit/dodge utile.
+Si tu recoltes dans la foret, tu obtiens des composants pour des consommables et objets hybrides.
+Si tu explores les ossements, tu debloques du lore et des bonus XP/metier.
+```
+
+---
+
+## Chronologie du chapitre Foret
+
+### Vue d'ensemble
+
+| Palier | Zone / contenu | Role gameplay | Role narratif |
+|---|---|---|---|
+| 1 | Forest Outskirts | Introduction combat, drops simples | La foret semble banale |
+| 2 | Deeper Trails | Builds crit/dodge/loot | La foret devient hostile |
+| 3 | Buried Grove | Archaeology, traces de morts | Les anciens aventuriers sont enfouis ici |
+| 4 | Goblin Camp | Premier donjon simple | Les gobelins organisent la foret |
+| 5 | Rootbound Grove | Donjon nature/relique | La corruption est ancienne |
+| 6 | Forest Boss | Fin de chapitre | La racine du probleme est revelee |
+
+---
+
+## Bestiaire Foret propose
+
+### Liste longue d'ennemis
+
+| Ordre | Enemy id propose | Nom visible | Famille | Role gameplay | Drop specifique | Drop rare potentiel |
+|---:|---|---|---|---|---|---|
+| 1 | forest_rat | Forest Rat | beast | Ennemi tres simple | rat_tail | small_fang |
+| 2 | young_goblin | Young Goblin | goblin | Introduction gobelin | goblin_ear | crude_charm |
+| 3 | stray_wolf | Stray Wolf | wolf | Introduction bete rapide | wolf_pelt | small_fang |
+| 4 | goblin_scout | Goblin Scout | goblin | Loot/gold/luck | scout_badge | goblin_map_scrap |
+| 5 | forest_wolf | Forest Wolf | wolf | Crit/dodge | wolf_fang | wild_heart |
+| 6 | thorn_sprite | Thorn Sprite | nature | Lien druid/craft nature | thorn_essence | forest_spore |
+| 7 | bone_gnawer | Bone Gnawer | scavenger | Lien ossements | chewed_bone | cracked_skull |
+| 8 | lost_adventurer | Lost Adventurer | fallen | Lore boucle de mort | broken_adventurer_tag | rusted_ring |
+| 9 | goblin_shaman | Goblin Shaman | goblin | Magie primitive/totems | shaman_totem | ritual_paint |
+| 10 | alpha_wolf | Alpha Wolf | wolf | Mini-boss / pre-boss | alpha_fang | wild_heart |
+| 11 | rootbound_remnant | Rootbound Remnant | nature/fallen | Mini-boss donjon | rootbound_relic | briar_sap |
+| 12 | grubfang_rootcaller | Grubfang, Rootcaller | boss | Boss Foret | rootcaller_totem | forest_core |
+
+Notes :
+
+- Tous ces ennemis ne doivent pas forcement etre disponibles en meme temps.
+- Les ennemis 1 a 3 servent d'introduction.
+- Les ennemis 4 a 6 ouvrent les premiers builds.
+- Les ennemis 7 a 8 installent le theme des morts et de l'archeologie.
+- Les ennemis 9 a 12 structurent les donjons et le boss.
+
+---
+
+## Zones et sous-zones Foret
+
+### Zones generiques
+
+| Zone id propose | Nom visible | Ennemis principaux | Metiers lies | Role |
+|---|---|---|---|---|
+| forest_outskirts | Forest Outskirts | forest_rat, young_goblin, stray_wolf | druid, archaeologist | Introduction |
+| forest_deep_trails | Deep Forest Trails | goblin_scout, forest_wolf, thorn_sprite | druid | Builds rapides / nature |
+| forest_buried_paths | Buried Forest Paths | bone_gnawer, lost_adventurer | archaeologist, druid | Lore et ossements |
+| forest_ritual_grounds | Ritual Grounds | goblin_shaman, thorn_sprite, alpha_wolf | druid, archaeologist | Pre-boss |
+
+Ces zones peuvent remplacer ou completer les zones actuelles :
+
+```text
+forest_goblin
+forest_wolf
+```
+
+Recommandation technique future : garder les zones actuelles tant que necessaire, puis migrer progressivement vers des zones plus narratives.
+
+---
+
+## Donjons Foret
+
+### Donjon 1 — Goblin Camp
+
+| Champ | Proposition |
+|---|---|
+| Dungeon id | forest_goblin_camp |
+| Nom visible | Goblin Camp |
+| Theme | camp gobelin, vol, bricolage, totems, economie |
+| Role gameplay | premier donjon oriente loot/gold/luck |
+| Ennemis | young_goblin, goblin_scout, goblin_shaman |
+| Mini-boss | goblin_quartermaster |
+| Set lie | Goblin Scavenger |
+| Ressources cles | goblin_ear, scout_badge, shaman_totem, goblin_map_scrap |
+
+#### Route fixe V1
+
+```text
+Room 1: Young Goblin
+Room 2: Goblin Scout
+Room 3: Young Goblin + Goblin Scout
+Room 4: Goblin Shaman
+Room 5: Goblin Quartermaster
+```
+
+V1 technique possible : une route fixe de combats successifs, sans carte visuelle.
+
+---
+
+### Donjon 2 — Buried Grove
+
+| Champ | Proposition |
+|---|---|
+| Dungeon id | forest_buried_grove |
+| Nom visible | Buried Grove |
+| Theme | ossements, racines, anciens aventuriers, memoire de la mort |
+| Role gameplay | donjon hybride druid + archaeologist + lore |
+| Ennemis | thorn_sprite, bone_gnawer, lost_adventurer |
+| Mini-boss | rootbound_remnant |
+| Set lie | Rootbound Relic / Forest Remnant |
+| Ressources cles | buried_bones, cracked_skull, broken_adventurer_tag, rootbound_relic |
+
+#### Route fixe V1
+
+```text
+Room 1: Thorn Sprite
+Room 2: Bone Gnawer
+Room 3: Lost Adventurer
+Room 4: Thorn Sprite + Bone Gnawer
+Room 5: Rootbound Remnant
+```
+
+Ce donjon est important pour raconter que les personnages qui meurent laissent des traces exploitables par l'archeologue.
+
+---
+
+## Boss Foret
+
+### Boss propose — Grubfang, Rootcaller
+
+| Champ | Proposition |
+|---|---|
+| Enemy id | grubfang_rootcaller |
+| Nom visible | Grubfang, Rootcaller |
+| Type | boss |
+| Theme | gobelin chaman corrompu par les racines |
+| Role gameplay | fin de chapitre Foret |
+| Drops principaux | rootcaller_totem, corrupted_root |
+| Drop rare | forest_core |
+| Unlock | Caves / prochain chapitre |
+
+### Idee a garder : boss qui tue le joueur en fin de donjon
+
+Piste de design a conserver :
+
+```text
+Le boss de fin de donjon fonctionne comme une boucle de fin.
+Le joueur affronte une version du boss.
+S'il gagne, le boss revient plus fort.
+Chaque victoire augmente le loot.
+La sequence continue jusqu'a la defaite du joueur.
+```
+
+Avantages :
+
+```text
+coherent avec le concept du jeu
+raconte la mort inevitable du personnage
+rend les donjons plus intenses
+permet un scaling de recompenses
+```
+
+A ne pas implementer tout de suite sans cadrage technique.
+
+Issue / future bloc possible :
+
+```text
+Dev jeu — boss scaling et fin de donjon par defaite
+```
+
+---
+
+## Ressources metier Foret
+
+### Druid
+
+| Ressource | Palier | Source | Usage principal |
+|---|---:|---|---|
+| healing_herb | 1 | Forest Outskirts | consommables |
+| wild_root | 1-2 | Forest Outskirts / Deep Trails | craft nature, bijoux |
+| forest_spore | 2 | Deep Trails | consommables avances, nature gear |
+| briar_sap | 3 | Buried Grove / Ritual Grounds | craft hybride, mini-boss |
+| corrupted_root | boss | Grubfang / boss content | boss gear, unlock craft |
+
+### Archaeologist
+
+| Ressource | Palier | Source | Usage principal |
+|---|---:|---|---|
+| buried_bones | 1 | Buried paths | craft basique relique |
+| cracked_skull | 2 | Bone Gnawer / gathering | anneaux, talismans |
+| old_charm_fragment | 2 | Buried Grove | loot/gold/relic craft |
+| broken_adventurer_tag | 3 | Lost Adventurer | lore, quetes, relic set |
+| rootbound_relic | dungeon | Rootbound Remnant | set hybride / boss key |
+
+### Prospector
+
+Le prospector doit rester secondaire en Foret. Il brillera surtout dans les Caves et Mountains.
+
+| Ressource | Palier | Source | Usage principal |
+|---|---:|---|---|
+| river_stone | 1 | Forest Outskirts | petit composant secondaire |
+| greenstone_chip | 2 | Deep Trails | bijoux simples |
+| mossy_geode | rare | Rare gathering | craft hybride rare |
+
+---
+
+## Sets Foret
+
+### Set 1 — Wolf Stalker
+
+| Champ | Proposition |
+|---|---|
+| Orientation | dexterity, crit_chance, dodge_chance |
+| Source | loups + ressources druid |
+| Fantaisie | chasseur rapide, predateur |
+| Pieces possibles | hood, gloves, boots, ring |
+
+Bonus possibles :
+
+```text
+2 pieces: +dexterity
+3 pieces: +crit_chance
+4 pieces: +dodge_chance or initiative
+```
+
+Crafts possibles :
+
+```text
+wolf_pelt + wild_root -> Wolf Stalker Hood
+wolf_fang + forest_spore -> Wolf Fang Charm
+sharp_claw + leather -> Wolf Stalker Gloves
+alpha_fang + wild_heart -> Alpha Stalker Ring
+```
+
+---
+
+### Set 2 — Goblin Scavenger
+
+| Champ | Proposition |
+|---|---|
+| Orientation | loot_bonus, gold_bonus, luck |
+| Source | gobelins + archaeology fragments |
+| Fantaisie | recup, vol, butin |
+| Pieces possibles | trinket, gloves, boots, amulet |
+
+Bonus possibles :
+
+```text
+2 pieces: +luck
+3 pieces: +gold_bonus
+4 pieces: +loot_bonus
+```
+
+Crafts possibles :
+
+```text
+goblin_ear + torn_cloth -> Scavenger Gloves
+scout_badge + old_charm_fragment -> Scavenger Badge
+goblin_totem + cracked_skull -> Lucky Goblin Totem
+shaman_totem + ritual_paint -> Goblin Ritual Amulet
+```
+
+---
+
+### Set 3 — Forest Remnant
+
+| Champ | Proposition |
+|---|---|
+| Orientation | archaeologist_mastery, druid_mastery, xp_bonus, wisdom |
+| Source | Buried Grove + ressources metier |
+| Fantaisie | traces des anciens personnages morts |
+| Pieces possibles | ring, amulet, trinket, pants |
+
+Bonus possibles :
+
+```text
+2 pieces: +archaeologist_mastery
+3 pieces: +gathering_xp_bonus
+4 pieces: +wisdom or xp_bonus
+```
+
+Crafts possibles :
+
+```text
+buried_bones + cracked_skull -> Bone Signet
+broken_adventurer_tag + old_charm_fragment -> Adventurer Relic
+rootbound_relic + briar_sap -> Rootbound Amulet
+forest_core + rootcaller_totem -> Forest Remnant Trinket
+```
+
+---
+
+## Crafts Foret proposes
+
+| Recipe id propose | Resultat | Ingredients | Role |
+|---|---|---|---|
+| craft_herbal_poultice | Herbal Poultice | healing_herb + forest_spore | consommable soin |
+| craft_wolf_fang_charm | Wolf Fang Charm | wolf_fang + wild_root | crit/dodge early |
+| craft_scavenger_badge | Scavenger Badge | scout_badge + old_charm_fragment | loot/gold |
+| craft_bone_signet | Bone Signet | buried_bones + cracked_skull | relic ring |
+| craft_forest_gatherer_gloves | Forest Gatherer Gloves | wild_root + forest_spore | druid mastery |
+| craft_goblin_lucky_totem | Lucky Goblin Totem | goblin_totem + cracked_skull | luck/loot |
+| craft_rootbound_amulet | Rootbound Amulet | rootbound_relic + briar_sap | dungeon reward |
+| craft_forest_core_trinket | Forest Core Trinket | forest_core + rootcaller_totem | boss craft |
+
+---
+
+## Quetes Foret V1
+
+### Chaine principale
+
+| Ordre | Quest id | Nom | Objectifs | Recompenses | Debloque |
+|---:|---|---|---|---|---|
+| 1 | forest_secure_outskirts | Secure the Outskirts | Kill forest_rat x5, young_goblin x3 | gold, recipe herbal_poultice | Deep Trails |
+| 2 | forest_first_harvest | First Forest Harvest | Gather healing_herb x5, wild_root x2 | druid XP, forest_spore | basic druid crafts |
+| 3 | forest_pack_watches | The Pack Watches | Kill forest_wolf x5, craft wolf_fang_charm | wolf_fang, recipe wolf set piece | Wolf Stalker craft |
+| 4 | forest_bones_under_roots | Bones Under the Roots | Gather buried_bones x5, kill bone_gnawer x2 | archaeologist XP, old_charm_fragment | Buried Grove |
+| 5 | forest_smoke_above_trees | Smoke Above the Trees | Kill goblin_scout x8, collect scout_badge x3 | gold, recipe scavenger_badge | Goblin Camp |
+| 6 | forest_clear_goblin_camp | Break the Goblin Camp | Clear Goblin Camp once | shaman_totem, Goblin Scavenger recipe | Ritual Grounds |
+| 7 | forest_buried_grove | The Buried Grove | Clear Buried Grove once, find rootbound_relic | rootbound craft | Boss access |
+| 8 | forest_silence_rootcaller | Silence the Rootcaller | Defeat Grubfang, Rootcaller | forest_core, permanent bonus | Caves |
+
+### Recompenses permanentes legeres possibles
+
+A utiliser avec moderation :
+
+```text
++1 inventory slot
++1 druid_mastery
++1 archaeologist_mastery
++1 luck
++2% gathering_xp_bonus
++1% loot_bonus
+```
+
+---
+
+## Succes Foret V1
+
+### Combat
+
+| Achievement id | Nom | Objectif | Recompense |
+|---|---|---|---|
+| forest_rat_cleaner_1 | Rat Cleaner I | Kill forest_rat x25 | +gold |
+| forest_wolf_hunter_1 | Wolf Hunter I | Kill wolf-family x25 | +1 dexterity |
+| forest_goblin_problem_1 | Goblin Problem I | Kill goblin-family x50 | +1% loot_bonus |
+| forest_shaman_breaker_1 | Shaman Breaker I | Kill goblin_shaman x10 | +1 luck |
+
+### Gathering
+
+| Achievement id | Nom | Objectif | Recompense |
+|---|---|---|---|
+| forest_first_harvest | First Harvest | Gather 25 druid resources | +1 druid_mastery |
+| forest_bone_reader | Bone Reader | Gather 25 archaeology resources | +1 archaeologist_mastery |
+| forest_worker | Forest Worker | Complete 100 gathering ticks in forest | +2% gathering_xp_bonus |
+
+### Craft / sets
+
+| Achievement id | Nom | Objectif | Recompense |
+|---|---|---|---|
+| forest_first_craft | First Forest Craft | Craft 1 forest item | gold |
+| forest_set_apprentice | Set Apprentice | Equip 2 pieces from same forest set | +1 luck |
+| forest_crafter | Forest Crafter | Craft 5 forest-tier items | material bundle |
+
+### Donjons / boss
+
+| Achievement id | Nom | Objectif | Recompense |
+|---|---|---|---|
+| forest_camp_breaker | Camp Breaker | Clear Goblin Camp x5 | +2% gold_bonus |
+| forest_rootbound | Rootbound | Clear Buried Grove x5 | +1 wisdom |
+| forest_rootcaller_defeated | Rootcaller Defeated | Defeat Grubfang once | unlock Caves / permanent bonus |
+
+---
+
+## Architecture systeme a prevoir plus tard
+
+### Quests V1
+
+Fichiers probables :
+
+```text
+data/quests.json
+systems/quests.py
+tests/test_quests.py
+```
+
+Objectifs supportes en V1 :
+
+```text
+kill_enemy
+gather_item
+craft_item
+equip_set_pieces
+clear_dungeon
+defeat_boss
+profession_level
+```
+
+Recompenses supportees en V1 :
+
+```text
+gold
+xp
+item
+unlock_recipe
+unlock_zone
+stat_bonus
+profession_xp
+```
+
+---
+
+### Achievements V1
+
+Fichiers probables :
+
+```text
+data/achievements.json
+systems/achievements.py
+tests/test_achievements.py
+```
+
+Objectifs supportes en V1 :
+
+```text
+kill_count
+gather_count
+craft_count
+dungeon_clear_count
+boss_kill_count
+set_equipped
+```
+
+Recompenses supportees en V1 :
+
+```text
+small_stat_bonus
+small_percent_bonus
+item_bundle
+gold
+```
+
+---
+
+### Dungeons V1
+
+Fichiers probables :
+
+```text
+data/dungeons.json
+systems/dungeons.py
+tests/test_dungeons.py
+```
+
+Structure simple recommandee :
+
+```json
+{
+  "forest_goblin_camp": {
+    "name": "Goblin Camp",
+    "unlock_level": 3,
+    "route": [
+      {"type": "combat", "enemy": "young_goblin"},
+      {"type": "combat", "enemy": "goblin_scout"},
+      {"type": "combat", "enemy": "goblin_shaman"},
+      {"type": "boss", "enemy": "goblin_quartermaster"}
+    ],
+    "rewards": [
+      {"type": "item", "item": "scout_badge", "quantity": 1}
+    ]
+  }
+}
+```
+
+---
+
+## Idee gameplay a garder : combats plus animes
+
+Piste future : rendre les combats plus lisibles et plus vivants.
+
+Vision :
+
+```text
+Le premier combat est joue lentement pour montrer le build.
+Ensuite la vitesse augmente progressivement.
+Les combats repetitifs s'accelerent jusqu'a la defaite.
+Les donjons peuvent etre joues plus lentement car ce sont des instances uniques.
+Les boss de fin peuvent repeter une boucle plus forte jusqu'a tuer le joueur.
+```
+
+Impact potentiel :
+
+```text
+core/instance.py
+systems/combat.py
+ui/screens/combat_screen.py
+ui/screens/result_screen.py
+systems/dungeons.py
+```
+
+A ne pas implementer maintenant.
+
+Issue future possible :
+
+```text
+Dev jeu — combat visual pacing and dungeon boss loop
+```
+
+---
+
+## Roadmap proposee pour implementation
+
+### Bloc 1 — Data Foret et taxonomie
+
+Objectif : poser les ennemis, ressources, drops et categories sans gros nouveau systeme.
+
+Fichiers probables :
+
+```text
+data/enemies.json
+data/items.json
+data/gathering_nodes.json
+tests/test_forest_content_data.py
+```
+
+### Bloc 2 — Crafts et sets Foret
+
+Objectif : connecter drops + ressources metier a des items utiles.
+
+Fichiers probables :
+
+```text
+data/items.json
+data/recipes.json
+data/equipment_sets.json
+tests/test_forest_crafting_data.py
+tests/test_equipment_sets.py
+```
+
+### Bloc 3 — Quests V1
+
+Objectif : guider le joueur dans la Foret.
+
+Fichiers probables :
+
+```text
+data/quests.json
+systems/quests.py
+core/game.py
+tests/test_quests.py
+```
+
+### Bloc 4 — Dungeons V1
+
+Objectif : ajouter Goblin Camp et Buried Grove comme routes fixes.
+
+Fichiers probables :
+
+```text
+data/dungeons.json
+systems/dungeons.py
+core/game.py
+ui/screens/menu_screen.py
+tests/test_dungeons.py
+```
+
+### Bloc 5 — Achievements V1
+
+Objectif : recompenses optionnelles et bonus permanents legers.
+
+Fichiers probables :
+
+```text
+data/achievements.json
+systems/achievements.py
+tests/test_achievements.py
+```
+
+---
+
+## Decision recommandee pour le prochain bloc
+
+Commencer par :
+
+```text
+Dev jeu — contenu narratif T1 Foret
+```
+
+Premiere etape recommandee :
+
+```text
+Data Foret et taxonomie
+```
+
+Pourquoi :
+
+```text
+pas de nouveau gros systeme
+pose la chronologie du monde
+alimente les futurs crafts, sets, quetes et donjons
+permet de tester les incoherences de data
+```
+
+Ne pas commencer par les quetes ou les donjons tant que les ennemis, drops et ressources de Foret ne sont pas propres.
