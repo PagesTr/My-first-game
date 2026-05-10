@@ -47,31 +47,21 @@ EXPECTED_FOREST_ENEMY_DROPS = {
     "grubfang_rootcaller": {"rootcaller_totem", "forest_core", "forest_remnant_trinket"},
 }
 
-FOREST_GATHERING_ZONE_IDS = {
-    "forest_rat_outskirts",
-    "forest_young_goblin_trail",
-    "forest_stray_wolf_path",
-    "forest_goblin_scout_trails",
-    "forest_wolf_hunting_ground",
-    "forest_thorn_sprite_grove",
-    "forest_bone_gnawer_den",
-    "forest_lost_adventurer_path",
-    "forest_goblin_shaman_grounds",
-    "forest_alpha_wolf_lair",
+EXPECTED_FOREST_ZONE_ENEMIES = {
+    "forest_rat_outskirts": "forest_rat",
+    "forest_young_goblin_trail": "young_goblin",
+    "forest_stray_wolf_path": "stray_wolf",
+    "forest_goblin_scout_trails": "goblin_scout",
+    "forest_wolf_hunting_ground": "forest_wolf",
+    "forest_thorn_sprite_grove": "thorn_sprite",
+    "forest_bone_gnawer_den": "bone_gnawer",
+    "forest_lost_adventurer_path": "lost_adventurer",
+    "forest_goblin_shaman_grounds": "goblin_shaman",
+    "forest_alpha_wolf_lair": "alpha_wolf",
 }
 
-FOREST_GENERIC_ZONE_IDS = {
-    "forest_rat_outskirts",
-    "forest_young_goblin_trail",
-    "forest_stray_wolf_path",
-    "forest_goblin_scout_trails",
-    "forest_wolf_hunting_ground",
-    "forest_thorn_sprite_grove",
-    "forest_bone_gnawer_den",
-    "forest_lost_adventurer_path",
-    "forest_goblin_shaman_grounds",
-    "forest_alpha_wolf_lair",
-}
+FOREST_GATHERING_ZONE_IDS = set(EXPECTED_FOREST_ZONE_ENEMIES)
+FOREST_GENERIC_ZONE_IDS = set(EXPECTED_FOREST_ZONE_ENEMIES)
 
 LEGACY_FOREST_ZONE_IDS = {
     "forest_goblin",
@@ -341,7 +331,7 @@ def test_forest_direct_set_drops_are_not_on_every_enemy():
     assert enemies_without_set_drop >= 4
 
 
-def test_removed_legacy_enemies_are_not_required():
+def test_legacy_forest_enemies_are_removed():
     enemies = load_json("data/enemies.json")
 
     assert "goblin" not in enemies
@@ -373,10 +363,11 @@ def test_new_forest_zones_use_new_forest_enemies():
 def test_forest_generic_zones_have_single_enemy():
     zones = load_json("data/zones.json")
 
-    for zone_id in FOREST_GENERIC_ZONE_IDS:
+    for zone_id, expected_enemy_id in EXPECTED_FOREST_ZONE_ENEMIES.items():
         enemy_pool = zones[zone_id].get("enemy_pool")
         assert isinstance(enemy_pool, list)
         assert len(enemy_pool) == 1
+        assert enemy_pool[0] == expected_enemy_id
 
 
 def test_forest_zones_do_not_use_legacy_enemies():
@@ -426,7 +417,7 @@ def test_new_forest_zone_unlock_levels_are_progressive():
     assert unlock_levels["forest_alpha_wolf_lair"] >= unlock_levels["forest_lost_adventurer_path"]
 
 
-def test_new_forest_zones_have_matching_gathering_nodes_when_expected():
+def test_forest_gathering_nodes_match_expected_zones():
     gathering_nodes = load_json("data/gathering_nodes.json")
 
     for zone_id, expected_professions in EXPECTED_FOREST_ZONE_PROFESSIONS.items():
