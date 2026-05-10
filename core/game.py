@@ -25,6 +25,8 @@ from systems.dungeons import (
 )
 from systems.gathering import gather_from_zone
 from systems.inventory import (
+    add_individual_item,
+    add_stackable_item,
     claim_all_pending_drops,
     claim_pending_drop,
     move_inventory_slot_to_pending,
@@ -418,6 +420,7 @@ class Game:
         self.active_dungeon.setdefault("total_gold", 0)
         self.active_dungeon.setdefault("total_exp", 0)
         self.active_dungeon.setdefault("loot", [])
+        self.active_dungeon.setdefault("pending_loot", [])
         self.active_dungeon.setdefault("rest_choice", None)
         self.active_dungeon.setdefault("last_enemy", None)
 
@@ -428,7 +431,12 @@ class Game:
         self.active_dungeon["rooms_cleared"] += 1
         self.active_dungeon["total_gold"] += int(result.get("gold", 0))
         self.active_dungeon["total_exp"] += int(result.get("exp", 0))
-        self.active_dungeon["loot"].extend(list(result.get("drops", [])))
+        inventory_result = result.get("inventory_result")
+        if isinstance(inventory_result, dict):
+            self.active_dungeon["loot"].extend(list(inventory_result.get("added", [])))
+            self.active_dungeon["pending_loot"].extend(list(inventory_result.get("pending", [])))
+        else:
+            self.active_dungeon["loot"].extend(list(result.get("drops", [])))
         self.active_dungeon["last_enemy"] = enemy_id
 
     def _build_dungeon_result(self, reason, defeated_by, won=False):
@@ -444,8 +452,52 @@ class Game:
             "total_gold": dungeon.get("total_gold", 0),
             "total_exp": dungeon.get("total_exp", 0),
             "loot": list(dungeon.get("loot", [])),
+            "pending_loot": list(dungeon.get("pending_loot", [])),
             "rest_choice": dungeon.get("rest_choice"),
         }
+
+    def _add_dungeon_drops_to_inventory(self, drops):
+        result = {
+            "added": [],
+            "pending": [],
+            "failed": [],
+        }
+        if not self.player or not isinstance(drops, list):
+            return result
+
+        inventory = self.player.get("inventory")
+        if not isinstance(inventory, dict):
+            result["failed"].extend(drops)
+            return result
+
+        for drop in drops:
+            if not isinstance(drop, dict):
+                result["failed"].append(drop)
+                continue
+
+            item_id = drop.get("item")
+            item_data = self.data.items.get(item_id, {}) if item_id else {}
+            if not item_id or not isinstance(item_data, dict):
+                result["failed"].append(drop)
+                continue
+
+            if item_data.get("type") == "equipment" or drop.get("kind") == "individual":
+                item_instance = {
+                    "kind": "individual",
+                    "item": item_id,
+                    "rarity": item_data.get("rarity", "common"),
+                    "stats": dict(item_data.get("stats", {})),
+                }
+                added = add_individual_item(inventory, item_instance)
+            else:
+                quantity = int(drop.get("quantity", 1))
+                added = add_stackable_item(inventory, item_id, max(1, quantity))
+
+            if added:
+                result["added"].append(drop)
+            else:
+                result["pending"].append(drop)
+        return result
 
     def _run_single_dungeon_combat(self, enemy_id, multiplier=1.0):
         if not self.player or enemy_id not in self.data.enemies:
@@ -496,6 +548,7 @@ class Game:
 
         reward_result = apply_combat_rewards(self.player, enemy)
         drops = generate_combat_loot(enemy, self.data.items, self.player)
+        inventory_result = self._add_dungeon_drops_to_inventory(drops)
         return {
             "won": True,
             "enemy_id": enemy_id,
@@ -503,11 +556,7 @@ class Game:
             "exp": reward_result.get("exp_gained", 0),
             "gold": reward_result.get("gold_gained", 0),
             "drops": drops,
-            "inventory_result": {
-                "added": [],
-                "failed": [],
-                "pending": list(drops),
-            },
+            "inventory_result": inventory_result,
         }
 
     def _scale_dungeon_enemy(self, enemy, multiplier):

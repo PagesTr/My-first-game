@@ -135,6 +135,68 @@ def test_dungeon_tracks_room_rewards_on_combat_win(monkeypatch):
     assert game.active_dungeon["loot"] == drops
 
 
+def test_dungeon_combat_adds_drops_to_inventory(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    drop = {"kind": "stackable", "item": "goblin_ear", "quantity": 2}
+
+    result = game._add_dungeon_drops_to_inventory([drop])
+
+    assert result["added"] == [drop]
+    assert result["pending"] == []
+    assert any(
+        slot
+        and slot.get("kind") == "stackable"
+        and slot.get("item") == "goblin_ear"
+        and slot.get("quantity") == 2
+        for slot in game.player["inventory"]["slots"]
+    )
+
+
+def test_dungeon_equipment_drop_added_as_individual(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    drop = {"kind": "individual", "item": "scavenger_gloves", "quantity": 1}
+
+    result = game._add_dungeon_drops_to_inventory([drop])
+
+    assert result["added"] == [drop]
+    assert any(
+        slot
+        and slot.get("kind") == "individual"
+        and slot.get("item") == "scavenger_gloves"
+        for slot in game.player["inventory"]["slots"]
+    )
+
+
+def test_dungeon_drops_go_pending_when_inventory_full(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    inventory = game.player["inventory"]
+    inventory["slots"] = [
+        {"kind": "individual", "item": "scavenger_gloves", "rarity": "common", "stats": {}}
+        for _ in range(inventory["size"])
+    ]
+    drop = {"kind": "individual", "item": "scavenger_gloves", "quantity": 1}
+
+    result = game._add_dungeon_drops_to_inventory([drop])
+
+    assert result["added"] == []
+    assert result["pending"] == [drop]
+
+
+def test_dungeon_result_contains_pending_loot(monkeypatch):
+    game = Game()
+    select_first_class(game, monkeypatch)
+    game.start_dungeon("forest_goblin_camp")
+    pending_drop = {"kind": "individual", "item": "scavenger_gloves", "quantity": 1}
+    game.active_dungeon["pending_loot"] = [pending_drop]
+
+    result = game._build_dungeon_result("boss_defeat", "goblin_quartermaster")
+
+    assert result["pending_loot"] == [pending_drop]
+
+
 def test_resolve_dungeon_combat_step_marks_failed_on_loss(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)

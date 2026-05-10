@@ -137,10 +137,10 @@ class DungeonScreen:
             screen.blit(text, (rect.x + 18, y))
             y += 24
 
-        loot_title = self.body_font.render("Loot:", True, (245, 245, 245))
+        loot_title = self.body_font.render("Loot added:", True, (245, 245, 245))
         screen.blit(loot_title, (rect.x + 340, rect.y + 48))
         loot_y = rect.y + 74
-        for line in self._format_loot_lines(result.get("loot", []))[:6]:
+        for line in self._format_loot_lines(result.get("loot", []))[:4]:
             text = self.body_font.render(
                 self._truncate_text(f"- {line}", self.body_font, 250),
                 True,
@@ -148,6 +148,24 @@ class DungeonScreen:
             )
             screen.blit(text, (rect.x + 340, loot_y))
             loot_y += 24
+
+        pending_loot = result.get("pending_loot", [])
+        if isinstance(pending_loot, list) and pending_loot:
+            pending_title = self.body_font.render(
+                "Inventory full - pending loot:",
+                True,
+                (245, 180, 105),
+            )
+            screen.blit(pending_title, (rect.x + 340, loot_y + 8))
+            loot_y += 34
+            for line in self._format_loot_lines(pending_loot)[:6]:
+                text = self.body_font.render(
+                    self._truncate_text(f"- {line}", self.body_font, 250),
+                    True,
+                    (225, 190, 135),
+                )
+                screen.blit(text, (rect.x + 340, loot_y))
+                loot_y += 22
 
     def _draw_summary_panel(self, screen, summary):
         rect = pygame.Rect(80, 120, 310, 180)
