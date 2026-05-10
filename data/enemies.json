@@ -261,6 +261,39 @@
       }
     ]
   },
+  "goblin_quartermaster": {
+    "name": "Goblin Quartermaster",
+    "behavior": "balanced",
+    "stats": {
+      "hp": 34,
+      "attack": 8,
+      "defense": 4
+    },
+    "exp": 24,
+    "gold": 18,
+    "family": "goblin",
+    "chapter": "forest",
+    "tier": 5,
+    "description": "He manages supplies, morale, and several terrible decisions with surprising confidence.",
+    "drops": [
+      {
+        "item": "scout_badge",
+        "chance": 1.0
+      },
+      {
+        "item": "shaman_totem",
+        "chance": 0.25
+      },
+      {
+        "item": "goblin_map_scrap",
+        "chance": 0.15
+      },
+      {
+        "item": "goblin_ritual_amulet",
+        "chance": 0.04
+      }
+    ]
+  },
   "alpha_wolf": {
     "name": "Alpha Wolf",
     "behavior": "aggressive",

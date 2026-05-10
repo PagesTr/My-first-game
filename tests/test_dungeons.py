@@ -18,7 +18,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DUNGEONS_PATH = PROJECT_ROOT / "data" / "dungeons.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
 FOREST_DUNGEON_IDS = {"forest_goblin_camp", "forest_buried_grove"}
-ALLOWED_FUTURE_ENEMY_IDS = {"goblin_quartermaster"}
 
 
 def load_json(path):
@@ -151,12 +150,9 @@ def test_dungeon_route_enemy_ids_are_valid():
             enemy_id = step.get("enemy_id")
             if not enemy_id:
                 continue
-            assert enemy_id in enemies or enemy_id in ALLOWED_FUTURE_ENEMY_IDS
+            assert enemy_id in enemies
         boss_enemy_id = dungeon.get("boss_enemy_id")
-        assert (
-            boss_enemy_id in enemies
-            or boss_enemy_id in ALLOWED_FUTURE_ENEMY_IDS
-        )
+        assert boss_enemy_id in enemies
 
 
 def test_get_next_dungeon_step_returns_step_or_none():

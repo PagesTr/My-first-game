@@ -380,6 +380,7 @@ class Game:
         self.active_dungeon["completed"] = True
         result["completed"] = True
         result["boss_victories"] = victories
+        dungeon_id = self.active_dungeon.get("dungeon_id")
         self.last_dungeon_result = self._build_dungeon_result(
             "boss_defeat",
             boss_enemy_id,
@@ -389,6 +390,11 @@ class Game:
             "resolved": True,
             "enemy_id": result.get("enemy_id"),
             "enemy_name": result.get("enemy_name"),
+        })
+        self.record_quest_event({
+            "type": "clear_dungeon",
+            "target": dungeon_id,
+            "amount": 1,
         })
         self.active_dungeon = None
         self.state = "dungeon"

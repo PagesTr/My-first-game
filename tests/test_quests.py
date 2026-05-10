@@ -129,3 +129,41 @@ def test_apply_gold_reward():
     )
 
     assert player["gold"] == 25
+
+
+def test_clear_dungeon_progress():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_clear_goblin_camp"]
+
+    record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "clear_dungeon",
+            "target": "forest_goblin_camp",
+            "amount": 1,
+        },
+    )
+
+    assert get_quest_progress(player, "forest_clear_goblin_camp", 0) == 1
+
+
+def test_clear_dungeon_completion_activates_next():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_clear_goblin_camp"]
+
+    result = record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "clear_dungeon",
+            "target": "forest_goblin_camp",
+            "amount": 1,
+        },
+    )
+
+    assert result["completed"] == ["forest_clear_goblin_camp"]
+    assert "forest_clear_goblin_camp" in player["quests"]["completed"]
+    assert "forest_buried_grove" in player["quests"]["active"]

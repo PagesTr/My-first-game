@@ -3,7 +3,12 @@ from copy import deepcopy
 from systems.inventory import add_individual_item, add_stackable_item
 
 
-SUPPORTED_EVENT_TYPES = {"kill_enemy", "gather_item", "craft_recipe"}
+SUPPORTED_EVENT_TYPES = {
+    "kill_enemy",
+    "gather_item",
+    "craft_recipe",
+    "clear_dungeon",
+}
 
 
 def create_player_quests(quests_data):
