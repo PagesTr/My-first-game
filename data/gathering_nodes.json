@@ -66,6 +66,179 @@
       ]
     }
   },
+  "forest_outskirts": {
+    "druid": {
+      "name": "Soft Herb Patches",
+      "description": "Helpful plants grow near the path, probably hoping nobody notices.",
+      "tick_seconds": 3,
+      "xp": 4,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "archaeologist": {
+      "name": "Shallow Remains",
+      "description": "Old bones rest close to the surface. The forest is not subtle.",
+      "tick_seconds": 10,
+      "xp": 4,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "cracked_skull",
+          "chance": 0.18,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_deep_trails": {
+    "druid": {
+      "name": "Spore Thickets",
+      "description": "The plants here glow faintly, which is either magical or deeply worrying.",
+      "tick_seconds": 4,
+      "xp": 5,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item": "forest_spore",
+          "chance": 0.22,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_buried_paths": {
+    "archaeologist": {
+      "name": "Buried Adventurer Remains",
+      "description": "Someone died here with admirable commitment to future crafting.",
+      "tick_seconds": 12,
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "old_charm_fragment",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item": "broken_adventurer_tag",
+          "chance": 0.12,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "druid": {
+      "name": "Briar Roots",
+      "description": "The roots twist around old bones. That is probably symbolic.",
+      "tick_seconds": 5,
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "wild_root",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "briar_sap",
+          "chance": 0.20,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_ritual_grounds": {
+    "druid": {
+      "name": "Ritual Briars",
+      "description": "The briars hum when touched. Most plants settle for being quiet.",
+      "tick_seconds": 6,
+      "xp": 7,
+      "rewards": [
+        {
+          "item": "wild_root",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "forest_spore",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item": "briar_sap",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    },
+    "archaeologist": {
+      "name": "Totem Scraps",
+      "description": "Broken charms and old warnings. Naturally, you collect them.",
+      "tick_seconds": 14,
+      "xp": 7,
+      "rewards": [
+        {
+          "item": "old_charm_fragment",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "rootbound_relic",
+          "chance": 0.10,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
   "caves_skeleton": {
     "archaeologist": {
       "name": "Ancient Remains",

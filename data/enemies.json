@@ -122,6 +122,398 @@
       }
     ]
   },
+  "forest_rat": {
+    "name": "Forest Rat",
+    "behavior": "aggressive",
+    "stats": {
+      "hp": 8,
+      "attack": 2,
+      "defense": 0
+    },
+    "exp": 3,
+    "gold": 2,
+    "family": "beast",
+    "chapter": "forest",
+    "tier": 1,
+    "description": "Small, angry, and far too confident for something this edible.",
+    "drops": [
+      {
+        "item": "rat_tail",
+        "chance": 1.0
+      },
+      {
+        "item": "leather",
+        "chance": 0.15
+      },
+      {
+        "item": "minor_health_potion",
+        "chance": 0.08
+      }
+    ]
+  },
+  "young_goblin": {
+    "name": "Young Goblin",
+    "behavior": "balanced",
+    "stats": {
+      "hp": 10,
+      "attack": 3,
+      "defense": 1
+    },
+    "exp": 4,
+    "gold": 3,
+    "family": "goblin",
+    "chapter": "forest",
+    "tier": 1,
+    "description": "A goblin with ambition, a stick, and very little long-term planning.",
+    "drops": [
+      {
+        "item": "goblin_ear",
+        "chance": 1.0
+      },
+      {
+        "item": "torn_cloth",
+        "chance": 0.45
+      },
+      {
+        "item": "crude_charm",
+        "chance": 0.08
+      },
+      {
+        "item": "minor_health_potion",
+        "chance": 0.10
+      }
+    ]
+  },
+  "stray_wolf": {
+    "name": "Stray Wolf",
+    "behavior": "aggressive",
+    "stats": {
+      "hp": 12,
+      "attack": 4,
+      "defense": 1
+    },
+    "exp": 5,
+    "gold": 3,
+    "family": "wolf",
+    "chapter": "forest",
+    "tier": 1,
+    "description": "A hungry wolf. It has not read the tutorial either.",
+    "drops": [
+      {
+        "item": "wolf_pelt",
+        "chance": 1.0
+      },
+      {
+        "item": "small_fang",
+        "chance": 0.25
+      },
+      {
+        "item": "leather",
+        "chance": 0.20
+      }
+    ]
+  },
+  "goblin_scout": {
+    "name": "Goblin Scout",
+    "behavior": "balanced",
+    "stats": {
+      "hp": 14,
+      "attack": 4,
+      "defense": 1
+    },
+    "exp": 7,
+    "gold": 6,
+    "family": "goblin",
+    "chapter": "forest",
+    "tier": 2,
+    "description": "Fast enough to run away, brave enough to forget.",
+    "drops": [
+      {
+        "item": "scout_badge",
+        "chance": 0.85
+      },
+      {
+        "item": "goblin_ear",
+        "chance": 0.55
+      },
+      {
+        "item": "torn_cloth",
+        "chance": 0.35
+      },
+      {
+        "item": "goblin_map_scrap",
+        "chance": 0.08
+      },
+      {
+        "item": "scavenger_gloves",
+        "chance": 0.035
+      }
+    ]
+  },
+  "forest_wolf": {
+    "name": "Forest Wolf",
+    "behavior": "aggressive",
+    "stats": {
+      "hp": 16,
+      "attack": 5,
+      "defense": 1
+    },
+    "exp": 8,
+    "gold": 5,
+    "family": "wolf",
+    "chapter": "forest",
+    "tier": 2,
+    "description": "It watches your footwork. It is not impressed.",
+    "drops": [
+      {
+        "item": "wolf_pelt",
+        "chance": 1.0
+      },
+      {
+        "item": "wolf_fang",
+        "chance": 0.45
+      },
+      {
+        "item": "leather",
+        "chance": 0.25
+      },
+      {
+        "item": "wild_heart",
+        "chance": 0.04
+      },
+      {
+        "item": "wolf_stalker_boots",
+        "chance": 0.035
+      }
+    ]
+  },
+  "thorn_sprite": {
+    "name": "Thorn Sprite",
+    "behavior": "defensive",
+    "stats": {
+      "hp": 13,
+      "attack": 4,
+      "defense": 2
+    },
+    "exp": 8,
+    "gold": 4,
+    "family": "nature",
+    "chapter": "forest",
+    "tier": 2,
+    "description": "A tiny forest spirit with the personality of a locked door.",
+    "drops": [
+      {
+        "item": "thorn_essence",
+        "chance": 0.85
+      },
+      {
+        "item": "healing_herb",
+        "chance": 0.30
+      },
+      {
+        "item": "forest_spore",
+        "chance": 0.18
+      },
+      {
+        "item": "forest_gatherer_gloves",
+        "chance": 0.025
+      }
+    ]
+  },
+  "bone_gnawer": {
+    "name": "Bone Gnawer",
+    "behavior": "balanced",
+    "stats": {
+      "hp": 18,
+      "attack": 5,
+      "defense": 2
+    },
+    "exp": 10,
+    "gold": 6,
+    "family": "scavenger",
+    "chapter": "forest",
+    "tier": 3,
+    "description": "It found the bones before the archaeologist did. Professional rivalry ensues.",
+    "drops": [
+      {
+        "item": "chewed_bone",
+        "chance": 1.0
+      },
+      {
+        "item": "buried_bones",
+        "chance": 0.35
+      },
+      {
+        "item": "cracked_skull",
+        "chance": 0.08
+      }
+    ]
+  },
+  "lost_adventurer": {
+    "name": "Lost Adventurer",
+    "behavior": "balanced",
+    "stats": {
+      "hp": 20,
+      "attack": 6,
+      "defense": 2
+    },
+    "exp": 12,
+    "gold": 7,
+    "family": "fallen",
+    "chapter": "forest",
+    "tier": 3,
+    "description": "Someone came before you. Judging by the posture, they also had a plan.",
+    "drops": [
+      {
+        "item": "broken_adventurer_tag",
+        "chance": 0.75
+      },
+      {
+        "item": "old_charm_fragment",
+        "chance": 0.25
+      },
+      {
+        "item": "rusted_ring",
+        "chance": 0.05
+      },
+      {
+        "item": "adventurer_relic_ring",
+        "chance": 0.03
+      }
+    ]
+  },
+  "goblin_shaman": {
+    "name": "Goblin Shaman",
+    "behavior": "defensive",
+    "stats": {
+      "hp": 22,
+      "attack": 6,
+      "defense": 3
+    },
+    "exp": 14,
+    "gold": 10,
+    "family": "goblin",
+    "chapter": "forest",
+    "tier": 4,
+    "description": "He understands roots, smoke, and the dramatic value of bad chanting.",
+    "drops": [
+      {
+        "item": "shaman_totem",
+        "chance": 0.75
+      },
+      {
+        "item": "goblin_ear",
+        "chance": 0.50
+      },
+      {
+        "item": "ritual_paint",
+        "chance": 0.06
+      },
+      {
+        "item": "goblin_totem",
+        "chance": 0.035
+      }
+    ]
+  },
+  "alpha_wolf": {
+    "name": "Alpha Wolf",
+    "behavior": "aggressive",
+    "stats": {
+      "hp": 28,
+      "attack": 8,
+      "defense": 3
+    },
+    "exp": 18,
+    "gold": 12,
+    "family": "wolf",
+    "chapter": "forest",
+    "tier": 4,
+    "description": "The pack follows it. The sensible option would be to go elsewhere.",
+    "drops": [
+      {
+        "item": "alpha_fang",
+        "chance": 0.75
+      },
+      {
+        "item": "wolf_fang",
+        "chance": 0.60
+      },
+      {
+        "item": "wild_heart",
+        "chance": 0.10
+      },
+      {
+        "item": "wolf_stalker_hood",
+        "chance": 0.04
+      }
+    ]
+  },
+  "rootbound_remnant": {
+    "name": "Rootbound Remnant",
+    "behavior": "defensive",
+    "stats": {
+      "hp": 32,
+      "attack": 7,
+      "defense": 4
+    },
+    "exp": 22,
+    "gold": 14,
+    "family": "nature_fallen",
+    "chapter": "forest",
+    "tier": 5,
+    "description": "The forest remembers this one. Unfortunately, it remembers how to hit.",
+    "drops": [
+      {
+        "item": "rootbound_relic",
+        "chance": 0.75
+      },
+      {
+        "item": "briar_sap",
+        "chance": 0.35
+      },
+      {
+        "item": "old_charm_fragment",
+        "chance": 0.25
+      },
+      {
+        "item": "rootbound_amulet",
+        "chance": 0.035
+      }
+    ]
+  },
+  "grubfang_rootcaller": {
+    "name": "Grubfang, Rootcaller",
+    "behavior": "defensive",
+    "stats": {
+      "hp": 45,
+      "attack": 10,
+      "defense": 5
+    },
+    "exp": 35,
+    "gold": 25,
+    "family": "boss",
+    "chapter": "forest",
+    "tier": 6,
+    "description": "The roots answer his call. They should really screen their messages.",
+    "drops": [
+      {
+        "item": "rootcaller_totem",
+        "chance": 1.0
+      },
+      {
+        "item": "corrupted_root",
+        "chance": 0.60
+      },
+      {
+        "item": "forest_core",
+        "chance": 0.12
+      },
+      {
+        "item": "forest_remnant_trinket",
+        "chance": 0.05
+      }
+    ]
+  },
   "bandit": {
     "name": "Bandit",
     "behavior": "balanced",
