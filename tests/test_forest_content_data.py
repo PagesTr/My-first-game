@@ -39,6 +39,20 @@ FOREST_GATHERING_ZONE_IDS = {
     "forest_ritual_grounds",
 }
 
+EXPECTED_FOREST_ZONE_PROFESSIONS = {
+    "forest_outskirts": {"druid", "archaeologist"},
+    "forest_deep_trails": {"druid"},
+    "forest_buried_paths": {"archaeologist", "druid"},
+    "forest_ritual_grounds": {"druid", "archaeologist"},
+}
+
+EXPECTED_FOREST_ZONE_UNLOCK_LEVELS = {
+    "forest_outskirts": 1,
+    "forest_deep_trails": 2,
+    "forest_buried_paths": 3,
+    "forest_ritual_grounds": 4,
+}
+
 FOREST_SET_DROP_IDS = {
     "scavenger_gloves",
     "wolf_stalker_boots",
@@ -246,6 +260,67 @@ def test_legacy_forest_enemies_are_still_present():
 
     assert "goblin" in enemies
     assert "wolf" in enemies
+
+
+def test_new_forest_zones_exist():
+    zones = load_json("data/zones.json")
+
+    for zone_id in FOREST_GATHERING_ZONE_IDS:
+        assert zone_id in zones
+
+
+def test_new_forest_zones_use_new_forest_enemies():
+    zones = load_json("data/zones.json")
+    enemies = load_json("data/enemies.json")
+    legacy_enemy_ids = {"goblin", "wolf"}
+
+    for zone_id in FOREST_GATHERING_ZONE_IDS:
+        enemy_pool = zones[zone_id].get("enemy_pool", [])
+        assert enemy_pool
+        for enemy_id in enemy_pool:
+            assert enemy_id in enemies
+            assert enemy_id in FOREST_ENEMY_IDS
+            assert enemy_id not in legacy_enemy_ids
+            assert enemies[enemy_id].get("chapter") == "forest"
+
+
+def test_new_forest_zone_loot_tables_reference_existing_items():
+    zones = load_json("data/zones.json")
+    items = load_json("data/items.json")
+
+    for zone_id in FOREST_GATHERING_ZONE_IDS:
+        loot_table = zones[zone_id].get("loot_table", [])
+        assert loot_table
+        for item_id in loot_table:
+            assert item_id in items
+
+
+def test_new_forest_zone_unlock_levels_are_progressive():
+    zones = load_json("data/zones.json")
+    unlock_levels = {
+        zone_id: zones[zone_id]["unlock_level"]
+        for zone_id in EXPECTED_FOREST_ZONE_UNLOCK_LEVELS
+    }
+
+    assert unlock_levels["forest_outskirts"] == 1
+    assert unlock_levels["forest_deep_trails"] >= unlock_levels["forest_outskirts"]
+    assert unlock_levels["forest_buried_paths"] >= unlock_levels["forest_deep_trails"]
+    assert unlock_levels["forest_ritual_grounds"] >= unlock_levels["forest_buried_paths"]
+
+
+def test_new_forest_zones_have_matching_gathering_nodes_when_expected():
+    gathering_nodes = load_json("data/gathering_nodes.json")
+
+    for zone_id, expected_professions in EXPECTED_FOREST_ZONE_PROFESSIONS.items():
+        assert zone_id in gathering_nodes
+        assert set(gathering_nodes[zone_id]) == expected_professions
+
+
+def test_legacy_forest_zones_do_not_block_new_forest_content():
+    zones = load_json("data/zones.json")
+
+    # Legacy forest zones are tolerated until full migration cleanup.
+    assert FOREST_GATHERING_ZONE_IDS <= set(zones)
 
 
 def test_forest_gathering_nodes_exist():

@@ -29,6 +29,73 @@
     "difficulty_multiplier": 1.0,
     "farming_rate": 10
   },
+  "forest_outskirts": {
+    "name": "Forest Outskirts",
+    "description": "The forest begins with rats, young goblins, and decisions nobody will brag about.",
+    "unlock_level": 1,
+    "enemy_pool": [
+      "forest_rat",
+      "young_goblin",
+      "stray_wolf"
+    ],
+    "loot_table": [
+      "rat_tail",
+      "goblin_ear",
+      "wolf_pelt"
+    ],
+    "difficulty_multiplier": 1.0,
+    "farming_rate": 10
+  },
+  "forest_deep_trails": {
+    "name": "Deep Forest Trails",
+    "description": "The trees grow thicker, the wolves grow smarter, and the goblins grow almost organized.",
+    "unlock_level": 2,
+    "enemy_pool": [
+      "goblin_scout",
+      "forest_wolf",
+      "thorn_sprite"
+    ],
+    "loot_table": [
+      "scout_badge",
+      "wolf_fang",
+      "thorn_essence"
+    ],
+    "difficulty_multiplier": 1.15,
+    "farming_rate": 9
+  },
+  "forest_buried_paths": {
+    "name": "Buried Forest Paths",
+    "description": "Old bones, lost tags, and the quiet confidence of people who should have turned back.",
+    "unlock_level": 3,
+    "enemy_pool": [
+      "bone_gnawer",
+      "lost_adventurer"
+    ],
+    "loot_table": [
+      "chewed_bone",
+      "broken_adventurer_tag",
+      "buried_bones"
+    ],
+    "difficulty_multiplier": 1.3,
+    "farming_rate": 8
+  },
+  "forest_ritual_grounds": {
+    "name": "Ritual Grounds",
+    "description": "Totems, briars, and chanting. The forest has developed opinions.",
+    "unlock_level": 4,
+    "enemy_pool": [
+      "goblin_shaman",
+      "alpha_wolf",
+      "thorn_sprite"
+    ],
+    "loot_table": [
+      "shaman_totem",
+      "alpha_fang",
+      "old_charm_fragment"
+    ],
+    "difficulty_multiplier": 1.45,
+    "farming_rate": 7
+  },
   "caves_skeleton": {
     "name": "Skeleton Caves",
     "description": "A cave expedition focused on skeletons.",
