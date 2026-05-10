@@ -25,16 +25,21 @@ FOREST_SET_ITEM_IDS = {
 
 REQUIRED_FOREST_RECIPE_IDS = {
     "craft_herbal_poultice",
+    "craft_wolf_fang_charm",
     "craft_wolf_stalker_gloves",
     "craft_scavenger_badge",
     "craft_lucky_goblin_totem",
     "craft_goblin_ritual_amulet",
     "craft_bone_signet",
+    "craft_rootbound_amulet",
+    "craft_forest_remnant_trinket",
 }
 
 HYBRID_RECIPE_IDS = {
+    "craft_wolf_fang_charm",
     "craft_wolf_stalker_gloves",
     "craft_scavenger_badge",
+    "craft_rootbound_amulet",
 }
 
 FOREST_REMNANT_ITEM_IDS = {
@@ -75,7 +80,10 @@ def load_json(path):
 
 
 def get_forest_recipe_ids(recipes, items):
-    return set(REQUIRED_FOREST_RECIPE_IDS)
+    recipe_ids = set(REQUIRED_FOREST_RECIPE_IDS)
+    if "forest_gatherer_gloves" in items:
+        recipe_ids.add("craft_forest_gatherer_gloves")
+    return recipe_ids
 
 
 def recipe_item_ids(recipe):
