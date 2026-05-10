@@ -31,15 +31,27 @@ REQUIRED_FOREST_RECIPE_IDS = {
     "craft_lucky_goblin_totem",
     "craft_goblin_ritual_amulet",
     "craft_bone_signet",
-    "craft_rootbound_amulet",
-    "craft_forest_remnant_trinket",
 }
 
 HYBRID_RECIPE_IDS = {
     "craft_wolf_fang_charm",
     "craft_wolf_stalker_gloves",
     "craft_scavenger_badge",
-    "craft_rootbound_amulet",
+}
+
+FOREST_NARRATIVE_ENEMY_IDS = {
+    "forest_rat",
+    "young_goblin",
+    "stray_wolf",
+    "goblin_scout",
+    "forest_wolf",
+    "thorn_sprite",
+    "bone_gnawer",
+    "lost_adventurer",
+    "goblin_shaman",
+    "alpha_wolf",
+    "rootbound_remnant",
+    "grubfang_rootcaller",
 }
 
 FOREST_REMNANT_ITEM_IDS = {
@@ -80,10 +92,7 @@ def load_json(path):
 
 
 def get_forest_recipe_ids(recipes, items):
-    recipe_ids = set(REQUIRED_FOREST_RECIPE_IDS)
-    if "forest_gatherer_gloves" in items:
-        recipe_ids.add("craft_forest_gatherer_gloves")
-    return recipe_ids
+    return set(REQUIRED_FOREST_RECIPE_IDS)
 
 
 def recipe_item_ids(recipe):
@@ -172,6 +181,23 @@ def test_forest_recipes_connect_enemy_and_gathering_resources():
         )
         assert has_enemy_resource, recipe_id
         assert has_gathered_resource, recipe_id
+
+
+def test_forest_crafted_results_do_not_overlap_new_forest_direct_drops():
+    recipes = load_json("data/recipes.json")
+    enemies = load_json("data/enemies.json")
+
+    new_forest_direct_drops = {
+        drop["item"]
+        for enemy_id in FOREST_NARRATIVE_ENEMY_IDS
+        for drop in enemies[enemy_id].get("drops", [])
+    }
+
+    for recipe_id in REQUIRED_FOREST_RECIPE_IDS:
+        result_item = recipes[recipe_id]["result"]["item"]
+        if result_item == "wolf_fang_charm":
+            continue
+        assert result_item not in new_forest_direct_drops, recipe_id
 
 
 def test_forest_remnant_items_use_forest_remnant_set():

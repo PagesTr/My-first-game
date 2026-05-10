@@ -17,7 +17,8 @@ ZONES_PATH = PROJECT_ROOT / "data" / "zones.json"
 ENEMIES_PATH = PROJECT_ROOT / "data" / "enemies.json"
 VALID_INGREDIENT_KINDS = {"stackable", "individual"}
 LEGACY_INGREDIENT_KIND_ALIASES = {"unique": "individual"}
-ALLOWED_CRAFTED_ENEMY_DROP_OVERLAPS = {"bone_talisman"}
+# wolf_fang_charm is still dropped by legacy enemies until the old forest content is migrated.
+ALLOWED_CRAFTED_ENEMY_DROP_OVERLAPS = {"bone_talisman", "wolf_fang_charm"}
 
 
 def load_json(path):
