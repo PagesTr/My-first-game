@@ -109,6 +109,10 @@ def get_enemy_resource_drop_ids(enemies, items):
     return drop_ids
 
 
+def get_enemy_drop_ids(enemy):
+    return {drop.get("item") for drop in enemy.get("drops", [])}
+
+
 def test_forest_sets_exist():
     equipment_sets = load_json("data/equipment_sets.json")
 
@@ -198,6 +202,43 @@ def test_forest_crafted_results_do_not_overlap_new_forest_direct_drops():
         if result_item == "wolf_fang_charm":
             continue
         assert result_item not in new_forest_direct_drops, recipe_id
+
+
+def test_wolf_fang_charm_is_allowed_legacy_overlap():
+    recipes = load_json("data/recipes.json")
+    enemies = load_json("data/enemies.json")
+    recipe = recipes["craft_wolf_fang_charm"]
+    narrative_forest_drops = {
+        drop_id
+        for enemy_id in FOREST_NARRATIVE_ENEMY_IDS
+        for drop_id in get_enemy_drop_ids(enemies[enemy_id])
+    }
+    legacy_enemy_drops = {
+        drop_id
+        for enemy_id, enemy in enemies.items()
+        if enemy_id not in FOREST_NARRATIVE_ENEMY_IDS
+        for drop_id in get_enemy_drop_ids(enemy)
+    }
+
+    assert recipe["result"]["item"] == "wolf_fang_charm"
+    assert "wolf_fang_charm" in legacy_enemy_drops
+    assert "wolf_fang_charm" not in narrative_forest_drops
+
+
+def test_forest_required_recipes_are_craft_only_except_legacy_charm():
+    recipes = load_json("data/recipes.json")
+    enemies = load_json("data/enemies.json")
+    enemy_drops = {
+        drop_id
+        for enemy in enemies.values()
+        for drop_id in get_enemy_drop_ids(enemy)
+    }
+
+    for recipe_id in REQUIRED_FOREST_RECIPE_IDS:
+        result_item = recipes[recipe_id]["result"]["item"]
+        if result_item == "wolf_fang_charm":
+            continue
+        assert result_item not in enemy_drops, recipe_id
 
 
 def test_forest_remnant_items_use_forest_remnant_set():

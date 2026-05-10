@@ -17,6 +17,21 @@ FOREST_ENEMY_IDS = {
     "grubfang_rootcaller",
 }
 
+FOREST_ENEMY_TIERS = {
+    "forest_rat": 1,
+    "young_goblin": 1,
+    "stray_wolf": 1,
+    "goblin_scout": 2,
+    "forest_wolf": 2,
+    "thorn_sprite": 2,
+    "bone_gnawer": 3,
+    "lost_adventurer": 3,
+    "goblin_shaman": 4,
+    "alpha_wolf": 4,
+    "rootbound_remnant": 5,
+    "grubfang_rootcaller": 6,
+}
+
 FOREST_GATHERING_ZONE_IDS = {
     "forest_outskirts",
     "forest_deep_trails",
@@ -105,6 +120,22 @@ def test_forest_enemies_have_required_metadata():
         assert enemy.get("description")
 
 
+def test_forest_enemy_tiers_are_progressive():
+    enemies = load_json("data/enemies.json")
+
+    for enemy_id, expected_tier in FOREST_ENEMY_TIERS.items():
+        assert enemies[enemy_id]["tier"] == expected_tier
+
+
+def test_forest_boss_is_last_tier():
+    enemies = load_json("data/enemies.json")
+    boss = enemies["grubfang_rootcaller"]
+    max_forest_tier = max(enemies[enemy_id]["tier"] for enemy_id in FOREST_ENEMY_IDS)
+
+    assert boss["family"] == "boss"
+    assert boss["tier"] == max_forest_tier
+
+
 def test_forest_enemy_drops_reference_existing_items():
     enemies = load_json("data/enemies.json")
     items = load_json("data/items.json")
@@ -147,6 +178,28 @@ def test_not_every_forest_enemy_has_rare_drop():
     assert enemies_without_rare_resource >= 3
 
 
+def test_forest_rare_resource_drops_are_selective():
+    enemies = load_json("data/enemies.json")
+    items = load_json("data/items.json")
+    enemies_with_rare_resource = 0
+    enemies_without_rare_resource = 0
+
+    for enemy_id in FOREST_ENEMY_IDS:
+        rare_resource_drops = [
+            item_id
+            for item_id in get_enemy_drop_items(enemies[enemy_id])
+            if items[item_id]["type"] == "resource"
+            and items[item_id]["rarity"] in RARE_RESOURCE_RARITIES
+        ]
+        if rare_resource_drops:
+            enemies_with_rare_resource += 1
+        else:
+            enemies_without_rare_resource += 1
+
+    assert enemies_with_rare_resource >= 3
+    assert enemies_without_rare_resource >= 3
+
+
 def test_forest_set_direct_drops_are_selective():
     enemies = load_json("data/enemies.json")
     items = load_json("data/items.json")
@@ -170,6 +223,29 @@ def test_forest_set_direct_drops_are_selective():
             enemies_without_set_drop += 1
 
     assert enemies_without_set_drop >= 4
+
+
+def test_forest_direct_set_drops_are_not_on_every_enemy():
+    enemies = load_json("data/enemies.json")
+    items = load_json("data/items.json")
+    enemies_without_set_drop = 0
+
+    for enemy_id in FOREST_ENEMY_IDS:
+        has_set_drop = any(
+            items[item_id].get("type") == "equipment" and items[item_id].get("set_id")
+            for item_id in get_enemy_drop_items(enemies[enemy_id])
+        )
+        if not has_set_drop:
+            enemies_without_set_drop += 1
+
+    assert enemies_without_set_drop >= 4
+
+
+def test_legacy_forest_enemies_are_still_present():
+    enemies = load_json("data/enemies.json")
+
+    assert "goblin" in enemies
+    assert "wolf" in enemies
 
 
 def test_forest_gathering_nodes_exist():
