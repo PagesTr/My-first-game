@@ -109,6 +109,11 @@ class MenuScreen:
             "Professions",
             "View gathering progress",
         )
+        self.quests_button = MenuButton(
+            (400, 298, 300, 72),
+            "Quests",
+            "Track forest objectives",
+        )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
         self.selected_region = None
         self.region_buttons = []
@@ -221,6 +226,11 @@ class MenuScreen:
                 self.game.state = "professions"
                 return
 
+            if self.quests_button.is_clicked(pos):
+                self._clear_offline_result()
+                self.game.state = "quests"
+                return
+
             if self.mailbox_button.is_clicked(pos):
                 self._clear_offline_result()
                 self.game.state = "mailbox"
@@ -282,6 +292,7 @@ class MenuScreen:
         if has_available_recipe:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
+        self.quests_button.draw(screen, self.option_font, self.body_font)
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
@@ -317,7 +328,7 @@ class MenuScreen:
         screen.blit(label, (badge_rect.x + 8, badge_rect.y + 3))
 
     def _draw_town_player_panel(self, screen):
-        rect = pygame.Rect(470, 150, 250, 220)
+        rect = pygame.Rect(470, 150, 250, 132)
         pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
         pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
 
@@ -333,15 +344,14 @@ class MenuScreen:
         lines = [
             f"Class: {class_name}",
             f"Level: {player.get('level', 1)}",
-            f"HP: {player.get('current_hp', 0)} / {player.get('max_hp', 0)}",
             f"Gold: {player.get('gold', 0)}",
         ]
 
-        y = rect.y + 62
+        y = rect.y + 52
         for line in lines:
             text = self.body_font.render(line, True, (190, 200, 205))
             screen.blit(text, (rect.x + 18, y))
-            y += 34
+            y += 24
 
     def _draw_offline_result_panel(self, screen):
         result = getattr(self.game, "last_offline_result", None)

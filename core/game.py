@@ -29,6 +29,7 @@ from systems.offline import (
     stop_offline_activity,
 )
 from systems.progression import apply_combat_rewards
+from systems.quests import ensure_player_quests, record_quest_event
 from systems.save_load import load_data_from_file, save_game, validate_save_data
 from systems.stats import prepare_player_for_combat
 
@@ -80,6 +81,7 @@ class Game:
         self.selected_class = save_data.get("selected_class")
         self.selected_zone = save_data.get("selected_zone")
         self.player = save_data.get("player")
+        ensure_player_quests(self.player, self.data.quests)
         self.mailbox = save_data.get("mailbox") or create_mailbox()
         self.combat = None
         self.auto_mode = False
@@ -121,7 +123,9 @@ class Game:
             classes=self.data.classes,
             items=self.data.items,
             professions_data=self.data.professions,
+            quests_data=self.data.quests,
         )
+        ensure_player_quests(self.player, self.data.quests)
         prepare_player_for_combat(
             self.player,
             self.data.items,
@@ -169,6 +173,17 @@ class Game:
         self.last_combat_result = self.last_instance_result
         self.combat = None
         self.auto_mode = False
+        enemy_pool = zone.get("enemy_pool", [])
+        if (
+            isinstance(enemy_pool, list)
+            and len(enemy_pool) == 1
+            and isinstance(self.last_instance_result, dict)
+        ):
+            self.record_quest_event({
+                "type": "kill_enemy",
+                "target": enemy_pool[0],
+                "amount": int(self.last_instance_result.get("combats_won", 0)),
+            })
         self.state = "combat_result"
 
     def gather_in_zone(self, zone_key, profession_id):
@@ -196,6 +211,7 @@ class Game:
         self.selected_zone = zone_key
         self.state = "zone_actions"
         if result.get("gathered") is True:
+            self._record_gathering_quest_progress(result)
             self.save_current_game()
         return result
 
@@ -256,6 +272,7 @@ class Game:
         self.last_gathering_result = result
         if result.get("gathered") is True:
             advance_active_gathering_tick(self.active_gathering, current_time_ms)
+            self._record_gathering_quest_progress(result)
             self.save_current_game()
             return result
         if result.get("reason") == "inventory_full":
@@ -304,8 +321,46 @@ class Game:
             self.data.items,
         )
         if result.get("resolved") is True or result.get("reason") == "inventory_full":
+            if result.get("resolved") is True:
+                self._record_gathering_quest_progress(result)
             self.save_current_game()
         return result
+
+    def record_quest_event(self, event):
+        if not self.player:
+            return {"updated": False, "completed": []}
+        result = record_quest_event(self.player, self.data.quests, event)
+        if result.get("updated") or result.get("completed"):
+            self.save_current_game()
+        return result
+
+    def record_craft_quest_progress(self, recipe_id, craft_result):
+        if not self.player or not isinstance(craft_result, dict):
+            return {"updated": False, "completed": []}
+        if craft_result.get("crafted") is not True:
+            return {"updated": False, "completed": []}
+        return self.record_quest_event({
+            "type": "craft_recipe",
+            "target": recipe_id,
+            "amount": 1,
+        })
+
+    def _record_gathering_quest_progress(self, result):
+        if not isinstance(result, dict):
+            return []
+        quest_results = []
+        for reward in result.get("rewards", []):
+            if not isinstance(reward, dict):
+                continue
+            item_id = reward.get("item")
+            quantity = reward.get("quantity", 1)
+            if item_id:
+                quest_results.append(self.record_quest_event({
+                    "type": "gather_item",
+                    "target": item_id,
+                    "amount": int(quantity),
+                }))
+        return quest_results
 
     def stop_offline_progress(self):
         if not self.player:

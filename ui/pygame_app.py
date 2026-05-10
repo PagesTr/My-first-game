@@ -8,6 +8,7 @@ from ui.screens.main_menu_screen import MainMenuScreen
 from ui.screens.merchant_screen import MerchantScreen
 from ui.screens.menu_screen import MenuScreen
 from ui.screens.professions_screen import ProfessionsScreen
+from ui.screens.quests_screen import QuestScreen
 from ui.screens.result_screen import ResultScreen
 from ui.screens.skills_screen import SkillsScreen
 
@@ -33,6 +34,7 @@ class PygameApp:
         self.skills_screen = SkillsScreen(self.game)
         self.mailbox_screen = MailboxScreen(self.game)
         self.professions_screen = ProfessionsScreen(self.game)
+        self.quests_screen = QuestScreen(self.game)
 
     def run(self):
         while self.running:
@@ -66,6 +68,8 @@ class PygameApp:
                 self.skills_screen.handle_event(event)
             elif self.game.state == "professions":
                 self.professions_screen.handle_event(event)
+            elif self.game.state == "quests":
+                self.quests_screen.handle_event(event)
             elif self.game.state == "mailbox":
                 self.mailbox_screen.handle_event(event)
 
@@ -97,6 +101,8 @@ class PygameApp:
             self.skills_screen.draw(self.screen)
         elif self.game.state == "professions":
             self.professions_screen.draw(self.screen)
+        elif self.game.state == "quests":
+            self.quests_screen.draw(self.screen)
         elif self.game.state == "mailbox":
             self.mailbox_screen.draw(self.screen)
 
