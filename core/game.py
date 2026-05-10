@@ -13,6 +13,16 @@ from systems.active_gathering import (
 )
 from systems.combat import CombatSystem
 from systems.effects import tick_combat_effects
+from systems.dungeons import (
+    apply_rest_choice,
+    calculate_boss_multiplier,
+    calculate_boss_reward_multiplier,
+    create_dungeon_state,
+    get_dungeon,
+    get_next_dungeon_step,
+    is_boss_loop_step,
+    is_rest_choice_step,
+)
 from systems.gathering import gather_from_zone
 from systems.inventory import (
     claim_all_pending_drops,
@@ -37,6 +47,7 @@ from systems.stats import prepare_player_for_combat
 class Game:
     def __init__(self):
         self.data = DataManager()
+        self.data.dungeons = self.data.load("data/dungeons.json")
 
         self.player = None
         self.selected_class = None
@@ -48,7 +59,9 @@ class Game:
         self.last_instance_result = None
         self.last_gathering_result = None
         self.last_offline_result = None
+        self.last_dungeon_result = None
         self.active_gathering = None
+        self.active_dungeon = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
 
@@ -62,7 +75,9 @@ class Game:
         self.last_instance_result = None
         self.last_gathering_result = None
         self.last_offline_result = None
+        self.last_dungeon_result = None
         self.active_gathering = None
+        self.active_dungeon = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
         self.state = "class_select"
@@ -185,6 +200,218 @@ class Game:
                 "amount": int(self.last_instance_result.get("combats_won", 0)),
             })
         self.state = "combat_result"
+
+    def start_dungeon(self, dungeon_id):
+        if not self.player:
+            return {"started": False, "reason": "invalid_player"}
+
+        dungeon = get_dungeon(getattr(self.data, "dungeons", {}), dungeon_id)
+        if dungeon is None:
+            return {"started": False, "reason": "unknown_dungeon"}
+        if self.player.get("level", 1) < dungeon.get("unlock_level", 1):
+            return {"started": False, "reason": "locked_dungeon"}
+
+        self.active_dungeon = create_dungeon_state(dungeon_id)
+        self.player["current_hp"] = self.player.get("max_hp", self.player.get("current_hp", 0))
+        if hasattr(self, "save_current_game"):
+            self.save_current_game()
+        if self.state == "dungeon":
+            self.state = "dungeon"
+        else:
+            self.state = "town"
+        return {"started": True, "dungeon_id": dungeon_id}
+
+    def get_active_dungeon_step(self):
+        if not isinstance(self.active_dungeon, dict):
+            return None
+        dungeon = get_dungeon(
+            getattr(self.data, "dungeons", {}),
+            self.active_dungeon.get("dungeon_id"),
+        )
+        if dungeon is None:
+            return None
+        return get_next_dungeon_step(
+            dungeon,
+            self.active_dungeon.get("step_index", 0),
+        )
+
+    def resolve_dungeon_combat_step(self):
+        if not isinstance(self.active_dungeon, dict):
+            return {"resolved": False, "reason": "no_active_dungeon"}
+
+        step = self.get_active_dungeon_step()
+        if not isinstance(step, dict) or step.get("type") != "combat":
+            return {"resolved": False, "reason": "not_combat_step"}
+
+        enemy_id = step.get("enemy_id")
+        result = self._run_single_dungeon_combat(enemy_id)
+        result["resolved"] = True
+        if result.get("won") is True:
+            self.active_dungeon["step_index"] += 1
+            self.record_quest_event({
+                "type": "kill_enemy",
+                "target": enemy_id,
+                "amount": 1,
+            })
+        else:
+            self.active_dungeon["failed"] = True
+
+        self.last_dungeon_result = result
+        if hasattr(self, "save_current_game"):
+            self.save_current_game()
+        return result
+
+    def apply_dungeon_rest_choice(self, choice):
+        if not isinstance(self.active_dungeon, dict):
+            return {"applied": False, "choice": choice, "reason": "no_active_dungeon"}
+
+        step = self.get_active_dungeon_step()
+        if not is_rest_choice_step(step):
+            return {
+                "applied": False,
+                "choice": choice,
+                "healed": 0,
+                "loot_bonus": False,
+                "reason": "not_rest_choice_step",
+            }
+
+        result = apply_rest_choice(self.player, choice)
+        if result.get("applied") is True:
+            self.active_dungeon["rest_choice_used"] = True
+            self.active_dungeon["step_index"] += 1
+            if hasattr(self, "save_current_game"):
+                self.save_current_game()
+        return result
+
+    def resolve_dungeon_boss_step(self):
+        if not isinstance(self.active_dungeon, dict):
+            return {"resolved": False, "reason": "no_active_dungeon"}
+
+        dungeon = get_dungeon(
+            getattr(self.data, "dungeons", {}),
+            self.active_dungeon.get("dungeon_id"),
+        )
+        step = self.get_active_dungeon_step()
+        if dungeon is None or not is_boss_loop_step(step):
+            return {"resolved": False, "reason": "not_boss_loop_step"}
+
+        boss_enemy_id = step.get("enemy_id") or dungeon.get("boss_enemy_id")
+        victories = self.active_dungeon.get("boss_victories", 0)
+        boss_multiplier = calculate_boss_multiplier(
+            victories,
+            dungeon.get("scaling_rate", 0),
+        )
+        result = self._run_single_dungeon_combat(boss_enemy_id, boss_multiplier)
+        result["resolved"] = True
+        result["boss_multiplier"] = boss_multiplier
+
+        if result.get("won") is True:
+            reward_multiplier = calculate_boss_reward_multiplier(
+                victories,
+                dungeon.get("reward_multiplier_per_victory", 0),
+            )
+            self._apply_extra_dungeon_reward_multiplier(result, reward_multiplier)
+            self.active_dungeon["boss_victories"] = victories + 1
+            result["boss_victories"] = self.active_dungeon["boss_victories"]
+            result["reward_multiplier"] = reward_multiplier
+            self.last_dungeon_result = result
+            if hasattr(self, "save_current_game"):
+                self.save_current_game()
+            return result
+
+        self.active_dungeon["failed"] = True
+        self.active_dungeon["completed"] = True
+        result["completed"] = True
+        result["boss_victories"] = victories
+        self.last_dungeon_result = result
+        self.active_dungeon = None
+        if hasattr(self, "save_current_game"):
+            self.save_current_game()
+        return result
+
+    def _run_single_dungeon_combat(self, enemy_id, multiplier=1.0):
+        if not self.player or enemy_id not in self.data.enemies:
+            return {
+                "won": False,
+                "enemy_id": enemy_id,
+                "enemy_name": enemy_id or "Unknown Enemy",
+                "exp": 0,
+                "gold": 0,
+                "drops": [],
+                "reason": "unknown_enemy",
+            }
+
+        enemy = create_enemy(self.data.enemies[enemy_id], self.player.get("level", 1))
+        self._scale_dungeon_enemy(enemy, multiplier)
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        combat = CombatSystem(self.player, enemy, self.data.skills)
+        turns = 0
+        while not combat.is_over and turns < 300:
+            combat.step()
+            turns += 1
+
+        if not combat.is_over:
+            self.player["current_hp"] = 0
+            return {
+                "won": False,
+                "enemy_id": enemy_id,
+                "enemy_name": enemy.get("name", enemy_id),
+                "exp": 0,
+                "gold": 0,
+                "drops": [],
+                "reason": "turn_limit",
+            }
+        if combat.winner != "player":
+            return {
+                "won": False,
+                "enemy_id": enemy_id,
+                "enemy_name": enemy.get("name", enemy_id),
+                "exp": 0,
+                "gold": 0,
+                "drops": [],
+            }
+
+        reward_result = apply_combat_rewards(self.player, enemy)
+        drops = generate_combat_loot(enemy, self.data.items, self.player)
+        return {
+            "won": True,
+            "enemy_id": enemy_id,
+            "enemy_name": enemy.get("name", enemy_id),
+            "exp": reward_result.get("exp_gained", 0),
+            "gold": reward_result.get("gold_gained", 0),
+            "drops": drops,
+            "inventory_result": {
+                "added": [],
+                "failed": [],
+                "pending": list(drops),
+            },
+        }
+
+    def _scale_dungeon_enemy(self, enemy, multiplier):
+        if not isinstance(multiplier, (int, float)) or multiplier <= 0:
+            multiplier = 1.0
+        for stat in ("max_hp", "attack", "defense", "exp", "gold"):
+            enemy[stat] = max(1, int(enemy.get(stat, 1) * multiplier))
+        enemy["current_hp"] = enemy["max_hp"]
+
+    def _apply_extra_dungeon_reward_multiplier(self, result, reward_multiplier):
+        if not isinstance(reward_multiplier, (int, float)) or reward_multiplier <= 1:
+            return
+        base_exp = int(result.get("exp", 0))
+        base_gold = int(result.get("gold", 0))
+        total_exp = int(base_exp * reward_multiplier)
+        total_gold = int(base_gold * reward_multiplier)
+        bonus_exp = max(0, total_exp - base_exp)
+        bonus_gold = max(0, total_gold - base_gold)
+        self.player["exp"] = self.player.get("exp", 0) + bonus_exp
+        self.player["gold"] = self.player.get("gold", 0) + bonus_gold
+        result["exp"] = total_exp
+        result["gold"] = total_gold
 
     def gather_in_zone(self, zone_key, profession_id):
         if not self.player or zone_key not in self.data.zones:
