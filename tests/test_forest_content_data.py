@@ -32,6 +32,21 @@ FOREST_ENEMY_TIERS = {
     "grubfang_rootcaller": 6,
 }
 
+EXPECTED_FOREST_ENEMY_DROPS = {
+    "forest_rat": {"rat_tail"},
+    "young_goblin": {"goblin_ear"},
+    "stray_wolf": {"wolf_pelt"},
+    "goblin_scout": {"scout_badge", "goblin_map_scrap", "scavenger_gloves"},
+    "forest_wolf": {"wolf_fang", "wild_heart", "wolf_stalker_boots"},
+    "thorn_sprite": {"thorn_essence", "forest_gatherer_gloves"},
+    "bone_gnawer": {"chewed_bone", "cracked_skull"},
+    "lost_adventurer": {"broken_adventurer_tag", "rusted_ring", "adventurer_relic_ring"},
+    "goblin_shaman": {"shaman_totem", "ritual_paint"},
+    "alpha_wolf": {"alpha_fang", "wild_heart", "wolf_stalker_hood"},
+    "rootbound_remnant": {"rootbound_relic", "briar_sap", "rootbound_amulet"},
+    "grubfang_rootcaller": {"rootcaller_totem", "forest_core", "forest_remnant_trinket"},
+}
+
 FOREST_GATHERING_ZONE_IDS = {
     "forest_rat_outskirts",
     "forest_young_goblin_trail",
@@ -43,6 +58,28 @@ FOREST_GATHERING_ZONE_IDS = {
     "forest_lost_adventurer_path",
     "forest_goblin_shaman_grounds",
     "forest_alpha_wolf_lair",
+}
+
+FOREST_GENERIC_ZONE_IDS = {
+    "forest_rat_outskirts",
+    "forest_young_goblin_trail",
+    "forest_stray_wolf_path",
+    "forest_goblin_scout_trails",
+    "forest_wolf_hunting_ground",
+    "forest_thorn_sprite_grove",
+    "forest_bone_gnawer_den",
+    "forest_lost_adventurer_path",
+    "forest_goblin_shaman_grounds",
+    "forest_alpha_wolf_lair",
+}
+
+LEGACY_FOREST_ZONE_IDS = {
+    "forest_goblin",
+    "forest_wolf",
+    "forest_outskirts",
+    "forest_deep_trails",
+    "forest_buried_paths",
+    "forest_ritual_grounds",
 }
 
 EXPECTED_FOREST_ZONE_PROFESSIONS = {
@@ -116,6 +153,19 @@ FOREST_NEW_ITEM_IDS = {
 
 NON_IDENTITY_DROP_IDS = {"minor_health_potion", "health_potion", "leather"}
 RARE_RESOURCE_RARITIES = {"rare", "epic", "legendary", "unique"}
+UNPLANNED_FOREST_DROP_NOISE = {
+    "leather",
+    "minor_health_potion",
+    "health_potion",
+    "copper_coin",
+    "gold_coin",
+    "torn_cloth",
+    "old_charm_fragment",
+    "buried_bones",
+    "healing_herb",
+    "forest_spore",
+    "wild_root",
+}
 
 
 def load_json(path):
@@ -177,6 +227,24 @@ def test_forest_enemy_drops_reference_existing_items():
             assert drop.get("item") in items
             assert isinstance(drop.get("chance"), (int, float))
             assert 0 <= drop["chance"] <= 1
+
+
+def test_forest_enemy_drops_match_plan_exactly():
+    enemies = load_json("data/enemies.json")
+
+    for enemy_id, expected_drops in EXPECTED_FOREST_ENEMY_DROPS.items():
+        assert set(get_enemy_drop_items(enemies[enemy_id])) == expected_drops
+
+
+def test_forest_enemy_drops_do_not_include_unplanned_generic_noise():
+    enemies = load_json("data/enemies.json")
+
+    for enemy_id in FOREST_ENEMY_IDS:
+        drop_items = set(get_enemy_drop_items(enemies[enemy_id]))
+        assert not (drop_items & UNPLANNED_FOREST_DROP_NOISE), enemy_id
+
+    assert "wolf_pelt" not in get_enemy_drop_items(enemies["forest_wolf"])
+    assert "goblin_ear" not in get_enemy_drop_items(enemies["goblin_scout"])
 
 
 def test_forest_enemies_have_specific_drop():
@@ -283,7 +351,7 @@ def test_removed_legacy_enemies_are_not_required():
 def test_new_forest_zones_exist():
     zones = load_json("data/zones.json")
 
-    for zone_id in FOREST_GATHERING_ZONE_IDS:
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
         assert zone_id in zones
 
 
@@ -292,7 +360,7 @@ def test_new_forest_zones_use_new_forest_enemies():
     enemies = load_json("data/enemies.json")
     legacy_enemy_ids = {"goblin", "wolf"}
 
-    for zone_id in FOREST_GATHERING_ZONE_IDS:
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
         enemy_pool = zones[zone_id].get("enemy_pool", [])
         assert enemy_pool
         for enemy_id in enemy_pool:
@@ -305,7 +373,7 @@ def test_new_forest_zones_use_new_forest_enemies():
 def test_forest_generic_zones_have_single_enemy():
     zones = load_json("data/zones.json")
 
-    for zone_id in FOREST_GATHERING_ZONE_IDS:
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
         enemy_pool = zones[zone_id].get("enemy_pool")
         assert isinstance(enemy_pool, list)
         assert len(enemy_pool) == 1
@@ -315,15 +383,24 @@ def test_forest_zones_do_not_use_legacy_enemies():
     zones = load_json("data/zones.json")
     legacy_enemy_ids = {"goblin", "wolf"}
 
-    for zone_id in FOREST_GATHERING_ZONE_IDS:
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
         assert not (set(zones[zone_id].get("enemy_pool", [])) & legacy_enemy_ids)
+
+
+def test_forest_zones_loot_tables_match_enemy_drops_exactly():
+    zones = load_json("data/zones.json")
+    enemies = load_json("data/enemies.json")
+
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
+        enemy_id = zones[zone_id]["enemy_pool"][0]
+        assert set(zones[zone_id]["loot_table"]) == set(get_enemy_drop_items(enemies[enemy_id]))
 
 
 def test_new_forest_zone_loot_tables_reference_existing_items():
     zones = load_json("data/zones.json")
     items = load_json("data/items.json")
 
-    for zone_id in FOREST_GATHERING_ZONE_IDS:
+    for zone_id in FOREST_GENERIC_ZONE_IDS:
         loot_table = zones[zone_id].get("loot_table", [])
         assert loot_table
         for item_id in loot_table:
@@ -360,15 +437,15 @@ def test_new_forest_zones_have_matching_gathering_nodes_when_expected():
 def test_legacy_forest_zones_are_removed():
     zones = load_json("data/zones.json")
 
-    assert "forest_goblin" not in zones
-    assert "forest_wolf" not in zones
+    for zone_id in LEGACY_FOREST_ZONE_IDS:
+        assert zone_id not in zones
 
 
 def test_legacy_forest_gathering_nodes_are_removed():
     gathering_nodes = load_json("data/gathering_nodes.json")
 
-    assert "forest_goblin" not in gathering_nodes
-    assert "forest_wolf" not in gathering_nodes
+    for zone_id in LEGACY_FOREST_ZONE_IDS:
+        assert zone_id not in gathering_nodes
 
 
 def test_forest_gathering_nodes_exist():

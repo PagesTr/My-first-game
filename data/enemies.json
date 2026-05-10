@@ -54,14 +54,6 @@
       {
         "item": "rat_tail",
         "chance": 1.0
-      },
-      {
-        "item": "leather",
-        "chance": 0.15
-      },
-      {
-        "item": "minor_health_potion",
-        "chance": 0.08
       }
     ]
   },
@@ -83,18 +75,6 @@
       {
         "item": "goblin_ear",
         "chance": 1.0
-      },
-      {
-        "item": "torn_cloth",
-        "chance": 0.45
-      },
-      {
-        "item": "crude_charm",
-        "chance": 0.08
-      },
-      {
-        "item": "minor_health_potion",
-        "chance": 0.1
       }
     ]
   },
@@ -116,14 +96,6 @@
       {
         "item": "wolf_pelt",
         "chance": 1.0
-      },
-      {
-        "item": "small_fang",
-        "chance": 0.25
-      },
-      {
-        "item": "leather",
-        "chance": 0.2
       }
     ]
   },
@@ -144,15 +116,7 @@
     "drops": [
       {
         "item": "scout_badge",
-        "chance": 0.85
-      },
-      {
-        "item": "goblin_ear",
-        "chance": 0.55
-      },
-      {
-        "item": "torn_cloth",
-        "chance": 0.35
+        "chance": 1.0
       },
       {
         "item": "goblin_map_scrap",
@@ -180,16 +144,8 @@
     "description": "It watches your footwork. It is not impressed.",
     "drops": [
       {
-        "item": "wolf_pelt",
-        "chance": 1.0
-      },
-      {
         "item": "wolf_fang",
-        "chance": 0.45
-      },
-      {
-        "item": "leather",
-        "chance": 0.25
+        "chance": 1.0
       },
       {
         "item": "wild_heart",
@@ -218,15 +174,7 @@
     "drops": [
       {
         "item": "thorn_essence",
-        "chance": 0.85
-      },
-      {
-        "item": "healing_herb",
-        "chance": 0.3
-      },
-      {
-        "item": "forest_spore",
-        "chance": 0.18
+        "chance": 1.0
       },
       {
         "item": "forest_gatherer_gloves",
@@ -254,10 +202,6 @@
         "chance": 1.0
       },
       {
-        "item": "buried_bones",
-        "chance": 0.35
-      },
-      {
         "item": "cracked_skull",
         "chance": 0.08
       }
@@ -280,11 +224,7 @@
     "drops": [
       {
         "item": "broken_adventurer_tag",
-        "chance": 0.75
-      },
-      {
-        "item": "old_charm_fragment",
-        "chance": 0.25
+        "chance": 1.0
       },
       {
         "item": "rusted_ring",
@@ -313,19 +253,11 @@
     "drops": [
       {
         "item": "shaman_totem",
-        "chance": 0.75
-      },
-      {
-        "item": "goblin_ear",
-        "chance": 0.5
+        "chance": 1.0
       },
       {
         "item": "ritual_paint",
         "chance": 0.06
-      },
-      {
-        "item": "goblin_totem",
-        "chance": 0.035
       }
     ]
   },
@@ -346,11 +278,7 @@
     "drops": [
       {
         "item": "alpha_fang",
-        "chance": 0.75
-      },
-      {
-        "item": "wolf_fang",
-        "chance": 0.6
+        "chance": 1.0
       },
       {
         "item": "wild_heart",
@@ -379,15 +307,11 @@
     "drops": [
       {
         "item": "rootbound_relic",
-        "chance": 0.75
+        "chance": 1.0
       },
       {
         "item": "briar_sap",
-        "chance": 0.35
-      },
-      {
-        "item": "old_charm_fragment",
-        "chance": 0.25
+        "chance": 0.1
       },
       {
         "item": "rootbound_amulet",
@@ -413,10 +337,6 @@
       {
         "item": "rootcaller_totem",
         "chance": 1.0
-      },
-      {
-        "item": "corrupted_root",
-        "chance": 0.6
       },
       {
         "item": "forest_core",

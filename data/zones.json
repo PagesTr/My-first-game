@@ -20,8 +20,7 @@
       "young_goblin"
     ],
     "loot_table": [
-      "goblin_ear",
-      "torn_cloth"
+      "goblin_ear"
     ],
     "difficulty_multiplier": 1.05,
     "farming_rate": 10
@@ -34,8 +33,7 @@
       "stray_wolf"
     ],
     "loot_table": [
-      "wolf_pelt",
-      "small_fang"
+      "wolf_pelt"
     ],
     "difficulty_multiplier": 1.08,
     "farming_rate": 10
@@ -49,7 +47,8 @@
     ],
     "loot_table": [
       "scout_badge",
-      "goblin_map_scrap"
+      "goblin_map_scrap",
+      "scavenger_gloves"
     ],
     "difficulty_multiplier": 1.15,
     "farming_rate": 9
@@ -63,7 +62,8 @@
     ],
     "loot_table": [
       "wolf_fang",
-      "wild_heart"
+      "wild_heart",
+      "wolf_stalker_boots"
     ],
     "difficulty_multiplier": 1.2,
     "farming_rate": 9
@@ -77,7 +77,7 @@
     ],
     "loot_table": [
       "thorn_essence",
-      "forest_spore"
+      "forest_gatherer_gloves"
     ],
     "difficulty_multiplier": 1.18,
     "farming_rate": 9
@@ -105,8 +105,8 @@
     ],
     "loot_table": [
       "broken_adventurer_tag",
-      "old_charm_fragment",
-      "rusted_ring"
+      "rusted_ring",
+      "adventurer_relic_ring"
     ],
     "difficulty_multiplier": 1.35,
     "farming_rate": 8
@@ -134,7 +134,8 @@
     ],
     "loot_table": [
       "alpha_fang",
-      "wild_heart"
+      "wild_heart",
+      "wolf_stalker_hood"
     ],
     "difficulty_multiplier": 1.55,
     "farming_rate": 7
