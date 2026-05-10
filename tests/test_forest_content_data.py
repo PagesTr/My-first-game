@@ -33,24 +33,42 @@ FOREST_ENEMY_TIERS = {
 }
 
 FOREST_GATHERING_ZONE_IDS = {
-    "forest_outskirts",
-    "forest_deep_trails",
-    "forest_buried_paths",
-    "forest_ritual_grounds",
+    "forest_rat_outskirts",
+    "forest_young_goblin_trail",
+    "forest_stray_wolf_path",
+    "forest_goblin_scout_trails",
+    "forest_wolf_hunting_ground",
+    "forest_thorn_sprite_grove",
+    "forest_bone_gnawer_den",
+    "forest_lost_adventurer_path",
+    "forest_goblin_shaman_grounds",
+    "forest_alpha_wolf_lair",
 }
 
 EXPECTED_FOREST_ZONE_PROFESSIONS = {
-    "forest_outskirts": {"druid", "archaeologist"},
-    "forest_deep_trails": {"druid"},
-    "forest_buried_paths": {"archaeologist", "druid"},
-    "forest_ritual_grounds": {"druid", "archaeologist"},
+    "forest_rat_outskirts": {"druid", "archaeologist"},
+    "forest_young_goblin_trail": {"druid"},
+    "forest_stray_wolf_path": {"druid"},
+    "forest_goblin_scout_trails": {"archaeologist"},
+    "forest_wolf_hunting_ground": {"druid"},
+    "forest_thorn_sprite_grove": {"druid"},
+    "forest_bone_gnawer_den": {"archaeologist"},
+    "forest_lost_adventurer_path": {"archaeologist"},
+    "forest_goblin_shaman_grounds": {"druid", "archaeologist"},
+    "forest_alpha_wolf_lair": {"druid"},
 }
 
 EXPECTED_FOREST_ZONE_UNLOCK_LEVELS = {
-    "forest_outskirts": 1,
-    "forest_deep_trails": 2,
-    "forest_buried_paths": 3,
-    "forest_ritual_grounds": 4,
+    "forest_rat_outskirts": 1,
+    "forest_young_goblin_trail": 1,
+    "forest_stray_wolf_path": 1,
+    "forest_goblin_scout_trails": 2,
+    "forest_wolf_hunting_ground": 2,
+    "forest_thorn_sprite_grove": 2,
+    "forest_bone_gnawer_den": 3,
+    "forest_lost_adventurer_path": 3,
+    "forest_goblin_shaman_grounds": 4,
+    "forest_alpha_wolf_lair": 4,
 }
 
 FOREST_SET_DROP_IDS = {
@@ -255,11 +273,11 @@ def test_forest_direct_set_drops_are_not_on_every_enemy():
     assert enemies_without_set_drop >= 4
 
 
-def test_legacy_forest_enemies_are_still_present():
+def test_removed_legacy_enemies_are_not_required():
     enemies = load_json("data/enemies.json")
 
-    assert "goblin" in enemies
-    assert "wolf" in enemies
+    assert "goblin" not in enemies
+    assert "wolf" not in enemies
 
 
 def test_new_forest_zones_exist():
@@ -284,6 +302,23 @@ def test_new_forest_zones_use_new_forest_enemies():
             assert enemies[enemy_id].get("chapter") == "forest"
 
 
+def test_forest_generic_zones_have_single_enemy():
+    zones = load_json("data/zones.json")
+
+    for zone_id in FOREST_GATHERING_ZONE_IDS:
+        enemy_pool = zones[zone_id].get("enemy_pool")
+        assert isinstance(enemy_pool, list)
+        assert len(enemy_pool) == 1
+
+
+def test_forest_zones_do_not_use_legacy_enemies():
+    zones = load_json("data/zones.json")
+    legacy_enemy_ids = {"goblin", "wolf"}
+
+    for zone_id in FOREST_GATHERING_ZONE_IDS:
+        assert not (set(zones[zone_id].get("enemy_pool", [])) & legacy_enemy_ids)
+
+
 def test_new_forest_zone_loot_tables_reference_existing_items():
     zones = load_json("data/zones.json")
     items = load_json("data/items.json")
@@ -302,10 +337,16 @@ def test_new_forest_zone_unlock_levels_are_progressive():
         for zone_id in EXPECTED_FOREST_ZONE_UNLOCK_LEVELS
     }
 
-    assert unlock_levels["forest_outskirts"] == 1
-    assert unlock_levels["forest_deep_trails"] >= unlock_levels["forest_outskirts"]
-    assert unlock_levels["forest_buried_paths"] >= unlock_levels["forest_deep_trails"]
-    assert unlock_levels["forest_ritual_grounds"] >= unlock_levels["forest_buried_paths"]
+    assert unlock_levels["forest_rat_outskirts"] == 1
+    assert unlock_levels["forest_young_goblin_trail"] == 1
+    assert unlock_levels["forest_stray_wolf_path"] == 1
+    assert unlock_levels["forest_goblin_scout_trails"] >= unlock_levels["forest_rat_outskirts"]
+    assert unlock_levels["forest_wolf_hunting_ground"] >= unlock_levels["forest_young_goblin_trail"]
+    assert unlock_levels["forest_thorn_sprite_grove"] >= unlock_levels["forest_stray_wolf_path"]
+    assert unlock_levels["forest_bone_gnawer_den"] >= unlock_levels["forest_goblin_scout_trails"]
+    assert unlock_levels["forest_lost_adventurer_path"] >= unlock_levels["forest_wolf_hunting_ground"]
+    assert unlock_levels["forest_goblin_shaman_grounds"] >= unlock_levels["forest_bone_gnawer_den"]
+    assert unlock_levels["forest_alpha_wolf_lair"] >= unlock_levels["forest_lost_adventurer_path"]
 
 
 def test_new_forest_zones_have_matching_gathering_nodes_when_expected():
@@ -316,11 +357,18 @@ def test_new_forest_zones_have_matching_gathering_nodes_when_expected():
         assert set(gathering_nodes[zone_id]) == expected_professions
 
 
-def test_legacy_forest_zones_do_not_block_new_forest_content():
+def test_legacy_forest_zones_are_removed():
     zones = load_json("data/zones.json")
 
-    # Legacy forest zones are tolerated until full migration cleanup.
-    assert FOREST_GATHERING_ZONE_IDS <= set(zones)
+    assert "forest_goblin" not in zones
+    assert "forest_wolf" not in zones
+
+
+def test_legacy_forest_gathering_nodes_are_removed():
+    gathering_nodes = load_json("data/gathering_nodes.json")
+
+    assert "forest_goblin" not in gathering_nodes
+    assert "forest_wolf" not in gathering_nodes
 
 
 def test_forest_gathering_nodes_exist():

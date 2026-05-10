@@ -1,49 +1,4 @@
 {
-  "goblin": {
-    "name": "Goblin",
-    "behavior": "balanced",
-    "stats": {
-      "hp": 12,
-      "attack": 3,
-      "defense": 1
-    },
-    "exp": 5,
-    "gold": 4,
-    "drops": [
-      {
-        "item": "goblin_ear",
-        "chance": 1.0
-      },
-      {
-        "item": "goblin_charm",
-        "chance": 0.08
-      },
-      {
-        "item": "leather",
-        "chance": 0.4
-      },
-      {
-        "item": "minor_health_potion",
-        "chance": 0.18
-      },
-      {
-        "item": "iron_sword",
-        "chance": 0.08
-      },
-      {
-        "item": "rusty_sword",
-        "chance": 0.20
-      },
-      {
-        "item": "ring_of_luck",
-        "chance": 0.04
-      },
-      {
-        "item": "goblin_totem",
-        "chance": 0.03
-      }
-    ]
-  },
   "skeleton": {
     "name": "Skeleton",
     "behavior": "defensive",
@@ -78,47 +33,6 @@
       {
         "item": "scout_hood",
         "chance": 0.03
-      }
-    ]
-  },
-  "wolf": {
-    "name": "Wolf",
-    "behavior": "aggressive",
-    "stats": {
-      "hp": 14,
-      "attack": 5,
-      "defense": 1
-    },
-    "exp": 8,
-    "gold": 5,
-    "drops": [
-      {
-        "item": "wolf_pelt",
-        "chance": 1.0
-      },
-      {
-        "item": "sharp_fang",
-        "chance": 0.12
-      },
-      {
-        "item": "leather",
-        "chance": 0.3
-      },
-      {
-        "item": "minor_health_potion",
-        "chance": 0.08
-      },
-      {
-        "item": "worn_leather_armor",
-        "chance": 0.18
-      },
-      {
-        "item": "swift_boots",
-        "chance": 0.06
-      },
-      {
-        "item": "wolf_fang_charm",
-        "chance": 0.04
       }
     ]
   },
@@ -180,7 +94,7 @@
       },
       {
         "item": "minor_health_potion",
-        "chance": 0.10
+        "chance": 0.1
       }
     ]
   },
@@ -209,7 +123,7 @@
       },
       {
         "item": "leather",
-        "chance": 0.20
+        "chance": 0.2
       }
     ]
   },
@@ -308,7 +222,7 @@
       },
       {
         "item": "healing_herb",
-        "chance": 0.30
+        "chance": 0.3
       },
       {
         "item": "forest_spore",
@@ -403,7 +317,7 @@
       },
       {
         "item": "goblin_ear",
-        "chance": 0.50
+        "chance": 0.5
       },
       {
         "item": "ritual_paint",
@@ -436,11 +350,11 @@
       },
       {
         "item": "wolf_fang",
-        "chance": 0.60
+        "chance": 0.6
       },
       {
         "item": "wild_heart",
-        "chance": 0.10
+        "chance": 0.1
       },
       {
         "item": "wolf_stalker_hood",
@@ -502,7 +416,7 @@
       },
       {
         "item": "corrupted_root",
-        "chance": 0.60
+        "chance": 0.6
       },
       {
         "item": "forest_core",
@@ -646,10 +560,6 @@
       {
         "item": "ring_of_luck",
         "chance": 0.05
-      },
-      {
-        "item": "wolf_fang_charm",
-        "chance": 0.03
       }
     ]
   }

@@ -1,72 +1,5 @@
 {
-  "forest_goblin": {
-    "druid": {
-      "name": "Forest Herbs",
-      "description": "Useful herbs grow between goblin trails.",
-      "tick_seconds": 3,
-      "xp": 4,
-      "rewards": [
-        {
-          "item": "healing_herb",
-          "chance": 1.0,
-          "min_quantity": 1,
-          "max_quantity": 3
-        },
-        {
-          "item": "wild_root",
-          "chance": 0.35,
-          "min_quantity": 1,
-          "max_quantity": 1,
-          "is_rare": true
-        }
-      ]
-    },
-    "archaeologist": {
-      "name": "Buried Remains",
-      "description": "Old remains are buried near abandoned camps.",
-      "tick_seconds": 10,
-      "xp": 4,
-      "rewards": [
-        {
-          "item": "buried_bones",
-          "chance": 1.0,
-          "min_quantity": 1,
-          "max_quantity": 2
-        },
-        {
-          "item": "fossil_fragment",
-          "chance": 0.25,
-          "min_quantity": 1,
-          "max_quantity": 1,
-          "is_rare": true
-        }
-      ]
-    }
-  },
-  "forest_wolf": {
-    "druid": {
-      "name": "Wild Grove",
-      "description": "Hardy plants grow in the wolf hunting grounds.",
-      "tick_seconds": 4,
-      "xp": 5,
-      "rewards": [
-        {
-          "item": "healing_herb",
-          "chance": 1.0,
-          "min_quantity": 1,
-          "max_quantity": 3
-        },
-        {
-          "item": "wild_root",
-          "chance": 0.4,
-          "min_quantity": 1,
-          "max_quantity": 1,
-          "is_rare": true
-        }
-      ]
-    }
-  },
-  "forest_outskirts": {
+  "forest_rat_outskirts": {
     "druid": {
       "name": "Soft Herb Patches",
       "description": "Helpful plants grow near the path, probably hoping nobody notices.",
@@ -110,7 +43,76 @@
       ]
     }
   },
-  "forest_deep_trails": {
+  "forest_young_goblin_trail": {
+    "druid": {
+      "name": "Trail Herbs",
+      "description": "Useful herbs survive along the trail despite goblin landscaping.",
+      "tick_seconds": 3,
+      "xp": 4,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_stray_wolf_path": {
+    "druid": {
+      "name": "Wild Roots",
+      "description": "Roots grip the narrow path, which is rude but harvestable.",
+      "tick_seconds": 4,
+      "xp": 5,
+      "rewards": [
+        {
+          "item": "healing_herb",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "wild_root",
+          "chance": 0.45,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_goblin_scout_trails": {
+    "archaeologist": {
+      "name": "Stolen Trinket Scraps",
+      "description": "Goblin scouts dropped old trinkets and called it strategy.",
+      "tick_seconds": 11,
+      "xp": 5,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "old_charm_fragment",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_wolf_hunting_ground": {
     "druid": {
       "name": "Spore Thickets",
       "description": "The plants here glow faintly, which is either magical or deeply worrying.",
@@ -139,7 +141,59 @@
       ]
     }
   },
-  "forest_buried_paths": {
+  "forest_thorn_sprite_grove": {
+    "druid": {
+      "name": "Thorned Grove",
+      "description": "Every useful plant here has opinions and sharp edges.",
+      "tick_seconds": 5,
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "wild_root",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "forest_spore",
+          "chance": 0.3,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item": "briar_sap",
+          "chance": 0.18,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_bone_gnawer_den": {
+    "archaeologist": {
+      "name": "Chewed Remains",
+      "description": "The bones are not pristine. The forest rarely offers museum quality.",
+      "tick_seconds": 12,
+      "xp": 6,
+      "rewards": [
+        {
+          "item": "buried_bones",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item": "cracked_skull",
+          "chance": 0.22,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_lost_adventurer_path": {
     "archaeologist": {
       "name": "Buried Adventurer Remains",
       "description": "Someone died here with admirable commitment to future crafting.",
@@ -166,30 +220,9 @@
           "is_rare": true
         }
       ]
-    },
-    "druid": {
-      "name": "Briar Roots",
-      "description": "The roots twist around old bones. That is probably symbolic.",
-      "tick_seconds": 5,
-      "xp": 6,
-      "rewards": [
-        {
-          "item": "wild_root",
-          "chance": 1.0,
-          "min_quantity": 1,
-          "max_quantity": 2
-        },
-        {
-          "item": "briar_sap",
-          "chance": 0.20,
-          "min_quantity": 1,
-          "max_quantity": 1,
-          "is_rare": true
-        }
-      ]
     }
   },
-  "forest_ritual_grounds": {
+  "forest_goblin_shaman_grounds": {
     "druid": {
       "name": "Ritual Briars",
       "description": "The briars hum when touched. Most plants settle for being quiet.",
@@ -231,7 +264,30 @@
         },
         {
           "item": "rootbound_relic",
-          "chance": 0.10,
+          "chance": 0.08,
+          "min_quantity": 1,
+          "max_quantity": 1,
+          "is_rare": true
+        }
+      ]
+    }
+  },
+  "forest_alpha_wolf_lair": {
+    "druid": {
+      "name": "Alpha Briars",
+      "description": "The strongest roots grow where the pack is least interested in visitors.",
+      "tick_seconds": 6,
+      "xp": 7,
+      "rewards": [
+        {
+          "item": "wild_root",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item": "briar_sap",
+          "chance": 0.28,
           "min_quantity": 1,
           "max_quantity": 1,
           "is_rare": true

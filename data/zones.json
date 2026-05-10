@@ -1,99 +1,142 @@
 {
-  "forest_goblin": {
-    "name": "Goblin Forest",
-    "description": "A forest expedition focused on goblins.",
+  "forest_rat_outskirts": {
+    "name": "Rat Outskirts",
+    "description": "The forest begins with rats and questionable confidence.",
     "unlock_level": 1,
     "enemy_pool": [
-      "goblin"
+      "forest_rat"
     ],
     "loot_table": [
-      "health_potion",
-      "copper_coin",
-      "leather_armor"
+      "rat_tail"
     ],
     "difficulty_multiplier": 1.0,
     "farming_rate": 10
   },
-  "forest_wolf": {
-    "name": "Wolf Forest",
-    "description": "A forest expedition focused on wolves.",
+  "forest_young_goblin_trail": {
+    "name": "Young Goblin Trail",
+    "description": "A trail watched by goblins with ambition and very little supervision.",
     "unlock_level": 1,
     "enemy_pool": [
-      "wolf"
+      "young_goblin"
     ],
     "loot_table": [
-      "health_potion",
-      "copper_coin",
-      "leather_armor"
+      "goblin_ear",
+      "torn_cloth"
     ],
-    "difficulty_multiplier": 1.0,
+    "difficulty_multiplier": 1.05,
     "farming_rate": 10
   },
-  "forest_outskirts": {
-    "name": "Forest Outskirts",
-    "description": "The forest begins with rats, young goblins, and decisions nobody will brag about.",
+  "forest_stray_wolf_path": {
+    "name": "Stray Wolf Path",
+    "description": "A narrow path where hungry wolves test your footwork.",
     "unlock_level": 1,
     "enemy_pool": [
-      "forest_rat",
-      "young_goblin",
       "stray_wolf"
     ],
     "loot_table": [
-      "rat_tail",
-      "goblin_ear",
-      "wolf_pelt"
+      "wolf_pelt",
+      "small_fang"
     ],
-    "difficulty_multiplier": 1.0,
+    "difficulty_multiplier": 1.08,
     "farming_rate": 10
   },
-  "forest_deep_trails": {
-    "name": "Deep Forest Trails",
-    "description": "The trees grow thicker, the wolves grow smarter, and the goblins grow almost organized.",
+  "forest_goblin_scout_trails": {
+    "name": "Goblin Scout Trails",
+    "description": "The goblins are scouting. This implies planning, which is rude.",
     "unlock_level": 2,
     "enemy_pool": [
-      "goblin_scout",
-      "forest_wolf",
-      "thorn_sprite"
+      "goblin_scout"
     ],
     "loot_table": [
       "scout_badge",
-      "wolf_fang",
-      "thorn_essence"
+      "goblin_map_scrap"
     ],
     "difficulty_multiplier": 1.15,
     "farming_rate": 9
   },
-  "forest_buried_paths": {
-    "name": "Buried Forest Paths",
-    "description": "Old bones, lost tags, and the quiet confidence of people who should have turned back.",
+  "forest_wolf_hunting_ground": {
+    "name": "Wolf Hunting Ground",
+    "description": "The wolves hunt here. You are currently part of the ecosystem.",
+    "unlock_level": 2,
+    "enemy_pool": [
+      "forest_wolf"
+    ],
+    "loot_table": [
+      "wolf_fang",
+      "wild_heart"
+    ],
+    "difficulty_multiplier": 1.2,
+    "farming_rate": 9
+  },
+  "forest_thorn_sprite_grove": {
+    "name": "Thorn Sprite Grove",
+    "description": "Tiny spirits defend the grove with thorns and poor manners.",
+    "unlock_level": 2,
+    "enemy_pool": [
+      "thorn_sprite"
+    ],
+    "loot_table": [
+      "thorn_essence",
+      "forest_spore"
+    ],
+    "difficulty_multiplier": 1.18,
+    "farming_rate": 9
+  },
+  "forest_bone_gnawer_den": {
+    "name": "Bone Gnawer Den",
+    "description": "Bones vanish here before the archaeologist can file a complaint.",
     "unlock_level": 3,
     "enemy_pool": [
-      "bone_gnawer",
-      "lost_adventurer"
+      "bone_gnawer"
     ],
     "loot_table": [
       "chewed_bone",
-      "broken_adventurer_tag",
-      "buried_bones"
+      "cracked_skull"
     ],
     "difficulty_multiplier": 1.3,
     "farming_rate": 8
   },
-  "forest_ritual_grounds": {
-    "name": "Ritual Grounds",
-    "description": "Totems, briars, and chanting. The forest has developed opinions.",
+  "forest_lost_adventurer_path": {
+    "name": "Lost Adventurer Path",
+    "description": "Someone came before you. Their plan is now loot.",
+    "unlock_level": 3,
+    "enemy_pool": [
+      "lost_adventurer"
+    ],
+    "loot_table": [
+      "broken_adventurer_tag",
+      "old_charm_fragment",
+      "rusted_ring"
+    ],
+    "difficulty_multiplier": 1.35,
+    "farming_rate": 8
+  },
+  "forest_goblin_shaman_grounds": {
+    "name": "Goblin Shaman Grounds",
+    "description": "Smoke, roots, chanting. The goblins have discovered atmosphere.",
     "unlock_level": 4,
     "enemy_pool": [
-      "goblin_shaman",
-      "alpha_wolf",
-      "thorn_sprite"
+      "goblin_shaman"
     ],
     "loot_table": [
       "shaman_totem",
-      "alpha_fang",
-      "old_charm_fragment"
+      "ritual_paint"
     ],
     "difficulty_multiplier": 1.45,
+    "farming_rate": 7
+  },
+  "forest_alpha_wolf_lair": {
+    "name": "Alpha Wolf Lair",
+    "description": "The pack follows its alpha. You may question their judgement shortly.",
+    "unlock_level": 4,
+    "enemy_pool": [
+      "alpha_wolf"
+    ],
+    "loot_table": [
+      "alpha_fang",
+      "wild_heart"
+    ],
+    "difficulty_multiplier": 1.55,
     "farming_rate": 7
   },
   "caves_skeleton": {

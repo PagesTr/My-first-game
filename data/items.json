@@ -388,10 +388,10 @@
     "set_id": "wolf_stalker",
     "level": 1,
     "rarity": "rare",
-    "economic_source": "dropped_item",
+    "economic_source": "crafted_item",
     "stats": {
       "crit_chance": 0.03,
-      "crit_damage": 0.10
+      "crit_damage": 0.1
     },
     "rarity_weights": {
       "uncommon": 65,
@@ -590,11 +590,11 @@
       "dexterity": 2,
       "luck": 1,
       "attack": 10,
-      "crit_chance": 0.10,
-      "crit_damage": 0.50,
+      "crit_chance": 0.1,
+      "crit_damage": 0.5,
       "initiative": 2,
-      "gold_bonus": 0.10,
-      "xp_bonus": 0.10,
+      "gold_bonus": 0.1,
+      "xp_bonus": 0.1,
       "rare_find_bonus": 0.05
     },
     "rarity_weights": {
@@ -657,17 +657,6 @@
       "value": 2
     }
   },
-  "goblin_charm": {
-    "name": "Goblin Charm",
-    "type": "resource",
-    "category": "monster_drop",
-    "level": 1,
-    "rarity": "rare",
-    "economic_source": "dropped_resource",
-    "stats": {
-      "value": 15
-    }
-  },
   "ancient_bone": {
     "name": "Ancient Bone",
     "type": "resource",
@@ -688,17 +677,6 @@
     "economic_source": "dropped_resource",
     "stats": {
       "value": 6
-    }
-  },
-  "sharp_fang": {
-    "name": "Sharp Fang",
-    "type": "resource",
-    "category": "monster_drop",
-    "level": 1,
-    "rarity": "rare",
-    "economic_source": "dropped_resource",
-    "stats": {
-      "value": 20
     }
   },
   "bandit_badge": {
