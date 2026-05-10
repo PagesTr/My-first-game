@@ -157,6 +157,11 @@ UNPLANNED_FOREST_DROP_NOISE = {
     "wild_root",
 }
 
+REMOVED_LEGACY_STARTER_ITEM_IDS = {
+    "goblin_charm",
+    "sharp_fang",
+}
+
 
 def load_json(path):
     data_path = Path(__file__).resolve().parents[1] / path
@@ -482,6 +487,13 @@ def test_forest_new_items_have_valid_categories_and_sources():
         assert item.get("category")
         assert item.get("economic_source")
         assert item.get("rarity")
+
+
+def test_forest_items_do_not_include_removed_legacy_starter_items():
+    items = load_json("data/items.json")
+
+    for item_id in REMOVED_LEGACY_STARTER_ITEM_IDS:
+        assert item_id not in items
 
 
 def test_boss_has_boss_family_and_forest_core_drop():

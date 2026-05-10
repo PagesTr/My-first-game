@@ -1,4 +1,4 @@
-import systems.gathering as gathering
+﻿import systems.gathering as gathering
 from core.game import Game
 from systems.active_gathering import (
     DEFAULT_ACTIVE_GATHERING_TICK_SECONDS,
@@ -22,7 +22,7 @@ PROFESSIONS_DATA = {
 }
 
 GATHERING_NODES = {
-    "forest_goblin": {
+    "forest_rat_outskirts": {
         "druid": {
             "name": "Forest Herbs",
             "tick_seconds": 3,
@@ -57,7 +57,7 @@ def select_first_class(game, monkeypatch):
 
 def test_create_active_gathering_activity_contains_expected_fields():
     activity = create_active_gathering_activity(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "druid",
         current_time_ms=1000,
         tick_seconds=3,
@@ -65,7 +65,7 @@ def test_create_active_gathering_activity_contains_expected_fields():
 
     assert activity == {
         "type": "gathering",
-        "zone_id": "forest_goblin",
+        "zone_id": "forest_rat_outskirts",
         "profession_id": "druid",
         "started_at_ms": 1000,
         "last_tick_at_ms": 1000,
@@ -84,25 +84,25 @@ def test_get_node_tick_seconds_uses_default_for_invalid_value():
 
 
 def test_is_active_gathering_tick_ready_returns_false_before_tick():
-    activity = create_active_gathering_activity("forest_goblin", "druid", 1000, 3)
+    activity = create_active_gathering_activity("forest_rat_outskirts", "druid", 1000, 3)
 
     assert is_active_gathering_tick_ready(activity, 3999) is False
 
 
 def test_is_active_gathering_tick_ready_returns_true_at_tick():
-    activity = create_active_gathering_activity("forest_goblin", "druid", 1000, 3)
+    activity = create_active_gathering_activity("forest_rat_outskirts", "druid", 1000, 3)
 
     assert is_active_gathering_tick_ready(activity, 4000) is True
 
 
 def test_get_active_gathering_remaining_ms_returns_remaining_time():
-    activity = create_active_gathering_activity("forest_goblin", "druid", 1000, 3)
+    activity = create_active_gathering_activity("forest_rat_outskirts", "druid", 1000, 3)
 
     assert get_active_gathering_remaining_ms(activity, 2500) == 1500
 
 
 def test_advance_active_gathering_tick_updates_last_tick_time():
-    activity = create_active_gathering_activity("forest_goblin", "druid", 1000, 3)
+    activity = create_active_gathering_activity("forest_rat_outskirts", "druid", 1000, 3)
 
     assert advance_active_gathering_tick(activity, 4000)["last_tick_at_ms"] == 4000
 
@@ -119,7 +119,7 @@ def test_format_tick_rate_displays_ticks_per_second_below_one_second():
 
 def test_resolve_active_gathering_tick_uses_gather_from_zone(monkeypatch):
     player = make_player()
-    activity = create_active_gathering_activity("forest_goblin", "druid", 1000, 3)
+    activity = create_active_gathering_activity("forest_rat_outskirts", "druid", 1000, 3)
     monkeypatch.setattr(gathering.random, "random", lambda: 1.0)
     monkeypatch.setattr(gathering.random, "randint", lambda minimum, maximum: minimum)
 
@@ -141,7 +141,7 @@ def test_game_start_active_gathering_rejects_unknown_node(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
 
-    result = game.start_active_gathering("forest_goblin", "prospector", 1000)
+    result = game.start_active_gathering("forest_rat_outskirts", "prospector", 1000)
 
     assert result == {"started": False, "reason": "unknown_node"}
 
@@ -150,7 +150,7 @@ def test_game_start_active_gathering_stores_activity(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
 
-    result = game.start_active_gathering("forest_goblin", "druid", 1000)
+    result = game.start_active_gathering("forest_rat_outskirts", "druid", 1000)
 
     assert result["started"] is True
     assert game.active_gathering is not None
@@ -159,7 +159,7 @@ def test_game_start_active_gathering_stores_activity(monkeypatch):
 def test_game_update_active_gathering_resolves_tick(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
-    game.start_active_gathering("forest_goblin", "druid", 1000)
+    game.start_active_gathering("forest_rat_outskirts", "druid", 1000)
     monkeypatch.setattr(gathering.random, "random", lambda: 1.0)
     monkeypatch.setattr(gathering.random, "randint", lambda minimum, maximum: minimum)
 
@@ -173,7 +173,7 @@ def test_game_update_active_gathering_resolves_tick(monkeypatch):
 def test_game_update_active_gathering_stops_on_inventory_full(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
-    game.start_active_gathering("forest_goblin", "druid", 1000)
+    game.start_active_gathering("forest_rat_outskirts", "druid", 1000)
 
     def fake_resolve(*args, **kwargs):
         return {"gathered": False, "reason": "inventory_full"}

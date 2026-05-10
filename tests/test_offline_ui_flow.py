@@ -1,4 +1,4 @@
-import core.game as game_module
+﻿import core.game as game_module
 from core.game import Game
 
 
@@ -12,7 +12,7 @@ def test_send_current_player_offline_gathering_starts_activity_and_goes_main_men
     game = Game()
     select_first_class(game, monkeypatch)
 
-    result = game.send_current_player_offline_gathering("forest_goblin", "druid")
+    result = game.send_current_player_offline_gathering("forest_rat_outskirts", "druid")
 
     assert result["started"] is True
     assert isinstance(game.player["offline_activity"], dict)
@@ -25,7 +25,7 @@ def test_send_current_player_offline_gathering_rejects_unknown_node(monkeypatch)
     select_first_class(game, monkeypatch)
 
     result = game.send_current_player_offline_gathering(
-        "forest_goblin",
+        "forest_rat_outskirts",
         "prospector",
     )
 
@@ -37,7 +37,7 @@ def test_load_saved_game_resolves_offline_progress(monkeypatch):
     save_data = {
         "version": 1,
         "selected_class": "warrior",
-        "selected_zone": "forest_goblin",
+        "selected_zone": "forest_rat_outskirts",
         "player": {"offline_activity": None},
         "mailbox": {"mails": []},
     }
@@ -60,7 +60,7 @@ def test_load_saved_game_resolves_and_clears_offline_activity(monkeypatch):
     save_calls = []
     offline_activity = {
         "type": "gathering",
-        "zone_id": "forest_goblin",
+        "zone_id": "forest_rat_outskirts",
         "profession_id": "druid",
         "started_at": 1000,
         "last_claimed_at": 1000,
@@ -68,7 +68,7 @@ def test_load_saved_game_resolves_and_clears_offline_activity(monkeypatch):
     save_data = {
         "version": 1,
         "selected_class": "warrior",
-        "selected_zone": "forest_goblin",
+        "selected_zone": "forest_rat_outskirts",
         "player": {"offline_activity": offline_activity},
         "mailbox": {"mails": []},
     }
@@ -94,7 +94,7 @@ def test_load_saved_game_clears_offline_activity_even_when_not_enough_time(monke
     save_calls = []
     offline_activity = {
         "type": "gathering",
-        "zone_id": "forest_goblin",
+        "zone_id": "forest_rat_outskirts",
         "profession_id": "druid",
         "started_at": 1000,
         "last_claimed_at": 1000,
@@ -102,7 +102,7 @@ def test_load_saved_game_clears_offline_activity_even_when_not_enough_time(monke
     save_data = {
         "version": 1,
         "selected_class": "warrior",
-        "selected_zone": "forest_goblin",
+        "selected_zone": "forest_rat_outskirts",
         "player": {"offline_activity": offline_activity},
         "mailbox": {"mails": []},
     }
@@ -167,7 +167,7 @@ def test_send_current_player_offline_gathering_is_only_way_to_start_offline(monk
 
     assert game.player["offline_activity"] is None
 
-    result = game.send_current_player_offline_gathering("forest_goblin", "druid")
+    result = game.send_current_player_offline_gathering("forest_rat_outskirts", "druid")
 
     assert result["started"] is True
     assert isinstance(game.player["offline_activity"], dict)
