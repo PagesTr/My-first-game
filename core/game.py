@@ -62,6 +62,7 @@ class Game:
         self.last_dungeon_result = None
         self.active_gathering = None
         self.active_dungeon = None
+        self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
 
@@ -78,6 +79,7 @@ class Game:
         self.last_dungeon_result = None
         self.active_gathering = None
         self.active_dungeon = None
+        self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
         self.state = "class_select"
@@ -121,6 +123,50 @@ class Game:
             self.save_current_game()
         self.state = "town"
         return True
+
+    def get_available_dungeons(self, region_id=None):
+        dungeons = getattr(self.data, "dungeons", {}) or {}
+        if not isinstance(dungeons, dict):
+            return []
+        available = []
+        for dungeon_id, dungeon in dungeons.items():
+            if not isinstance(dungeon, dict):
+                continue
+            if region_id is not None and dungeon.get("chapter") != region_id:
+                continue
+            available.append({
+                "dungeon_id": dungeon_id,
+                "dungeon": dungeon,
+            })
+        return available
+
+    def get_active_dungeon_summary(self):
+        if not isinstance(self.active_dungeon, dict):
+            return {"active": False}
+
+        dungeon_id = self.active_dungeon.get("dungeon_id")
+        dungeon = get_dungeon(getattr(self.data, "dungeons", {}), dungeon_id) or {}
+        return {
+            "active": True,
+            "dungeon_id": dungeon_id,
+            "dungeon_name": dungeon.get("name", dungeon_id),
+            "step": self.get_active_dungeon_step(),
+            "step_index": self.active_dungeon.get("step_index", 0),
+            "boss_victories": self.active_dungeon.get("boss_victories", 0),
+            "completed": self.active_dungeon.get("completed", False),
+            "failed": self.active_dungeon.get("failed", False),
+        }
+
+    def open_inventory_from_dungeon(self):
+        self.return_state_after_inventory = "dungeon"
+        self.state = "inventory"
+
+    def return_from_inventory_if_needed(self):
+        if getattr(self, "return_state_after_inventory", None) == "dungeon":
+            self.state = "dungeon"
+            self.return_state_after_inventory = None
+            return True
+        return False
 
     def return_to_main_menu(self):
         if self.player is not None:

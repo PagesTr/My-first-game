@@ -121,12 +121,16 @@ class MenuScreen:
         self.gathering_action_buttons = []
         self.gathering_popups = []
         self.selected_gathering_action = None
+        self.selected_dungeon_id = None
         self.zone_action_tab = "combat"
         self.combat_page = 0
         self.gathering_page = 0
         self.selected_combat_zone = None
+        self.dungeon_action_buttons = []
+        self.dungeon_message = ""
         self.combat_tab_rect = pygame.Rect(60, 104, 150, 38)
         self.gathering_tab_rect = pygame.Rect(218, 104, 150, 38)
+        self.dungeons_tab_rect = pygame.Rect(376, 104, 150, 38)
         self.combat_page_prev_rect = pygame.Rect(60, 500, 44, 38)
         self.combat_page_next_rect = pygame.Rect(346, 500, 44, 38)
         self.combat_start_button = MenuButton(
@@ -142,6 +146,10 @@ class MenuScreen:
         self.gathering_offline_button = MenuButton(
             (580, 470, 150, 50),
             "Send Offline",
+        )
+        self.dungeon_start_button = MenuButton(
+            (420, 470, 310, 50),
+            "Start Dungeon",
         )
 
     def _build_class_buttons(self):
@@ -549,11 +557,19 @@ class MenuScreen:
             "Gathering",
             self.zone_action_tab == "gathering",
         )
+        self._draw_tab_button(
+            screen,
+            self.dungeons_tab_rect,
+            "Dungeons",
+            self.zone_action_tab == "dungeons",
+        )
 
         if self.zone_action_tab == "combat":
             self._draw_combat_tab(screen, region_id)
-        else:
+        elif self.zone_action_tab == "gathering":
             self._draw_gathering_tab(screen, region_id)
+        else:
+            self._draw_dungeons_tab(screen, region_id)
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
@@ -571,6 +587,8 @@ class MenuScreen:
                 self.gathering_page = 0
                 self.selected_combat_zone = None
                 self.selected_gathering_action = None
+                self.selected_dungeon_id = None
+                self.dungeon_message = ""
                 self.game.state = "zone_actions"
                 return True
         return False
@@ -587,6 +605,10 @@ class MenuScreen:
 
         if self.gathering_tab_rect.collidepoint(pos):
             self.zone_action_tab = "gathering"
+            return True
+
+        if self.dungeons_tab_rect.collidepoint(pos):
+            self.zone_action_tab = "dungeons"
             return True
 
         region_id = self.selected_region
@@ -611,6 +633,27 @@ class MenuScreen:
             selected_zone = self.selected_combat_zone
             if self.combat_start_button.is_clicked(pos) and selected_zone:
                 self.game.select_zone(selected_zone)
+                return True
+            return False
+
+        if self.zone_action_tab == "dungeons":
+            for dungeon_id, button in self.dungeon_action_buttons:
+                if button.rect.collidepoint(pos):
+                    self.selected_dungeon_id = dungeon_id
+                    self.dungeon_message = ""
+                    return True
+            if self.dungeon_start_button.is_clicked(pos) and self.selected_dungeon_id:
+                if not hasattr(self.game, "start_dungeon"):
+                    self.dungeon_message = "Dungeons unavailable"
+                    return True
+                result = self.game.start_dungeon(self.selected_dungeon_id)
+                if result.get("started") is True:
+                    self.game.state = "dungeon"
+                    self.dungeon_message = ""
+                else:
+                    self.dungeon_message = self._get_dungeon_start_failure_message(
+                        result.get("reason"),
+                    )
                 return True
             return False
 
@@ -753,6 +796,119 @@ class MenuScreen:
         if not isinstance(zone, dict):
             return False
         return self.game.player.get("level", 0) >= zone.get("unlock_level", 1)
+
+    def _draw_dungeons_tab(self, screen, region_id):
+        dungeon_entries = []
+        if hasattr(self.game, "get_available_dungeons"):
+            dungeon_entries = self.game.get_available_dungeons(region_id)
+        player_level = self.game.player.get("level", 0) if self.game.player else 0
+
+        dungeon_ids = [entry["dungeon_id"] for entry in dungeon_entries]
+        if self.selected_dungeon_id not in dungeon_ids:
+            self.selected_dungeon_id = None
+        if self.selected_dungeon_id is None:
+            for entry in dungeon_entries:
+                dungeon = entry.get("dungeon", {})
+                if player_level >= dungeon.get("unlock_level", 1):
+                    self.selected_dungeon_id = entry["dungeon_id"]
+                    break
+            if self.selected_dungeon_id is None and dungeon_entries:
+                self.selected_dungeon_id = dungeon_entries[0]["dungeon_id"]
+
+        self.dungeon_action_buttons = []
+        x, y = 60, 150
+        for index, entry in enumerate(dungeon_entries[:6]):
+            dungeon_id = entry["dungeon_id"]
+            dungeon = entry.get("dungeon", {})
+            unlock_level = dungeon.get("unlock_level", 1)
+            locked = player_level < unlock_level
+            subtitle = f"Level {unlock_level}" + (" - Locked" if locked else "")
+            button = MenuButton(
+                (x, y + index * 60, 330, 52),
+                dungeon.get("name", dungeon_id),
+                subtitle,
+                enabled=not locked,
+            )
+            self.dungeon_action_buttons.append((dungeon_id, button))
+            button.draw(screen, self.body_font, self.body_font)
+            if dungeon_id == self.selected_dungeon_id:
+                pygame.draw.rect(screen, (210, 220, 145), button.rect, 3, border_radius=6)
+
+        if not dungeon_entries:
+            empty_text = self.body_font.render("No dungeons available", True, (145, 145, 150))
+            screen.blit(empty_text, (x, y))
+
+        self._draw_dungeon_detail_panel(screen, self.selected_dungeon_id)
+        self.dungeon_start_button.enabled = self._can_start_selected_dungeon()
+        self.dungeon_start_button.draw(screen, self.option_font, self.body_font)
+        if self.dungeon_message:
+            message = self.body_font.render(
+                self._truncate_text(self.dungeon_message, self.body_font, 310),
+                True,
+                (230, 160, 90),
+            )
+            screen.blit(message, (420, 532))
+
+    def _draw_dungeon_detail_panel(self, screen, dungeon_id):
+        rect = pygame.Rect(420, 150, 310, 300)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+        title = self.option_font.render("Dungeon Details", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 14, rect.y + 14))
+
+        dungeon = self._get_dungeon_data(dungeon_id)
+        if not dungeon:
+            text = self.body_font.render("Select a dungeon", True, (150, 155, 160))
+            screen.blit(text, (rect.x + 14, rect.y + 58))
+            return
+
+        boss_id = dungeon.get("boss_enemy_id", "")
+        boss_name = self.game.data.enemies.get(boss_id, {}).get("name", boss_id)
+        player_level = self.game.player.get("level", 0) if self.game.player else 0
+        unlock_level = dungeon.get("unlock_level", 1)
+        status = "Locked" if player_level < unlock_level else "Ready"
+        lines = [
+            dungeon.get("name", dungeon_id),
+            f"Unlock: Level {unlock_level}",
+            dungeon.get("description", ""),
+            f"Boss: {boss_name}",
+            f"Boss scaling: +{dungeon.get('scaling_rate', 0) * 100:.0f}%",
+            f"Reward scaling: +{dungeon.get('reward_multiplier_per_victory', 0) * 100:.0f}%",
+            f"Route length: {len(dungeon.get('route', []))}",
+            f"Status: {status}",
+        ]
+        line_y = rect.y + 52
+        for line in lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, rect.w - 28),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (rect.x + 14, line_y))
+            line_y += 28
+
+    def _can_start_selected_dungeon(self):
+        if not self.selected_dungeon_id or not self.game.player:
+            return False
+        dungeon = self._get_dungeon_data(self.selected_dungeon_id)
+        if not dungeon:
+            return False
+        return self.game.player.get("level", 0) >= dungeon.get("unlock_level", 1)
+
+    def _get_dungeon_data(self, dungeon_id):
+        dungeons = getattr(self.game.data, "dungeons", {}) or {}
+        if not dungeon_id or not isinstance(dungeons, dict):
+            return {}
+        dungeon = dungeons.get(dungeon_id, {})
+        return dungeon if isinstance(dungeon, dict) else {}
+
+    def _get_dungeon_start_failure_message(self, reason):
+        messages = {
+            "invalid_player": "No player",
+            "unknown_dungeon": "Unknown dungeon",
+            "locked_dungeon": "Dungeon locked",
+        }
+        return messages.get(reason, "Could not start dungeon")
 
     def _draw_gathering_tab(self, screen, region_id):
         actions = self._get_region_gathering_actions(region_id)
