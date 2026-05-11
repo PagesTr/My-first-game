@@ -1,0 +1,668 @@
+{
+  "forest_rat_cleaner_1": {
+    "name": "Rat Cleaner I",
+    "description": "You solved a rat problem with violence. Traditional, but effective.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "forest_rat",
+      "required": 25
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      }
+    ]
+  },
+  "forest_rat_cleaner_2": {
+    "name": "Rat Cleaner II",
+    "description": "The rats regrouped. You brought statistics.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "forest_rat",
+      "required": 100
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "luck",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_bad_decision_manager": {
+    "name": "Bad Decision Manager",
+    "description": "You managed young goblin enthusiasm into the ground.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "young_goblin",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 75
+      }
+    ]
+  },
+  "forest_introductory_biting": {
+    "name": "Introductory Biting",
+    "description": "The wolves taught the basics. You disliked the syllabus.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "stray_wolf",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "dexterity",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_goblin_problem_1": {
+    "name": "Goblin Problem I",
+    "description": "The goblins organized. You objected.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_family",
+      "target": "goblin",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "loot_bonus",
+        "amount": 0.01
+      }
+    ]
+  },
+  "forest_goblin_problem_2": {
+    "name": "Goblin Problem II",
+    "description": "At this point, goblins use your name as weather.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_family",
+      "target": "goblin",
+      "required": 150
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "luck",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_wolf_hunter_1": {
+    "name": "Wolf Hunter I",
+    "description": "The pack had opinions. You edited them.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_family",
+      "target": "wolf",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "dexterity",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_nature_argument": {
+    "name": "Nature Argument",
+    "description": "The forest spoke. You hit the speaker.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_family",
+      "target": "nature",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "wisdom",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_scout_interviewer": {
+    "name": "Scout Interviewer",
+    "description": "You asked every scout the same question. Loudly.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "goblin_scout",
+      "required": 40
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 100
+      }
+    ]
+  },
+  "forest_shaman_breaker_1": {
+    "name": "Shaman Breaker I",
+    "description": "Bad chanting met worse consequences.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "goblin_shaman",
+      "required": 10
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "luck",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_alpha_disagreement": {
+    "name": "Alpha Disagreement",
+    "description": "The alpha had authority. You filed a complaint.",
+    "chapter": "forest",
+    "category": "combat",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "kill_enemy",
+      "target": "alpha_wolf",
+      "required": 10
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "crit_chance",
+        "amount": 0.01
+      }
+    ]
+  },
+  "forest_first_harvest": {
+    "name": "First Harvest",
+    "description": "You picked plants with the confidence of a tiny storm.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_profession",
+      "target": "druid",
+      "required": 25
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "druid_mastery",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_patient_herbalist": {
+    "name": "Patient Herbalist",
+    "description": "You stared at enough leaves to become suspiciously qualified.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_profession",
+      "target": "druid",
+      "required": 100
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "gathering_xp_bonus",
+        "amount": 0.02
+      }
+    ]
+  },
+  "forest_bone_reader": {
+    "name": "Bone Reader",
+    "description": "You bothered enough bones to call it research.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_profession",
+      "target": "archaeologist",
+      "required": 25
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "archaeologist_mastery",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_professional_grave_botherer": {
+    "name": "Professional Grave Botherer",
+    "description": "History tried to rest. You brought a shovel.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_profession",
+      "target": "archaeologist",
+      "required": 100
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "wisdom",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_herb_collector": {
+    "name": "Suspiciously Prepared",
+    "description": "You collected enough herbs to make everyone nervous.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_item",
+      "target": "healing_herb",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ]
+  },
+  "forest_old_bones_new_business": {
+    "name": "Old Bones, New Business",
+    "description": "The bones were old. The invoice is new.",
+    "chapter": "forest",
+    "category": "gathering",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "gather_item",
+      "target": "buried_bones",
+      "required": 50
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 80
+      }
+    ]
+  },
+  "forest_first_craft": {
+    "name": "First Forest Craft",
+    "description": "You made a thing. The forest is withholding applause.",
+    "chapter": "forest",
+    "category": "craft",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "craft_chapter",
+      "target": "forest",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      }
+    ]
+  },
+  "forest_crafter_1": {
+    "name": "Forest Crafter I",
+    "description": "Your pockets now contain plans and questionable fibers.",
+    "chapter": "forest",
+    "category": "craft",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "craft_chapter",
+      "target": "forest",
+      "required": 5
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "rare_find_bonus",
+        "amount": 0.01
+      }
+    ]
+  },
+  "forest_crafter_2": {
+    "name": "Forest Crafter II",
+    "description": "You crafted enough forest items to annoy several trees.",
+    "chapter": "forest",
+    "category": "craft",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "craft_chapter",
+      "target": "forest",
+      "required": 15
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "wisdom",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_wolf_fang_jeweler": {
+    "name": "Wolf Fang Jeweler",
+    "description": "Nothing says elegance like bite-shaped jewelry.",
+    "chapter": "forest",
+    "category": "craft",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "craft_recipe",
+      "target": "craft_wolf_fang_charm",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "crit_chance",
+        "amount": 0.01
+      }
+    ]
+  },
+  "forest_relic_tinkerer": {
+    "name": "Relic Tinkerer",
+    "description": "You turned old bones into accessories. Taste is optional.",
+    "chapter": "forest",
+    "category": "craft",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "craft_recipe",
+      "target": "craft_bone_signet",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "archaeologist_mastery",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_set_apprentice": {
+    "name": "Set Apprentice",
+    "description": "Two matching pieces. Fashion trembles politely.",
+    "chapter": "forest",
+    "category": "sets",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "equip_set_pieces",
+      "target": "any_forest_set",
+      "required": 2
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "luck",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_wolf_stalker_initiate": {
+    "name": "Wolf Stalker Initiate",
+    "description": "You dressed for wolves. The wolves noticed.",
+    "chapter": "forest",
+    "category": "sets",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "equip_set_pieces",
+      "target": "wolf_stalker",
+      "required": 2
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "dexterity",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_scavenger_accountant": {
+    "name": "Scavenger Accountant",
+    "description": "You counted the loot before the fight was emotionally over.",
+    "chapter": "forest",
+    "category": "sets",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "equip_set_pieces",
+      "target": "goblin_scavenger",
+      "required": 2
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "gold_bonus",
+        "amount": 0.01
+      }
+    ]
+  },
+  "forest_remnant_listener": {
+    "name": "Remnant Listener",
+    "description": "The old forest whispered. You kept the jewelry.",
+    "chapter": "forest",
+    "category": "sets",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "equip_set_pieces",
+      "target": "forest_remnant",
+      "required": 2
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "wisdom",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_camp_breaker_1": {
+    "name": "Camp Breaker I",
+    "description": "The camp had structure. You introduced collapse.",
+    "chapter": "forest",
+    "category": "dungeons",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "clear_dungeon",
+      "target": "forest_goblin_camp",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 100
+      }
+    ]
+  },
+  "forest_camp_breaker_2": {
+    "name": "Camp Breaker II",
+    "description": "The goblins rebuilt. That was optimistic.",
+    "chapter": "forest",
+    "category": "dungeons",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "clear_dungeon",
+      "target": "forest_goblin_camp",
+      "required": 5
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "gold_bonus",
+        "amount": 0.02
+      }
+    ]
+  },
+  "forest_rootbound_1": {
+    "name": "Rootbound I",
+    "description": "You visited the buried grove and refused its mood.",
+    "chapter": "forest",
+    "category": "dungeons",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "clear_dungeon",
+      "target": "forest_buried_grove",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "wisdom",
+        "amount": 1
+      }
+    ]
+  },
+  "forest_rootcaller_defeated": {
+    "name": "Rootcaller Defeated",
+    "description": "The roots answered his call. You ended the conversation.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "defeat_boss",
+      "target": "grubfang_rootcaller",
+      "required": 1
+    },
+    "rewards": [
+      {
+        "type": "percent_bonus",
+        "stat": "xp_bonus",
+        "amount": 0.02
+      }
+    ]
+  },
+  "forest_rootcaller_argument": {
+    "name": "Rootcaller Argument",
+    "description": "You won the same argument with roots three times.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "boss_victory_count",
+      "target": "grubfang_rootcaller",
+      "required": 3
+    },
+    "rewards": [
+      {
+        "type": "item",
+        "item": "forest_core",
+        "quantity": 1
+      }
+    ]
+  },
+  "forest_chapter_survivor": {
+    "name": "Forest Chapter Survivor",
+    "description": "The forest kept trying. You became paperwork-resistant.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "objective": {
+      "type": "boss_victory_count",
+      "target": "grubfang_rootcaller",
+      "required": 5
+    },
+    "rewards": [
+      {
+        "type": "stat_bonus",
+        "stat": "vitality",
+        "amount": 1
+      }
+    ]
+  }
+}
