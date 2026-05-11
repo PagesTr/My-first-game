@@ -1,6 +1,7 @@
 import pygame
 
 from core.game import Game
+from ui.pygame_app import PygameApp
 from ui.screens.achievements_screen import AchievementsScreen
 from ui.screens.menu_screen import MenuScreen
 
@@ -185,3 +186,95 @@ def test_claim_status_helper_handles_missing_player():
     screen = AchievementsScreen(game)
 
     assert screen._get_claim_status("some_id") == "locked"
+
+
+def test_town_claimable_achievement_count_returns_zero_without_player():
+    game = Game()
+    menu = MenuScreen(game)
+
+    assert menu._get_claimable_achievement_count() == 0
+
+
+def test_town_claimable_achievement_count_detects_unclaimed_unlocked():
+    game = Game()
+    game.player = {
+        "achievements": {
+            "unlocked": ["forest_rat_cleaner_1"],
+            "claimed": [],
+            "progress": {},
+            "last_unlocked": [],
+        }
+    }
+    menu = MenuScreen(game)
+
+    assert menu._get_claimable_achievement_count() == 1
+
+
+def test_town_claimable_achievement_count_ignores_claimed():
+    game = Game()
+    game.player = {
+        "achievements": {
+            "unlocked": ["forest_rat_cleaner_1"],
+            "claimed": ["forest_rat_cleaner_1"],
+            "progress": {},
+            "last_unlocked": [],
+        }
+    }
+    menu = MenuScreen(game)
+
+    assert menu._get_claimable_achievement_count() == 0
+
+
+def test_draw_achievements_claim_badge_does_not_crash():
+    game = Game()
+    menu = MenuScreen(game)
+    surface = pygame.Surface((800, 600))
+
+    menu._draw_achievements_claim_badge(surface, 3)
+
+
+def test_achievement_toast_sync_captures_last_unlocked(monkeypatch):
+    app = PygameApp()
+    monkeypatch.setattr(app.game, "save_current_game", lambda: True)
+    app.game.player = {
+        "achievements": {
+            "unlocked": ["forest_rat_cleaner_1"],
+            "claimed": [],
+            "progress": {},
+            "last_unlocked": ["forest_rat_cleaner_1"],
+        }
+    }
+
+    app._sync_achievement_toast(1000)
+
+    assert app.achievement_toast_ids == ["forest_rat_cleaner_1"]
+    assert app.game.player["achievements"]["last_unlocked"] == []
+
+
+def test_achievement_toast_sync_handles_missing_player():
+    app = PygameApp()
+    app.game.player = None
+
+    app._sync_achievement_toast(1000)
+
+    assert app.achievement_toast_ids == []
+
+
+def test_achievement_toast_expires_after_duration():
+    app = PygameApp()
+    app.achievement_toast_ids = ["forest_rat_cleaner_1"]
+    app.achievement_toast_started_at = 0
+    surface = pygame.Surface((800, 600))
+
+    app._draw_achievement_toast(surface, app.achievement_toast_duration_ms + 1)
+
+    assert app.achievement_toast_ids == []
+
+
+def test_achievement_toast_draw_does_not_crash():
+    app = PygameApp()
+    app.achievement_toast_ids = ["forest_rat_cleaner_1"]
+    app.achievement_toast_started_at = 1000
+    surface = pygame.Surface((800, 600))
+
+    app._draw_achievement_toast(surface, 1000)

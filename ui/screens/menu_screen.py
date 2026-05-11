@@ -7,6 +7,7 @@ except ImportError:
 
 from systems.professions import get_profession_mastery
 from systems.active_gathering import format_tick_rate
+from systems.achievements import get_claimable_achievements
 from ui.assets import draw_background, load_image
 
 
@@ -311,11 +312,60 @@ class MenuScreen:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
         self.quests_button.draw(screen, self.option_font, self.body_font)
+        claimable_count = self._get_claimable_achievement_count()
+        if claimable_count > 0:
+            self.achievements_button.subtitle = "Rewards to claim"
+        else:
+            self.achievements_button.subtitle = "View progress records"
         self.achievements_button.draw(screen, self.option_font, self.body_font)
+        if claimable_count > 0:
+            self._draw_claimable_button_highlight(screen, self.achievements_button.rect)
+            self._draw_achievements_claim_badge(screen, claimable_count)
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
         self._draw_offline_result_panel(screen)
+
+    def _get_claimable_achievement_count(self):
+        player = getattr(self.game, "player", None)
+        if not isinstance(player, dict):
+            return 0
+        achievements = player.get("achievements")
+        if not isinstance(achievements, dict):
+            return 0
+        try:
+            return len(get_claimable_achievements(player))
+        except (TypeError, AttributeError):
+            return 0
+
+    def _draw_achievements_claim_badge(self, screen, count):
+        rect = self.achievements_button.rect
+        badge_width = 92
+        badge_height = 26
+        badge = pygame.Rect(
+            rect.right - badge_width - 12,
+            rect.y + 12,
+            badge_width,
+            badge_height,
+        )
+        pygame.draw.rect(screen, (105, 82, 36), badge, border_radius=10)
+        pygame.draw.rect(screen, (235, 210, 120), badge, 2, border_radius=10)
+
+        dot_center = (badge.x + 13, badge.centery)
+        pygame.draw.circle(screen, (255, 220, 100), dot_center, 5)
+        pygame.draw.circle(screen, (255, 245, 200), dot_center, 2)
+
+        count_label = "99+" if count > 99 else str(count)
+        label = self.body_font.render(f"CLAIM x{count_label}", True, (255, 245, 200))
+        label_rect = label.get_rect()
+        label_rect.centery = badge.centery
+        label_rect.x = badge.x + 24
+        screen.blit(label, label_rect)
+
+    def _draw_claimable_button_highlight(self, screen, rect):
+        highlight = pygame.Rect(rect)
+        highlight.inflate_ip(4, 4)
+        pygame.draw.rect(screen, (235, 210, 120), highlight, 2, border_radius=8)
 
     def _has_available_crafting_recipe(self):
         if not self.game.player:

@@ -39,6 +39,11 @@ class PygameApp:
         self.professions_screen = ProfessionsScreen(self.game)
         self.quests_screen = QuestScreen(self.game)
         self.achievements_screen = AchievementsScreen(self.game)
+        self.achievement_toast_ids = []
+        self.achievement_toast_started_at = 0
+        self.achievement_toast_duration_ms = 3800
+        self.achievement_toast_font = pygame.font.Font(None, 22)
+        self.achievement_toast_title_font = pygame.font.Font(None, 24)
 
     def run(self):
         while self.running:
@@ -91,6 +96,7 @@ class PygameApp:
                 self.menu_screen.add_gathering_popup(result)
 
     def render(self):
+        current_time_ms = pygame.time.get_ticks()
         if self.game.state == "main_menu":
             self.main_menu_screen.draw(self.screen)
         elif self.game.state in ("class_select", "town", "zone_select", "zone_actions"):
@@ -118,4 +124,82 @@ class PygameApp:
         elif self.game.state == "mailbox":
             self.mailbox_screen.draw(self.screen)
 
+        self._sync_achievement_toast(current_time_ms)
+        self._draw_achievement_toast(self.screen, current_time_ms)
         pygame.display.flip()
+
+    def _sync_achievement_toast(self, current_time_ms):
+        player = getattr(self.game, "player", None)
+        if not isinstance(player, dict):
+            return
+        achievements = player.get("achievements")
+        if not isinstance(achievements, dict):
+            return
+        last_unlocked = achievements.get("last_unlocked")
+        if not isinstance(last_unlocked, list) or not last_unlocked:
+            return
+
+        self.achievement_toast_ids = list(last_unlocked)
+        self.achievement_toast_started_at = current_time_ms
+        achievements["last_unlocked"] = []
+        if hasattr(self.game, "save_current_game"):
+            self.game.save_current_game()
+
+    def _draw_achievement_toast(self, screen, current_time_ms):
+        if not self.achievement_toast_ids:
+            return
+        elapsed = current_time_ms - self.achievement_toast_started_at
+        if elapsed > self.achievement_toast_duration_ms:
+            self.achievement_toast_ids = []
+            return
+
+        achievement_id = self.achievement_toast_ids[0]
+        achievement_name = self._get_achievement_name(achievement_id)
+        rect = pygame.Rect(470, 112, 280, 76)
+        pygame.draw.rect(screen, (46, 39, 30), rect, border_radius=8)
+        pygame.draw.rect(screen, (228, 196, 105), rect, 2, border_radius=8)
+
+        icon_center = (rect.x + 24, rect.y + 26)
+        pygame.draw.circle(screen, (255, 218, 96), icon_center, 10)
+        pygame.draw.circle(screen, (255, 244, 190), icon_center, 4)
+
+        title = self.achievement_toast_title_font.render(
+            "Achievement unlocked",
+            True,
+            (255, 240, 190),
+        )
+        screen.blit(title, (rect.x + 44, rect.y + 14))
+
+        name = self.achievement_toast_font.render(
+            self._truncate_text(achievement_name, self.achievement_toast_font, rect.w - 58),
+            True,
+            (242, 242, 232),
+        )
+        screen.blit(name, (rect.x + 44, rect.y + 38))
+
+        remaining_count = len(self.achievement_toast_ids) - 1
+        if remaining_count > 0:
+            more = self.achievement_toast_font.render(
+                f"+{remaining_count} more",
+                True,
+                (205, 214, 205),
+            )
+            screen.blit(more, (rect.x + 44, rect.y + 56))
+
+    def _get_achievement_name(self, achievement_id):
+        achievements = getattr(getattr(self.game, "data", None), "achievements", {})
+        achievement = achievements.get(achievement_id, {}) if isinstance(achievements, dict) else {}
+        if isinstance(achievement, dict) and achievement.get("name"):
+            return achievement["name"]
+        return str(achievement_id or "unknown").replace("_", " ").title()
+
+    def _truncate_text(self, text, font, max_width):
+        text = str(text or "")
+        if max_width <= 0:
+            return ""
+        if font.size(text)[0] <= max_width:
+            return text
+        ellipsis = "..."
+        while text and font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+        return text + ellipsis if text else ellipsis
