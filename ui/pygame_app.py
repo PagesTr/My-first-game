@@ -1,5 +1,6 @@
 import pygame
 from core.game import Game
+from ui.screens.achievements_screen import AchievementsScreen
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.dungeon_screen import DungeonScreen
@@ -37,6 +38,7 @@ class PygameApp:
         self.mailbox_screen = MailboxScreen(self.game)
         self.professions_screen = ProfessionsScreen(self.game)
         self.quests_screen = QuestScreen(self.game)
+        self.achievements_screen = AchievementsScreen(self.game)
 
     def run(self):
         while self.running:
@@ -74,6 +76,8 @@ class PygameApp:
                 self.professions_screen.handle_event(event)
             elif self.game.state == "quests":
                 self.quests_screen.handle_event(event)
+            elif self.game.state == "achievements":
+                self.achievements_screen.handle_event(event)
             elif self.game.state == "mailbox":
                 self.mailbox_screen.handle_event(event)
 
@@ -109,6 +113,8 @@ class PygameApp:
             self.professions_screen.draw(self.screen)
         elif self.game.state == "quests":
             self.quests_screen.draw(self.screen)
+        elif self.game.state == "achievements":
+            self.achievements_screen.draw(self.screen)
         elif self.game.state == "mailbox":
             self.mailbox_screen.draw(self.screen)
 

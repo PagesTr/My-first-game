@@ -100,19 +100,24 @@ class MenuScreen:
             "Learn and equip skills",
         )
         self.mailbox_button = MenuButton(
-            (400, 474, 300, 72),
+            (400, 490, 300, 54),
             "Mailbox",
             "View combat reports",
         )
         self.professions_button = MenuButton(
-            (400, 386, 300, 72),
+            (400, 426, 300, 54),
             "Professions",
             "View gathering progress",
         )
         self.quests_button = MenuButton(
-            (400, 298, 300, 72),
+            (400, 298, 300, 54),
             "Quests",
             "Track forest objectives",
+        )
+        self.achievements_button = MenuButton(
+            (400, 362, 300, 54),
+            "Achievements",
+            "View progress records",
         )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
         self.selected_region = None
@@ -239,6 +244,11 @@ class MenuScreen:
                 self.game.state = "quests"
                 return
 
+            if self.achievements_button.is_clicked(pos):
+                self._clear_offline_result()
+                self.game.state = "achievements"
+                return
+
             if self.mailbox_button.is_clicked(pos):
                 self._clear_offline_result()
                 self.game.state = "mailbox"
@@ -301,6 +311,7 @@ class MenuScreen:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
         self.quests_button.draw(screen, self.option_font, self.body_font)
+        self.achievements_button.draw(screen, self.option_font, self.body_font)
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
