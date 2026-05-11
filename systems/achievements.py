@@ -28,6 +28,7 @@ SUPPORTED_REWARD_TYPES = {
 def create_player_achievements(achievements_data):
     return {
         "unlocked": [],
+        "claimed": [],
         "progress": {},
         "last_unlocked": [],
     }
@@ -41,6 +42,8 @@ def ensure_player_achievements(player, achievements_data):
 
     if not isinstance(achievements.get("unlocked"), list):
         achievements["unlocked"] = []
+    if not isinstance(achievements.get("claimed"), list):
+        achievements["claimed"] = []
     if not isinstance(achievements.get("progress"), dict):
         achievements["progress"] = {}
     if not isinstance(achievements.get("last_unlocked"), list):
@@ -76,12 +79,37 @@ def is_achievement_unlocked(player, achievement_id):
     return achievement_id in unlocked
 
 
+def is_achievement_claimed(player, achievement_id):
+    achievements = player.get("achievements", {})
+    claimed = achievements.get("claimed", [])
+    return achievement_id in claimed
+
+
 def get_unlocked_achievements(player):
     achievements = player.get("achievements", {})
     unlocked = achievements.get("unlocked", [])
     if not isinstance(unlocked, list):
         return []
     return list(unlocked)
+
+
+def get_claimable_achievements(player):
+    achievements = player.get("achievements", {})
+    unlocked = achievements.get("unlocked", [])
+    claimed = achievements.get("claimed", [])
+    if not isinstance(unlocked, list):
+        unlocked = []
+    if not isinstance(claimed, list):
+        claimed = []
+    return [achievement_id for achievement_id in unlocked if achievement_id not in claimed]
+
+
+def get_achievement_claim_status(player, achievement_id):
+    if not is_achievement_unlocked(player, achievement_id):
+        return "locked"
+    if is_achievement_claimed(player, achievement_id):
+        return "claimed"
+    return "claimable"
 
 
 def get_visible_achievements(player, achievements_data, include_hidden=False):
@@ -143,7 +171,6 @@ def record_achievement_event(player, achievements_data, event, items=None):
         if next_value >= required and achievement_id not in achievements["unlocked"]:
             achievements["unlocked"].append(achievement_id)
             achievements["last_unlocked"].append(achievement_id)
-            apply_achievement_rewards(player, achievement, items)
             newly_unlocked.append(achievement_id)
             updated = True
 
@@ -181,6 +208,49 @@ def apply_achievement_rewards(player, achievement, items=None):
         target.append(reward)
 
     return result
+
+
+def claim_achievement_reward(player, achievements_data, achievement_id, items=None):
+    empty_rewards = {"applied": [], "failed": []}
+    achievements = ensure_player_achievements(player, achievements_data)
+    achievement = get_achievement(achievements_data, achievement_id)
+    if achievement is None:
+        return {
+            "claimed": False,
+            "reason": "unknown_achievement",
+            "rewards": empty_rewards,
+        }
+    if achievement_id not in achievements["unlocked"]:
+        return {
+            "claimed": False,
+            "reason": "not_unlocked",
+            "rewards": empty_rewards,
+        }
+    if achievement_id in achievements["claimed"]:
+        return {
+            "claimed": False,
+            "reason": "already_claimed",
+            "rewards": empty_rewards,
+        }
+
+    reward_result = apply_achievement_rewards(player, achievement, items)
+    item_failed = any(
+        isinstance(reward, dict) and reward.get("type") == "item"
+        for reward in reward_result.get("failed", [])
+    )
+    if item_failed:
+        return {
+            "claimed": False,
+            "reason": "reward_failed",
+            "rewards": reward_result,
+        }
+
+    achievements["claimed"].append(achievement_id)
+    return {
+        "claimed": True,
+        "achievement_id": achievement_id,
+        "rewards": reward_result,
+    }
 
 
 def clear_last_unlocked(player):

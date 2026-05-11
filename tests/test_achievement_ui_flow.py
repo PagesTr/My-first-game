@@ -61,3 +61,127 @@ def test_achievement_reward_formatting():
     assert screen._format_reward({"type": "stat_bonus", "stat": "luck", "amount": 1}) == "+1 luck"
     assert screen._format_reward({"type": "percent_bonus", "stat": "xp_bonus", "amount": 0.02}) == "+2% xp_bonus"
     assert screen._format_reward({"type": "item", "item": "field_dressing", "quantity": 2}) == "+2 Field Dressing"
+
+
+def test_claimable_filter_does_not_crash():
+    game = Game()
+    screen = AchievementsScreen(game)
+    screen.selected_category = "claimable"
+
+    achievements = screen._get_filtered_achievements()
+
+    assert achievements == []
+
+
+def test_claim_reward_button_claims_selected_achievement(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    game.player["achievements"]["unlocked"].append("forest_rat_cleaner_1")
+    screen = AchievementsScreen(game)
+    screen.selected_achievement_id = "forest_rat_cleaner_1"
+
+    result = screen._claim_selected_achievement()
+
+    assert result["claimed"] is True
+    assert "forest_rat_cleaner_1" in game.player["achievements"]["claimed"]
+
+
+def test_claim_selected_achievement_handles_locked(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    screen = AchievementsScreen(game)
+    screen.selected_achievement_id = "forest_rat_cleaner_1"
+
+    result = screen._claim_selected_achievement()
+
+    assert result["claimed"] is False
+    assert result["reason"] == "not_unlocked"
+
+
+def test_claimable_filter_returns_only_claimable(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    game.player["achievements"]["unlocked"].extend([
+        "forest_rat_cleaner_1",
+        "forest_bad_decision_manager",
+    ])
+    game.player["achievements"]["claimed"].append("forest_bad_decision_manager")
+    screen = AchievementsScreen(game)
+    screen.selected_category = "claimable"
+
+    achievement_ids = [achievement_id for achievement_id, _ in screen._get_filtered_achievements()]
+
+    assert achievement_ids == ["forest_rat_cleaner_1"]
+    assert all(screen._get_claim_status(achievement_id) == "claimable" for achievement_id in achievement_ids)
+
+
+def test_claimed_filter_returns_only_claimed(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    game.player["achievements"]["unlocked"].extend([
+        "forest_rat_cleaner_1",
+        "forest_bad_decision_manager",
+    ])
+    game.player["achievements"]["claimed"].append("forest_bad_decision_manager")
+    screen = AchievementsScreen(game)
+    screen.selected_category = "claimed"
+
+    achievement_ids = [achievement_id for achievement_id, _ in screen._get_filtered_achievements()]
+
+    assert achievement_ids == ["forest_bad_decision_manager"]
+    assert all(screen._get_claim_status(achievement_id) == "claimed" for achievement_id in achievement_ids)
+
+
+def test_in_progress_filter_returns_progress_only(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    game.player["achievements"]["progress"]["forest_rat_cleaner_1"] = 12
+    screen = AchievementsScreen(game)
+    screen.selected_category = "in_progress"
+
+    achievement_ids = [achievement_id for achievement_id, _ in screen._get_filtered_achievements()]
+
+    assert "forest_rat_cleaner_1" in achievement_ids
+    assert all(screen._get_claim_status(achievement_id) == "locked" for achievement_id in achievement_ids)
+
+
+def test_claim_selected_achievement_stores_result(monkeypatch):
+    game = Game()
+    monkeypatch.setattr(game, "save_current_game", lambda: True)
+    class_id = next(iter(game.data.classes))
+    game.select_class(class_id)
+    game.player["achievements"]["unlocked"].append("forest_rat_cleaner_1")
+    screen = AchievementsScreen(game)
+    screen.selected_achievement_id = "forest_rat_cleaner_1"
+
+    result = screen._claim_selected_achievement()
+
+    assert result["claimed"] is True
+    assert screen.last_claim_result == result
+    assert screen.last_claim_achievement_id == "forest_rat_cleaner_1"
+    assert "forest_rat_cleaner_1" in game.player["achievements"]["claimed"]
+
+
+def test_empty_filter_does_not_crash():
+    game = Game()
+    screen = AchievementsScreen(game)
+    screen.selected_category = "claimable"
+
+    assert screen._get_filtered_achievements() == []
+
+
+def test_claim_status_helper_handles_missing_player():
+    game = Game()
+    screen = AchievementsScreen(game)
+
+    assert screen._get_claim_status("some_id") == "locked"

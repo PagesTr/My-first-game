@@ -5,11 +5,15 @@ from systems.achievements import (
     SUPPORTED_OBJECTIVE_TYPES,
     SUPPORTED_REWARD_TYPES,
     apply_achievement_rewards,
+    claim_achievement_reward,
     clear_last_unlocked,
     create_player_achievements,
     ensure_player_achievements,
+    get_achievement_claim_status,
     get_achievement_progress,
+    get_claimable_achievements,
     get_visible_achievements,
+    is_achievement_claimed,
     is_achievement_unlocked,
     record_achievement_event,
 )
@@ -61,9 +65,16 @@ def make_player():
 def test_create_player_achievements_has_expected_shape():
     assert create_player_achievements({}) == {
         "unlocked": [],
+        "claimed": [],
         "progress": {},
         "last_unlocked": [],
     }
+
+
+def test_create_player_achievements_has_claimed_list():
+    achievements = create_player_achievements({})
+
+    assert achievements["claimed"] == []
 
 
 def test_ensure_player_achievements_preserves_existing_progress():
@@ -77,8 +88,26 @@ def test_ensure_player_achievements_preserves_existing_progress():
     achievements = ensure_player_achievements(player, {})
 
     assert achievements["unlocked"] == ["forest_rat_cleaner_1"]
+    assert achievements["claimed"] == []
     assert achievements["progress"] == {"forest_rat_cleaner_2": 12}
     assert achievements["last_unlocked"] == []
+
+
+def test_ensure_player_achievements_adds_missing_claimed_without_reset():
+    player = {
+        "achievements": {
+            "unlocked": ["forest_rat_cleaner_1"],
+            "progress": {"forest_rat_cleaner_2": 12},
+            "last_unlocked": ["forest_rat_cleaner_1"],
+        }
+    }
+
+    achievements = ensure_player_achievements(player, {})
+
+    assert achievements["claimed"] == []
+    assert achievements["unlocked"] == ["forest_rat_cleaner_1"]
+    assert achievements["progress"] == {"forest_rat_cleaner_2": 12}
+    assert achievements["last_unlocked"] == ["forest_rat_cleaner_1"]
 
 
 def test_achievements_data_has_required_fields():
@@ -250,7 +279,112 @@ def test_unlocked_achievement_is_not_unlocked_twice():
 
     assert result["unlocked"] == []
     assert player["achievements"]["unlocked"].count("forest_rat_cleaner_1") == 1
+    assert player["gold"] == 0
+
+
+def test_unlock_does_not_apply_reward_immediately():
+    achievements = load_achievements()
+    player = make_player()
+
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "forest_rat", "amount": 25},
+    )
+
+    assert is_achievement_unlocked(player, "forest_rat_cleaner_1")
+    assert player["gold"] == 0
+
+
+def test_claim_achievement_reward_applies_gold():
+    achievements = load_achievements()
+    player = make_player()
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "forest_rat", "amount": 25},
+    )
+
+    result = claim_achievement_reward(player, achievements, "forest_rat_cleaner_1")
+
+    assert result["claimed"] is True
     assert player["gold"] == 50
+    assert is_achievement_claimed(player, "forest_rat_cleaner_1")
+
+
+def test_claim_achievement_reward_rejects_locked_achievement():
+    achievements = load_achievements()
+    player = make_player()
+
+    result = claim_achievement_reward(player, achievements, "forest_rat_cleaner_1")
+
+    assert result["claimed"] is False
+    assert result["reason"] == "not_unlocked"
+    assert not is_achievement_claimed(player, "forest_rat_cleaner_1")
+
+
+def test_claim_achievement_reward_rejects_already_claimed():
+    achievements = load_achievements()
+    player = make_player()
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "forest_rat", "amount": 25},
+    )
+    claim_achievement_reward(player, achievements, "forest_rat_cleaner_1")
+
+    result = claim_achievement_reward(player, achievements, "forest_rat_cleaner_1")
+
+    assert result["claimed"] is False
+    assert result["reason"] == "already_claimed"
+    assert player["gold"] == 50
+
+
+def test_get_claimable_achievements_returns_unclaimed_unlocked():
+    player = make_player()
+    player["achievements"]["unlocked"] = ["a", "b"]
+    player["achievements"]["claimed"] = ["a"]
+
+    assert get_claimable_achievements(player) == ["b"]
+
+
+def test_get_achievement_claim_status():
+    player = make_player()
+
+    assert get_achievement_claim_status(player, "a") == "locked"
+    player["achievements"]["unlocked"].append("a")
+    assert get_achievement_claim_status(player, "a") == "claimable"
+    player["achievements"]["claimed"].append("a")
+    assert get_achievement_claim_status(player, "a") == "claimed"
+
+
+def test_claim_item_reward_can_be_retried_if_inventory_full():
+    achievements = {
+        "item_reward": {
+            "objective": {"type": "kill_enemy", "target": "forest_rat", "required": 1},
+            "rewards": [{"type": "item", "item": "wolf_fang_charm", "quantity": 1}],
+        }
+    }
+    items = load_json("data/items.json")
+    player = make_player()
+    player["inventory"] = create_inventory(size=1)
+    player["inventory"]["slots"][0] = {"kind": "stackable", "item": "rat_tail", "quantity": 1}
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "forest_rat", "amount": 1},
+    )
+
+    failed = claim_achievement_reward(player, achievements, "item_reward", items=items)
+    claimed_after_failure = is_achievement_claimed(player, "item_reward")
+    player["inventory"]["slots"][0] = None
+    retried = claim_achievement_reward(player, achievements, "item_reward", items=items)
+
+    assert failed["claimed"] is False
+    assert failed["reason"] == "reward_failed"
+    assert not claimed_after_failure
+    assert retried["claimed"] is True
+    assert is_achievement_claimed(player, "item_reward")
 
 
 def test_kill_family_matches_metadata_family():
