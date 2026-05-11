@@ -28,6 +28,18 @@ REQUIRED_ACHIEVEMENT_FIELDS = {
     "objective",
     "rewards",
 }
+FOREST_ZONE_IDS = {
+    "forest_rat_outskirts",
+    "forest_young_goblin_trail",
+    "forest_stray_wolf_path",
+    "forest_goblin_scout_trails",
+    "forest_wolf_hunting_ground",
+    "forest_thorn_sprite_grove",
+    "forest_bone_gnawer_den",
+    "forest_lost_adventurer_path",
+    "forest_goblin_shaman_grounds",
+    "forest_alpha_wolf_lair",
+}
 
 
 def load_json(path):
@@ -85,7 +97,7 @@ def test_forest_achievements_count_is_at_least_30():
         if achievement["chapter"] == "forest"
     ]
 
-    assert len(forest_achievements) >= 30
+    assert len(forest_achievements) >= 55
 
 
 def test_record_kill_enemy_unlocks_rat_cleaner():
@@ -113,6 +125,112 @@ def test_progress_is_capped_at_required():
     )
 
     assert get_achievement_progress(player, "forest_rat_cleaner_1") == 25
+
+
+def test_max_progress_mode_keeps_best_value():
+    achievements = {
+        "test_run": {
+            "progress_mode": "max",
+            "objective": {
+                "type": "single_expedition_kills",
+                "target": "test_zone",
+                "required": 20,
+            },
+            "rewards": [],
+        }
+    }
+    player = make_player()
+
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "expedition_finished", "target": "test_zone", "amount": 8},
+    )
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "expedition_finished", "target": "test_zone", "amount": 5},
+    )
+
+    assert get_achievement_progress(player, "test_run") == 8
+
+
+def test_max_progress_mode_updates_when_new_best_is_higher():
+    achievements = {
+        "test_run": {
+            "progress_mode": "max",
+            "objective": {
+                "type": "single_expedition_kills",
+                "target": "test_zone",
+                "required": 20,
+            },
+            "rewards": [],
+        }
+    }
+    player = make_player()
+
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "expedition_finished", "target": "test_zone", "amount": 8},
+    )
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "expedition_finished", "target": "test_zone", "amount": 12},
+    )
+
+    assert get_achievement_progress(player, "test_run") == 12
+
+
+def test_max_progress_mode_caps_at_required():
+    achievements = {
+        "test_run": {
+            "progress_mode": "max",
+            "objective": {
+                "type": "single_expedition_kills",
+                "target": "test_zone",
+                "required": 10,
+            },
+            "rewards": [],
+        }
+    }
+    player = make_player()
+
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "expedition_finished", "target": "test_zone", "amount": 999},
+    )
+
+    assert get_achievement_progress(player, "test_run") == 10
+
+
+def test_cumulative_progress_mode_still_adds_amounts():
+    achievements = {
+        "test_cumulative": {
+            "objective": {
+                "type": "kill_enemy",
+                "target": "test_enemy",
+                "required": 10,
+            },
+            "rewards": [],
+        }
+    }
+    player = make_player()
+
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "test_enemy", "amount": 4},
+    )
+    record_achievement_event(
+        player,
+        achievements,
+        {"type": "kill_enemy", "target": "test_enemy", "amount": 5},
+    )
+
+    assert get_achievement_progress(player, "test_cumulative") == 9
 
 
 def test_unlocked_achievement_is_not_unlocked_twice():
@@ -259,6 +377,57 @@ def test_equip_set_pieces_matches_any_forest_set():
     assert "forest_set_apprentice" in result["unlocked"]
 
 
+def test_single_expedition_kills_matches_expedition_finished_event():
+    achievements = load_achievements()
+    player = make_player()
+
+    result = record_achievement_event(
+        player,
+        achievements,
+        {
+            "type": "expedition_finished",
+            "target": "forest_rat_outskirts",
+            "amount": 10,
+        },
+    )
+
+    assert "forest_rat_outskirts_push_1" in result["unlocked"]
+
+
+def test_single_dungeon_kills_matches_dungeon_run_finished_event():
+    achievements = load_achievements()
+    player = make_player()
+
+    result = record_achievement_event(
+        player,
+        achievements,
+        {
+            "type": "dungeon_run_finished",
+            "target": "forest_goblin_camp",
+            "amount": 5,
+        },
+    )
+
+    assert "forest_goblin_camp_push_1" in result["unlocked"]
+
+
+def test_single_boss_victories_matches_boss_loop_finished_event():
+    achievements = load_achievements()
+    player = make_player()
+
+    result = record_achievement_event(
+        player,
+        achievements,
+        {
+            "type": "boss_loop_finished",
+            "target": "grubfang_rootcaller",
+            "amount": 2,
+        },
+    )
+
+    assert "forest_rootcaller_loop_1" in result["unlocked"]
+
+
 def test_gold_reward_is_applied():
     player = {"gold": 5}
     achievement = {"rewards": [{"type": "gold", "amount": 50}]}
@@ -370,12 +539,38 @@ def test_all_achievement_reward_types_are_supported():
     assert reward_types == SUPPORTED_REWARD_TYPES
 
 
+def test_forest_run_achievements_exist_for_each_forest_zone():
+    achievements = load_achievements()
+
+    for zone_id in FOREST_ZONE_IDS:
+        zone_achievements = [
+            achievement
+            for achievement in achievements.values()
+            if achievement["objective"]["type"] == "single_expedition_kills"
+            and achievement["objective"]["target"] == zone_id
+        ]
+        assert len(zone_achievements) >= 2, zone_id
+
+
+def test_forest_run_achievements_count_is_at_least_25():
+    achievements = load_achievements()
+
+    run_achievements = [
+        achievement
+        for achievement in achievements.values()
+        if achievement["chapter"] == "forest" and achievement["category"] == "run"
+    ]
+
+    assert len(run_achievements) >= 25
+
+
 def test_forest_achievement_targets_reference_existing_data_when_possible():
     achievements = load_achievements()
     enemies = load_json("data/enemies.json")
     dungeons = load_json("data/dungeons.json")
     recipes = load_json("data/recipes.json")
     equipment_sets = load_json("data/equipment_sets.json")
+    zones = load_json("data/zones.json")
 
     for achievement_id, achievement in achievements.items():
         objective = achievement["objective"]
@@ -386,11 +581,13 @@ def test_forest_achievement_targets_reference_existing_data_when_possible():
             continue
         if objective_type == "kill_enemy":
             assert target in enemies, achievement_id
-        if objective_type in {"defeat_boss", "boss_victory_count"}:
+        if objective_type in {"defeat_boss", "boss_victory_count", "single_boss_victories"}:
             assert target in enemies, achievement_id
-        if objective_type == "clear_dungeon":
+        if objective_type in {"clear_dungeon", "single_dungeon_kills"}:
             assert target in dungeons, achievement_id
         if objective_type == "craft_recipe":
             assert target in recipes, achievement_id
         if objective_type == "equip_set_pieces":
             assert target == "any_forest_set" or target in equipment_sets, achievement_id
+        if objective_type == "single_expedition_kills":
+            assert target in zones, achievement_id

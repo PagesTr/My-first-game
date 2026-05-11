@@ -42,6 +42,7 @@ from systems.offline import (
 )
 from systems.progression import apply_combat_rewards
 from systems.quests import ensure_player_quests, record_quest_event
+from systems.achievements import ensure_player_achievements, record_achievement_event
 from systems.save_load import load_data_from_file, save_game, validate_save_data
 from systems.stats import prepare_player_for_combat
 
@@ -101,6 +102,7 @@ class Game:
         self.selected_zone = save_data.get("selected_zone")
         self.player = save_data.get("player")
         ensure_player_quests(self.player, self.data.quests)
+        ensure_player_achievements(self.player, self.data.achievements)
         self.mailbox = save_data.get("mailbox") or create_mailbox()
         self.combat = None
         self.auto_mode = False
@@ -187,8 +189,10 @@ class Game:
             items=self.data.items,
             professions_data=self.data.professions,
             quests_data=self.data.quests,
+            achievements_data=self.data.achievements,
         )
         ensure_player_quests(self.player, self.data.quests)
+        ensure_player_achievements(self.player, self.data.achievements)
         prepare_player_for_combat(
             self.player,
             self.data.items,
@@ -237,15 +241,40 @@ class Game:
         self.combat = None
         self.auto_mode = False
         enemy_pool = zone.get("enemy_pool", [])
+        combats_won = 0
+        if isinstance(self.last_instance_result, dict):
+            combats_won = int(self.last_instance_result.get("combats_won", 0))
+        enemy_id = None
+        enemy_family = None
         if (
             isinstance(enemy_pool, list)
             and len(enemy_pool) == 1
             and isinstance(self.last_instance_result, dict)
         ):
-            self.record_quest_event({
-                "type": "kill_enemy",
-                "target": enemy_pool[0],
-                "amount": int(self.last_instance_result.get("combats_won", 0)),
+            enemy_id = enemy_pool[0]
+            enemy_data = self.data.enemies.get(enemy_id, {})
+            enemy_family = enemy_data.get("family") if isinstance(enemy_data, dict) else None
+            if combats_won > 0:
+                self.record_progress_event({
+                    "type": "kill_enemy",
+                    "target": enemy_id,
+                    "amount": combats_won,
+                    "metadata": {
+                        "chapter": zone.get("chapter", "forest"),
+                        "family": enemy_family,
+                        "zone_id": zone_key,
+                    },
+                })
+        if combats_won > 0:
+            self.record_achievement_event({
+                "type": "expedition_finished",
+                "target": zone_key,
+                "amount": combats_won,
+                "metadata": {
+                    "chapter": zone.get("chapter", "forest"),
+                    "enemy_id": enemy_id,
+                    "family": enemy_family,
+                },
             })
         self.state = "combat_result"
 
@@ -289,8 +318,12 @@ class Game:
         if not isinstance(self.active_dungeon, dict):
             return {"resolved": False, "reason": "no_active_dungeon"}
 
+        dungeon = get_dungeon(
+            getattr(self.data, "dungeons", {}),
+            self.active_dungeon.get("dungeon_id"),
+        )
         step = self.get_active_dungeon_step()
-        if not isinstance(step, dict) or step.get("type") != "combat":
+        if dungeon is None or not isinstance(step, dict) or step.get("type") != "combat":
             return {"resolved": False, "reason": "not_combat_step"}
 
         enemy_id = step.get("enemy_id")
@@ -299,10 +332,18 @@ class Game:
         if result.get("won") is True:
             self._record_dungeon_victory(result, enemy_id)
             self.active_dungeon["step_index"] += 1
-            self.record_quest_event({
+            dungeon_id = self.active_dungeon.get("dungeon_id")
+            enemy_data = self.data.enemies.get(enemy_id, {})
+            enemy_family = enemy_data.get("family") if isinstance(enemy_data, dict) else None
+            self.record_progress_event({
                 "type": "kill_enemy",
                 "target": enemy_id,
                 "amount": 1,
+                "metadata": {
+                    "chapter": dungeon.get("chapter"),
+                    "family": enemy_family,
+                    "dungeon_id": dungeon_id,
+                },
             })
         else:
             self.active_dungeon["failed"] = True
@@ -375,10 +416,14 @@ class Game:
             result["reward_multiplier"] = reward_multiplier
             self.last_dungeon_result = result
             if boss_enemy_id == "grubfang_rootcaller":
-                self.record_quest_event({
+                self.record_progress_event({
                     "type": "defeat_boss",
-                    "target": "grubfang_rootcaller",
+                    "target": boss_enemy_id,
                     "amount": 1,
+                    "metadata": {
+                        "chapter": dungeon.get("chapter"),
+                        "dungeon_id": self.active_dungeon.get("dungeon_id"),
+                    },
                 })
             if hasattr(self, "save_current_game"):
                 self.save_current_game()
@@ -389,6 +434,7 @@ class Game:
         result["completed"] = True
         result["boss_victories"] = victories
         dungeon_id = self.active_dungeon.get("dungeon_id")
+        rooms_cleared = self.active_dungeon.get("rooms_cleared", 0)
         self.last_dungeon_result = self._build_dungeon_result(
             "boss_defeat",
             boss_enemy_id,
@@ -399,11 +445,33 @@ class Game:
             "enemy_id": result.get("enemy_id"),
             "enemy_name": result.get("enemy_name"),
         })
-        self.record_quest_event({
+        self.record_progress_event({
             "type": "clear_dungeon",
             "target": dungeon_id,
             "amount": 1,
+            "metadata": {
+                "chapter": dungeon.get("chapter"),
+            },
         })
+        self.record_achievement_event({
+            "type": "dungeon_run_finished",
+            "target": dungeon_id,
+            "amount": rooms_cleared,
+            "metadata": {
+                "chapter": dungeon.get("chapter"),
+                "boss_victories": victories,
+            },
+        })
+        if victories > 0:
+            self.record_achievement_event({
+                "type": "boss_loop_finished",
+                "target": boss_enemy_id,
+                "amount": victories,
+                "metadata": {
+                    "chapter": dungeon.get("chapter"),
+                    "dungeon_id": dungeon_id,
+                },
+            })
         self.active_dungeon = None
         self.state = "dungeon"
         if hasattr(self, "save_current_game"):
@@ -605,7 +673,11 @@ class Game:
         self.selected_zone = zone_key
         self.state = "zone_actions"
         if result.get("gathered") is True:
-            self._record_gathering_quest_progress(result)
+            self._record_gathering_progress(
+                result,
+                profession_id=profession_id,
+                zone_key=zone_key,
+            )
             self.save_current_game()
         return result
 
@@ -665,8 +737,17 @@ class Game:
         )
         self.last_gathering_result = result
         if result.get("gathered") is True:
+            profession_id = None
+            zone_key = None
+            if isinstance(self.active_gathering, dict):
+                profession_id = self.active_gathering.get("profession_id")
+                zone_key = self.active_gathering.get("zone_id")
             advance_active_gathering_tick(self.active_gathering, current_time_ms)
-            self._record_gathering_quest_progress(result)
+            self._record_gathering_progress(
+                result,
+                profession_id=profession_id,
+                zone_key=zone_key,
+            )
             self.save_current_game()
             return result
         if result.get("reason") == "inventory_full":
@@ -708,6 +789,13 @@ class Game:
         if not self.player:
             return {"resolved": False, "reason": "no_player"}
 
+        offline_activity = self.player.get("offline_activity")
+        fallback_zone_key = None
+        fallback_profession_id = None
+        if isinstance(offline_activity, dict):
+            fallback_zone_key = offline_activity.get("zone_id")
+            fallback_profession_id = offline_activity.get("profession_id")
+
         result = resolve_offline_activity(
             self.player,
             self.data.gathering_nodes,
@@ -716,7 +804,11 @@ class Game:
         )
         if result.get("resolved") is True or result.get("reason") == "inventory_full":
             if result.get("resolved") is True:
-                self._record_gathering_quest_progress(result)
+                self._record_gathering_progress(
+                    result,
+                    profession_id=result.get("profession_id", fallback_profession_id),
+                    zone_key=result.get("zone_key", fallback_zone_key),
+                )
             self.save_current_game()
         return result
 
@@ -728,33 +820,80 @@ class Game:
             self.save_current_game()
         return result
 
+    def record_achievement_event(self, event):
+        if not self.player:
+            return {"updated": False, "unlocked": []}
+        result = record_achievement_event(
+            self.player,
+            self.data.achievements,
+            event,
+            items=self.data.items,
+        )
+        if result.get("updated") or result.get("unlocked"):
+            self.save_current_game()
+        return result
+
+    def record_progress_event(self, event):
+        quest_result = self.record_quest_event(event)
+        achievement_result = self.record_achievement_event(event)
+        return {
+            "quests": quest_result,
+            "achievements": achievement_result,
+        }
+
     def record_craft_quest_progress(self, recipe_id, craft_result):
         if not self.player or not isinstance(craft_result, dict):
             return {"updated": False, "completed": []}
         if craft_result.get("crafted") is not True:
             return {"updated": False, "completed": []}
-        return self.record_quest_event({
+        recipe = self.data.recipes.get(recipe_id, {})
+        chapter = recipe.get("chapter") if isinstance(recipe, dict) else None
+        if chapter is None and isinstance(recipe_id, str) and recipe_id.startswith("craft_"):
+            chapter = "forest"
+        return self.record_progress_event({
             "type": "craft_recipe",
             "target": recipe_id,
             "amount": 1,
+            "metadata": {
+                "chapter": chapter,
+            },
         })
 
-    def _record_gathering_quest_progress(self, result):
+    def _record_gathering_progress(self, result, profession_id=None, zone_key=None):
         if not isinstance(result, dict):
             return []
-        quest_results = []
+        progress_results = []
         for reward in result.get("rewards", []):
             if not isinstance(reward, dict):
                 continue
             item_id = reward.get("item")
             quantity = reward.get("quantity", 1)
             if item_id:
-                quest_results.append(self.record_quest_event({
+                progress_results.append(self.record_progress_event({
                     "type": "gather_item",
                     "target": item_id,
                     "amount": int(quantity),
+                    "metadata": {
+                        "chapter": "forest",
+                        "profession_id": profession_id,
+                        "zone_id": zone_key,
+                    },
                 }))
-        return quest_results
+                if profession_id:
+                    progress_results.append(self.record_progress_event({
+                        "type": "gather_tick",
+                        "target": profession_id,
+                        "amount": 1,
+                        "metadata": {
+                            "chapter": "forest",
+                            "profession_id": profession_id,
+                            "zone_id": zone_key,
+                        },
+                    }))
+        return progress_results
+
+    def _record_gathering_quest_progress(self, result):
+        return self._record_gathering_progress(result)
 
     def stop_offline_progress(self):
         if not self.player:

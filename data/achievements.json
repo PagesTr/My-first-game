@@ -664,5 +664,453 @@
         "amount": 1
       }
     ]
+  },
+  "forest_rat_outskirts_push_1": {
+    "name": "Rat Outskirts Push I",
+    "description": "You turned the outskirts into a rodent accounting error.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_rat_outskirts",
+      "required": 10
+    },
+    "rewards": [{"type": "gold", "amount": 40}]
+  },
+  "forest_rat_outskirts_push_2": {
+    "name": "Rat Outskirts Push II",
+    "description": "At this point, the rats are considering administration.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_rat_outskirts",
+      "required": 25
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "luck", "amount": 1}]
+  },
+  "forest_young_goblin_trail_push_1": {
+    "name": "Young Goblin Trail Push I",
+    "description": "You corrected goblin career plans in bulk.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_young_goblin_trail",
+      "required": 10
+    },
+    "rewards": [{"type": "gold", "amount": 45}]
+  },
+  "forest_young_goblin_trail_push_2": {
+    "name": "Young Goblin Trail Push II",
+    "description": "The trail now has fewer ambitions and more silence.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_young_goblin_trail",
+      "required": 25
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "loot_bonus", "amount": 0.01}]
+  },
+  "forest_stray_wolf_path_push_1": {
+    "name": "Stray Wolf Path Push I",
+    "description": "You made the path less bite-forward.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_stray_wolf_path",
+      "required": 8
+    },
+    "rewards": [{"type": "gold", "amount": 45}]
+  },
+  "forest_stray_wolf_path_push_2": {
+    "name": "Stray Wolf Path Push II",
+    "description": "The wolves learned path ownership is negotiable.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_stray_wolf_path",
+      "required": 20
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "dexterity", "amount": 1}]
+  },
+  "forest_goblin_scout_trails_push_1": {
+    "name": "Goblin Scout Trails Push I",
+    "description": "You found the scouts before they found a plan.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_goblin_scout_trails",
+      "required": 8
+    },
+    "rewards": [{"type": "gold", "amount": 60}]
+  },
+  "forest_goblin_scout_trails_push_2": {
+    "name": "Goblin Scout Trails Push II",
+    "description": "The scout network is now mostly rumor.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_goblin_scout_trails",
+      "required": 18
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "gold_bonus", "amount": 0.01}]
+  },
+  "forest_wolf_hunting_ground_push_1": {
+    "name": "Wolf Hunting Ground Push I",
+    "description": "The hunting ground briefly misplaced its hunters.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_wolf_hunting_ground",
+      "required": 8
+    },
+    "rewards": [{"type": "gold", "amount": 60}]
+  },
+  "forest_wolf_hunting_ground_push_2": {
+    "name": "Wolf Hunting Ground Push II",
+    "description": "You became a scheduling problem for the whole pack.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_wolf_hunting_ground",
+      "required": 18
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "crit_chance", "amount": 0.01}]
+  },
+  "forest_thorn_sprite_grove_push_1": {
+    "name": "Thorn Sprite Grove Push I",
+    "description": "The tiny spirits were sharp. You were persistent.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_thorn_sprite_grove",
+      "required": 8
+    },
+    "rewards": [{"type": "gold", "amount": 60}]
+  },
+  "forest_thorn_sprite_grove_push_2": {
+    "name": "Thorn Sprite Grove Push II",
+    "description": "The grove defended itself with less enthusiasm afterward.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_thorn_sprite_grove",
+      "required": 18
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "wisdom", "amount": 1}]
+  },
+  "forest_bone_gnawer_den_push_1": {
+    "name": "Bone Gnawer Den Push I",
+    "description": "You interrupted the den's chewing schedule.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_bone_gnawer_den",
+      "required": 6
+    },
+    "rewards": [{"type": "gold", "amount": 70}]
+  },
+  "forest_bone_gnawer_den_push_2": {
+    "name": "Bone Gnawer Den Push II",
+    "description": "The bones are safer. The den is less employed.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_bone_gnawer_den",
+      "required": 15
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "archaeologist_mastery", "amount": 1}]
+  },
+  "forest_lost_adventurer_path_push_1": {
+    "name": "Lost Adventurer Path Push I",
+    "description": "You found trouble where someone else lost directions.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_lost_adventurer_path",
+      "required": 6
+    },
+    "rewards": [{"type": "gold", "amount": 75}]
+  },
+  "forest_lost_adventurer_path_push_2": {
+    "name": "Lost Adventurer Path Push II",
+    "description": "The path remains lost, but now with fewer witnesses.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_lost_adventurer_path",
+      "required": 15
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "xp_bonus", "amount": 0.01}]
+  },
+  "forest_goblin_shaman_grounds_push_1": {
+    "name": "Goblin Shaman Grounds Push I",
+    "description": "The chanting stopped before it became a meeting.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_goblin_shaman_grounds",
+      "required": 5
+    },
+    "rewards": [{"type": "gold", "amount": 90}]
+  },
+  "forest_goblin_shaman_grounds_push_2": {
+    "name": "Goblin Shaman Grounds Push II",
+    "description": "Their rituals now include checking for you first.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_goblin_shaman_grounds",
+      "required": 12
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "luck", "amount": 1}]
+  },
+  "forest_alpha_wolf_lair_push_1": {
+    "name": "Alpha Wolf Lair Push I",
+    "description": "You entered the lair and questioned management.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_alpha_wolf_lair",
+      "required": 5
+    },
+    "rewards": [{"type": "gold", "amount": 90}]
+  },
+  "forest_alpha_wolf_lair_push_2": {
+    "name": "Alpha Wolf Lair Push II",
+    "description": "The alpha's office hours have been cancelled.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_expedition_kills",
+      "target": "forest_alpha_wolf_lair",
+      "required": 12
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "dexterity", "amount": 1}]
+  },
+  "forest_goblin_camp_push_1": {
+    "name": "Goblin Camp Push I",
+    "description": "You cleared enough camp problems to ruin dinner.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_dungeon_kills",
+      "target": "forest_goblin_camp",
+      "required": 5
+    },
+    "rewards": [{"type": "gold", "amount": 100}]
+  },
+  "forest_goblin_camp_push_2": {
+    "name": "Goblin Camp Push II",
+    "description": "The camp's emergency plan is now just pointing at you.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_dungeon_kills",
+      "target": "forest_goblin_camp",
+      "required": 10
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "gold_bonus", "amount": 0.01}]
+  },
+  "forest_buried_grove_push_1": {
+    "name": "Buried Grove Push I",
+    "description": "The buried grove tried to stay dramatic. You interrupted.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 1,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_dungeon_kills",
+      "target": "forest_buried_grove",
+      "required": 5
+    },
+    "rewards": [{"type": "gold", "amount": 120}]
+  },
+  "forest_buried_grove_push_2": {
+    "name": "Buried Grove Push II",
+    "description": "Even the roots are asking for a break.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_dungeon_kills",
+      "target": "forest_buried_grove",
+      "required": 10
+    },
+    "rewards": [{"type": "stat_bonus", "stat": "wisdom", "amount": 1}]
+  },
+  "forest_rootcaller_loop_1": {
+    "name": "Rootcaller Loop I",
+    "description": "You beat the Rootcaller twice before the roots found excuses.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 2,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_boss_victories",
+      "target": "grubfang_rootcaller",
+      "required": 2
+    },
+    "rewards": [{"type": "gold", "amount": 150}]
+  },
+  "forest_rootcaller_lair_push_1": {
+    "name": "Rootcaller Lair Push I",
+    "description": "You entered the lair and made the roots regret attendance.",
+    "chapter": "forest",
+    "category": "run",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_dungeon_kills",
+      "target": "forest_rootcaller_lair",
+      "required": 1
+    },
+    "rewards": [{"type": "gold", "amount": 130}]
+  },
+  "forest_rootcaller_loop_2": {
+    "name": "Rootcaller Loop II",
+    "description": "The Rootcaller called again. You declined four times.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 3,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_boss_victories",
+      "target": "grubfang_rootcaller",
+      "required": 4
+    },
+    "rewards": [{"type": "percent_bonus", "stat": "xp_bonus", "amount": 0.01}]
+  },
+  "forest_rootcaller_loop_3": {
+    "name": "Rootcaller Loop III",
+    "description": "Six victories later, the forest is pretending this was planned.",
+    "chapter": "forest",
+    "category": "boss",
+    "tier": 4,
+    "hidden": false,
+    "repeatable": false,
+    "progress_mode": "max",
+    "objective": {
+      "type": "single_boss_victories",
+      "target": "grubfang_rootcaller",
+      "required": 6
+    },
+    "rewards": [{"type": "item", "item": "forest_core", "quantity": 1}]
   }
 }

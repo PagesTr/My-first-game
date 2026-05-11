@@ -12,6 +12,9 @@ SUPPORTED_OBJECTIVE_TYPES = {
     "defeat_boss",
     "boss_victory_count",
     "equip_set_pieces",
+    "single_expedition_kills",
+    "single_dungeon_kills",
+    "single_boss_victories",
 }
 
 SUPPORTED_REWARD_TYPES = {
@@ -50,6 +53,12 @@ def get_achievement(achievements_data, achievement_id):
     if not isinstance(achievements_data, dict):
         return None
     return achievements_data.get(achievement_id)
+
+
+def get_achievement_progress_mode(achievement):
+    if not isinstance(achievement, dict):
+        return "cumulative"
+    return achievement.get("progress_mode", "cumulative")
 
 
 def get_achievement_progress(player, achievement_id):
@@ -122,7 +131,11 @@ def record_achievement_event(player, achievements_data, event, items=None):
             continue
 
         current = get_achievement_progress(player, achievement_id)
-        next_value = min(required, current + amount)
+        progress_mode = get_achievement_progress_mode(achievement)
+        if progress_mode == "max":
+            next_value = min(required, max(current, amount))
+        else:
+            next_value = min(required, current + amount)
         if next_value != current:
             achievements["progress"][achievement_id] = next_value
             updated = True
@@ -215,6 +228,12 @@ def _objective_matches_event(objective, event):
                 or (target == "any_forest_set" and metadata.get("chapter") == "forest")
             )
         )
+    if objective_type == "single_expedition_kills":
+        return event_type == "expedition_finished" and event_target == target
+    if objective_type == "single_dungeon_kills":
+        return event_type == "dungeon_run_finished" and event_target == target
+    if objective_type == "single_boss_victories":
+        return event_type == "boss_loop_finished" and event_target == target
     return False
 
 
