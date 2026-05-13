@@ -231,15 +231,16 @@ Note technique future : les PNJ pourront etre ajoutes dans un fichier dedie, par
 | 8 | lost_adventurer | Lost Adventurer | fallen | Lore boucle de mort | broken_adventurer_tag | rusted_ring | adventurer_relic_ring |
 | 9 | goblin_shaman | Goblin Shaman | goblin | Magie primitive/totems | shaman_totem | ritual_paint | - |
 | 10 | alpha_wolf | Alpha Wolf | wolf | Mini-boss / pre-boss | alpha_fang | wild_heart | wolf_stalker_hood |
-| 11 | rootbound_remnant | Rootbound Remnant | nature/fallen | Mini-boss donjon | rootbound_relic | briar_sap | rootbound_amulet |
-| 12 | grubfang_rootcaller | Grubfang, Rootcaller | boss | Boss Foret | rootcaller_totem | forest_core | forest_remnant_trinket |
+| 11 | goblin_quartermaster | Goblin Quartermaster | goblin | Mini-boss Goblin Camp | scout_badge | goblin_map_scrap | goblin_ritual_amulet |
+| 12 | rootbound_remnant | Rootbound Remnant | nature/fallen | Mini-boss Buried Grove | rootbound_relic | briar_sap | rootbound_amulet |
+| 13 | grubfang_rootcaller | Grubfang, Rootcaller | boss | Boss Foret | rootcaller_totem | forest_core | forest_remnant_trinket |
 
 Notes :
 
 - Les ennemis 1 a 3 servent d'introduction.
-- Les ennemis 4 a 6 ouvrent les premiers builds.
+- Les ennemis 4 a 6 ouvrent les premiers builds et les routes plus profondes.
 - Les ennemis 7 a 8 installent le theme des morts et de l'archeologie.
-- Les ennemis 9 a 12 structurent les donjons et le boss.
+- Les ennemis 9 a 13 structurent les donjons, la corruption et le boss.
 - Les pieces de set directes doivent rester rares, mais visibles dans les objectifs du joueur.
 - Les ennemis hors donjon doivent recevoir quelques drops de set pour eviter que tout l'interet soit concentre dans les donjons.
 
@@ -247,23 +248,65 @@ Notes :
 
 ## Zones et sous-zones Foret
 
-### Zones generiques
+### Zones de combat actuellement implementees
 
-| Zone id propose | Nom visible | Ennemis principaux | Metiers lies | Role |
-|---|---|---|---|---|
-| forest_outskirts | Forest Outskirts | forest_rat, young_goblin, stray_wolf | druid, archaeologist | Introduction |
-| forest_deep_trails | Deep Forest Trails | goblin_scout, forest_wolf, thorn_sprite | druid | Builds rapides / nature |
-| forest_buried_paths | Buried Forest Paths | bone_gnawer, lost_adventurer | archaeologist, druid | Lore et ossements |
-| forest_ritual_grounds | Ritual Grounds | goblin_shaman, thorn_sprite, alpha_wolf | druid, archaeologist | Pre-boss |
+Les zones de combat actuelles de la Foret sont definies dans `data/zones.json`.
 
-Ces zones peuvent remplacer ou completer les zones actuelles :
+Chaque zone de combat correspond a une zone de farm / combat ciblant un ennemi principal, avec son propre niveau de deblocage, sa table de loot, son multiplicateur de difficulte et son rythme de farming.
+
+| Zone id actuelle | Nom visible | Unlock level | Ennemi principal | Loot principal | Role narratif |
+|---|---|---:|---|---|---|
+| forest_rat_outskirts | Rat Outskirts | 1 | forest_rat | rat_tail | Premiere zone de combat. Sert au demarrage, aux rats et aux premieres quetes de Brindle. |
+| forest_young_goblin_trail | Young Goblin Trail | 1 | young_goblin | goblin_ear | Introduit les gobelins maladroits et les premiers problemes de route. |
+| forest_stray_wolf_path | Stray Wolf Path | 1 | stray_wolf | wolf_pelt | Introduit les loups opportunistes et les chemins moins surs. |
+| forest_goblin_scout_trails | Goblin Scout Trails | 2 | goblin_scout | scout_badge, goblin_map_scrap, scavenger_gloves | Ouvre la progression vers les routes gobelines, Fen et l'approche de Goblin Camp. |
+| forest_wolf_hunting_ground | Wolf Hunting Ground | 2 | forest_wolf | wolf_fang, wild_heart, wolf_stalker_boots | Zone de loups plus avancee. Sert aux builds crit/dodge et a la sensation d'ecosysteme hostile. |
+| forest_thorn_sprite_grove | Thorn Sprite Grove | 2 | thorn_sprite | thorn_essence, forest_gatherer_gloves | Zone nature/grove. Sert a Maela, au Druid, aux plantes agressives et aux premiers signes de corruption naturelle. |
+| forest_bone_gnawer_den | Bone Gnawer Den | 3 | bone_gnawer | chewed_bone, cracked_skull | Zone d'ossements et de charognards. Sert a Osric et a la bascule morbide. |
+| forest_lost_adventurer_path | Lost Adventurer Path | 3 | lost_adventurer | broken_adventurer_tag, rusted_ring, adventurer_relic_ring | Zone des anciens aventuriers. Montre que d'autres sont tombes avant le joueur. |
+| forest_goblin_shaman_grounds | Goblin Shaman Grounds | 4 | goblin_shaman | shaman_totem, ritual_paint | Zone rituelle gobeline. Prepare les totems, la magie primitive, Goblin Camp et Rootcaller. |
+| forest_alpha_wolf_lair | Alpha Wolf Lair | 4 | alpha_wolf | alpha_fang, wild_heart, wolf_stalker_hood | Zone de loups avancee / pre-boss. Renforce la menace de la meute avant les contenus de fin de chapitre. |
+
+### Lecture narrative des zones de combat
+
+Les zones implementees peuvent etre lues comme une progression plus fine que les macro-zones narratives :
 
 ```text
-forest_goblin
-forest_wolf
+Rat Outskirts
+-> Young Goblin Trail / Stray Wolf Path
+-> Goblin Scout Trails / Wolf Hunting Ground / Thorn Sprite Grove
+-> Bone Gnawer Den / Lost Adventurer Path
+-> Goblin Shaman Grounds / Alpha Wolf Lair
+-> Goblin Camp / Buried Grove
+-> Grubfang, Rootcaller
 ```
 
-Recommandation technique future : garder les zones actuelles tant que necessaire, puis migrer progressivement vers des zones plus narratives.
+Cette progression permet de distribuer les PNJ sans doublon :
+
+| PNJ | Couverture principale | Zones associees |
+|---|---|---|
+| Quartermaster Brindle | Combat de base, logistique, premieres recompenses | Rat Outskirts, Young Goblin Trail, Stray Wolf Path |
+| Maela the Herbalist | Recolte, soins, craft, nature anormale | Thorn Sprite Grove, ressources Druid, zones de racines et de sap |
+| Fen the One-Time Scout | Exploration plus profonde, routes secondaires, combats de chemin | Goblin Scout Trails, Wolf Hunting Ground, routes profondes, approche de Goblin Camp |
+| Archivist Osric | Ossements, anciens aventuriers, memoire des morts | Bone Gnawer Den, Lost Adventurer Path, Buried Grove |
+| Gatekeeper Marn | Donjons, boss, seuils dangereux | Goblin Camp, Buried Grove, Grubfang, Rootcaller |
+
+Fen prolonge donc Brindle sans le copier : Brindle donne des missions de combat officielles, tandis que Fen pousse le joueur vers des routes plus profondes ou les combats arrivent parce que le joueur explore des chemins moins surs.
+
+### Macro-zones narratives
+
+Les macro-zones ci-dessous servent de lecture narrative globale. Elles peuvent regrouper plusieurs zones de combat actuelles.
+
+| Macro-zone narrative | Zones de combat associees | Ennemis principaux | Metiers lies | Role |
+|---|---|---|---|---|
+| Forest Outskirts | Rat Outskirts, Young Goblin Trail, Stray Wolf Path | forest_rat, young_goblin, stray_wolf | druid, archaeologist | Introduction combat, drops simples, premieres quetes |
+| Deeper Trails | Goblin Scout Trails, Wolf Hunting Ground, Thorn Sprite Grove | goblin_scout, forest_wolf, thorn_sprite | druid | Routes plus profondes, builds rapides, nature hostile, Fen et Maela |
+| Buried Paths | Bone Gnawer Den, Lost Adventurer Path | bone_gnawer, lost_adventurer | archaeologist, druid | Lore, ossements, anciens aventuriers, Osric |
+| Ritual Grounds | Goblin Shaman Grounds, Alpha Wolf Lair | goblin_shaman, alpha_wolf | druid, archaeologist | Pre-boss, totems, loups avances, racines et tension finale |
+| Dungeon Thresholds | Goblin Camp, Buried Grove | goblin_quartermaster, rootbound_remnant | druid, archaeologist | Donjons, mini-boss, acces boss, Marn |
+| Forest Boss | Rootcaller encounter | grubfang_rootcaller | all forest systems | Fin du chapitre Foret et transition vers le chapitre suivant |
+
+Recommandation technique : garder les zones de combat actuelles tant qu'elles sont fonctionnelles. Les macro-zones doivent servir au plan narratif, a la future carte top-down / up-down et a la repartition des PNJ, sans forcer une refonte technique immediate.
 
 ---
 
@@ -651,6 +694,7 @@ Fichiers probables :
 ```text
 data/quests.json
 systems/quests.py
+core/game.py
 tests/test_quests.py
 ```
 
