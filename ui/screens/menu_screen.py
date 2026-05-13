@@ -223,6 +223,12 @@ class MenuScreen:
                 self._start_selected_gathering_offline()
             return
 
+        if event.type == pygame.KEYDOWN and self.game.state == "town":
+            if event.key == pygame.K_e:
+                self._clear_offline_result()
+                self.game.open_exploration()
+            return
+
         if event.type != pygame.MOUSEBUTTONDOWN:
             return
 
@@ -526,6 +532,7 @@ class MenuScreen:
             f"Class: {class_name}",
             f"Level: {player.get('level', 1)}",
             f"Gold: {player.get('gold', 0)}",
+            "E: Explorer la clairiere",
         ]
 
         y = rect.y + 52

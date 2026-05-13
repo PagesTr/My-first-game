@@ -178,6 +178,16 @@ class Game:
         self.active_gathering = None
         self.state = "main_menu"
 
+    def open_exploration(self):
+        if self.player is None:
+            return False
+        self.state = "exploration"
+        return True
+
+    def return_to_town(self):
+        self.state = "town"
+        return True
+
     def select_class(self, class_key):
         if class_key not in self.data.classes:
             return

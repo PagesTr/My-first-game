@@ -4,6 +4,7 @@ from ui.screens.achievements_screen import AchievementsScreen
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.dungeon_screen import DungeonScreen
+from ui.screens.exploration_screen import ExplorationScreen
 from ui.screens.inventory_screen import InventoryScreen
 from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.main_menu_screen import MainMenuScreen
@@ -33,6 +34,7 @@ class PygameApp:
         self.inventory_screen = InventoryScreen(self.game)
         self.crafting_screen = CraftingScreen(self.game)
         self.dungeon_screen = DungeonScreen(self.game)
+        self.exploration_screen = ExplorationScreen(self.game)
         self.merchant_screen = MerchantScreen(self.game)
         self.skills_screen = SkillsScreen(self.game)
         self.mailbox_screen = MailboxScreen(self.game)
@@ -73,6 +75,8 @@ class PygameApp:
                 self.crafting_screen.handle_event(event)
             elif self.game.state == "dungeon":
                 self.dungeon_screen.handle_event(event)
+            elif self.game.state == "exploration":
+                self.exploration_screen.handle_event(event)
             elif self.game.state == "merchant":
                 self.merchant_screen.handle_event(event)
             elif self.game.state == "skills":
@@ -111,6 +115,8 @@ class PygameApp:
             self.crafting_screen.draw(self.screen)
         elif self.game.state == "dungeon":
             self.dungeon_screen.draw(self.screen)
+        elif self.game.state == "exploration":
+            self.exploration_screen.draw(self.screen)
         elif self.game.state == "merchant":
             self.merchant_screen.draw(self.screen)
         elif self.game.state == "skills":
