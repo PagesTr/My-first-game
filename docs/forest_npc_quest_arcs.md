@@ -640,13 +640,13 @@ By the end of his chain, Brindle stops pretending this is a normal logistics iss
 
 Welcome to the Forest assignment desk, recruit.
 
-Technically, this is not a punishment. Administratively, however, everyone previously assigned here has requested transfer, injury leave, or posthumous clarification.
+Technically, this is not a punishment. Administratively, however, everyone previously assigned here has requested transfer, injury leave, or posthumous clarification. One person tried to request all three at once. Admirable ambition. Terrible form layout.
 
-We begin with simple work: rats. Not heroic rats. Not prophetic rats. Not rats with titles, banners, or suspiciously organized supply chains. Just rats. You will remove them from our crates, our boots, and ideally from the concept of breakfast.
+My job is to turn this forest's daily nonsense into assignments, rewards, supply notes, casualty reports, and the occasional optimistic checkmark. Your job is to go out there, make the problems smaller, and return with enough limbs to sign the completion form.
 
-Complete the task, return here, and I will provide compensation in the traditional adventuring style: coins, experience, and the comforting illusion that this place is under control.
+You will receive work from me in the traditional adventuring style: something unpleasant is happening, you will be sent toward it, and if you come back alive, I will provide compensation in coins, experience, equipment, or the comforting illusion that this place is under control.
 
-Objective: kill the rats threatening the supply crates.
+Do not confuse my tone for indifference. I care deeply about survival rates. They make the reports shorter.
 
 ### Core quest chain overview
 
@@ -671,9 +671,9 @@ Kill a small number of rats in early Forest content.
 
 #### Quest offer text
 
-The first issue is rats.
+We begin with simple work: rats.
 
-I would like to stress that rats are not normally a strategic concern. Unfortunately, these ones have discovered our supply crates, our rations, and one junior clerk who now refuses to enter rooms without a broom.
+Not heroic rats. Not prophetic rats. Not rats with titles, banners, or suspiciously organized supply chains. Just rats. They have discovered our supply crates, our boots, and ideally not the concept of breakfast, though morale suggests otherwise.
 
 Remove the rats from the supply area. Try not to look too heroic while doing it. It encourages the paperwork.
 
@@ -944,6 +944,382 @@ You survived the sort of incident that usually becomes a plaque, a warning sign,
 For what it is worth, you did more than complete assignments. You kept the line from breaking.
 
 I will file that properly. With only minor exaggeration.
+
+## Maela the Herbalist
+
+### Role
+
+Maela connects the player to gathering, herbalism, healing, consumables, crafting materials, and the strange biological side of the Forest.
+
+She should feel like the first NPC who listens to the Forest instead of simply fighting it, cataloging it, or blocking access to it.
+
+### Personality and tone
+
+Maela is gentle, observant, and quietly sarcastic.
+
+She speaks softly, but not weakly. Her humor is dry in a calm, herbalist way: she treats bite wounds, poisonous berries, twitching roots, and suspicious mushrooms as ordinary workplace inconveniences.
+
+She should not sound like Brindle. She is not administrative, not military, and not obsessed with reports. Her sarcasm comes from experience, patience, and mild disappointment in people who ignore obvious warnings such as "do not lick the glowing moss."
+
+Her unsettling side should appear gradually. At first, she feels reassuring. Later, she starts mentioning that plants should not hum, roots should not flinch, and sap should not react to names.
+
+### Narrative function
+
+Maela introduces the player to the softer systems of the Forest: gathering, healing, consumables, and crafting.
+
+Her arc slowly reveals that the Forest is changing from within. The danger is not only enemies attacking the player. The plants, roots, spores, and natural materials are becoming reactive, aware, and possibly afraid.
+
+She should make the Forest feel alive before it feels hostile.
+
+### Link with gameplay systems
+
+- Gathering.
+- Herbalism.
+- Crafting.
+- Consumables.
+- Healing items.
+- Forest materials.
+- Root-related corruption.
+- Rootcaller foreshadowing.
+
+### Arc summary
+
+Maela begins by asking for harmless herbs and simple ingredients. Her early quests are practical: gather leaves, prepare remedies, learn which plants are useful and which ones are rude.
+
+As the chain progresses, the plants become stranger. Mushrooms seem opinionated. Roots twitch. Sap darkens and appears to respond to sound, touch, or names.
+
+By the end of her arc, Maela understands that the Forest is not merely sick. It is being called, pulled, or commanded by something deeper. Her final remedy is not a cure for the Forest, but a way to help the player survive long enough to face what is hurting it.
+
+### Introduction monologue
+
+Careful where you step.
+
+No, not because of traps. Traps are at least honest. I mean the small green leaves near your boot. They cause itching, swelling, and in one memorable case, a man briefly insisted he could understand furniture.
+
+Welcome. I am Maela. I prepare remedies, identify useful plants, and discourage adventurers from eating things that glow in colors nature clearly regrets.
+
+If you bring me herbs, roots, mushrooms, or anything that looks medicinal without actively screaming, I can turn them into something useful. Salves, tonics, poultices, teas. Occasionally antidotes. Often apologies.
+
+The Forest is generous, when treated properly. Lately, it has also become nervous. Plants bend away from paths. Roots surface where nothing was planted. Some herbs bruise before they are touched.
+
+So we will begin simply. You gather what is safe. I will tell you what is not. If something whispers your name, do not answer until I have had a look at it.
+
+### Core quest chain overview
+
+| Step | Quest title | Gameplay objective | Narrative beat | Reward intention |
+|---|---|---|---|---|
+| 1 | A Polite Amount of Leaves | Gather basic plants | Introduce gathering and Maela's calm humor | Basic consumable, XP |
+| 2 | Remedies for Bite-Shaped Mistakes | Bring healing ingredients | Connect combat damage to healing items | Healing consumable |
+| 3 | Mushrooms With Opinions | Gather unusual mushrooms | The Forest becomes absurdly strange | Craft material, XP |
+| 4 | Roots Should Not Twitch | Recover abnormal roots | First clear sign of root corruption | Better consumable, XP |
+| 5 | The Sap Is Listening | Gather corrupted plant samples | Nature appears reactive or aware | Craft material, lore hint |
+| 6 | A Cure That Might Apologize | Craft or deliver a special remedy | Prepare the player for deeper corruption | Strong consumable, progression |
+
+### Quest 1: A Polite Amount of Leaves
+
+#### Narrative context
+
+Maela needs basic leaves and herbs for simple remedies. The Forest still feels safe enough for a beginner gathering task.
+
+#### Objective
+
+Gather basic Forest herbs or leaves.
+
+#### Quest offer text
+
+We will start with leaves.
+
+A modest amount. A polite amount. Not an entire bush dragged back by the roots like some tragic salad trophy.
+
+Look for the broad green leaves near the safer paths. They are useful for simple salves, mild burns, and adventurers who believe "minor wound" means "still attached."
+
+Objective: gather basic Forest leaves for Maela.
+
+#### Progress reminder
+
+The leaves are still out there, being leafy and medicinal without your assistance.
+
+Objective: gather basic Forest leaves.
+
+#### Completion text
+
+Good. These are clean, fresh, and only slightly offended.
+
+I can make a simple salve from these. Nothing heroic, but useful. Most survival is built from small useful things and the decision not to eat suspicious berries.
+
+#### Transition text
+
+Now that we have something for scratches, we should prepare something for bites. The Forest has many opinions, and several of them have teeth.
+
+### Quest 2: Remedies for Bite-Shaped Mistakes
+
+#### Narrative context
+
+The player has begun fighting more often. Maela wants ingredients for stronger healing remedies.
+
+#### Objective
+
+Gather healing ingredients or bring materials linked to early combat wounds.
+
+#### Quest offer text
+
+You are going to be bitten.
+
+That is not a prophecy. It is pattern recognition.
+
+Bring me the herbs with pale stems and red tips. They help close wounds, reduce swelling, and make people stop saying "it is probably fine" while bleeding on my floor.
+
+Objective: gather healing herbs for Maela.
+
+#### Progress reminder
+
+I still need the pale-stemmed herbs. Also, if you have been bitten already, try to keep the bitten part attached.
+
+Objective: gather healing herbs.
+
+#### Completion text
+
+These will do nicely.
+
+A little grinding, a little heat, a little muttering at the patient for waiting too long, and we have a remedy.
+
+Use it before you collapse, not after. I know that sounds obvious. Adventurers keep proving otherwise.
+
+#### Transition text
+
+There are mushrooms deeper in the Forest that may help with stronger mixtures. They are harmless, probably. Some of them seem judgmental, but that is not technically poison.
+
+### Quest 3: Mushrooms With Opinions
+
+#### Narrative context
+
+Maela sends the player to collect unusual mushrooms. The quest keeps the tone absurd while starting to suggest the Forest is behaving strangely.
+
+#### Objective
+
+Gather unusual mushrooms from Forest content.
+
+#### Quest offer text
+
+I need mushrooms.
+
+Before you ask: no, not the screaming ones. Not yet.
+
+Look for the small blue caps growing near fallen wood. They are excellent for stabilizing tonics. They also lean away from people with bad intentions, which makes them more socially perceptive than most mercenaries.
+
+Objective: gather blue-capped mushrooms for Maela.
+
+#### Progress reminder
+
+The mushrooms should still be near the fallen wood. If they have moved, come back and tell me calmly. I will pretend to be calm as well.
+
+Objective: gather blue-capped mushrooms.
+
+#### Completion text
+
+Interesting.
+
+They are fresh, intact, and all leaning in the same direction. That is new. Not impossible, just new in the way that makes my shoulders tense.
+
+Still, they will work.
+
+#### Transition text
+
+The roots near that area may be affecting them. Roots are allowed to feed plants. They are not usually allowed to make decisions.
+
+### Quest 4: Roots Should Not Twitch
+
+#### Narrative context
+
+Maela notices abnormal roots and asks the player to recover samples.
+
+#### Objective
+
+Recover abnormal root samples.
+
+#### Quest offer text
+
+I need a root sample.
+
+Not a normal root. A normal root stays underground, drinks water, holds soil, and minds its own quiet little business.
+
+These roots have been surfacing near the paths. One pulled away from my knife yesterday. Very rude. Also biologically concerning.
+
+Objective: recover abnormal root samples for Maela.
+
+#### Progress reminder
+
+I still need the root samples. If one moves, do not chase it too far. That sentence used to be unnecessary.
+
+Objective: recover abnormal root samples.
+
+#### Completion text
+
+Yes. This is wrong.
+
+The fibers are too tight, the color is too dark, and this end curled toward my hand when I touched it.
+
+Do not look so alarmed. Alarm is my job. Yours is bringing me the alarming things.
+
+#### Transition text
+
+If the roots are changing, the sap will show it next. Sap remembers more than people think. Usually trees. Sometimes wounds.
+
+### Quest 5: The Sap Is Listening
+
+#### Narrative context
+
+The Forest corruption becomes more explicit. Maela asks for sap or plant samples that seem reactive.
+
+#### Objective
+
+Gather corrupted sap or plant samples.
+
+#### Quest offer text
+
+The trees are producing dark sap.
+
+That can happen after fire, rot, disease, or magic. This is not fire. The trees are not rotting. Disease does not usually pulse when spoken near.
+
+Bring me a sample. Keep it sealed. If it reacts to your voice, stop talking to it. Especially if it starts being polite.
+
+Objective: collect dark sap samples for Maela.
+
+#### Progress reminder
+
+I still need the dark sap. Keep it sealed, and do not let it touch your skin unless you want your arm to have opinions.
+
+Objective: collect dark sap samples.
+
+#### Completion text
+
+It moved when I said Rootcaller.
+
+There. It did it again.
+
+That is not good. Useful, yes. Good, no. There is a difference, and it keeps people alive.
+
+#### Transition text
+
+I can prepare something from this. Not a cure. Not yet. More like a polite refusal to be immediately consumed by whatever is calling these roots.
+
+### Quest 6: A Cure That Might Apologize
+
+#### Narrative context
+
+Maela prepares a stronger remedy or protective mixture to help the player survive deeper Forest corruption.
+
+#### Objective
+
+Bring final ingredients or craft/deliver a special remedy.
+
+#### Quest offer text
+
+I cannot cure the Forest from here.
+
+I can, however, make something that may help you survive the part of the Forest that has stopped pretending to be passive scenery.
+
+I need clean leaves, bitter root, and a sealed drop of dark sap. Yes, the same sap. No, I do not like it either. Good medicine often begins with mutual discomfort.
+
+Objective: bring Maela the ingredients for a protective remedy.
+
+#### Progress reminder
+
+I still need the ingredients. Clean leaves, bitter root, sealed dark sap. Keep the sap sealed. I am repeating that because I enjoy you having skin.
+
+Objective: bring Maela the ingredients for the protective remedy.
+
+#### Completion text
+
+There.
+
+It smells terrible, which is often how you know medicine is sincere.
+
+This will not make you safe. Safe is a word people use before the Forest corrects them. But it may keep you standing when the roots start calling.
+
+#### Arc transition
+
+If the corruption is this strong near the surface, then Marn should know. And Osric, perhaps. Roots that react to names often grow near things that used to have them.
+
+### Optional quest: Berries, Probably Safe
+
+#### Narrative purpose
+
+A light gathering quest that reinforces Maela's humor and teaches caution around consumables.
+
+#### Objective
+
+Gather edible berries or identify unsafe ones.
+
+#### Text direction
+
+Maela should sound calm and mildly disappointed that people keep eating unknown berries.
+
+### Optional quest: Compost of Questionable Origin
+
+#### Narrative purpose
+
+An absurd herbalism quest that supports crafting materials without escalating the main story too much.
+
+#### Objective
+
+Collect organic materials used for fertilizer or potion stabilizers.
+
+#### Text direction
+
+Maela should avoid explaining the smell too directly and treat the material as useful, unpleasant, and best not discussed during meals.
+
+### Optional quest: Tea for People Who Ignore Warnings
+
+#### Narrative purpose
+
+A healing-focused optional quest after the player faces stronger enemies.
+
+#### Objective
+
+Bring ingredients for a restorative tea.
+
+#### Text direction
+
+Maela should use gentle sarcasm toward adventurers who ignore danger and then act surprised when injured.
+
+### Optional quest: Leaves That Bite Back
+
+#### Narrative purpose
+
+A bridge between gathering and combat.
+
+#### Objective
+
+Gather guarded herbs or defeat plant-adjacent threats.
+
+#### Text direction
+
+Maela should treat aggressive plants as badly behaved patients rather than monsters.
+
+### Epilogue quest: The Forest Breathes Again, Mostly
+
+#### Narrative context
+
+After major Rootcaller-related progress, Maela reflects on the Forest's partial recovery.
+
+#### Objective
+
+Return to Maela after Rootcaller-related progress.
+
+#### Completion text direction
+
+Maela should be relieved, but not naive. The Forest is better, not healed forever.
+
+Example direction:
+
+The leaves are opening again.
+
+Not all of them. Some are still curled tight, and one patch of moss hissed at me this morning. But the trees are breathing more slowly now.
+
+You helped. Not by fixing everything. No one fixes a forest in an afternoon. But you gave it room to remember what it was before something started pulling at its roots.
+
+Take this. It is a remedy, and a thank-you, and possibly an apology from the nettles. I would not trust that last part too much.
 
 ## 13. Playtest notes
 
