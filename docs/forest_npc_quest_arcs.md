@@ -1744,6 +1744,447 @@ I would like to say I was with you in spirit. Specifically, the cautious part of
 
 Still. You did it. I pointed, you survived, the camp is weaker, and I will now become unbearable about having helped.
 
+## Archivist Osric
+
+### Role
+
+Archivist Osric connects the player to bones, remains, old adventurers, forgotten expeditions, relics, and the memory of the dead.
+
+He is the Forest NPC who turns loot into evidence and enemy drops into history.
+
+### Personality and tone
+
+Osric is polite, morbid, precise, and quietly unsettling.
+
+He does not speak like Brindle. Brindle is administrative because he manages living problems. Osric is archival because he manages what remains after problems have finished being survivable.
+
+He does not speak like Maela. Maela listens to plants and worries about corruption. Osric listens to bones and worries about forgotten names.
+
+He does not speak like Fen. Fen lies loudly to protect his pride. Osric tells uncomfortable truths softly enough that they become worse.
+
+His humor should be dry and dark, but never cruel. He treats the dead with courtesy, even when describing deeply inconvenient remains.
+
+### Narrative function
+
+Osric marks the tonal shift from playful Forest danger to old tragedy.
+
+Through him, the player learns that the Forest has consumed previous adventurers, workers, scouts, and expeditions. Some left tags. Some left journals. Some left only bones arranged in ways bones should not arrange themselves.
+
+Osric should make the player understand that death in this world is not only failure. It is also memory, resource, warning, and sometimes unfinished paperwork.
+
+His arc should prepare the player for Buried Grove, where the Forest's memory becomes active and dangerous.
+
+### Link with gameplay systems
+
+- Bone-related drops.
+- Archaeologist profession.
+- Lore items.
+- Relics.
+- Old adventurer traces.
+- Buried Grove foreshadowing.
+- Forest Remnant set.
+- Quest rewards linked to memory and relics.
+
+### Covered zones
+
+Osric mainly supports the following Forest combat areas:
+
+| Zone | Narrative use |
+|---|---|
+| Bone Gnawer Den | Bones, scavengers, remains being disturbed |
+| Lost Adventurer Path | Old adventurer traces, tags, relics, failed expeditions |
+| Buried Paths | Macro-zone for archaeology and memory |
+| Buried Grove | Dungeon transition, roots preserving or using the dead |
+
+Osric does not own the full dungeon system. Buried Grove access and dungeon warnings belong mostly to Gatekeeper Marn, but Osric gives the place its meaning.
+
+### Arc summary
+
+Osric begins by asking the player to recover simple remains for identification. At first, his work seems strange but manageable.
+
+As the quest chain progresses, the remains become more specific: chewed bones, broken tags, old notes, relics, and names. Osric discovers that the Forest has not merely killed previous adventurers. It has kept them.
+
+By the end of his arc, Osric understands that Buried Grove is not just a dangerous place. It is an archive made of roots, bones, and unfinished stories.
+
+The arc should end with Osric asking the player to carry memory forward before Marn sends them into the real threshold.
+
+### Introduction monologue
+
+Please step carefully.
+
+Not because the floor is fragile. Because some of it may be someone.
+
+Archivist Osric. I record remains, recover names, classify relics, and do my best to ensure that the dead are not reduced to "miscellaneous loot," which is a phrase I have formally objected to on several occasions.
+
+The Forest is old. Older than the camp, older than the roads, older than most heroic confidence. People entered it with maps, blades, songs, contracts, debts, romantic delusions, and in one case a trained ferret.
+
+Many did not leave.
+
+When you find bones, tags, broken rings, or equipment that looks as though it has made peace with failure, bring them to me. I will determine who they were, what happened if the evidence permits, and whether the Forest has been moving the remains again.
+
+That last part is not poetic.
+
+### Core quest chain overview
+
+| Step | Quest title | Gameplay objective | Narrative beat | Reward intention |
+|---|---|---|---|---|
+| 1 | Bones Without Appointment | Recover basic bone remains | Introduce Osric and archaeology tone | XP, gold |
+| 2 | Catalog of Poor Decisions | Gather remains from Bone Gnawer Den | The dead suggest repeated failed attempts | XP, archaeology item |
+| 3 | The Previous Expedition | Recover old adventurer tags or traces | A failed expedition becomes identifiable | XP, lore reward |
+| 4 | Names the Forest Kept | Recover named fragments or relics | The dead regain identity | Reward, achievement hint |
+| 5 | The Grove Remembers | Investigate remains tied to roots and Buried Grove | The Forest is preserving or using memory | Better reward, progression |
+| 6 | A Grave Administrative Error | Recover final evidence from the buried paths | Buried Grove becomes narratively unavoidable | Major XP, lore closure |
+
+### Quest 1: Bones Without Appointment
+
+#### Narrative context
+
+Osric asks the player to recover simple remains so he can begin classifying what the Forest has left behind.
+
+#### Objective
+
+Recover basic bones or bone-related drops from early buried-path content.
+
+#### Quest offer text
+
+I require bones.
+
+A simple request, though people often react as if I have asked for a fresh personality.
+
+The nearby scavengers have been disturbing remains before I can identify them. This is rude to the dead, inconvenient for the archive, and professionally offensive.
+
+Recover what bones you can. Clean ones are preferred. Recent ones are acceptable. Moving ones should be reported immediately.
+
+Objective: recover basic bone remains for Osric.
+
+#### Progress reminder
+
+The remains are still uncollected.
+
+Please remember: bones found in piles are not automatically "decor." That is how several unpleasant traditions begin.
+
+Objective: recover basic bone remains.
+
+#### Completion text
+
+Thank you.
+
+These are incomplete, but useful. Most people are incomplete by the time they reach my desk.
+
+No name yet. No clear cause. But the bite marks suggest scavengers, and the soil suggests the remains were moved after burial.
+
+That is discourteous.
+
+#### Transition text
+
+If the scavengers are moving bones, we should determine whether they are feeding, nesting, or following something else's instructions.
+
+### Quest 2: Catalog of Poor Decisions
+
+#### Narrative context
+
+Osric sends the player deeper into Bone Gnawer territory to recover more complete remains.
+
+#### Objective
+
+Recover remains from Bone Gnawer Den or defeat Bone Gnawers to collect bone-related evidence.
+
+#### Quest offer text
+
+Bone Gnawers are gathering remains.
+
+This is not unusual behavior for scavengers. What is unusual is their selectiveness. They are taking skull fragments, old tags, and finger bones, but leaving easier meals behind.
+
+Either they have developed archival preferences, or something has taught them which pieces matter.
+
+Neither option improves my morning.
+
+Objective: recover remains from Bone Gnawer Den.
+
+#### Progress reminder
+
+I still need the remains from the den.
+
+If a Bone Gnawer appears to be sorting them, do not interrupt politely. Interrupt effectively.
+
+Objective: recover remains from Bone Gnawer Den.
+
+#### Completion text
+
+Yes. This confirms it.
+
+The remains were not gathered randomly. These pieces belong to different bodies, but they were carried to the same place.
+
+Someone, or something, is assembling a record very badly.
+
+#### Transition text
+
+There are old adventurer tags among these marks. That changes the matter from unfortunate to documented.
+
+### Quest 3: The Previous Expedition
+
+#### Narrative context
+
+Osric identifies signs of an older expedition and asks the player to recover tags or traces from Lost Adventurer Path.
+
+#### Objective
+
+Recover broken adventurer tags, old notes, or relic traces from Lost Adventurer Path.
+
+#### Quest offer text
+
+I found a mark on one of the fragments.
+
+Not a wound. Not a bite. A stamped expedition mark.
+
+A group came through this part of the Forest before you. Properly equipped, judging by the metal. Improperly alive, judging by everything else.
+
+Search the old path. Bring me tags, notes, rings, anything that might let me identify them.
+
+Objective: recover traces of the previous expedition.
+
+#### Progress reminder
+
+The previous expedition remains previous, but not yet understood.
+
+Bring me any tags, notes, or relics you find along the old path.
+
+Objective: recover traces of the previous expedition.
+
+#### Completion text
+
+A broken tag. A ring. A strip of map.
+
+Enough to confirm they were real, organized, and very badly rewarded for it.
+
+This name appears twice. Once on the tag, once scratched into the back of the map.
+
+People repeat names when they are afraid of forgetting themselves.
+
+#### Transition text
+
+We should find the others. Death is unfortunate. Being filed under "unknown" is an additional insult.
+
+### Quest 4: Names the Forest Kept
+
+#### Narrative context
+
+Osric wants to recover enough named fragments to restore identity to some of the fallen adventurers.
+
+#### Objective
+
+Recover named fragments, tags, rings, or relics from Lost Adventurer Path and buried zones.
+
+#### Quest offer text
+
+The Forest kept their belongings.
+
+Not scattered. Kept.
+
+A ring near a root. A tag under moss. A name scratched into bark from the inside, which I admit raises procedural questions.
+
+Find more named fragments. I would like to return at least a few people to the category of "someone," rather than "remains."
+
+Objective: recover named fragments from the buried paths.
+
+#### Progress reminder
+
+I still need the named fragments.
+
+Anonymous bones are common. Named bones are responsibilities.
+
+Objective: recover named fragments.
+
+#### Completion text
+
+Good.
+
+Marin. Edda. Veyr. One name still incomplete, but enough to start a record.
+
+They were not simply lost. They were held here long enough for the Forest to learn them.
+
+That is not a comforting sentence. I recommend not being comforted by it.
+
+#### Transition text
+
+Some of these roots have grown through the tags without breaking them. That kind of care is rarely kind.
+
+### Quest 5: The Grove Remembers
+
+#### Narrative context
+
+The remains appear connected to roots and Buried Grove. Osric asks for evidence before Marn becomes involved.
+
+#### Objective
+
+Investigate root-bound remains or recover evidence tied to Buried Grove.
+
+#### Quest offer text
+
+The roots are preserving the tags.
+
+Metal should rust. Leather should rot. Names should fade. Instead, the roots hold them in place like bookmarks.
+
+There is a buried grove connected to these remains. I do not yet know whether it is a grave, an archive, or a mouth.
+
+Please investigate the outer traces. Do not enter deeper than necessary. Marn becomes difficult when people pre-die in his jurisdiction.
+
+Objective: investigate the root-bound remains near Buried Grove.
+
+#### Progress reminder
+
+The root-bound remains still need investigation.
+
+If the roots move to protect the evidence, return. If they move to protect themselves, return faster.
+
+Objective: investigate the root-bound remains.
+
+#### Completion text
+
+This is worse than I hoped, and almost exactly as bad as I feared.
+
+The roots are not merely growing through the remains. They are arranging them.
+
+Names, tags, bones, relics. The Grove is remembering people in pieces.
+
+#### Transition text
+
+Marn must be told. He handles thresholds. I handle records. This has become both.
+
+### Quest 6: A Grave Administrative Error
+
+#### Narrative context
+
+Osric asks for one final piece of evidence that confirms Buried Grove is a major chapter threat.
+
+#### Objective
+
+Recover final evidence from buried paths or root-bound remains before the Buried Grove transition.
+
+#### Quest offer text
+
+I need one final confirmation.
+
+A complete tag, a preserved relic, or a rootbound fragment bearing a name. Something the Grove has kept too carefully.
+
+This is not for curiosity. Curiosity is what killed several of the people I am currently trying to identify.
+
+Bring me the evidence, and I will prepare a record for Marn. It is important that he knows this is not merely a dungeon.
+
+It is a place with witnesses.
+
+Objective: recover final evidence for Osric.
+
+#### Progress reminder
+
+The final evidence is still missing.
+
+Please be careful. I dislike preparing records before people are finished being people.
+
+Objective: recover final evidence for Osric.
+
+#### Completion text
+
+Yes.
+
+This is enough.
+
+The Grove contains remains from more than one expedition, arranged across years. The Forest did not forget them. It stored them.
+
+I will give this to Marn. He will call it a warning. I will call it testimony.
+
+Both are correct.
+
+#### Arc transition
+
+Go to Marn when you are ready.
+
+If you enter Buried Grove, remember this: you are not walking into an empty place. You are walking into a memory that learned to defend itself.
+
+### Optional quest: Unclaimed Boots
+
+#### Narrative purpose
+
+A small dark-humor quest that humanizes fallen adventurers through recovered equipment.
+
+#### Objective
+
+Recover old boots or worn equipment from buried paths.
+
+#### Text direction
+
+Osric should be politely offended by people assuming unclaimed boots are automatically loot.
+
+### Optional quest: Last Words, Badly Spelled
+
+#### Narrative purpose
+
+A lore-flavored optional quest that keeps the tone tragic but absurd.
+
+#### Objective
+
+Recover damaged notes or last words from fallen adventurers.
+
+#### Text direction
+
+Osric should treat spelling errors with gentle professionalism, while still respecting the dead.
+
+### Optional quest: The Skeleton Was Right
+
+#### Narrative purpose
+
+A quest where an old warning turns out to be accurate.
+
+#### Objective
+
+Recover or confirm an old warning from a previous expedition.
+
+#### Text direction
+
+Osric should note that the dead are often better informed than the living, though less convenient to interview.
+
+### Optional quest: Proper Labeling Prevents Haunting
+
+#### Narrative purpose
+
+A character-focused optional quest reinforcing Osric's archival obsession.
+
+#### Objective
+
+Collect specific remains or relic fragments for proper classification.
+
+#### Text direction
+
+Osric should imply that bad documentation is not the cause of hauntings, but it certainly does not help.
+
+### Epilogue quest: Properly Filed at Last
+
+#### Narrative context
+
+After Buried Grove or Rootcaller-related progress, Osric reflects on what the player recovered and who was remembered.
+
+#### Objective
+
+Return to Osric after Buried Grove or Rootcaller progress.
+
+#### Completion text direction
+
+Osric should give a quiet, sincere conclusion. The humor should be minimal here.
+
+Example direction:
+
+I have finished the records.
+
+Not all of them. That would be arrogant. The dead rarely arrive in complete chapters.
+
+But Marin, Edda, Veyr, and the others we could identify will not remain miscellaneous remains in a hostile wood.
+
+They entered the Forest and did not return. That is the fact.
+
+You carried their names out. That is the correction.
+
+Thank you. I will file it properly, and for once, that means something.
+
 ## 13. Playtest notes
 
 These quest chains are not final.
