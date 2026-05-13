@@ -20,7 +20,7 @@ This document covers:
 - Core quests, optional quests, and epilogue quests.
 - Recommended narrative order.
 - Dialogue text categories to write later.
-- One complete example for Quartermaster Brindle.
+- Complete examples for the main Forest NPCs.
 
 This document intentionally does not cover:
 
@@ -98,7 +98,7 @@ These quests may be edited, reordered, shortened, merged, removed, or expanded a
 |---|---|---|---|---|
 | Quartermaster Brindle | Combat, logistics, first rewards | Pragmatic, dry, sarcastic, administrative | Combat, rewards, early progression | Early to middle Forest |
 | Maela the Herbalist | Plants, care, consumables, nature corruption | Gentle, sarcastic, slightly unsettling | Gathering, crafting, consumables | Early to late Forest |
-| Archivist Osric | Bones, old adventurers, memory of the dead | Polite, morbid, bureaucratic | Lore, strict drops, exploration, Buried Grove | Middle to late Forest |
+| Archivist Osric | Bones, old adventurers, memory of the dead | Polite, morbid, archival | Lore, strict drops, exploration, Buried Grove | Middle to late Forest |
 | Fen the One-Time Scout | Wolves, paths, goblins, dubious guidance | Bragging, unreliable, funny | Exploration, wolves, goblins, zone guidance | Early to middle Forest |
 | Gatekeeper Marn | Dungeons, bosses, warnings, chapter ending | Solemn, tired, reluctant epic | Dungeon access, boss progression, chapter climax | Middle to late Forest |
 
@@ -600,9 +600,9 @@ Purpose:
 - Show that something changed.
 - Prepare the next chapter or next system.
 
-## 12. Complete example: Quartermaster Brindle
+## 12. Detailed NPC examples
 
-## Quartermaster Brindle
+## 12.1 Quartermaster Brindle
 
 ### Role
 
@@ -624,6 +624,9 @@ His arc ends when he forwards the player to Gatekeeper Marn.
 
 - Combat.
 - Early enemies.
+- Rat Outskirts.
+- Young Goblin Trail.
+- Stray Wolf Path.
 - XP.
 - Gold.
 - Basic rewards.
@@ -839,7 +842,7 @@ You did well. Unfortunately, doing well means I now have to send you somewhere w
 
 #### Transition text
 
-Marn needs to see this. He handles gates, thresholds, sealed places, and other concepts that should remain theoretical.
+Marn needs to see this. If the bones matter, Osric will make them worse by understanding them. Marn handles gates, thresholds, sealed places, and other concepts that should remain theoretical.
 
 ### Quest 6: Forwarded to the Gate
 
@@ -945,7 +948,7 @@ For what it is worth, you did more than complete assignments. You kept the line 
 
 I will file that properly. With only minor exaggeration.
 
-## Maela the Herbalist
+## 12.2 Maela the Herbalist
 
 ### Role
 
@@ -979,6 +982,8 @@ She should make the Forest feel alive before it feels hostile.
 - Consumables.
 - Healing items.
 - Forest materials.
+- Thorn Sprite Grove.
+- Abnormal roots and sap.
 - Root-related corruption.
 - Rootcaller foreshadowing.
 
@@ -1321,7 +1326,7 @@ You helped. Not by fixing everything. No one fixes a forest in an afternoon. But
 
 Take this. It is a remedy, and a thank-you, and possibly an apology from the nettles. I would not trust that last part too much.
 
-## Fen the One-Time Scout
+## 12.3 Fen the One-Time Scout
 
 ### Role
 
@@ -1372,8 +1377,8 @@ Fen mainly supports the following Forest combat areas:
 |---|---|
 | Goblin Scout Trails | Goblin movement, route markers, signs of organization |
 | Wolf Hunting Ground | Deeper wolf territory, dangerous route combat |
-| Deep Forest side routes | Exploration, wrong turns, unsafe shortcuts |
-| Camp Approach | Smoke, drums, goblin patrols, transition toward Marn |
+| Deeper routes and side paths | Exploration, wrong turns, unsafe shortcuts |
+| Camp approach | Smoke, drums, goblin patrols, transition toward Marn |
 
 Fen does not own the dungeons themselves.
 
@@ -1744,7 +1749,7 @@ I would like to say I was with you in spirit. Specifically, the cautious part of
 
 Still. You did it. I pointed, you survived, the camp is weaker, and I will now become unbearable about having helped.
 
-## Archivist Osric
+## 12.4 Archivist Osric
 
 ### Role
 
@@ -1793,7 +1798,7 @@ Osric mainly supports the following Forest combat areas:
 |---|---|
 | Bone Gnawer Den | Bones, scavengers, remains being disturbed |
 | Lost Adventurer Path | Old adventurer traces, tags, relics, failed expeditions |
-| Buried Paths | Macro-zone for archaeology and memory |
+| buried paths | Narrative shorthand for archaeology and memory routes |
 | Buried Grove | Dungeon transition, roots preserving or using the dead |
 
 Osric does not own the full dungeon system. Buried Grove access and dungeon warnings belong mostly to Gatekeeper Marn, but Osric gives the place its meaning.
@@ -2185,7 +2190,7 @@ You carried their names out. That is the correction.
 
 Thank you. I will file it properly, and for once, that means something.
 
-## Gatekeeper Marn
+## 12.5 Gatekeeper Marn
 
 ### Role
 
