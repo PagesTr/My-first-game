@@ -1,0 +1,88 @@
+{
+  "forest_goblin_camp": {
+    "name": "Goblin Camp",
+    "chapter": "forest",
+    "unlock_level": 3,
+    "description": "Smoke rises between the trees. The goblins have discovered organization, which is rude.",
+    "route": [
+      {
+        "type": "combat",
+        "enemy_id": "young_goblin"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "goblin_scout"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "goblin_scout"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "goblin_shaman"
+      },
+      {
+        "type": "rest_choice"
+      },
+      {
+        "type": "boss_loop",
+        "enemy_id": "goblin_quartermaster"
+      }
+    ],
+    "boss_enemy_id": "goblin_quartermaster",
+    "scaling_rate": 0.15,
+    "reward_multiplier_per_victory": 0.20
+  },
+  "forest_buried_grove": {
+    "name": "Buried Grove",
+    "chapter": "forest",
+    "unlock_level": 4,
+    "description": "The roots remember old heroes. Some of them remember screaming.",
+    "route": [
+      {
+        "type": "combat",
+        "enemy_id": "thorn_sprite"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "bone_gnawer"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "lost_adventurer"
+      },
+      {
+        "type": "combat",
+        "enemy_id": "bone_gnawer"
+      },
+      {
+        "type": "rest_choice"
+      },
+      {
+        "type": "boss_loop",
+        "enemy_id": "rootbound_remnant"
+      }
+    ],
+    "boss_enemy_id": "rootbound_remnant",
+    "scaling_rate": 0.15,
+    "reward_multiplier_per_victory": 0.20
+  },
+  "forest_rootcaller_lair": {
+    "name": "Rootcaller Lair",
+    "chapter": "forest",
+    "unlock_level": 5,
+    "description": "The forest has found a voice. Unfortunately, it chose a goblin with a flair for drama.",
+    "route": [
+      {
+        "type": "rest_choice"
+      },
+      {
+        "type": "boss_loop",
+        "enemy_id": "grubfang_rootcaller"
+      }
+    ],
+    "boss_enemy_id": "grubfang_rootcaller",
+    "scaling_rate": 0.20,
+    "reward_multiplier_per_victory": 0.25
+  }
+}

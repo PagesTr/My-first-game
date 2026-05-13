@@ -1,14 +1,24 @@
 from systems.inventory import add_stackable_item, create_inventory
 from systems.professions import create_player_professions
 from systems.quests import create_player_quests
+from systems.achievements import create_player_achievements
 from systems.stats import derive_stats
 
-def create_player(char_class, classes, items, professions_data=None, quests_data=None):
+def create_player(
+    char_class,
+    classes,
+    items,
+    professions_data=None,
+    quests_data=None,
+    achievements_data=None,
+):
     """Create a new player using a chosen character class."""
     if professions_data is None:
         professions_data = {}
     if quests_data is None:
         quests_data = {}
+    if achievements_data is None:
+        achievements_data = {}
 
     player = {
         'name': 'Hero',
@@ -40,6 +50,7 @@ def create_player(char_class, classes, items, professions_data=None, quests_data
         'skill_cooldowns': {},
         'professions': create_player_professions(professions_data),
         'quests': create_player_quests(quests_data),
+        'achievements': create_player_achievements(achievements_data),
         'offline_activity': None,
         'current_hp': 0,
     }

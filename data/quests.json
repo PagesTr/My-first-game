@@ -155,6 +155,92 @@
         "quantity": 2
       }
     ],
+    "next_quests": [
+      "forest_clear_goblin_camp"
+    ]
+  },
+  "forest_clear_goblin_camp": {
+    "name": "Break the Goblin Camp",
+    "description": "The goblins built a camp. This is either strategy or a zoning violation.",
+    "chapter": "forest",
+    "order": 6,
+    "objectives": [
+      {
+        "type": "clear_dungeon",
+        "target": "forest_goblin_camp",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 80
+      },
+      {
+        "type": "item",
+        "item": "shaman_totem",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_buried_grove"
+    ]
+  },
+  "forest_buried_grove": {
+    "name": "The Buried Grove",
+    "description": "The roots remember the dead. The dead would probably prefer a quieter hobby.",
+    "chapter": "forest",
+    "order": 7,
+    "objectives": [
+      {
+        "type": "clear_dungeon",
+        "target": "forest_buried_grove",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 100
+      },
+      {
+        "type": "item",
+        "item": "rootbound_relic",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_silence_rootcaller"
+    ]
+  },
+  "forest_silence_rootcaller": {
+    "name": "Silence the Rootcaller",
+    "description": "The forest has found a voice. Bad news: it chants, commands roots, and has terrible timing.",
+    "chapter": "forest",
+    "order": 8,
+    "objectives": [
+      {
+        "type": "defeat_boss",
+        "target": "grubfang_rootcaller",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 150
+      },
+      {
+        "type": "item",
+        "item": "forest_core",
+        "quantity": 1
+      },
+      {
+        "type": "item",
+        "item": "rootcaller_totem",
+        "quantity": 1
+      }
+    ],
     "next_quests": []
   }
 }

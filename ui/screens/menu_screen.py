@@ -7,6 +7,7 @@ except ImportError:
 
 from systems.professions import get_profession_mastery
 from systems.active_gathering import format_tick_rate
+from systems.achievements import get_claimable_achievements
 from ui.assets import draw_background, load_image
 
 
@@ -14,6 +15,30 @@ REGION_LABELS = {
     "forest": "Forest",
     "caves": "Caves",
     "mountains": "Mountains",
+}
+
+TOWN_PALETTE = {
+    "sky_top": (30, 36, 48),
+    "sky_bottom": (72, 58, 44),
+    "roof_back": (54, 38, 34),
+    "roof_front": (72, 48, 38),
+    "wall_back": (56, 50, 46),
+    "wall_front": (76, 62, 50),
+    "street": (34, 32, 32),
+    "street_light": (68, 61, 52),
+    "panel": (48, 42, 38),
+    "panel_dark": (31, 30, 32),
+    "panel_light": (94, 78, 58),
+    "border": (112, 86, 50),
+    "border_light": (226, 188, 98),
+    "button": (70, 58, 44),
+    "button_disabled": (45, 43, 42),
+    "button_border": (214, 174, 92),
+    "text": (242, 232, 210),
+    "muted": (194, 181, 154),
+    "gold": (232, 190, 88),
+    "green": (132, 190, 118),
+    "shadow": (10, 9, 10),
 }
 
 
@@ -25,13 +50,15 @@ class MenuButton:
         self.enabled = enabled
 
     def draw(self, screen, title_font, body_font):
-        bg = (58, 68, 78) if self.enabled else (45, 45, 50)
-        border = (210, 220, 225) if self.enabled else (95, 95, 100)
-        text_color = (245, 245, 245) if self.enabled else (145, 145, 150)
-        sub_color = (190, 200, 205) if self.enabled else (120, 120, 125)
+        bg = TOWN_PALETTE["button"] if self.enabled else TOWN_PALETTE["button_disabled"]
+        border = TOWN_PALETTE["button_border"] if self.enabled else (95, 88, 78)
+        text_color = TOWN_PALETTE["text"] if self.enabled else (145, 140, 132)
+        sub_color = TOWN_PALETTE["muted"] if self.enabled else (120, 116, 108)
 
+        pygame.draw.rect(screen, TOWN_PALETTE["shadow"], self.rect.move(4, 4), border_radius=6)
         pygame.draw.rect(screen, bg, self.rect, border_radius=6)
         pygame.draw.rect(screen, border, self.rect, 2, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_light"], self.rect.inflate(-10, -10), 1, border_radius=4)
 
         title_y = self.rect.y + (9 if self.rect.h <= 58 and self.subtitle else 14)
         subtitle_y = self.rect.y + (31 if self.rect.h <= 58 else 48)
@@ -75,44 +102,49 @@ class MenuScreen:
         self.class_buttons = self._build_class_buttons()
         self.zone_buttons = self._build_zone_buttons()
         self.expedition_button = MenuButton(
-            (80, 150, 300, 72),
+            (80, 170, 300, 72),
             "Expedition",
             "Choose a combat zone",
         )
         self.inventory_button = MenuButton(
-            (80, 238, 300, 72),
+            (80, 252, 300, 72),
             "Inventory",
             "Manage gear and items",
         )
         self.merchant_button = MenuButton(
-            (80, 326, 300, 72),
+            (80, 334, 300, 72),
             "Merchant",
             "Sell items",
         )
         self.crafting_button = MenuButton(
-            (80, 414, 300, 72),
+            (80, 416, 300, 72),
             "Craft",
             "Use resources",
         )
         self.skills_button = MenuButton(
-            (80, 502, 300, 72),
+            (80, 498, 300, 72),
             "Skills",
             "Learn and equip skills",
         )
         self.mailbox_button = MenuButton(
-            (400, 474, 300, 72),
+            (400, 490, 300, 54),
             "Mailbox",
             "View combat reports",
         )
         self.professions_button = MenuButton(
-            (400, 386, 300, 72),
+            (400, 426, 300, 54),
             "Professions",
             "View gathering progress",
         )
         self.quests_button = MenuButton(
-            (400, 298, 300, 72),
+            (400, 298, 300, 54),
             "Quests",
             "Track forest objectives",
+        )
+        self.achievements_button = MenuButton(
+            (400, 362, 300, 54),
+            "Achievements",
+            "View progress records",
         )
         self.zone_back_button = MenuButton((560, 54, 160, 52), "Back")
         self.selected_region = None
@@ -121,12 +153,16 @@ class MenuScreen:
         self.gathering_action_buttons = []
         self.gathering_popups = []
         self.selected_gathering_action = None
+        self.selected_dungeon_id = None
         self.zone_action_tab = "combat"
         self.combat_page = 0
         self.gathering_page = 0
         self.selected_combat_zone = None
+        self.dungeon_action_buttons = []
+        self.dungeon_message = ""
         self.combat_tab_rect = pygame.Rect(60, 104, 150, 38)
         self.gathering_tab_rect = pygame.Rect(218, 104, 150, 38)
+        self.dungeons_tab_rect = pygame.Rect(376, 104, 150, 38)
         self.combat_page_prev_rect = pygame.Rect(60, 500, 44, 38)
         self.combat_page_next_rect = pygame.Rect(346, 500, 44, 38)
         self.combat_start_button = MenuButton(
@@ -142,6 +178,10 @@ class MenuScreen:
         self.gathering_offline_button = MenuButton(
             (580, 470, 150, 50),
             "Send Offline",
+        )
+        self.dungeon_start_button = MenuButton(
+            (420, 470, 310, 50),
+            "Start Dungeon",
         )
 
     def _build_class_buttons(self):
@@ -231,6 +271,11 @@ class MenuScreen:
                 self.game.state = "quests"
                 return
 
+            if self.achievements_button.is_clicked(pos):
+                self._clear_offline_result()
+                self.game.state = "achievements"
+                return
+
             if self.mailbox_button.is_clicked(pos):
                 self._clear_offline_result()
                 self.game.state = "mailbox"
@@ -249,7 +294,7 @@ class MenuScreen:
             draw_background(screen, self.class_background, (18, 24, 30))
             self._draw_class_select(screen)
         elif self.game.state == "town":
-            draw_background(screen, self.town_background, (18, 24, 30))
+            self._draw_town_background(screen)
             self._draw_town(screen)
         elif self.game.state in ("zone_select", "zone_actions"):
             draw_background(screen, self.zone_background, (18, 24, 30))
@@ -268,17 +313,12 @@ class MenuScreen:
     def _draw_town(self, screen):
         player_level = self.game.player["level"] if self.game.player else 1
 
-        title = self.title_font.render("Town", True, (245, 245, 245))
-        screen.blit(title, (80, 64))
-
         if self.game.selected_class:
             class_name = self.game.data.classes[self.game.selected_class]["name"]
         else:
             class_name = "Adventurer"
-        subtitle = self.body_font.render(
-            f"{class_name} - Level {player_level}", True, (190, 200, 205)
-        )
-        screen.blit(subtitle, (82, 105))
+        self._draw_town_title(screen, class_name, player_level)
+        self._draw_town_action_panels(screen)
 
         self.expedition_button.draw(screen, self.option_font, self.body_font)
         self.inventory_button.draw(screen, self.option_font, self.body_font)
@@ -293,10 +333,149 @@ class MenuScreen:
             self._draw_crafting_ready_badge(screen)
         self.skills_button.draw(screen, self.option_font, self.body_font)
         self.quests_button.draw(screen, self.option_font, self.body_font)
+        claimable_count = self._get_claimable_achievement_count()
+        if claimable_count > 0:
+            self.achievements_button.subtitle = "Rewards to claim"
+        else:
+            self.achievements_button.subtitle = "View progress records"
+        self.achievements_button.draw(screen, self.option_font, self.body_font)
+        if claimable_count > 0:
+            self._draw_claimable_button_highlight(screen, self.achievements_button.rect)
+            self._draw_achievements_claim_badge(screen, claimable_count)
         self.professions_button.draw(screen, self.option_font, self.body_font)
         self.mailbox_button.draw(screen, self.option_font, self.body_font)
         self._draw_town_player_panel(screen)
         self._draw_offline_result_panel(screen)
+
+    def _draw_town_background(self, screen):
+        if self.town_background is not None:
+            screen.blit(self.town_background, (0, 0))
+            overlay = pygame.Surface((800, 600), pygame.SRCALPHA)
+            overlay.fill((20, 16, 12, 74))
+            screen.blit(overlay, (0, 0))
+        else:
+            for y in range(0, 600, 4):
+                blend = y / 600
+                color = (
+                    int(TOWN_PALETTE["sky_top"][0] * (1 - blend) + TOWN_PALETTE["sky_bottom"][0] * blend),
+                    int(TOWN_PALETTE["sky_top"][1] * (1 - blend) + TOWN_PALETTE["sky_bottom"][1] * blend),
+                    int(TOWN_PALETTE["sky_top"][2] * (1 - blend) + TOWN_PALETTE["sky_bottom"][2] * blend),
+                )
+                pygame.draw.rect(screen, color, (0, y, 800, 4))
+            self._draw_town_silhouette(screen)
+
+        self._draw_town_street(screen)
+
+    def _draw_town_silhouette(self, screen):
+        for x in range(-30, 850, 132):
+            wall = pygame.Rect(x + 14, 278, 92, 154)
+            roof = [(x, 278), (x + 60, 218), (x + 120, 278)]
+            pygame.draw.rect(screen, TOWN_PALETTE["wall_back"], wall)
+            pygame.draw.polygon(screen, TOWN_PALETTE["roof_back"], roof)
+            pygame.draw.rect(screen, (32, 30, 30), (x + 44, 336, 28, 96))
+            pygame.draw.rect(screen, (224, 172, 84), (x + 30, 306, 18, 24))
+
+        for x in range(28, 850, 156):
+            wall = pygame.Rect(x + 8, 318, 112, 116)
+            roof = [(x - 8, 318), (x + 64, 250), (x + 136, 318)]
+            pygame.draw.rect(screen, TOWN_PALETTE["wall_front"], wall)
+            pygame.draw.polygon(screen, TOWN_PALETTE["roof_front"], roof)
+            pygame.draw.rect(screen, (36, 31, 28), (x + 46, 360, 32, 74))
+            pygame.draw.rect(screen, (238, 184, 90), (x + 22, 340, 20, 22))
+            pygame.draw.rect(screen, (238, 184, 90), (x + 84, 340, 20, 22))
+
+    def _draw_town_street(self, screen):
+        pygame.draw.rect(screen, TOWN_PALETTE["street"], (0, 430, 800, 170))
+        pygame.draw.rect(screen, TOWN_PALETTE["street_light"], (0, 430, 800, 4))
+        for y in range(454, 600, 28):
+            offset = 0 if (y // 28) % 2 == 0 else 34
+            for x in range(-offset, 800, 68):
+                pygame.draw.rect(screen, (44, 41, 40), (x, y, 52, 18), border_radius=3)
+                pygame.draw.rect(screen, (26, 25, 25), (x, y, 52, 18), 1, border_radius=3)
+
+    def _draw_town_title(self, screen, class_name, player_level):
+        sign_rect = pygame.Rect(60, 46, 332, 78)
+        pygame.draw.rect(screen, TOWN_PALETTE["shadow"], sign_rect.move(4, 4), border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_dark"], sign_rect, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], sign_rect, 3, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_light"], sign_rect.inflate(-12, -12), 1, border_radius=4)
+
+        title_shadow = self.title_font.render("Town", True, TOWN_PALETTE["shadow"])
+        title = self.title_font.render("Town", True, TOWN_PALETTE["gold"])
+        screen.blit(title_shadow, (sign_rect.x + 20 + 2, sign_rect.y + 10 + 2))
+        screen.blit(title, (sign_rect.x + 20, sign_rect.y + 10))
+
+        subtitle = self.body_font.render(
+            f"{class_name} - Level {player_level}",
+            True,
+            TOWN_PALETTE["muted"],
+        )
+        screen.blit(subtitle, (sign_rect.x + 22, sign_rect.y + 50))
+
+    def _draw_town_action_panels(self, screen):
+        left_panel = pygame.Rect(56, 132, 348, 462)
+        right_panel = pygame.Rect(384, 132, 356, 434)
+        self._draw_town_panel(screen, left_panel, "Town Services")
+        self._draw_town_panel(screen, right_panel, "Records & Guilds")
+
+    def _draw_town_panel(self, screen, rect, title):
+        pygame.draw.rect(screen, TOWN_PALETTE["shadow"], rect.move(5, 5), border_radius=8)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel"], rect, border_radius=8)
+        pygame.draw.rect(screen, TOWN_PALETTE["border"], rect, 3, border_radius=8)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_light"], rect.inflate(-14, -14), 1, border_radius=5)
+        pygame.draw.line(
+            screen,
+            TOWN_PALETTE["border_light"],
+            (rect.x + 14, rect.y + 14),
+            (rect.right - 14, rect.y + 14),
+            2,
+        )
+        label_rect = pygame.Rect(rect.x + 18, rect.y + 8, rect.w - 36, 22)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_dark"], label_rect, border_radius=5)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], label_rect, 1, border_radius=5)
+        label = self.body_font.render(title, True, TOWN_PALETTE["text"])
+        screen.blit(label, (label_rect.x + 12, label_rect.y + 2))
+
+    def _get_claimable_achievement_count(self):
+        player = getattr(self.game, "player", None)
+        if not isinstance(player, dict):
+            return 0
+        achievements = player.get("achievements")
+        if not isinstance(achievements, dict):
+            return 0
+        try:
+            return len(get_claimable_achievements(player))
+        except (TypeError, AttributeError):
+            return 0
+
+    def _draw_achievements_claim_badge(self, screen, count):
+        rect = self.achievements_button.rect
+        badge_width = 92
+        badge_height = 26
+        badge = pygame.Rect(
+            rect.right - badge_width - 12,
+            rect.y + 12,
+            badge_width,
+            badge_height,
+        )
+        pygame.draw.rect(screen, (105, 82, 36), badge, border_radius=10)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], badge, 2, border_radius=10)
+
+        dot_center = (badge.x + 13, badge.centery)
+        pygame.draw.circle(screen, (255, 220, 100), dot_center, 5)
+        pygame.draw.circle(screen, (255, 245, 200), dot_center, 2)
+
+        count_label = "99+" if count > 99 else str(count)
+        label = self.body_font.render(f"CLAIM x{count_label}", True, (255, 245, 200))
+        label_rect = label.get_rect()
+        label_rect.centery = badge.centery
+        label_rect.x = badge.x + 24
+        screen.blit(label, label_rect)
+
+    def _draw_claimable_button_highlight(self, screen, rect):
+        highlight = pygame.Rect(rect)
+        highlight.inflate_ip(4, 4)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], highlight, 2, border_radius=8)
 
     def _has_available_crafting_recipe(self):
         if not self.game.player:
@@ -324,15 +503,17 @@ class MenuScreen:
         pygame.draw.rect(screen, (78, 104, 50), badge_rect, border_radius=10)
         pygame.draw.rect(screen, (220, 220, 120), badge_rect, 2, border_radius=10)
 
-        label = self.body_font.render("Ready", True, (245, 245, 245))
+        label = self.body_font.render("Ready", True, TOWN_PALETTE["text"])
         screen.blit(label, (badge_rect.x + 8, badge_rect.y + 3))
 
     def _draw_town_player_panel(self, screen):
         rect = pygame.Rect(470, 150, 250, 132)
-        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
-        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["shadow"], rect.move(4, 4), border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_dark"], rect, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], rect, 2, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_light"], rect.inflate(-10, -10), 1, border_radius=4)
 
-        title = self.option_font.render("Player", True, (245, 245, 245))
+        title = self.option_font.render("Player", True, TOWN_PALETTE["gold"])
         screen.blit(title, (rect.x + 18, rect.y + 18))
 
         player = self.game.player or {}
@@ -349,7 +530,7 @@ class MenuScreen:
 
         y = rect.y + 52
         for line in lines:
-            text = self.body_font.render(line, True, (190, 200, 205))
+            text = self.body_font.render(line, True, TOWN_PALETTE["muted"])
             screen.blit(text, (rect.x + 18, y))
             y += 24
 
@@ -360,10 +541,11 @@ class MenuScreen:
             return
 
         rect = pygame.Rect(400, 64, 320, 78)
-        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
-        pygame.draw.rect(screen, (155, 170, 110), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["shadow"], rect.move(4, 4), border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["panel_dark"], rect, border_radius=6)
+        pygame.draw.rect(screen, TOWN_PALETTE["border_light"], rect, 2, border_radius=6)
 
-        title = self.body_font.render("Offline Progress", True, (245, 245, 245))
+        title = self.body_font.render("Offline Progress", True, TOWN_PALETTE["gold"])
         screen.blit(title, (rect.x + 14, rect.y + 10))
 
         y = rect.y + 30
@@ -371,7 +553,7 @@ class MenuScreen:
             text = self.body_font.render(
                 self._truncate_text(line, self.body_font, rect.w - 28),
                 True,
-                (200, 210, 195),
+                TOWN_PALETTE["muted"],
             )
             screen.blit(text, (rect.x + 14, y))
             y += 18
@@ -549,11 +731,19 @@ class MenuScreen:
             "Gathering",
             self.zone_action_tab == "gathering",
         )
+        self._draw_tab_button(
+            screen,
+            self.dungeons_tab_rect,
+            "Dungeons",
+            self.zone_action_tab == "dungeons",
+        )
 
         if self.zone_action_tab == "combat":
             self._draw_combat_tab(screen, region_id)
-        else:
+        elif self.zone_action_tab == "gathering":
             self._draw_gathering_tab(screen, region_id)
+        else:
+            self._draw_dungeons_tab(screen, region_id)
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
@@ -571,6 +761,8 @@ class MenuScreen:
                 self.gathering_page = 0
                 self.selected_combat_zone = None
                 self.selected_gathering_action = None
+                self.selected_dungeon_id = None
+                self.dungeon_message = ""
                 self.game.state = "zone_actions"
                 return True
         return False
@@ -587,6 +779,10 @@ class MenuScreen:
 
         if self.gathering_tab_rect.collidepoint(pos):
             self.zone_action_tab = "gathering"
+            return True
+
+        if self.dungeons_tab_rect.collidepoint(pos):
+            self.zone_action_tab = "dungeons"
             return True
 
         region_id = self.selected_region
@@ -611,6 +807,27 @@ class MenuScreen:
             selected_zone = self.selected_combat_zone
             if self.combat_start_button.is_clicked(pos) and selected_zone:
                 self.game.select_zone(selected_zone)
+                return True
+            return False
+
+        if self.zone_action_tab == "dungeons":
+            for dungeon_id, button in self.dungeon_action_buttons:
+                if button.rect.collidepoint(pos):
+                    self.selected_dungeon_id = dungeon_id
+                    self.dungeon_message = ""
+                    return True
+            if self.dungeon_start_button.is_clicked(pos) and self.selected_dungeon_id:
+                if not hasattr(self.game, "start_dungeon"):
+                    self.dungeon_message = "Dungeons unavailable"
+                    return True
+                result = self.game.start_dungeon(self.selected_dungeon_id)
+                if result.get("started") is True:
+                    self.game.state = "dungeon"
+                    self.dungeon_message = ""
+                else:
+                    self.dungeon_message = self._get_dungeon_start_failure_message(
+                        result.get("reason"),
+                    )
                 return True
             return False
 
@@ -753,6 +970,119 @@ class MenuScreen:
         if not isinstance(zone, dict):
             return False
         return self.game.player.get("level", 0) >= zone.get("unlock_level", 1)
+
+    def _draw_dungeons_tab(self, screen, region_id):
+        dungeon_entries = []
+        if hasattr(self.game, "get_available_dungeons"):
+            dungeon_entries = self.game.get_available_dungeons(region_id)
+        player_level = self.game.player.get("level", 0) if self.game.player else 0
+
+        dungeon_ids = [entry["dungeon_id"] for entry in dungeon_entries]
+        if self.selected_dungeon_id not in dungeon_ids:
+            self.selected_dungeon_id = None
+        if self.selected_dungeon_id is None:
+            for entry in dungeon_entries:
+                dungeon = entry.get("dungeon", {})
+                if player_level >= dungeon.get("unlock_level", 1):
+                    self.selected_dungeon_id = entry["dungeon_id"]
+                    break
+            if self.selected_dungeon_id is None and dungeon_entries:
+                self.selected_dungeon_id = dungeon_entries[0]["dungeon_id"]
+
+        self.dungeon_action_buttons = []
+        x, y = 60, 150
+        for index, entry in enumerate(dungeon_entries[:6]):
+            dungeon_id = entry["dungeon_id"]
+            dungeon = entry.get("dungeon", {})
+            unlock_level = dungeon.get("unlock_level", 1)
+            locked = player_level < unlock_level
+            subtitle = f"Level {unlock_level}" + (" - Locked" if locked else "")
+            button = MenuButton(
+                (x, y + index * 60, 330, 52),
+                dungeon.get("name", dungeon_id),
+                subtitle,
+                enabled=not locked,
+            )
+            self.dungeon_action_buttons.append((dungeon_id, button))
+            button.draw(screen, self.body_font, self.body_font)
+            if dungeon_id == self.selected_dungeon_id:
+                pygame.draw.rect(screen, (210, 220, 145), button.rect, 3, border_radius=6)
+
+        if not dungeon_entries:
+            empty_text = self.body_font.render("No dungeons available", True, (145, 145, 150))
+            screen.blit(empty_text, (x, y))
+
+        self._draw_dungeon_detail_panel(screen, self.selected_dungeon_id)
+        self.dungeon_start_button.enabled = self._can_start_selected_dungeon()
+        self.dungeon_start_button.draw(screen, self.option_font, self.body_font)
+        if self.dungeon_message:
+            message = self.body_font.render(
+                self._truncate_text(self.dungeon_message, self.body_font, 310),
+                True,
+                (230, 160, 90),
+            )
+            screen.blit(message, (420, 532))
+
+    def _draw_dungeon_detail_panel(self, screen, dungeon_id):
+        rect = pygame.Rect(420, 150, 310, 300)
+        pygame.draw.rect(screen, (35, 40, 48), rect, border_radius=6)
+        pygame.draw.rect(screen, (120, 130, 140), rect, 2, border_radius=6)
+        title = self.option_font.render("Dungeon Details", True, (245, 245, 245))
+        screen.blit(title, (rect.x + 14, rect.y + 14))
+
+        dungeon = self._get_dungeon_data(dungeon_id)
+        if not dungeon:
+            text = self.body_font.render("Select a dungeon", True, (150, 155, 160))
+            screen.blit(text, (rect.x + 14, rect.y + 58))
+            return
+
+        boss_id = dungeon.get("boss_enemy_id", "")
+        boss_name = self.game.data.enemies.get(boss_id, {}).get("name", boss_id)
+        player_level = self.game.player.get("level", 0) if self.game.player else 0
+        unlock_level = dungeon.get("unlock_level", 1)
+        status = "Locked" if player_level < unlock_level else "Ready"
+        lines = [
+            dungeon.get("name", dungeon_id),
+            f"Unlock: Level {unlock_level}",
+            dungeon.get("description", ""),
+            f"Boss: {boss_name}",
+            f"Boss scaling: +{dungeon.get('scaling_rate', 0) * 100:.0f}%",
+            f"Reward scaling: +{dungeon.get('reward_multiplier_per_victory', 0) * 100:.0f}%",
+            f"Route length: {len(dungeon.get('route', []))}",
+            f"Status: {status}",
+        ]
+        line_y = rect.y + 52
+        for line in lines:
+            text = self.body_font.render(
+                self._truncate_text(line, self.body_font, rect.w - 28),
+                True,
+                (210, 220, 205),
+            )
+            screen.blit(text, (rect.x + 14, line_y))
+            line_y += 28
+
+    def _can_start_selected_dungeon(self):
+        if not self.selected_dungeon_id or not self.game.player:
+            return False
+        dungeon = self._get_dungeon_data(self.selected_dungeon_id)
+        if not dungeon:
+            return False
+        return self.game.player.get("level", 0) >= dungeon.get("unlock_level", 1)
+
+    def _get_dungeon_data(self, dungeon_id):
+        dungeons = getattr(self.game.data, "dungeons", {}) or {}
+        if not dungeon_id or not isinstance(dungeons, dict):
+            return {}
+        dungeon = dungeons.get(dungeon_id, {})
+        return dungeon if isinstance(dungeon, dict) else {}
+
+    def _get_dungeon_start_failure_message(self, reason):
+        messages = {
+            "invalid_player": "No player",
+            "unknown_dungeon": "Unknown dungeon",
+            "locked_dungeon": "Dungeon locked",
+        }
+        return messages.get(reason, "Could not start dungeon")
 
     def _draw_gathering_tab(self, screen, region_id):
         actions = self._get_region_gathering_actions(region_id)

@@ -129,3 +129,81 @@ def test_apply_gold_reward():
     )
 
     assert player["gold"] == 25
+
+
+def test_clear_dungeon_progress():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_clear_goblin_camp"]
+
+    record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "clear_dungeon",
+            "target": "forest_goblin_camp",
+            "amount": 1,
+        },
+    )
+
+    assert get_quest_progress(player, "forest_clear_goblin_camp", 0) == 1
+
+
+def test_clear_dungeon_completion_activates_next():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_clear_goblin_camp"]
+
+    result = record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "clear_dungeon",
+            "target": "forest_goblin_camp",
+            "amount": 1,
+        },
+    )
+
+    assert result["completed"] == ["forest_clear_goblin_camp"]
+    assert "forest_clear_goblin_camp" in player["quests"]["completed"]
+    assert "forest_buried_grove" in player["quests"]["active"]
+
+
+def test_defeat_boss_progress():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_silence_rootcaller"]
+
+    result = record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "defeat_boss",
+            "target": "grubfang_rootcaller",
+            "amount": 1,
+        },
+    )
+
+    assert get_quest_progress(player, "forest_silence_rootcaller", 0) == 1
+    assert result["completed"] == ["forest_silence_rootcaller"]
+    assert "forest_silence_rootcaller" in player["quests"]["completed"]
+
+
+def test_buried_grove_activates_rootcaller_quest():
+    quests_data = load_quests()
+    player = create_test_player(quests_data)
+    player["quests"]["active"] = ["forest_buried_grove"]
+
+    result = record_quest_event(
+        player,
+        quests_data,
+        {
+            "type": "clear_dungeon",
+            "target": "forest_buried_grove",
+            "amount": 1,
+        },
+    )
+
+    assert result["completed"] == ["forest_buried_grove"]
+    assert "forest_buried_grove" in player["quests"]["completed"]
+    assert "forest_silence_rootcaller" in player["quests"]["active"]

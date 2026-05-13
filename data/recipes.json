@@ -356,29 +356,6 @@
       "quantity": 1
     }
   },
-  "craft_goblin_ritual_amulet": {
-    "ingredients": [
-      {
-        "kind": "stackable",
-        "item": "shaman_totem",
-        "quantity": 2
-      },
-      {
-        "kind": "stackable",
-        "item": "ritual_paint",
-        "quantity": 1
-      },
-      {
-        "kind": "stackable",
-        "item": "old_charm_fragment",
-        "quantity": 1
-      }
-    ],
-    "result": {
-      "item": "goblin_ritual_amulet",
-      "quantity": 1
-    }
-  },
   "craft_bone_signet": {
     "ingredients": [
       {

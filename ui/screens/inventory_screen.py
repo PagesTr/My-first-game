@@ -61,6 +61,9 @@ class InventoryScreen:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.back_btn.is_clicked(event.pos):
+                if hasattr(self.game, "return_from_inventory_if_needed"):
+                    if self.game.return_from_inventory_if_needed():
+                        return
                 self.game.state = "town"
                 return
 
