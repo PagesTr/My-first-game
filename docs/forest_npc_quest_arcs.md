@@ -2185,6 +2185,544 @@ You carried their names out. That is the correction.
 
 Thank you. I will file it properly, and for once, that means something.
 
+## Gatekeeper Marn
+
+### Role
+
+Gatekeeper Marn connects the player to dungeon thresholds, dangerous places, boss warnings, late Forest escalation, and the end of the Forest chapter.
+
+He does not introduce ordinary exploration. Fen does that.
+
+He does not explain the memory of the dead. Osric does that.
+
+Marn stands at the point where information becomes commitment.
+
+### Personality and tone
+
+Marn is solemn, tired, and reluctantly epic.
+
+He has given too many warnings to too many adventurers who nodded, smiled, entered the dangerous place anyway, and later became someone else's evidence.
+
+He is not dramatic because he enjoys drama. He is dramatic because the doors he guards deserve it.
+
+His humor should be dry, restrained, and weary. He should sound like a man who knows exactly how bad the situation is and is annoyed that he has to explain it again.
+
+Marn should not be silly. He can be sarcastic, but his sarcasm should never reduce the importance of Goblin Camp, Buried Grove, Grubfang, or Rootcaller.
+
+### Narrative function
+
+Marn carries the final escalation of the Forest chapter.
+
+He turns scattered clues into formal thresholds:
+
+- Fen confirms the approach to Goblin Camp.
+- Osric confirms that Buried Grove is more than a ruin.
+- Maela confirms that the Forest's corruption is active.
+- Brindle confirms that normal assignments are no longer enough.
+
+Marn receives those threads and turns them into dungeon and boss progression.
+
+His arc should make the player feel that entering a dungeon is a meaningful step, not just another farm action.
+
+### Link with gameplay systems
+
+- Dungeon access.
+- Dungeon warnings.
+- Goblin Camp.
+- Buried Grove.
+- Mini-bosses.
+- Grubfang, Rootcaller.
+- Chapter completion.
+- Major rewards.
+- Transition toward the next chapter.
+
+### Covered content
+
+Marn mainly supports the following Forest content:
+
+| Content | Narrative use |
+|---|---|
+| Goblin Camp | First dungeon threshold, organized goblin threat |
+| Goblin Quartermaster | Goblin Camp mini-boss and proof of organization |
+| Buried Grove | Ancient root/death dungeon threshold |
+| Rootbound Remnant | Buried Grove mini-boss and memory/corruption threat |
+| Grubfang, Rootcaller | Final Forest boss |
+| Chapter transition | Unlock or narrative bridge toward the next chapter |
+
+Marn does not replace the other NPCs. He receives their warnings and turns them into action.
+
+### Arc summary
+
+Marn begins by warning the player that some places in the Forest are not just zones. They are thresholds.
+
+At first, he frames Goblin Camp as the immediate danger: organized goblins, smoke, patrols, drums, and a command structure that should not exist among creatures who still label arrows with drawings.
+
+Then Buried Grove becomes relevant through Osric and Maela: roots, remains, memory, and corruption all point toward a deeper threat.
+
+By the end of his arc, Marn prepares the player for Grubfang, Rootcaller. His final role is to mark the end of the Forest chapter and the transition toward what comes next.
+
+Marn should feel like the last voice of warning before the player crosses into danger.
+
+### Introduction monologue
+
+Stop there.
+
+Not because I enjoy blocking paths. I gave up enjoying things sometime around my ninth doomed adventurer.
+
+I am Marn. I keep the gates, thresholds, sealed trails, half-sealed trails, badly sealed trails, and the places everyone insists on entering after I explain why they should not.
+
+You have spoken to Brindle, I assume. He sends people toward problems with admirable paperwork.
+
+Fen has likely pointed at something dangerous while standing far enough away to survive being correct.
+
+Maela has probably told you the Forest is ill in a tone that made it sound like tea might help.
+
+Osric, if involved, has already found the dead and given them better manners than the living.
+
+I stand where their warnings meet.
+
+When I tell you a path is a threshold, understand this: beyond it, the Forest stops inconveniencing you and starts answering back.
+
+### Core quest chain overview
+
+| Step | Quest title | Gameplay objective | Narrative beat | Reward intention |
+|---|---|---|---|---|
+| 1 | The Gate Is Not Decorative | Speak with Marn after earlier Forest progression | Introduce Marn and dungeon threshold logic | Progression clue |
+| 2 | Noise from Goblin Camp | Prepare for or unlock Goblin Camp | Goblins are organized enough to be dangerous | XP, consumable, dungeon access |
+| 3 | Break the Goblin Camp | Clear Goblin Camp or defeat its mini-boss | First dungeon milestone | Major reward, recipe or item |
+| 4 | Buried Grove Stirs | Prepare for or unlock Buried Grove | Roots, bones, and memory converge | XP, lore reward, dungeon access |
+| 5 | The Rootbound Warning | Clear Buried Grove or defeat Rootbound Remnant | Ancient corruption becomes active | Major reward, boss access clue |
+| 6 | Rootcaller's Door | Prepare for Grubfang, Rootcaller | Final Forest threshold | Boss access / chapter climax |
+| 7 | Grubfang Must Fall | Defeat Grubfang, Rootcaller | End of Forest chapter | Major reward, next chapter transition |
+
+### Quest 1: The Gate Is Not Decorative
+
+#### Narrative context
+
+Marn introduces himself after the player has progressed through early Forest content. He explains that some places require more than confidence.
+
+#### Objective
+
+Speak with Marn after enough Forest progression to begin dungeon-related content.
+
+#### Quest offer text
+
+You have reached the part of the Forest where warnings become useful.
+
+Earlier dangers bite, claw, steal, or make noise. Manageable problems. Unpleasant, but honest.
+
+The places I guard are different. They gather problems. They keep them behind smoke, roots, old stones, and doors people insist on opening.
+
+Before you enter anything I point toward, understand the rule: a gate is not decoration. It is a question.
+
+Objective: speak with Marn and prepare for dungeon thresholds.
+
+#### Progress reminder
+
+The gate remains where it is.
+
+That is one of its better qualities.
+
+Objective: speak with Marn when you are ready to approach dungeon content.
+
+#### Completion text
+
+Good.
+
+You listened. That already places you above several people whose names Osric now says very carefully.
+
+We begin with Goblin Camp. It should not be organized. It is.
+
+That is enough reason to worry.
+
+#### Transition text
+
+Fen has seen the smoke. Brindle has seen the reports. I have seen what happens when people ignore both.
+
+### Quest 2: Noise from Goblin Camp
+
+#### Narrative context
+
+Marn prepares the player for Goblin Camp. The camp is not just goblins in a pile; it has structure, patrols, smoke, and leadership.
+
+#### Objective
+
+Prepare for Goblin Camp, confirm readiness, or gather final proof of organized goblin activity.
+
+#### Quest offer text
+
+Goblin Camp is active.
+
+Smoke, patrols, drums, supply piles. Signs of order, which is deeply offensive when attached to goblins.
+
+Do not mistake them for comic relief with knives. A disorganized goblin is a nuisance. An organized goblin is a committee with teeth.
+
+Prepare yourself. Bring proof of readiness, supplies, or whatever courage has not already leaked from your boots.
+
+Objective: prepare for Goblin Camp.
+
+#### Progress reminder
+
+Goblin Camp is not going anywhere.
+
+Unfortunately, that is part of the problem.
+
+Objective: prepare for Goblin Camp.
+
+#### Completion text
+
+You are as ready as anyone can be before discovering they were only partially ready.
+
+The camp is your first true threshold.
+
+Enter, clear what must be cleared, and do not let the drums decide the pace of your breathing.
+
+#### Transition text
+
+Inside, you are not scouting anymore. You are breaking their structure.
+
+### Quest 3: Break the Goblin Camp
+
+#### Narrative context
+
+The player must clear Goblin Camp or defeat its mini-boss, showing that the goblins' organization can be disrupted.
+
+#### Objective
+
+Clear Goblin Camp or defeat the Goblin Quartermaster.
+
+#### Quest offer text
+
+The Goblin Quartermaster holds the camp together.
+
+I realize how absurd that sounds. A goblin quartermaster. Somewhere, Brindle is probably offended by the job title.
+
+Remove him, and the camp becomes noise again. Dangerous noise, but less directed.
+
+Objective: clear Goblin Camp and defeat its leader.
+
+#### Progress reminder
+
+The camp still stands.
+
+Try not to let goblins retain administrative superiority over us.
+
+Objective: clear Goblin Camp.
+
+#### Completion text
+
+The camp is broken.
+
+Not gone. Goblins are like weeds with arguments. But their command is shattered, their supplies are scattered, and their drums have lost discipline.
+
+That matters.
+
+Do not celebrate too loudly. The Forest listens when people think they are done.
+
+#### Transition text
+
+While you were breaking goblin order, the older parts of the Forest began moving.
+
+Osric has records. Maela has roots. I have a bad feeling, which is the least useful of the three and unfortunately the most familiar.
+
+### Quest 4: Buried Grove Stirs
+
+#### Narrative context
+
+Marn prepares the player for Buried Grove after Osric and Maela have revealed the connection between roots, remains, and memory.
+
+#### Objective
+
+Prepare for Buried Grove or bring final evidence from Osric/Maela-related progression.
+
+#### Quest offer text
+
+Buried Grove is stirring.
+
+Osric says the roots remember names. Maela says the sap reacts to them.
+
+I dislike it when experts agree in quiet voices.
+
+The Grove is not a graveyard. Graveyards are honest. The dead stay mostly where placed, the living feel appropriately uncomfortable, and everyone understands the arrangement.
+
+This is different.
+
+Objective: prepare for Buried Grove.
+
+#### Progress reminder
+
+Buried Grove remains sealed for now.
+
+That is not safety. That is delay.
+
+Objective: prepare for Buried Grove.
+
+#### Completion text
+
+You have the evidence.
+
+Names in roots. Relics preserved. Remains arranged with intent.
+
+Very well. The threshold is real, and pretending otherwise would only make the eventual screaming less organized.
+
+#### Transition text
+
+Enter Buried Grove carefully. If the Forest offers you memory, assume it expects payment.
+
+### Quest 5: The Rootbound Warning
+
+#### Narrative context
+
+The player must confront the danger within Buried Grove, especially the Rootbound Remnant.
+
+#### Objective
+
+Clear Buried Grove or defeat Rootbound Remnant.
+
+#### Quest offer text
+
+The Rootbound Remnant waits inside.
+
+It is not alive in the ordinary sense. It is not dead in the useful sense.
+
+It is what happens when the Forest remembers someone badly enough to use them.
+
+End it if you can. Free it if that is what ending it means. Some victories are just cleaner forms of mercy.
+
+Objective: clear Buried Grove and defeat the Rootbound Remnant.
+
+#### Progress reminder
+
+The Remnant still waits.
+
+I would say "take your time," but places like this do not improve with patience.
+
+Objective: clear Buried Grove.
+
+#### Completion text
+
+The Remnant has fallen.
+
+Good.
+
+No, not good. Necessary. There is a difference, and this chapter has been eager to teach it.
+
+The Grove is quieter now, but not empty. Beneath it, something answered when the roots were disturbed.
+
+#### Transition text
+
+Grubfang. Rootcaller.
+
+That name has appeared too often, from too many mouths, roots, relics, and dying things.
+
+### Quest 6: Rootcaller's Door
+
+#### Narrative context
+
+Marn prepares the player for the final Forest boss. This is the last warning before Grubfang, Rootcaller.
+
+#### Objective
+
+Prepare for the Rootcaller confrontation.
+
+#### Quest offer text
+
+This is the final threshold of the Forest.
+
+Beyond it is Grubfang, Rootcaller.
+
+A goblin, yes. But do not let the word make you careless. Some creatures become dangerous by being powerful. Others become dangerous by being listened to.
+
+The roots listen to him.
+
+Prepare yourself. Finish your business. Claim what rewards you need, mend what gear you trust, drink whatever Maela gave you if it has not started moving.
+
+Objective: prepare to confront Grubfang, Rootcaller.
+
+#### Progress reminder
+
+Rootcaller's door remains ahead.
+
+It will wait. That is not kindness. That is confidence.
+
+Objective: prepare for the Rootcaller confrontation.
+
+#### Completion text
+
+Then it is time.
+
+No more reports. No more scouting. No more samples. No more records.
+
+Only the thing calling the Forest by its roots, and the person foolish enough to answer back with a weapon.
+
+I have seen many cross thresholds.
+
+Try to be one of the few who return.
+
+#### Transition text
+
+Enter when ready. The Forest has spoken long enough.
+
+### Quest 7: Grubfang Must Fall
+
+#### Narrative context
+
+The player faces and defeats Grubfang, Rootcaller, ending the Forest chapter.
+
+#### Objective
+
+Defeat Grubfang, Rootcaller.
+
+#### Quest offer text
+
+Grubfang stands at the root of this.
+
+Yes, literally. The Forest has developed a sense of theatrical placement. I hate that it is effective.
+
+He has called rats, goblins, wolves, roots, bones, and memory into one long mistake.
+
+End it.
+
+Objective: defeat Grubfang, Rootcaller.
+
+#### Progress reminder
+
+Grubfang still calls.
+
+The Forest still answers.
+
+Objective: defeat Grubfang, Rootcaller.
+
+#### Completion text
+
+It is done.
+
+The roots have quieted. Not died. Not vanished. Quieted.
+
+That is enough for today.
+
+You broke the call. You ended the chapter before it became a grave with better scenery.
+
+Take your reward. Then breathe while the Forest remembers how to be only a forest.
+
+#### Arc transition
+
+The path beyond the Forest will open now.
+
+Do not mistake that for peace. It is simply the next place where the world has postponed its problems.
+
+### Optional quest: Last Warning, Repeated
+
+#### Narrative purpose
+
+A flavor-heavy optional quest that reinforces Marn's identity as the exhausted guardian of thresholds.
+
+#### Objective
+
+Speak to Marn before entering a major dungeon or boss encounter.
+
+#### Text direction
+
+Marn should repeat the warning with dry irritation, making it clear that warnings are only useful if people survive long enough to appreciate them.
+
+### Optional quest: The Door Complained First
+
+#### Narrative purpose
+
+An absurd but ominous quest about a threshold reacting before the player enters.
+
+#### Objective
+
+Collect or confirm strange evidence from a dungeon threshold.
+
+#### Text direction
+
+Marn should treat a complaining door or restless threshold as worrying, but not entirely surprising.
+
+### Optional quest: Things That Knock Back
+
+#### Narrative purpose
+
+A preparation quest before harder dungeon or boss content.
+
+#### Objective
+
+Gather defensive supplies, prepare gear, or obtain a protective item.
+
+#### Text direction
+
+Marn should make it clear that preparation is not cowardice. Cowardice usually has better survival rates.
+
+### Optional quest: Threshold Etiquette
+
+#### Narrative purpose
+
+A short optional teaching quest about not rushing into dangerous content.
+
+#### Objective
+
+Review or complete a small preparation step before dungeon entry.
+
+#### Text direction
+
+Marn should explain dungeon readiness with weary formality and controlled sarcasm.
+
+### Epilogue quest: After the Roots Fell
+
+#### Narrative context
+
+After Grubfang, Rootcaller is defeated, Marn acknowledges the end of the Forest chapter.
+
+#### Objective
+
+Return to Marn after defeating Grubfang, Rootcaller.
+
+#### Completion text direction
+
+Marn should be sincere, but still restrained. This is a rare moment where his fatigue softens.
+
+Example direction:
+
+The roots are still.
+
+For the first time in a long while, the gate behind me feels like wood and iron instead of a held breath.
+
+You did well.
+
+Do not look so surprised. I can recognize success. I simply try not to encourage the kind of confidence that gets carved onto memorial stones.
+
+The Forest is not safe. Safe is a fairy tale told by people who have never checked under leaves.
+
+But it is no longer being called.
+
+That is your doing.
+
+### Epilogue quest: A Gate Left Open
+
+#### Narrative context
+
+Marn gives the player a narrative bridge toward the next chapter.
+
+#### Objective
+
+Speak to Marn after the Forest chapter is complete.
+
+#### Completion text direction
+
+Marn should point toward the next chapter without overexplaining it.
+
+Example direction:
+
+The Forest has quieted, and the next road has opened.
+
+I would say you have earned rest, but the world has a poor sense of timing.
+
+Beyond this chapter, the dangers will be less leafy. Perhaps colder. Perhaps deeper. Perhaps simply worse with different scenery.
+
+Go when you are ready.
+
+And when the next gate looks harmless, remember this one.
+
 ## 13. Playtest notes
 
 These quest chains are not final.
