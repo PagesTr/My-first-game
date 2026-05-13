@@ -98,6 +98,8 @@ class PygameApp:
             result = self.game.update_active_gathering(current_time_ms)
             if result is not None and hasattr(self.menu_screen, "add_gathering_popup"):
                 self.menu_screen.add_gathering_popup(result)
+        if self.game.state == "exploration":
+            self.exploration_screen.update()
 
     def render(self):
         current_time_ms = pygame.time.get_ticks()

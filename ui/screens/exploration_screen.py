@@ -8,7 +8,7 @@ class ExplorationScreen:
         self.body_font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
         self.player_rect = pygame.Rect(382, 308, 24, 30)
-        self.player_speed = 12
+        self.player_speed = 6
         self.npc_rect = pygame.Rect(548, 250, 28, 34)
         self.message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres du PNJ. Echap pour rentrer."
         self.message_until_ms = 0
@@ -41,14 +41,16 @@ class ExplorationScreen:
             self.message_until_ms = pygame.time.get_ticks() + 2800
             return
 
+    def update(self):
+        keys = pygame.key.get_pressed()
         movement = pygame.Vector2(0, 0)
-        if event.key in (pygame.K_LEFT, pygame.K_q):
+        if keys[pygame.K_LEFT] or keys[pygame.K_q]:
             movement.x -= 1
-        elif event.key in (pygame.K_RIGHT, pygame.K_d):
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             movement.x += 1
-        elif event.key in (pygame.K_UP, pygame.K_z):
+        if keys[pygame.K_UP] or keys[pygame.K_z]:
             movement.y -= 1
-        elif event.key in (pygame.K_DOWN, pygame.K_s):
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             movement.y += 1
 
         if movement.length_squared() > 0:
@@ -66,9 +68,26 @@ class ExplorationScreen:
 
     def _move_player(self, movement):
         movement = movement.normalize() * self.player_speed
-        self.player_rect.x += int(movement.x)
-        self.player_rect.y += int(movement.y)
-        self.player_rect.clamp_ip(pygame.Rect(14, 14, 772, 518))
+        bounds = pygame.Rect(14, 14, 772, 518)
+        candidate = self.player_rect.move(int(movement.x), int(movement.y))
+        candidate.clamp_ip(bounds)
+
+        if not self._collides_with_obstacle(candidate):
+            self.player_rect = candidate
+            return
+
+        horizontal = self.player_rect.move(int(movement.x), 0)
+        horizontal.clamp_ip(bounds)
+        if not self._collides_with_obstacle(horizontal):
+            self.player_rect = horizontal
+
+        vertical = self.player_rect.move(0, int(movement.y))
+        vertical.clamp_ip(bounds)
+        if not self._collides_with_obstacle(vertical):
+            self.player_rect = vertical
+
+    def _collides_with_obstacle(self, candidate):
+        return any(candidate.colliderect(obstacle) for obstacle in self.obstacles)
 
     def _draw_background(self, screen):
         screen.fill((23, 54, 35))
