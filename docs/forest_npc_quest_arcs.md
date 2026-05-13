@@ -1321,6 +1321,429 @@ You helped. Not by fixing everything. No one fixes a forest in an afternoon. But
 
 Take this. It is a remedy, and a thank-you, and possibly an apology from the nettles. I would not trust that last part too much.
 
+## Fen the One-Time Scout
+
+### Role
+
+Fen connects the player to deeper Forest routes, unsafe paths, wolf territory, goblin scouting trails, and the approach toward Goblin Camp.
+
+He extends Brindle's early combat loop into exploration-driven combat. Brindle sends the player to solve official problems. Fen sends the player down paths that become problems.
+
+### Personality and tone
+
+Fen is loud, boastful, unreliable, and funny.
+
+He claims to be a scout because he successfully scouted something once, survived by running in the correct direction, and has never allowed the truth to damage the legend.
+
+His advice is often bad, but not useless. He notices tracks, broken branches, wolf movement, goblin signs, and unsafe routes. He simply explains those things with too much confidence and not enough accuracy.
+
+Fen should not sound like Brindle. He is not administrative, official, or organized.
+
+Fen should not sound like Maela. He is not calm, herbal, or gently unsettling.
+
+Fen is comic relief, but not empty comic relief. His jokes should slowly reveal that he has seen something deeper in the Forest and has been avoiding it with remarkable commitment.
+
+### Narrative function
+
+Fen pushes the player beyond the safe routes.
+
+His arc begins after the player has already handled basic Forest threats through Brindle. Fen then opens the idea that the Forest is not just a list of enemies, but a layered space with side paths, hunting grounds, goblin trails, and dangerous approaches.
+
+He should make combat feel like a result of exploration.
+
+The player is not only killing enemies because a quest giver ordered it. The player is pushing into unsafe territory and discovering what lives there.
+
+### Link with gameplay systems
+
+- Exploration.
+- Deeper combat zones.
+- Wolf routes.
+- Goblin scouting routes.
+- Zone progression.
+- Goblin Camp foreshadowing.
+- Optional side objectives.
+- Transition from early Forest to mid Forest.
+
+### Covered zones
+
+Fen mainly supports the following Forest combat areas:
+
+| Zone | Narrative use |
+|---|---|
+| Goblin Scout Trails | Goblin movement, route markers, signs of organization |
+| Wolf Hunting Ground | Deeper wolf territory, dangerous route combat |
+| Deep Forest side routes | Exploration, wrong turns, unsafe shortcuts |
+| Camp Approach | Smoke, drums, goblin patrols, transition toward Marn |
+
+Fen does not own the dungeons themselves.
+
+| Content | Main NPC |
+|---|---|
+| Goblin Camp interior | Gatekeeper Marn |
+| Buried Grove | Gatekeeper Marn / Archivist Osric |
+| Rootcaller climax | Gatekeeper Marn |
+
+### Arc summary
+
+Fen starts by presenting himself as a brilliant scout with an extremely flexible relationship to truth.
+
+His early quests lead the player toward deeper paths and unsafe trails. The player encounters more dangerous wolves and better organized goblins, but the objective is always framed as scouting, checking a route, following signs, or confirming an approach.
+
+As the chain progresses, Fen's confidence starts to crack. He jokes less about being brave and more about having survived. By the end, he admits indirectly that Goblin Camp is not simply a place he has not explored. It is a place he deliberately avoided.
+
+The arc should end with Fen still funny, but slightly more honest.
+
+### Introduction monologue
+
+You there. Adventurer-looking person. Good posture, questionable survival odds. Perfect.
+
+Name's Fen. Scout. Former scout. One-time scout, technically, but the important word is scout.
+
+I know paths. I know tracks. I know which bushes make noise because of birds and which bushes make noise because something inside them is deciding whether your boots look edible.
+
+Do not listen to people who say I got lost. I did not get lost. I performed an aggressive survey of several unintended locations and returned with information, scratches, and a valuable fear of mossy slopes.
+
+Brindle sends people to fix problems. Sensible man. Very fond of forms. I do something more advanced: I show people where the problems are hiding before they become forms.
+
+If you need guaranteed safety, speak to a wall. It will lie less, but it will also give worse directions.
+
+### Core quest chain overview
+
+| Step | Quest title | Gameplay objective | Narrative beat | Reward intention |
+|---|---|---|---|---|
+| 1 | Scout's Honor, Used Once | Scout a deeper side route and survive | Fen introduces exploration-driven combat | XP, gold |
+| 2 | Tracks Facing the Wrong Way | Investigate wolf tracks leading away from safe paths | Wildlife is fleeing something deeper | XP, wolf material |
+| 3 | The Shortcut That Got Longer | Follow Fen's unsafe shortcut and clear what blocks it | The Forest paths feel unstable | XP, consumable |
+| 4 | Goblin Signs, Terrible Arrows | Study goblin route markings and survive goblin scouts | Goblins are absurd but organized | XP, scout_badge or route clue |
+| 5 | The Path I Did Not Run From | Investigate the old scout route Fen avoided | Fen's bravado starts to crack | Better reward, progression |
+| 6 | Smoke Beyond the Trees | Scout signs of Goblin Camp from its approach | Goblin Camp is confirmed indirectly | Progression reward |
+
+### Quest 1: Scout's Honor, Used Once
+
+#### Narrative context
+
+Fen wants to prove he is useful by sending the player toward a deeper side route beyond the safer Forest paths.
+
+#### Objective
+
+Scout a deeper Forest route and survive any encounter along the way.
+
+#### Quest offer text
+
+First rule of scouting: look confident.
+
+Second rule: if confidence fails, point dramatically and walk somewhere else.
+
+There is a side route beyond the safer paths. Brindle's people do not like it, which is how you know it might contain useful information. Or teeth. Often both.
+
+Walk the route, see what blocks it, and come back alive enough to describe it.
+
+Objective: scout the deeper side route and survive the encounter.
+
+#### Progress reminder
+
+The route is still unscouted. I would check it myself, obviously, but I am currently preserving my strategic overview.
+
+Objective: scout the deeper side route.
+
+#### Completion text
+
+See? Exactly as I predicted.
+
+Unless something terrible happened, in which case I predicted that too and chose not to alarm you.
+
+Good work. You now understand scouting: walking somewhere dangerous and calling it information.
+
+#### Transition text
+
+That route should not have been so active. The tracks near it are strange too. Some animals are moving the wrong way, which is rude because it makes me look less right.
+
+### Quest 2: Tracks Facing the Wrong Way
+
+#### Narrative context
+
+The player investigates animal tracks suggesting wolves are being pushed away from deeper territory.
+
+#### Objective
+
+Investigate wolf tracks near deeper routes and defeat any wolves encountered.
+
+#### Quest offer text
+
+Wolves leave honest tracks.
+
+That is one of their better qualities, after teeth and before social skills.
+
+These tracks are facing the wrong way. Wolves should be moving toward prey, not away from deeper woods with their tails low and their pride damaged.
+
+Follow the tracks. If the wolves object, try not to take it personally. They object to most things with ankles.
+
+Objective: investigate the wolf tracks and survive the wolves near the deeper route.
+
+#### Progress reminder
+
+The tracks are still there. Unless the wolves came back and corrected them, which would be impressive and inconvenient.
+
+Objective: investigate the wolf tracks.
+
+#### Completion text
+
+You found the wolves, and the wolves found your weapon. Productive for everyone except the wolves.
+
+But I was right about the tracks. They were not hunting. They were avoiding something.
+
+That means there is a deeper route worth checking, which is scout language for "bad idea with rewards."
+
+#### Transition text
+
+I know a shortcut toward that area. It is safe in the sense that I survived it once and refuse to discuss the details.
+
+### Quest 3: The Shortcut That Got Longer
+
+#### Narrative context
+
+Fen sends the player down a shortcut that is longer, stranger, and more dangerous than advertised.
+
+#### Objective
+
+Follow Fen's shortcut, clear what blocks the way, and return with route information.
+
+#### Quest offer text
+
+There is a shortcut.
+
+Some people call it "not a shortcut." Those people lack imagination and, in one case, a left boot.
+
+The path bends around the hunting ground and comes out near the goblin trails. Probably. Unless the Forest has shifted again, which it does not do. Usually.
+
+Follow it, clear whatever blocks the way, and tell me where it actually goes.
+
+Objective: follow Fen's shortcut and clear the route.
+
+#### Progress reminder
+
+The shortcut is waiting. If it seems longer than expected, that means it is building character.
+
+Objective: follow Fen's shortcut.
+
+#### Completion text
+
+You made it back.
+
+Excellent. That means the shortcut still exists, broadly speaking.
+
+The fact that it led near goblin signs is concerning. Not surprising, because I suspected it. Quietly. After you left.
+
+#### Transition text
+
+Goblin signs are next. Their arrows are terrible, but terrible arrows still point somewhere.
+
+### Quest 4: Goblin Signs, Terrible Arrows
+
+#### Narrative context
+
+Fen asks the player to investigate goblin route signs around Goblin Scout Trails.
+
+#### Objective
+
+Explore goblin-marked paths, defeat goblin scouts if encountered, and recover or confirm route signs.
+
+#### Quest offer text
+
+Goblins have started marking paths.
+
+That is bad. Not because the signs are good. They are not. One points toward "safe shinies," which is either a trap or the saddest travel brochure ever made.
+
+But signs mean routes. Routes mean movement. Movement means someone, somehow, has convinced goblins to go in the same direction twice.
+
+Follow the markings, deal with any scouts, and bring back proof of where the route leads.
+
+Objective: investigate the goblin-marked path and survive the scouts.
+
+#### Progress reminder
+
+The goblin signs are still out there, lowering the reputation of arrows everywhere.
+
+Objective: investigate the goblin-marked path.
+
+#### Completion text
+
+Good. These markings are nonsense.
+
+Useful nonsense, unfortunately.
+
+They point toward the same deeper approach. Goblins do not usually build routes unless someone is shouting orders, waving food, or both.
+
+#### Transition text
+
+There is an old scout route near there. I did not run from it. I withdrew from it with excellent speed.
+
+### Quest 5: The Path I Did Not Run From
+
+#### Narrative context
+
+Fen's confidence starts to crack. The player investigates an old route Fen avoided.
+
+#### Objective
+
+Investigate the old scout route and return with evidence of deeper goblin activity.
+
+#### Quest offer text
+
+There is a path I definitely meant to mention earlier.
+
+I was not hiding it. I was saving it. Like a professional. Or a coward with timing. History will decide.
+
+It leads toward older goblin movement, deeper wolf territory, and a stretch of Forest that gets quiet in a way I do not enjoy.
+
+Check the route. If you hear drums, count how many before you run. That is tactical information.
+
+Objective: investigate the old scout route and bring back evidence.
+
+#### Progress reminder
+
+The old route is still there. Probably.
+
+If it is not, return immediately. I do not like paths that make decisions.
+
+Objective: investigate the old scout route.
+
+#### Completion text
+
+That is goblin work.
+
+Not normal goblin work either. Too organized. Too many signs. Too much effort, which is suspicious from creatures that consider helmets optional furniture.
+
+I saw something like this once. Near a camp.
+
+I left immediately. For strategic survival purposes.
+
+#### Transition text
+
+Fine. Yes. There is a camp. No, I did not explore it. I am brave, not decorative.
+
+### Quest 6: Smoke Beyond the Trees
+
+#### Narrative context
+
+Fen finally admits that Goblin Camp exists and sends the player to scout its approach, not enter the dungeon.
+
+#### Objective
+
+Scout the approach to Goblin Camp and confirm smoke, patrols, drums, or organized goblin movement.
+
+#### Quest offer text
+
+There is smoke beyond the trees.
+
+Camp smoke, not cooking smoke. Well, possibly cooking smoke too, but goblins consider "burnt boot" a recipe, so let us not focus on cuisine.
+
+I need you to scout the approach. Do not enter the camp. That part is Marn's problem, because Marn enjoys standing near terrible doors and pretending he does not.
+
+Look for patrols, drums, supply piles, anything that proves the camp is active and organized.
+
+Objective: scout the approach to Goblin Camp and confirm organized goblin activity.
+
+#### Progress reminder
+
+The camp approach still needs scouting. Remember: approach means near. Not inside. Inside is where plans become screaming.
+
+Objective: scout the approach to Goblin Camp.
+
+#### Completion text
+
+That confirms it.
+
+Goblin Camp is active, organized, and very much not one of my exaggerations. I almost wish it were. I am excellent at exaggerations.
+
+You should tell Marn. He enjoys terrible news when it arrives with proof.
+
+#### Arc transition
+
+Go to Marn. Tell him the goblins have routes, patrols, smoke, and enough discipline to be concerning.
+
+Do not tell him I called the camp "heroically avoided." He will do the eyebrow thing.
+
+### Optional quest: Map Reading for the Emotionally Brave
+
+#### Narrative purpose
+
+A light exploration quest that reinforces Fen's unreliable scouting identity.
+
+#### Objective
+
+Compare path markers or confirm a route without turning it into a major combat assignment.
+
+#### Text direction
+
+Fen should pretend map reading is mostly confidence, then accidentally give useful information.
+
+### Optional quest: Howling Back Is Not Strategy
+
+#### Narrative purpose
+
+A wolf-focused optional quest that keeps Fen linked to deeper wolf routes without copying Brindle's supply-line wolf quest.
+
+#### Objective
+
+Investigate wolf behavior or survive a wolf encounter near a deeper trail.
+
+#### Text direction
+
+Fen should admit, indirectly, that howling back at wolves did not work.
+
+### Optional quest: A Totally Safe Detour
+
+#### Narrative purpose
+
+A short optional route task that adds absurd exploration flavor.
+
+#### Objective
+
+Follow a questionable detour and return with route information or a small recovered item.
+
+#### Text direction
+
+Fen should overstate the safety of something obviously unsafe.
+
+### Optional quest: My Second-Best Escape Route
+
+#### Narrative purpose
+
+A character-focused quest where Fen reveals that his survival knowledge is mostly escape knowledge.
+
+#### Objective
+
+Recover something Fen dropped while "testing route efficiency under pressure."
+
+#### Text direction
+
+Fen should insist he was not fleeing, only measuring the route's usefulness during a realistic emergency.
+
+### Epilogue quest: I Was Basically There
+
+#### Narrative context
+
+After Goblin Camp or a major goblin-related victory, Fen reacts to the player's success.
+
+#### Objective
+
+Return to Fen after Goblin Camp or a major goblin victory.
+
+#### Completion text direction
+
+Fen should take partial credit in a funny way, but still acknowledge the player.
+
+Example direction:
+
+You made it back.
+
+Excellent. That means my guidance was flawless, your survival instincts were acceptable, and the goblins were only mostly prepared.
+
+I would like to say I was with you in spirit. Specifically, the cautious part of the spirit. The part standing behind a tree, offering quiet encouragement from a sensible distance.
+
+Still. You did it. I pointed, you survived, the camp is weaker, and I will now become unbearable about having helped.
+
 ## 13. Playtest notes
 
 These quest chains are not final.
