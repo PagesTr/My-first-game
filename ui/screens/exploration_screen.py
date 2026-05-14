@@ -10,7 +10,8 @@ class ExplorationScreen:
         self.player_rect = pygame.Rect(382, 308, 24, 30)
         self.player_speed = 6
         self.npc_rect = pygame.Rect(548, 250, 28, 34)
-        self.message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres du PNJ. Echap pour rentrer."
+        self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres d'un point. Echap pour rentrer."
+        self.message = self.default_message
         self.message_until_ms = 0
         self.obstacles = [
             pygame.Rect(180, 214, 74, 34),
@@ -27,6 +28,43 @@ class ExplorationScreen:
             (88, 486, 34),
             (566, 474, 30),
         ]
+        self.interactions = [
+            {
+                "id": "quests",
+                "label": "Quetes",
+                "rect": pygame.Rect(520, 218, 88, 56),
+                "prompt": "E - Voir les quetes",
+                "target_state": "quests",
+            },
+            {
+                "id": "forest_path",
+                "label": "Foret",
+                "rect": pygame.Rect(684, 112, 88, 72),
+                "prompt": "E - Aller vers la foret",
+                "target_state": "zone_select",
+            },
+            {
+                "id": "dungeon_gate",
+                "label": "Donjons",
+                "rect": pygame.Rect(46, 248, 96, 86),
+                "prompt": "E - Entrer dans les donjons",
+                "target_state": "dungeon",
+            },
+            {
+                "id": "craft_bench",
+                "label": "Craft",
+                "rect": pygame.Rect(116, 420, 112, 54),
+                "prompt": "E - Ouvrir le craft",
+                "target_state": "crafting",
+            },
+            {
+                "id": "town_exit",
+                "label": "Town",
+                "rect": pygame.Rect(362, 492, 104, 34),
+                "prompt": "E - Retourner en ville",
+                "action": "return_to_town",
+            },
+        ]
 
     def handle_event(self, event):
         if event.type != pygame.KEYDOWN:
@@ -35,6 +73,12 @@ class ExplorationScreen:
         if event.key == pygame.K_ESCAPE:
             self.game.return_to_town()
             return
+
+        if event.key == pygame.K_e:
+            interaction = self._get_active_interaction()
+            if interaction is not None:
+                self._activate_interaction(interaction)
+                return
 
         if event.key == pygame.K_e and self.player_rect.colliderect(self.npc_rect.inflate(58, 58)):
             self.message = "Le garde forestier hoche la tete. Rien de dangereux a signaler. Pour l'instant."
@@ -61,6 +105,7 @@ class ExplorationScreen:
         self._draw_background(screen)
         self._draw_path(screen)
         self._draw_trees(screen)
+        self._draw_interactions(screen)
         self._draw_obstacles(screen)
         self._draw_npc(screen)
         self._draw_player(screen)
@@ -88,6 +133,23 @@ class ExplorationScreen:
 
     def _collides_with_obstacle(self, candidate):
         return any(candidate.colliderect(obstacle) for obstacle in self.obstacles)
+
+    def _get_active_interaction(self):
+        reach_rect = self.player_rect.inflate(46, 46)
+        for interaction in self.interactions:
+            if reach_rect.colliderect(interaction["rect"]):
+                return interaction
+        return None
+
+    def _activate_interaction(self, interaction):
+        action = interaction.get("action")
+        if action == "return_to_town":
+            self.game.return_to_town()
+            return
+
+        target_state = interaction.get("target_state")
+        if target_state:
+            self.game.state = target_state
 
     def _draw_background(self, screen):
         screen.fill((23, 54, 35))
@@ -126,6 +188,68 @@ class ExplorationScreen:
             pygame.draw.rect(screen, (134, 112, 76), rect, 2, border_radius=4)
             pygame.draw.line(screen, (45, 36, 28), (rect.x + 8, rect.centery), (rect.right - 8, rect.centery), 2)
 
+    def _draw_interactions(self, screen):
+        active = self._get_active_interaction()
+        for interaction in self.interactions:
+            rect = interaction["rect"]
+            is_active = interaction is active
+            if interaction["id"] == "quests":
+                self._draw_quest_post(screen, rect, is_active)
+            elif interaction["id"] == "forest_path":
+                self._draw_forest_exit(screen, rect, is_active)
+            elif interaction["id"] == "dungeon_gate":
+                self._draw_dungeon_gate(screen, rect, is_active)
+            elif interaction["id"] == "craft_bench":
+                self._draw_craft_bench(screen, rect, is_active)
+            elif interaction["id"] == "town_exit":
+                self._draw_town_exit(screen, rect, is_active)
+
+    def _draw_interaction_marker(self, screen, rect, label, is_active):
+        color = (238, 214, 126) if is_active else (168, 148, 90)
+        pygame.draw.circle(screen, color, (rect.centerx, rect.y - 10), 5)
+        text = self.small_font.render(label, True, (235, 226, 190))
+        text_rect = text.get_rect(center=(rect.centerx, rect.y - 24))
+        screen.blit(text, text_rect)
+
+    def _draw_quest_post(self, screen, rect, is_active):
+        pygame.draw.rect(screen, (83, 58, 38), (rect.x + 12, rect.y + 10, 14, rect.h - 10))
+        board = pygame.Rect(rect.x + 24, rect.y + 4, rect.w - 30, 34)
+        pygame.draw.rect(screen, (118, 84, 50), board, border_radius=4)
+        pygame.draw.rect(screen, (224, 190, 104), board, 2, border_radius=4)
+        pygame.draw.line(screen, (60, 42, 30), (board.x + 10, board.y + 12), (board.right - 10, board.y + 12), 2)
+        pygame.draw.line(screen, (60, 42, 30), (board.x + 10, board.y + 22), (board.right - 18, board.y + 22), 2)
+        self._draw_interaction_marker(screen, rect, "Quetes", is_active)
+
+    def _draw_forest_exit(self, screen, rect, is_active):
+        pygame.draw.ellipse(screen, (54, 82, 38), rect)
+        pygame.draw.arc(screen, (151, 124, 76), rect.inflate(-10, -8), 3.3, 6.1, 4)
+        pygame.draw.polygon(screen, (28, 94, 44), [(rect.x + 24, rect.y + 46), (rect.x + 44, rect.y + 10), (rect.x + 66, rect.y + 46)])
+        self._draw_interaction_marker(screen, rect, "Foret", is_active)
+
+    def _draw_dungeon_gate(self, screen, rect, is_active):
+        pygame.draw.ellipse(screen, (13, 17, 18), rect)
+        pygame.draw.arc(screen, (93, 86, 78), rect, 3.2, 6.2, 6)
+        inner = rect.inflate(-26, -18)
+        pygame.draw.ellipse(screen, (4, 8, 10), inner)
+        self._draw_interaction_marker(screen, rect, "Donjons", is_active)
+
+    def _draw_craft_bench(self, screen, rect, is_active):
+        top = pygame.Rect(rect.x + 8, rect.y + 12, rect.w - 16, 18)
+        pygame.draw.rect(screen, (103, 69, 42), top, border_radius=4)
+        pygame.draw.rect(screen, (196, 151, 84), top, 2, border_radius=4)
+        pygame.draw.rect(screen, (72, 48, 31), (rect.x + 20, rect.y + 30, 10, 22))
+        pygame.draw.rect(screen, (72, 48, 31), (rect.right - 30, rect.y + 30, 10, 22))
+        pygame.draw.circle(screen, (156, 158, 146), (rect.centerx + 20, rect.y + 8), 7)
+        self._draw_interaction_marker(screen, rect, "Craft", is_active)
+
+    def _draw_town_exit(self, screen, rect, is_active):
+        pygame.draw.rect(screen, (86, 72, 48), rect, border_radius=5)
+        pygame.draw.rect(screen, (209, 177, 95), rect, 2, border_radius=5)
+        label = self.small_font.render("Town", True, (245, 230, 180))
+        label_rect = label.get_rect(center=rect.center)
+        screen.blit(label, label_rect)
+        self._draw_interaction_marker(screen, rect, "Ville", is_active)
+
     def _draw_npc(self, screen):
         pygame.draw.ellipse(screen, (16, 33, 24), self.npc_rect.move(3, 8))
         pygame.draw.rect(screen, (79, 90, 58), self.npc_rect, border_radius=6)
@@ -143,13 +267,22 @@ class ExplorationScreen:
         pygame.draw.rect(screen, (18, 21, 18), panel, border_radius=8)
         pygame.draw.rect(screen, (104, 139, 90), panel, 2, border_radius=8)
 
-        text = self.message
         if self.message_until_ms and current_time_ms > self.message_until_ms:
-            text = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres du PNJ. Echap pour rentrer."
-            self.message = text
+            self.message = self.default_message
             self.message_until_ms = 0
+        active_interaction = self._get_active_interaction()
+        text = active_interaction["prompt"] if active_interaction is not None else self.message
 
         title = self.title_font.render("Exploration", True, (220, 232, 190))
         screen.blit(title, (38, 553))
-        body = self.body_font.render(text, True, (220, 220, 205))
+        body = self.body_font.render(self._fit_panel_text(text, 570), True, (220, 220, 205))
         screen.blit(body, (178, 558))
+
+    def _fit_panel_text(self, text, max_width):
+        text = str(text)
+        if self.body_font.size(text)[0] <= max_width:
+            return text
+        ellipsis = "..."
+        while text and self.body_font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+        return text + ellipsis if text else ellipsis
