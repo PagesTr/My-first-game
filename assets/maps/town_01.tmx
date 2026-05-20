@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="270">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="1091">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
@@ -115,9 +115,9 @@
  </layer>
  <layer id="2" name="01_ground" width="80" height="100">
   <data encoding="csv">
-2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,
-2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2353,2352,2352,2353,2354,2353,2352,2354,2354,2354,2353,2352,2354,2352,2353,2354,2352,2352,2352,2352,2352,
-2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2354,2353,2354,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2352,2354,2354,2352,2353,2352,2353,2353,2352,2353,2354,2353,2353,2352,2354,2353,2353,2354,2352,2352,2352,
+2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2907,2937,2962,2957,2959,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,
+2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2911,3007,3011,2962,2957,2959,2352,2352,2352,2353,2352,2352,2353,2354,2353,2352,2354,2354,2354,2353,2352,2354,2352,2353,2354,2352,2352,2352,2352,2352,
+2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2354,2353,2354,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2912,2962,2911,2962,2957,2959,2352,2352,2352,2352,2354,2354,2352,2353,2352,2353,2353,2352,2353,2354,2353,2353,2352,2354,2353,2353,2354,2352,2352,2352,
 2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2353,2354,2354,2352,2352,2352,2352,2353,2353,2353,2352,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2352,2352,2352,2353,2354,2353,2353,2352,2354,2352,2353,2354,2354,2352,2354,2352,2352,2352,2352,2352,2352,
 2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2353,2354,2352,2353,2354,2352,2353,2354,2353,2352,2353,2353,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2352,2353,2354,2353,2354,2354,2354,2354,2352,2353,2353,2352,2353,2353,2352,2352,2352,2352,2352,2352,2352,
 2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2959,2959,2959,2959,2959,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2353,2354,2354,2353,2353,2352,2353,2353,2352,2354,2354,2352,2352,2352,2352,2352,2959,2961,2962,2962,2962,2962,2957,2959,2352,2352,2352,2353,2354,2354,2354,2352,2352,2352,2353,2354,2352,2354,2353,2354,2352,2354,2353,2354,2353,2352,2352,2352,
@@ -427,28 +427,28 @@
  </layer>
  <layer id="3" name="04_decor_high" width="80" height="100">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2804,2805,2817,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2804,2763,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,2763,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,2776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,2763,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,2776,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2806,2807,2808,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2820,0,2806,2807,2808,0,0,0,0,0,0,0,0,0,0,0,2763,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2820,0,0,0,0,2803,2804,2805,0,0,0,0,0,2776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,2763,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2806,2807,2808,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2763,2820,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,0,0,2763,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,2803,2804,2805,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,2763,2803,4267,4270,4269,4270,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,2776,0,4292,4295,4294,4295,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2804,2805,2817,0,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2907,2937,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2804,2763,0,0,0,0,0,0,0,0,0,0,0,0,2961,2911,3007,3011,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,2776,0,0,0,0,0,0,0,0,0,0,0,0,2961,2912,2962,2911,2962,2957,2959,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,2763,0,2961,2962,2962,2962,2962,2957,2959,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,2776,0,2961,2962,2962,2962,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2962,2962,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,2959,2959,2985,3009,3009,2983,2959,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2962,2962,2962,2957,2959,2959,0,0,2809,2810,2811,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2959,2959,2985,3010,2962,2962,3008,3009,2983,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,2763,0,0,0,2961,2962,2962,2962,2962,3008,2983,2959,2959,2959,0,2823,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2809,2810,2811,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2959,2985,3010,2962,2962,2962,2962,2962,3008,2983,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,2776,0,0,2803,2935,2910,2962,2962,2962,2962,3008,3009,2983,2959,2959,2959,2959,2959,2959,2959,2959,2959,0,0,0,0,0,0,0,0,0,2823,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2985,3010,2962,2962,2962,2962,2962,2962,2962,2957,0,0,0,0,0,0,0,0,0,2806,2807,2808,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2959,2961,2962,2962,2962,2962,2962,2962,3008,3009,3009,3009,3009,3009,3009,3009,2983,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,
+0,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2957,0,0,0,0,0,0,0,0,0,0,2820,0,2806,2807,2808,0,0,0,0,0,0,0,0,0,0,0,2763,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,3008,3009,3009,3009,3009,3009,3009,3009,3009,3009,3009,3009,3009,2983,2959,
+0,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2957,0,0,0,0,0,0,0,0,0,0,0,0,0,2820,0,0,0,0,2803,2804,2805,0,0,0,0,0,2776,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,3008,3009,
+0,0,0,0,0,0,0,0,0,0,0,0,2961,2962,2962,2962,2962,2962,2962,2908,2909,2933,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,2763,0,0,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,
+0,0,0,0,0,0,0,0,0,0,0,0,2935,2909,2909,2909,2909,2909,2909,2933,2959,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,2961,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2959,2961,2962,2962,2962,2962,2962,2908,2909,2909,2909,2910,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,2962,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2806,2807,2808,0,0,0,2803,2804,2805,0,0,0,0,0,2959,2961,2962,2962,2962,2962,2908,2933,2959,2959,2959,2935,2909,2909,2909,2909,2909,2909,2909,2909,2909,2909,2909,2909,2910,2962,2962,2962,2908,2909,2909,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2763,2820,0,0,0,0,0,2817,0,0,0,0,0,0,2959,2935,2910,2962,2962,2962,2957,2959,2959,2805,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2959,2935,2909,2909,2909,2933,2959,2959,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,0,0,2763,0,0,0,0,0,0,0,2959,2959,2961,2962,2962,2962,2957,2959,2817,0,0,0,2803,2804,2805,0,0,0,0,2817,0,0,0,0,2959,2959,2959,2959,2959,2959,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,0,0,0,0,0,0,2959,2961,2962,2962,2962,2957,2959,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2803,2804,2805,0,0,0,0,0,0,0,2763,2803,4267,4270,4269,4270,0,0,2959,2961,2962,2962,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2817,0,0,0,0,0,0,0,0,2776,0,4292,4295,4294,4295,0,0,2959,2961,2962,2962,2962,2957,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2959,2935,2909,2909,2909,2933,2959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2763,0,2803,2804,2805,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2776,0,0,2817,0,0,0,0,0,4182,4183,0,4267,4268,0,4267,4268,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4207,4208,0,4292,4293,0,4292,4293,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -841,7 +841,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="90_collisions" visible="0">
+ <objectgroup id="4" name="90_collisions">
   <object id="24" name="coll_tree_" type="collision" x="672" y="64" width="16" height="16">
    <properties>
     <property name="solid" type="bool" value="true"/>
@@ -1550,6 +1550,2458 @@
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="270" name="coll_water" type="collision" x="320" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="271" name="coll_water" type="collision" x="208" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="272" name="coll_water" type="collision" x="224" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="273" name="coll_water" type="collision" x="240" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="274" name="coll_water" type="collision" x="256" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="275" name="coll_water" type="collision" x="272" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="276" name="coll_water" type="collision" x="288" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="277" name="coll_water" type="collision" x="336" y="192" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="278" name="coll_water" type="collision" x="304" y="208" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="279" name="coll_water" type="collision" x="200" y="208" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="280" name="coll_water" type="collision" x="336" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="281" name="coll_water" type="collision" x="336" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="282" name="coll_water" type="collision" x="336" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="283" name="coll_water" type="collision" x="192" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="284" name="coll_water" type="collision" x="192" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="285" name="coll_water" type="collision" x="192" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="286" name="coll_water" type="collision" x="256" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="287" name="coll_water" type="collision" x="272" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="288" name="coll_water" type="collision" x="240" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="289" name="coll_water" type="collision" x="256" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="290" name="coll_water" type="collision" x="272" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="291" name="coll_water" type="collision" x="288" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="292" name="coll_water" type="collision" x="304" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="293" name="coll_water" type="collision" x="224" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="294" name="coll_water" type="collision" x="240" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="295" name="coll_water" type="collision" x="256" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="296" name="coll_water" type="collision" x="272" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="297" name="coll_water" type="collision" x="288" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="298" name="coll_water" type="collision" x="304" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="299" name="coll_water" type="collision" x="320" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="300" name="coll_water" type="collision" x="208" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="301" name="coll_water" type="collision" x="224" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="302" name="coll_water" type="collision" x="240" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="303" name="coll_water" type="collision" x="256" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="304" name="coll_water" type="collision" x="272" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="305" name="coll_water" type="collision" x="288" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="306" name="coll_water" type="collision" x="304" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="307" name="coll_water" type="collision" x="320" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="308" name="coll_water" type="collision" x="208" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="309" name="coll_water" type="collision" x="224" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="310" name="coll_water" type="collision" x="240" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="311" name="coll_water" type="collision" x="256" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="312" name="coll_water" type="collision" x="272" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="313" name="coll_water" type="collision" x="288" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="314" name="coll_water" type="collision" x="304" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="315" name="coll_water" type="collision" x="320" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="316" name="coll_water" type="collision" x="208" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="317" name="coll_water" type="collision" x="224" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="318" name="coll_water" type="collision" x="240" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="319" name="coll_water" type="collision" x="256" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="320" name="coll_water" type="collision" x="272" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="321" name="coll_water" type="collision" x="288" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="322" name="coll_water" type="collision" x="288" y="104" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="323" name="coll_water" type="collision" x="320" y="120" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="324" name="coll_water" type="collision" x="336" y="136" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="325" name="coll_water" type="collision" x="248" y="104" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="326" name="coll_water" type="collision" x="232" y="120" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="327" name="coll_water" type="collision" x="216" y="136" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="328" name="coll_water" type="collision" x="200" y="152" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="329" name="coll_water" type="collision" x="256" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="330" name="coll_water" type="collision" x="272" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="331" name="coll_water" type="collision" x="304" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="797" name="coll_tree" type="collision" x="784" y="144" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="798" name="coll_tree" type="collision" x="912" y="272" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="799" name="coll_tree" type="collision" x="1088" y="272" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="800" name="coll_tree" type="collision" x="992" y="288" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="801" name="coll_tree" type="collision" x="1200" y="304" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="802" name="coll_tree" type="collision" x="912" y="48" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="803" name="coll_tree" type="collision" x="1152" y="48" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="804" name="coll_tree" type="collision" x="1072" y="80" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="805" name="coll_tree" type="collision" x="960" y="112" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="806" name="coll_tree" type="collision" x="1216" y="128" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="807" name="coll_tree" type="collision" x="784" y="144" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="808" name="coll_tree" type="collision" x="912" y="272" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="809" name="coll_tree" type="collision" x="1088" y="272" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="810" name="coll_tree" type="collision" x="992" y="288" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="811" name="coll_tree" type="collision" x="1200" y="304" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="812" name="coll_tree" type="collision" x="912" y="48" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="813" name="coll_tree" type="collision" x="1152" y="48" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="814" name="coll_tree" type="collision" x="1072" y="80" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="815" name="coll_tree" type="collision" x="960" y="112" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="816" name="coll_tree" type="collision" x="1216" y="128" width="16" height="16">
+   <properties>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="817" name="coll_water" type="collision" x="816" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="818" name="coll_water" type="collision" x="912" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="819" name="coll_water" type="collision" x="928" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="820" name="coll_water" type="collision" x="944" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="821" name="coll_water" type="collision" x="976" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="822" name="coll_water" type="collision" x="992" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="823" name="coll_water" type="collision" x="1008" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="824" name="coll_water" type="collision" x="1024" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="825" name="coll_water" type="collision" x="1040" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="826" name="coll_water" type="collision" x="1056" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="827" name="coll_water" type="collision" x="1072" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="828" name="coll_water" type="collision" x="1088" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="829" name="coll_water" type="collision" x="1104" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="830" name="coll_water" type="collision" x="1120" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="831" name="coll_water" type="collision" x="1136" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="832" name="coll_water" type="collision" x="1152" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="833" name="coll_water" type="collision" x="1248" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="834" name="coll_water" type="collision" x="1264" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="835" name="coll_water" type="collision" x="1184" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="836" name="coll_water" type="collision" x="1200" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="837" name="coll_water" type="collision" x="1216" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="838" name="coll_water" type="collision" x="832" y="336" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="839" name="coll_water" type="collision" x="848" y="336" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="840" name="coll_water" type="collision" x="864" y="336" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="841" name="coll_water" type="collision" x="800" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="842" name="coll_water" type="collision" x="832" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="843" name="coll_water" type="collision" x="800" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="844" name="coll_water" type="collision" x="896" y="240" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="845" name="coll_water" type="collision" x="1232" y="256" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="846" name="coll_water" type="collision" x="880" y="336" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="847" name="coll_water" type="collision" x="792" y="128" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="848" name="coll_water" type="collision" x="968" y="240" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="849" name="coll_water" type="collision" x="808" y="256" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="850" name="coll_water" type="collision" x="1176" y="256" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="851" name="coll_water" type="collision" x="824" y="336" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="852" name="coll_water" type="collision" x="832" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="853" name="coll_water" type="collision" x="864" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="854" name="coll_water" type="collision" x="864" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="855" name="coll_water" type="collision" x="864" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="856" name="coll_water" type="collision" x="864" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="857" name="coll_water" type="collision" x="864" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="858" name="coll_water" type="collision" x="864" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="859" name="coll_water" type="collision" x="864" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="860" name="coll_water" type="collision" x="880" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="861" name="coll_water" type="collision" x="880" y="272" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="862" name="coll_water" type="collision" x="880" y="288" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="863" name="coll_water" type="collision" x="880" y="304" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="864" name="coll_water" type="collision" x="880" y="320" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="865" name="coll_water" type="collision" x="784" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="866" name="coll_water" type="collision" x="784" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="867" name="coll_water" type="collision" x="784" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="868" name="coll_water" type="collision" x="784" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="869" name="coll_water" type="collision" x="784" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="870" name="coll_water" type="collision" x="784" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="871" name="coll_water" type="collision" x="784" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="872" name="coll_water" type="collision" x="784" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="873" name="coll_water" type="collision" x="800" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="874" name="coll_water" type="collision" x="800" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="875" name="coll_water" type="collision" x="800" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="876" name="coll_water" type="collision" x="800" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="877" name="coll_water" type="collision" x="800" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="878" name="coll_water" type="collision" x="800" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="879" name="coll_water" type="collision" x="800" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="880" name="coll_water" type="collision" x="816" y="272" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="881" name="coll_water" type="collision" x="816" y="288" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="882" name="coll_water" type="collision" x="816" y="304" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="883" name="coll_water" type="collision" x="816" y="320" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="884" name="coll_water" type="collision" x="800" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="885" name="coll_water" type="collision" x="848" y="0" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="886" name="coll_water" type="collision" x="848" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="887" name="coll_water" type="collision" x="816" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="888" name="coll_water" type="collision" x="848" y="32" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="889" name="coll_water" type="collision" x="800" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="890" name="coll_water" type="collision" x="816" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="891" name="coll_water" type="collision" x="832" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="892" name="coll_water" type="collision" x="848" y="48" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="893" name="coll_water" type="collision" x="800" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="894" name="coll_water" type="collision" x="816" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="895" name="coll_water" type="collision" x="832" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="896" name="coll_water" type="collision" x="848" y="64" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="897" name="coll_water" type="collision" x="800" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="898" name="coll_water" type="collision" x="816" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="899" name="coll_water" type="collision" x="832" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="900" name="coll_water" type="collision" x="848" y="80" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="901" name="coll_water" type="collision" x="800" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="902" name="coll_water" type="collision" x="816" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="903" name="coll_water" type="collision" x="832" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="904" name="coll_water" type="collision" x="848" y="96" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="905" name="coll_water" type="collision" x="800" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="906" name="coll_water" type="collision" x="816" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="907" name="coll_water" type="collision" x="832" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="908" name="coll_water" type="collision" x="848" y="112" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="909" name="coll_water" type="collision" x="816" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="910" name="coll_water" type="collision" x="832" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="911" name="coll_water" type="collision" x="848" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="912" name="coll_water" type="collision" x="864" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="913" name="coll_water" type="collision" x="816" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="914" name="coll_water" type="collision" x="832" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="915" name="coll_water" type="collision" x="848" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="916" name="coll_water" type="collision" x="864" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="917" name="coll_water" type="collision" x="880" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="918" name="coll_water" type="collision" x="896" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="919" name="coll_water" type="collision" x="816" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="920" name="coll_water" type="collision" x="832" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="921" name="coll_water" type="collision" x="848" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="922" name="coll_water" type="collision" x="864" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="923" name="coll_water" type="collision" x="880" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="924" name="coll_water" type="collision" x="896" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="925" name="coll_water" type="collision" x="912" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="926" name="coll_water" type="collision" x="928" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="927" name="coll_water" type="collision" x="944" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="928" name="coll_water" type="collision" x="960" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="929" name="coll_water" type="collision" x="976" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="930" name="coll_water" type="collision" x="992" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="931" name="coll_water" type="collision" x="1008" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="932" name="coll_water" type="collision" x="1024" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="933" name="coll_water" type="collision" x="816" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="934" name="coll_water" type="collision" x="832" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="935" name="coll_water" type="collision" x="848" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="936" name="coll_water" type="collision" x="864" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="937" name="coll_water" type="collision" x="880" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="938" name="coll_water" type="collision" x="896" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="939" name="coll_water" type="collision" x="912" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="940" name="coll_water" type="collision" x="928" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="941" name="coll_water" type="collision" x="944" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="942" name="coll_water" type="collision" x="960" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="943" name="coll_water" type="collision" x="976" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="944" name="coll_water" type="collision" x="992" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="945" name="coll_water" type="collision" x="1008" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="946" name="coll_water" type="collision" x="1024" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="947" name="coll_water" type="collision" x="1040" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="948" name="coll_water" type="collision" x="1056" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="949" name="coll_water" type="collision" x="1072" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="950" name="coll_water" type="collision" x="1088" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="951" name="coll_water" type="collision" x="1104" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="952" name="coll_water" type="collision" x="1120" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="953" name="coll_water" type="collision" x="1136" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="954" name="coll_water" type="collision" x="1152" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="955" name="coll_water" type="collision" x="1168" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="956" name="coll_water" type="collision" x="1184" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="957" name="coll_water" type="collision" x="1200" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="958" name="coll_water" type="collision" x="1216" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="959" name="coll_water" type="collision" x="1232" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="960" name="coll_water" type="collision" x="816" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="961" name="coll_water" type="collision" x="832" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="962" name="coll_water" type="collision" x="848" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="963" name="coll_water" type="collision" x="864" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="964" name="coll_water" type="collision" x="880" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="965" name="coll_water" type="collision" x="896" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="966" name="coll_water" type="collision" x="912" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="967" name="coll_water" type="collision" x="928" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="968" name="coll_water" type="collision" x="944" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="969" name="coll_water" type="collision" x="960" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="970" name="coll_water" type="collision" x="976" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="971" name="coll_water" type="collision" x="992" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="972" name="coll_water" type="collision" x="1008" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="973" name="coll_water" type="collision" x="1024" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="974" name="coll_water" type="collision" x="1040" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="975" name="coll_water" type="collision" x="1056" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="976" name="coll_water" type="collision" x="1072" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="977" name="coll_water" type="collision" x="1088" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="978" name="coll_water" type="collision" x="1104" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="979" name="coll_water" type="collision" x="1120" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="980" name="coll_water" type="collision" x="1136" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="981" name="coll_water" type="collision" x="1152" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="982" name="coll_water" type="collision" x="1168" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="983" name="coll_water" type="collision" x="1184" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="984" name="coll_water" type="collision" x="1200" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="985" name="coll_water" type="collision" x="1216" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="986" name="coll_water" type="collision" x="1232" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="987" name="coll_water" type="collision" x="1248" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="988" name="coll_water" type="collision" x="1264" y="192" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="989" name="coll_water" type="collision" x="816" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="990" name="coll_water" type="collision" x="832" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="991" name="coll_water" type="collision" x="848" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="992" name="coll_water" type="collision" x="864" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="993" name="coll_water" type="collision" x="880" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="994" name="coll_water" type="collision" x="896" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="995" name="coll_water" type="collision" x="912" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="996" name="coll_water" type="collision" x="928" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="997" name="coll_water" type="collision" x="944" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="998" name="coll_water" type="collision" x="960" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="999" name="coll_water" type="collision" x="976" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1000" name="coll_water" type="collision" x="992" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1001" name="coll_water" type="collision" x="1008" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1002" name="coll_water" type="collision" x="1024" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1003" name="coll_water" type="collision" x="1040" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1004" name="coll_water" type="collision" x="1056" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1005" name="coll_water" type="collision" x="1072" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1006" name="coll_water" type="collision" x="1088" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1007" name="coll_water" type="collision" x="1104" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1008" name="coll_water" type="collision" x="1120" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1009" name="coll_water" type="collision" x="1136" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1010" name="coll_water" type="collision" x="1152" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1011" name="coll_water" type="collision" x="1168" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1012" name="coll_water" type="collision" x="1184" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1013" name="coll_water" type="collision" x="1200" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1014" name="coll_water" type="collision" x="1216" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1015" name="coll_water" type="collision" x="1232" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1016" name="coll_water" type="collision" x="1248" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1017" name="coll_water" type="collision" x="1264" y="208" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1018" name="coll_water" type="collision" x="816" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1019" name="coll_water" type="collision" x="832" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1020" name="coll_water" type="collision" x="848" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1021" name="coll_water" type="collision" x="864" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1022" name="coll_water" type="collision" x="880" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1023" name="coll_water" type="collision" x="976" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1024" name="coll_water" type="collision" x="992" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1025" name="coll_water" type="collision" x="1008" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1026" name="coll_water" type="collision" x="1024" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1027" name="coll_water" type="collision" x="1040" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1028" name="coll_water" type="collision" x="1056" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1029" name="coll_water" type="collision" x="1072" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1030" name="coll_water" type="collision" x="1088" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1031" name="coll_water" type="collision" x="1104" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1032" name="coll_water" type="collision" x="1120" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1033" name="coll_water" type="collision" x="1136" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1034" name="coll_water" type="collision" x="1152" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1035" name="coll_water" type="collision" x="1168" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1036" name="coll_water" type="collision" x="1184" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1037" name="coll_water" type="collision" x="1200" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1038" name="coll_water" type="collision" x="1216" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1039" name="coll_water" type="collision" x="1232" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1040" name="coll_water" type="collision" x="1248" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1041" name="coll_water" type="collision" x="1264" y="224" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1042" name="coll_water" type="collision" x="816" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1043" name="coll_water" type="collision" x="832" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1044" name="coll_water" type="collision" x="848" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1045" name="coll_water" type="collision" x="864" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1046" name="coll_water" type="collision" x="1184" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1047" name="coll_water" type="collision" x="1200" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1048" name="coll_water" type="collision" x="1216" y="240" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1049" name="coll_water" type="collision" x="832" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1050" name="coll_water" type="collision" x="848" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1051" name="coll_water" type="collision" x="864" y="256" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1052" name="coll_water" type="collision" x="832" y="272" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1053" name="coll_water" type="collision" x="848" y="272" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1054" name="coll_water" type="collision" x="864" y="272" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1055" name="coll_water" type="collision" x="832" y="288" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1056" name="coll_water" type="collision" x="848" y="288" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1057" name="coll_water" type="collision" x="864" y="288" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1058" name="coll_water" type="collision" x="832" y="304" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1059" name="coll_water" type="collision" x="848" y="304" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1060" name="coll_water" type="collision" x="864" y="304" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1061" name="coll_water" type="collision" x="832" y="320" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1062" name="coll_water" type="collision" x="848" y="320" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1063" name="coll_water" type="collision" x="864" y="320" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1064" name="coll_water" type="collision" x="880" y="120" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1065" name="coll_water" type="collision" x="912" y="136" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1066" name="coll_water" type="collision" x="1040" y="152" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1067" name="coll_water" type="collision" x="1248" y="168" width="8" height="8">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1068" name="coll_water" type="collision" x="816" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1069" name="coll_water" type="collision" x="896" y="128" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1070" name="coll_water" type="collision" x="928" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1071" name="coll_water" type="collision" x="944" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1072" name="coll_water" type="collision" x="960" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1073" name="coll_water" type="collision" x="976" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1074" name="coll_water" type="collision" x="992" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1075" name="coll_water" type="collision" x="1008" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1076" name="coll_water" type="collision" x="1024" y="144" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1077" name="coll_water" type="collision" x="1056" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1078" name="coll_water" type="collision" x="1072" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1079" name="coll_water" type="collision" x="1088" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1080" name="coll_water" type="collision" x="1104" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1081" name="coll_water" type="collision" x="1120" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1082" name="coll_water" type="collision" x="1136" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1083" name="coll_water" type="collision" x="1152" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1084" name="coll_water" type="collision" x="1168" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1085" name="coll_water" type="collision" x="1184" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1086" name="coll_water" type="collision" x="1200" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1087" name="coll_water" type="collision" x="1216" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1088" name="coll_water" type="collision" x="1232" y="160" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1089" name="coll_water" type="collision" x="1264" y="176" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
+   </properties>
+  </object>
+  <object id="1090" name="coll_water" type="collision" x="832" y="16" width="16" height="16">
+   <properties>
+    <property name="slow_coeff" type="float" value="5"/>
+    <property name="solid" type="bool" value="true"/>
+    <property name="type" value="water"/>
    </properties>
   </object>
  </objectgroup>

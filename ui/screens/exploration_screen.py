@@ -18,6 +18,7 @@ class TiledMap:
         self.pixel_height = 0
         self.layers = []
         self.tiles = {}
+        self.collision_rects = []
         self.error_message = None
         self.is_loaded = False
         self._load()
@@ -41,6 +42,7 @@ class TiledMap:
                     continue
                 self.layers.append(self._parse_csv_layer(layer_node, data_node))
 
+            self._load_object_groups(root)
             self.is_loaded = bool(self.layers and self.tiles)
             if not self.is_loaded:
                 self.error_message = "Aucun calque Tiled lisible."
@@ -79,6 +81,51 @@ class TiledMap:
             row = local_id // columns
             tile_rect = pygame.Rect(column * tile_width, row * tile_height, tile_width, tile_height)
             self.tiles[first_gid + local_id] = image.subsurface(tile_rect).copy()
+
+    def _load_object_groups(self, root):
+        for object_group in root.findall("objectgroup"):
+            if object_group.attrib.get("name") != "90_collisions":
+                continue
+            for object_node in object_group.findall("object"):
+                rect = self._build_collision_rect(object_node)
+                if rect is not None:
+                    self.collision_rects.append(rect)
+
+    def _build_collision_rect(self, object_node):
+        if object_node.attrib.get("type") != "collision":
+            return None
+        if not self._get_object_bool_property(object_node, "solid"):
+            return None
+        if object_node.find("ellipse") is not None:
+            return None
+        if object_node.find("polygon") is not None or object_node.find("polyline") is not None:
+            return None
+
+        try:
+            x = int(float(object_node.attrib["x"]))
+            y = int(float(object_node.attrib["y"]))
+            width = int(float(object_node.attrib["width"]))
+            height = int(float(object_node.attrib["height"]))
+        except (KeyError, TypeError, ValueError):
+            return None
+
+        if width <= 0 or height <= 0:
+            return None
+        return pygame.Rect(x, y, width, height)
+
+    def _get_object_bool_property(self, object_node, property_name):
+        properties_node = object_node.find("properties")
+        if properties_node is None:
+            return False
+
+        for property_node in properties_node.findall("property"):
+            if property_node.attrib.get("name") != property_name:
+                continue
+            value = property_node.attrib.get("value")
+            if value is None:
+                value = property_node.text
+            return str(value).strip() in {"true", "True", "1", "On"}
+        return False
 
     def _parse_csv_layer(self, layer_node, data_node):
         layer_width = int(layer_node.attrib.get("width", self.width))
@@ -126,13 +173,19 @@ class ExplorationScreen:
         self.map_width = self.map.pixel_width if self.map.is_loaded else 800
         self.map_height = self.map.pixel_height if self.map.is_loaded else 600
         self.camera_offset = pygame.Vector2(0, 0)
-        self.player_rect = pygame.Rect(self.map_width // 2 - 12, self.map_height // 2 - 15, 24, 30)
+        self.tile_size = 16
+        self.player_visual_size = pygame.Vector2(16, 24)
+        self.player_hitbox_size = pygame.Vector2(10, 8)
+        self.player_sprite = self._load_player_sprite()
+        self.player_rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
+        self.player_rect.center = (self.map_width // 2, self.map_height // 2)
         self.player_speed = 6
         self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
         self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres d'un point. Echap pour rentrer."
         self.message = self.default_message
         self.message_until_ms = 0
-        self.obstacles = []
+        self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
+        self.show_collision_debug = False
         self.interactions = [
             {
                 "id": "quests",
@@ -212,6 +265,7 @@ class ExplorationScreen:
         self._draw_interactions(screen)
         self._draw_npc(screen)
         self._draw_player(screen)
+        self._draw_collision_debug(screen)
         self._draw_help_panel(screen, current_time_ms)
 
     def _move_player(self, movement):
@@ -342,10 +396,48 @@ class ExplorationScreen:
         screen.blit(label, (rect.x - 5, rect.y - 24))
 
     def _draw_player(self, screen):
-        rect = self._to_screen_rect(self.player_rect)
-        pygame.draw.ellipse(screen, (10, 25, 18), rect.move(3, 8))
-        pygame.draw.rect(screen, (66, 122, 166), rect, border_radius=6)
-        pygame.draw.circle(screen, (226, 188, 140), rect.midtop, 8)
+        hitbox_rect = self._to_screen_rect(self.player_rect)
+        draw_rect = self._to_screen_rect(self._get_player_draw_rect())
+        pygame.draw.ellipse(screen, (10, 25, 18), hitbox_rect.inflate(8, 2))
+
+        if self.player_sprite is not None:
+            screen.blit(self.player_sprite, draw_rect)
+            return
+
+        pygame.draw.rect(screen, (66, 122, 166), draw_rect, border_radius=3)
+        pygame.draw.circle(screen, (226, 188, 140), (draw_rect.centerx, draw_rect.y + 5), 5)
+
+    def _load_player_sprite(self):
+        sprite_path = Path("assets/sprites/player/base/idle/idle_down_sheet.png")
+        try:
+            sheet = pygame.image.load(str(sprite_path)).convert_alpha()
+            frame_size = sheet.get_height()
+            frame = sheet.subsurface(pygame.Rect(0, 0, frame_size, frame_size)).copy()
+            content_rect = frame.get_bounding_rect(min_alpha=1)
+            if content_rect.width > 0 and content_rect.height > 0:
+                frame = frame.subsurface(content_rect).copy()
+            return pygame.transform.scale(
+                frame,
+                (int(self.player_visual_size.x), int(self.player_visual_size.y)),
+            )
+        except (OSError, pygame.error, ValueError):
+            return None
+
+    def _get_player_draw_rect(self):
+        draw_rect = pygame.Rect(
+            0,
+            0,
+            int(self.player_visual_size.x),
+            int(self.player_visual_size.y),
+        )
+        draw_rect.midbottom = self.player_rect.midbottom
+        return draw_rect
+
+    def _draw_collision_debug(self, screen):
+        if not self.show_collision_debug:
+            return
+        for obstacle in self.obstacles:
+            pygame.draw.rect(screen, (220, 80, 80), self._to_screen_rect(obstacle), 1)
 
     def _draw_help_panel(self, screen, current_time_ms):
         panel = pygame.Rect(24, 546, 752, 42)
