@@ -1,0 +1,145 @@
+tile_id,gid,name,category,collides,interactable,interaction_type,description
+0,1,grass,terrain,false,false,,Base grass tile for town borders and lawns.
+1,2,grass_variant_flowers,terrain,false,false,,Grass with small flowers.
+2,3,grass_variant_clover,terrain,false,false,,Grass with darker clover patches.
+3,4,grass_variant_worn,terrain,false,false,,Slightly worn grass for natural variation.
+4,5,dirt_path,path,false,false,,Base dirt path.
+5,6,dirt_path_edge_north,path,false,false,,Northern dirt edge against grass.
+6,7,dirt_path_edge_south,path,false,false,,Southern dirt edge against grass.
+7,8,dirt_path_edge_west,path,false,false,,Western dirt edge against grass.
+8,9,dirt_path_edge_east,path,false,false,,Eastern dirt edge against grass.
+9,10,stone_path,path,false,false,,Base stone path.
+10,11,stone_path_variant_cracked,path,false,false,,Cracked stone path variant.
+11,12,stone_path_variant_mossy,path,false,false,,Mossy stone path variant.
+12,13,cobblestone,path,false,false,,Dense cobblestone road tile.
+13,14,plaza_floor,path,false,false,,Clean plaza floor tile.
+14,15,wooden_floor,interior,false,false,,Wooden floor for houses and shops.
+15,16,interior_floor,interior,false,false,,Simple interior floor tile.
+16,17,shadow_tile,terrain,false,false,,Transparent-looking shadow overlay tile.
+17,18,horizontal_path,path,false,false,,Horizontal dirt road segment.
+18,19,vertical_path,path,false,false,,Vertical dirt road segment.
+19,20,path_corner_nw,path,false,false,,North-west path corner.
+20,21,path_corner_ne,path,false,false,,North-east path corner.
+21,22,path_corner_sw,path,false,false,,South-west path corner.
+22,23,path_corner_se,path,false,false,,South-east path corner.
+23,24,path_t_junction_north,path,false,false,,T junction open to north.
+24,25,path_t_junction_south,path,false,false,,T junction open to south.
+25,26,path_t_junction_west,path,false,false,,T junction open to west.
+26,27,path_t_junction_east,path,false,false,,T junction open to east.
+27,28,path_crossroad,path,false,false,,Four-way path crossroad.
+28,29,grass_to_path_north,path,false,false,,Grass to path transition north.
+29,30,grass_to_path_south,path,false,false,,Grass to path transition south.
+30,31,grass_to_path_west,path,false,false,,Grass to path transition west.
+31,32,grass_to_path_east,path,false,false,,Grass to path transition east.
+32,33,plaza_to_path_north,path,false,false,,Plaza to path transition north.
+33,34,plaza_to_path_south,path,false,false,,Plaza to path transition south.
+34,35,plaza_to_path_west,path,false,false,,Plaza to path transition west.
+35,36,plaza_to_path_east,path,false,false,,Plaza to path transition east.
+36,37,house_wall,building,true,false,,Base plaster house wall.
+37,38,house_wall_variant_cracked,building,true,false,,Cracked plaster wall variant.
+38,39,house_wall_variant_vines,building,true,false,,Wall with vines for older homes.
+39,40,wooden_wall,building,true,false,,Wooden wall for stalls or sheds.
+40,41,stone_wall,building,true,false,,Stone wall for forge and sturdy buildings.
+41,42,roof_red,roof,true,false,,Red roof body tile.
+42,43,roof_brown,roof,true,false,,Brown roof body tile.
+43,44,roof_edge_north,roof,true,false,,Roof north edge.
+44,45,roof_edge_south,roof,true,false,,Roof south edge.
+45,46,roof_edge_west,roof,true,false,,Roof west edge.
+46,47,roof_edge_east,roof,true,false,,Roof east edge.
+47,48,roof_corner_nw,roof,true,false,,Roof north-west corner.
+48,49,roof_corner_ne,roof,true,false,,Roof north-east corner.
+49,50,roof_corner_sw,roof,true,false,,Roof south-west corner.
+50,51,roof_corner_se,roof,true,false,,Roof south-east corner.
+51,52,door_closed,building,true,true,exit,Closed building door.
+52,53,door_open,building,false,true,exit,Open building door.
+53,54,window,building,true,false,,House window.
+54,55,shop_window,building,true,true,shop,Shop display window.
+55,56,chimney,roof,true,false,,Roof chimney.
+56,57,signboard,building,true,true,dialogue,Hanging signboard.
+57,58,awning,building,true,false,,Shop awning tile.
+58,59,stairs,building,false,false,,Stone stairs or porch step.
+59,60,foundation_stone,building,true,false,,Stone foundation tile.
+60,61,foundation_wood,building,true,false,,Wooden foundation tile.
+61,62,foundation_corner_left,building,true,false,,Left foundation corner.
+62,63,foundation_corner_right,building,true,false,,Right foundation corner.
+63,64,wooden_table,interior,true,true,dialogue,Simple wooden table.
+64,65,chair,interior,true,false,,Wooden chair.
+65,66,bed,interior,true,false,,Small bed.
+66,67,shelf,interior,true,true,storage,Shelf for shop or house interiors.
+67,68,chest_closed,interior,true,true,storage,Closed chest.
+68,69,chest_open,interior,true,true,storage,Open chest.
+69,70,counter,interior,true,true,shop,Shop counter.
+70,71,fireplace,interior,true,true,craft,Indoor fireplace.
+71,72,carpet,interior,false,false,,Decorative carpet.
+72,73,crate,interior,true,true,storage,Storage crate.
+73,74,barrel,interior,true,true,storage,Storage barrel.
+74,75,storage_sack,interior,true,true,storage,Storage sack.
+75,76,well,decoration,true,true,dialogue,Town well.
+76,77,fountain,animated,true,true,save,Central fountain base frame.
+77,78,lamp_post,animated,true,false,,Lamp post base frame.
+78,79,bench,decoration,true,false,,Wooden bench.
+79,80,fence,decoration,true,false,,Wooden fence.
+80,81,notice_board,decoration,true,true,quest,Notice board for local information.
+81,82,market_stall,decoration,true,true,shop,Small market stall.
+82,83,cart,decoration,true,false,,Hand cart.
+83,84,hay_bale,decoration,false,false,,Decorative hay bale.
+84,85,flower_pot,decoration,false,false,,Small flower pot.
+85,86,small_tree,decoration,true,false,,Small blocking tree.
+86,87,bush,decoration,false,false,,Decorative bush.
+87,88,road_sign,decoration,true,true,dialogue,Road sign.
+88,89,mailbox_or_post,decoration,true,true,dialogue,Mailbox or message post.
+89,90,training_dummy,decoration,true,true,dialogue,Training dummy for guard area.
+90,91,blacksmith_anvil,profession,true,true,craft,Anvil for blacksmithing.
+91,92,blacksmith_forge,animated,true,true,craft,Forge base frame.
+92,93,crafting_table,profession,true,true,craft,General crafting table.
+93,94,alchemy_table,profession,true,true,craft,Alchemy and herbalism table.
+94,95,herb_drying_rack,profession,true,true,craft,Druid herb drying rack.
+95,96,resource_storage,profession,true,true,storage,Resource storage chest and sacks.
+96,97,merchant_counter,profession,true,true,shop,Merchant counter.
+97,98,quest_board,profession,true,true,quest,Main quest board.
+98,99,guild_banner,profession,true,true,dialogue,Guild banner.
+99,100,profession_board,profession,true,true,craft,Profession board.
+100,101,merchant_npc,npc,true,true,shop,Static merchant NPC marker sprite.
+101,102,blacksmith_npc,npc,true,true,craft,Static blacksmith NPC marker sprite.
+102,103,guard_npc,npc,true,true,dialogue,Static guard NPC marker sprite.
+103,104,elder_npc,npc,true,true,dialogue,Static elder NPC marker sprite.
+104,105,healer_npc,npc,true,true,dialogue,Static healer NPC marker sprite.
+105,106,ranger_npc,npc,true,true,dialogue,Static ranger NPC marker sprite.
+106,107,child_npc,npc,true,true,dialogue,Static child NPC marker sprite.
+107,108,villager_male_npc,npc,true,true,dialogue,Static male villager NPC marker sprite.
+108,109,villager_female_npc,npc,true,true,dialogue,Static female villager NPC marker sprite.
+109,110,player_spawn_marker,marker,false,false,,Logical player spawn marker tile.
+110,111,npc_marker,marker,false,false,,Generic NPC placement marker tile.
+111,112,shop_marker,marker,false,false,shop,Shop interaction marker tile.
+112,113,quest_marker,marker,false,false,quest,Quest interaction marker tile.
+113,114,exit_marker,marker,false,false,exit,Map exit marker tile.
+114,115,interaction_marker,marker,false,false,dialogue,Generic interaction marker tile.
+115,116,collision_marker,marker,false,false,,Collision planning marker tile.
+116,117,dungeon_marker,marker,false,false,exit,Dungeon entrance marker tile.
+117,118,crafting_marker,marker,false,false,craft,Crafting station marker tile.
+118,119,save_marker,marker,false,false,save,Save point marker tile.
+119,120,fountain_anim_1,animated,true,true,save,Fountain animation frame 1.
+120,121,fountain_anim_2,animated,true,true,save,Fountain animation frame 2.
+121,122,fountain_anim_3,animated,true,true,save,Fountain animation frame 3.
+122,123,fountain_anim_4,animated,true,true,save,Fountain animation frame 4.
+123,124,lamp_flame_anim_1,animated,true,false,,Lamp flame animation frame 1.
+124,125,lamp_flame_anim_2,animated,true,false,,Lamp flame animation frame 2.
+125,126,lamp_flame_anim_3,animated,true,false,,Lamp flame animation frame 3.
+126,127,lamp_flame_anim_4,animated,true,false,,Lamp flame animation frame 4.
+127,128,forge_fire_anim_1,animated,true,true,craft,Forge fire animation frame 1.
+128,129,forge_fire_anim_2,animated,true,true,craft,Forge fire animation frame 2.
+129,130,forge_fire_anim_3,animated,true,true,craft,Forge fire animation frame 3.
+130,131,forge_fire_anim_4,animated,true,true,craft,Forge fire animation frame 4.
+131,132,fireplace_anim_1,animated,true,true,craft,Fireplace animation frame 1.
+132,133,fireplace_anim_2,animated,true,true,craft,Fireplace animation frame 2.
+133,134,fireplace_anim_3,animated,true,true,craft,Fireplace animation frame 3.
+134,135,fireplace_anim_4,animated,true,true,craft,Fireplace animation frame 4.
+135,136,chest_opening_anim_1,animated,true,true,storage,Chest opening frame 1.
+136,137,chest_opening_anim_2,animated,true,true,storage,Chest opening frame 2.
+137,138,chest_opening_anim_3,animated,true,true,storage,Chest opening frame 3.
+138,139,shop_sign_anim_1,animated,true,true,shop,Shop sign animation frame 1.
+139,140,shop_sign_anim_2,animated,true,true,shop,Shop sign animation frame 2.
+140,141,shop_sign_anim_3,animated,true,true,shop,Shop sign animation frame 3.
+141,142,reserved_empty_1,reserved,false,false,,Reserved fallback tile.
+142,143,reserved_empty_2,reserved,false,false,,Reserved fallback tile.
+143,144,reserved_empty_3,reserved,false,false,,Reserved fallback tile.
