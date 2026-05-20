@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
- <tileset firstgid="2907" source="water.tsx"/>
+ <tileset firstgid="2907" source="../tilesets/water.tsx"/>
  <tileset firstgid="3532" source="../tilesets/pixe_crawlers_doors.tsx"/>
  <tileset firstgid="4157" source="../tilesets/house_tileset.tsx"/>
  <tileset firstgid="4782" source="../tilesets/pixel_crawler_roofs.tsx"/>

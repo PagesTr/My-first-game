@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="39">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_trees.tsx"/>
- <tileset firstgid="157" source="../maps/water.tsx"/>
+ <tileset firstgid="157" source="../tilesets/water.tsx"/>
  <tileset firstgid="782" source="../tilesets/pixel_crawler_vegetation.tsx"/>
  <layer id="7" name="input_04_decor_high" width="40" height="30">
   <data encoding="csv">

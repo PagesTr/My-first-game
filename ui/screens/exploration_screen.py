@@ -1,4 +1,119 @@
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
 import pygame
+
+
+TILED_FLIP_FLAGS = 0xE0000000
+
+
+class TiledMap:
+    def __init__(self, tmx_path):
+        self.tmx_path = Path(tmx_path)
+        self.width = 0
+        self.height = 0
+        self.tile_width = 16
+        self.tile_height = 16
+        self.pixel_width = 0
+        self.pixel_height = 0
+        self.layers = []
+        self.tiles = {}
+        self.error_message = None
+        self.is_loaded = False
+        self._load()
+
+    def _load(self):
+        try:
+            root = ET.parse(self.tmx_path).getroot()
+            self.width = int(root.attrib["width"])
+            self.height = int(root.attrib["height"])
+            self.tile_width = int(root.attrib["tilewidth"])
+            self.tile_height = int(root.attrib["tileheight"])
+            self.pixel_width = self.width * self.tile_width
+            self.pixel_height = self.height * self.tile_height
+
+            for tileset_node in root.findall("tileset"):
+                self._load_tileset(tileset_node)
+
+            for layer_node in root.findall("layer"):
+                data_node = layer_node.find("data")
+                if data_node is None or data_node.attrib.get("encoding") != "csv":
+                    continue
+                self.layers.append(self._parse_csv_layer(layer_node, data_node))
+
+            self.is_loaded = bool(self.layers and self.tiles)
+            if not self.is_loaded:
+                self.error_message = "Aucun calque Tiled lisible."
+        except Exception as exc:
+            self.error_message = f"Map Tiled indisponible: {exc}"
+            self.is_loaded = False
+
+    def _load_tileset(self, tileset_node):
+        first_gid = int(tileset_node.attrib["firstgid"])
+        source = tileset_node.attrib.get("source")
+        if source:
+            tileset_path = (self.tmx_path.parent / source).resolve()
+            tileset_root = ET.parse(tileset_path).getroot()
+        else:
+            tileset_path = self.tmx_path
+            tileset_root = tileset_node
+
+        image_node = tileset_root.find("image")
+        if image_node is None:
+            return
+
+        tile_width = int(tileset_root.attrib.get("tilewidth", self.tile_width))
+        tile_height = int(tileset_root.attrib.get("tileheight", self.tile_height))
+        columns = int(tileset_root.attrib.get("columns", 0))
+        tile_count = int(tileset_root.attrib.get("tilecount", 0))
+        image_path = (tileset_path.parent / image_node.attrib["source"]).resolve()
+        image = pygame.image.load(str(image_path)).convert_alpha()
+
+        if columns <= 0:
+            columns = image.get_width() // tile_width
+        rows = image.get_height() // tile_height
+        max_tiles = tile_count if tile_count > 0 else columns * rows
+
+        for local_id in range(max_tiles):
+            column = local_id % columns
+            row = local_id // columns
+            tile_rect = pygame.Rect(column * tile_width, row * tile_height, tile_width, tile_height)
+            self.tiles[first_gid + local_id] = image.subsurface(tile_rect).copy()
+
+    def _parse_csv_layer(self, layer_node, data_node):
+        layer_width = int(layer_node.attrib.get("width", self.width))
+        values = []
+        for raw_value in (data_node.text or "").replace("\n", "").split(","):
+            raw_value = raw_value.strip()
+            if raw_value:
+                values.append(int(raw_value) & ~TILED_FLIP_FLAGS)
+        return [values[index:index + layer_width] for index in range(0, len(values), layer_width)]
+
+    def draw(self, screen, camera_offset):
+        offset_x, offset_y = camera_offset
+        first_column = max(0, offset_x // self.tile_width)
+        first_row = max(0, offset_y // self.tile_height)
+        last_column = min(self.width, (offset_x + screen.get_width()) // self.tile_width + 2)
+        last_row = min(self.height, (offset_y + screen.get_height()) // self.tile_height + 2)
+
+        for layer in self.layers:
+            for row_index in range(first_row, last_row):
+                if row_index >= len(layer):
+                    continue
+                row = layer[row_index]
+                for column_index in range(first_column, min(last_column, len(row))):
+                    gid = row[column_index]
+                    if gid == 0:
+                        continue
+                    tile = self.tiles.get(gid)
+                    if tile is not None:
+                        screen.blit(
+                            tile,
+                            (
+                                column_index * self.tile_width - offset_x,
+                                row_index * self.tile_height - offset_y,
+                            ),
+                        )
 
 
 class ExplorationScreen:
@@ -7,60 +122,50 @@ class ExplorationScreen:
         self.title_font = pygame.font.Font(None, 34)
         self.body_font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
-        self.player_rect = pygame.Rect(382, 308, 24, 30)
+        self.map = TiledMap(Path("assets/maps/town_01.tmx"))
+        self.map_width = self.map.pixel_width if self.map.is_loaded else 800
+        self.map_height = self.map.pixel_height if self.map.is_loaded else 600
+        self.camera_offset = pygame.Vector2(0, 0)
+        self.player_rect = pygame.Rect(self.map_width // 2 - 12, self.map_height // 2 - 15, 24, 30)
         self.player_speed = 6
-        self.npc_rect = pygame.Rect(548, 250, 28, 34)
+        self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
         self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres d'un point. Echap pour rentrer."
         self.message = self.default_message
         self.message_until_ms = 0
-        self.obstacles = [
-            pygame.Rect(180, 214, 74, 34),
-            pygame.Rect(468, 178, 92, 30),
-            pygame.Rect(308, 414, 112, 32),
-            pygame.Rect(612, 382, 70, 38),
-        ]
-        self.trees = [
-            (96, 132, 30),
-            (158, 332, 36),
-            (266, 118, 28),
-            (648, 122, 34),
-            (704, 302, 32),
-            (88, 486, 34),
-            (566, 474, 30),
-        ]
+        self.obstacles = []
         self.interactions = [
             {
                 "id": "quests",
                 "label": "Quetes",
-                "rect": pygame.Rect(520, 218, 88, 56),
+                "rect": pygame.Rect(self.player_rect.x + 96, self.player_rect.y - 16, 88, 56),
                 "prompt": "E - Voir les quetes",
                 "target_state": "quests",
             },
             {
                 "id": "forest_path",
                 "label": "Foret",
-                "rect": pygame.Rect(684, 112, 88, 72),
+                "rect": pygame.Rect(self.map_width - 132, max(48, self.map_height // 2 - 40), 88, 72),
                 "prompt": "E - Aller vers la foret",
                 "target_state": "zone_select",
             },
             {
                 "id": "dungeon_gate",
                 "label": "Donjons",
-                "rect": pygame.Rect(46, 248, 96, 86),
+                "rect": pygame.Rect(46, max(48, self.map_height // 2 - 48), 96, 86),
                 "prompt": "E - Entrer dans les donjons",
                 "target_state": "dungeon",
             },
             {
                 "id": "craft_bench",
                 "label": "Craft",
-                "rect": pygame.Rect(116, 420, 112, 54),
+                "rect": pygame.Rect(self.player_rect.x - 168, self.player_rect.y + 96, 112, 54),
                 "prompt": "E - Ouvrir le craft",
                 "target_state": "crafting",
             },
             {
                 "id": "town_exit",
                 "label": "Town",
-                "rect": pygame.Rect(362, 492, 104, 34),
+                "rect": pygame.Rect(self.map_width // 2 - 52, self.map_height - 84, 104, 34),
                 "prompt": "E - Retourner en ville",
                 "action": "return_to_town",
             },
@@ -102,18 +207,16 @@ class ExplorationScreen:
 
     def draw(self, screen):
         current_time_ms = pygame.time.get_ticks()
-        self._draw_background(screen)
-        self._draw_path(screen)
-        self._draw_trees(screen)
+        self._update_camera(screen)
+        self._draw_map(screen)
         self._draw_interactions(screen)
-        self._draw_obstacles(screen)
         self._draw_npc(screen)
         self._draw_player(screen)
         self._draw_help_panel(screen, current_time_ms)
 
     def _move_player(self, movement):
         movement = movement.normalize() * self.player_speed
-        bounds = pygame.Rect(14, 14, 772, 518)
+        bounds = pygame.Rect(0, 0, self.map_width, self.map_height)
         candidate = self.player_rect.move(int(movement.x), int(movement.y))
         candidate.clamp_ip(bounds)
 
@@ -151,47 +254,27 @@ class ExplorationScreen:
         if target_state:
             self.game.state = target_state
 
-    def _draw_background(self, screen):
+    def _update_camera(self, screen):
+        max_x = max(0, self.map_width - screen.get_width())
+        max_y = max(0, self.map_height - screen.get_height())
+        self.camera_offset.x = min(max(self.player_rect.centerx - screen.get_width() // 2, 0), max_x)
+        self.camera_offset.y = min(max(self.player_rect.centery - screen.get_height() // 2, 0), max_y)
+
+    def _draw_map(self, screen):
+        if self.map.is_loaded:
+            screen.fill((18, 28, 22))
+            self.map.draw(screen, (int(self.camera_offset.x), int(self.camera_offset.y)))
+            return
+
         screen.fill((23, 54, 35))
-        for y in range(0, 548, 8):
+        for y in range(0, screen.get_height(), 8):
             shade = 28 + int(y * 0.025)
-            pygame.draw.rect(screen, (18, min(72, shade + 28), 35), (0, y, 800, 8))
-
-    def _draw_path(self, screen):
-        path_points = [
-            (0, 362),
-            (168, 326),
-            (314, 342),
-            (484, 294),
-            (800, 318),
-            (800, 452),
-            (510, 424),
-            (324, 458),
-            (140, 430),
-            (0, 470),
-        ]
-        pygame.draw.polygon(screen, (91, 78, 55), path_points)
-        pygame.draw.lines(screen, (130, 112, 78), False, path_points[:5], 3)
-        pygame.draw.lines(screen, (60, 52, 41), False, path_points[5:], 2)
-
-    def _draw_trees(self, screen):
-        for x, y, radius in self.trees:
-            trunk = pygame.Rect(x - 6, y + radius - 8, 12, 34)
-            pygame.draw.rect(screen, (74, 45, 28), trunk, border_radius=3)
-            pygame.draw.circle(screen, (17, 77, 40), (x, y), radius)
-            pygame.draw.circle(screen, (24, 96, 48), (x - 10, y - 8), max(10, radius - 10))
-            pygame.draw.circle(screen, (12, 48, 30), (x + 12, y + 8), max(10, radius - 12))
-
-    def _draw_obstacles(self, screen):
-        for rect in self.obstacles:
-            pygame.draw.rect(screen, (71, 58, 42), rect, border_radius=4)
-            pygame.draw.rect(screen, (134, 112, 76), rect, 2, border_radius=4)
-            pygame.draw.line(screen, (45, 36, 28), (rect.x + 8, rect.centery), (rect.right - 8, rect.centery), 2)
+            pygame.draw.rect(screen, (18, min(72, shade + 28), 35), (0, y, screen.get_width(), 8))
 
     def _draw_interactions(self, screen):
         active = self._get_active_interaction()
         for interaction in self.interactions:
-            rect = interaction["rect"]
+            rect = self._to_screen_rect(interaction["rect"])
             is_active = interaction is active
             if interaction["id"] == "quests":
                 self._draw_quest_post(screen, rect, is_active)
@@ -251,16 +334,18 @@ class ExplorationScreen:
         self._draw_interaction_marker(screen, rect, "Ville", is_active)
 
     def _draw_npc(self, screen):
-        pygame.draw.ellipse(screen, (16, 33, 24), self.npc_rect.move(3, 8))
-        pygame.draw.rect(screen, (79, 90, 58), self.npc_rect, border_radius=6)
-        pygame.draw.circle(screen, (202, 171, 126), self.npc_rect.midtop, 9)
+        rect = self._to_screen_rect(self.npc_rect)
+        pygame.draw.ellipse(screen, (16, 33, 24), rect.move(3, 8))
+        pygame.draw.rect(screen, (79, 90, 58), rect, border_radius=6)
+        pygame.draw.circle(screen, (202, 171, 126), rect.midtop, 9)
         label = self.small_font.render("PNJ", True, (230, 220, 185))
-        screen.blit(label, (self.npc_rect.x - 5, self.npc_rect.y - 24))
+        screen.blit(label, (rect.x - 5, rect.y - 24))
 
     def _draw_player(self, screen):
-        pygame.draw.ellipse(screen, (10, 25, 18), self.player_rect.move(3, 8))
-        pygame.draw.rect(screen, (66, 122, 166), self.player_rect, border_radius=6)
-        pygame.draw.circle(screen, (226, 188, 140), self.player_rect.midtop, 8)
+        rect = self._to_screen_rect(self.player_rect)
+        pygame.draw.ellipse(screen, (10, 25, 18), rect.move(3, 8))
+        pygame.draw.rect(screen, (66, 122, 166), rect, border_radius=6)
+        pygame.draw.circle(screen, (226, 188, 140), rect.midtop, 8)
 
     def _draw_help_panel(self, screen, current_time_ms):
         panel = pygame.Rect(24, 546, 752, 42)
@@ -275,8 +360,13 @@ class ExplorationScreen:
 
         title = self.title_font.render("Exploration", True, (220, 232, 190))
         screen.blit(title, (38, 553))
+        if not self.map.is_loaded and active_interaction is None:
+            text = "Map Tiled indisponible. Affichage de secours actif."
         body = self.body_font.render(self._fit_panel_text(text, 570), True, (220, 220, 205))
         screen.blit(body, (178, 558))
+
+    def _to_screen_rect(self, rect):
+        return rect.move(-int(self.camera_offset.x), -int(self.camera_offset.y))
 
     def _fit_panel_text(self, text, max_width):
         text = str(text)
