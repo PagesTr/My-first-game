@@ -19,6 +19,8 @@ class TiledMap:
         self.layers = []
         self.tiles = {}
         self.collision_rects = []
+        self.collision_polygons = []
+        self.spawns = {}
         self.warnings = []
         self.error_message = None
         self.is_loaded = False
@@ -99,12 +101,62 @@ class TiledMap:
 
     def _load_object_groups(self, root):
         for object_group in root.findall("objectgroup"):
+            if object_group.attrib.get("name") == "94_spawns":
+                self._load_spawns(object_group)
+                continue
             if object_group.attrib.get("name") != "90_collisions":
                 continue
             for object_node in object_group.findall("object"):
                 rect = self._build_collision_rect(object_node)
                 if rect is not None:
                     self.collision_rects.append(rect)
+                polygon = self._build_collision_polygon(object_node)
+                if polygon is not None:
+                    self.collision_polygons.append(polygon)
+
+    def _load_spawns(self, object_group):
+        for object_node in object_group.findall("object"):
+            spawn = self._build_spawn(object_node)
+            if spawn is not None:
+                self.spawns[spawn["spawn_id"]] = spawn
+
+    def _build_spawn(self, object_node):
+        object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
+        if object_type and object_type != "spawn":
+            return None
+        if not self._is_object_enabled(object_node):
+            return None
+
+        spawn_id = self._get_object_property(object_node, "spawn_id")
+        if not spawn_id:
+            return None
+
+        try:
+            x = float(object_node.attrib["x"])
+            y = float(object_node.attrib["y"])
+            width = float(object_node.attrib.get("width", 0))
+            height = float(object_node.attrib.get("height", 0))
+        except (KeyError, TypeError, ValueError):
+            return None
+
+        if width > 0 and height > 0:
+            x += width / 2
+            y += height / 2
+
+        return {
+            "spawn_id": spawn_id,
+            "spawn_type": self._get_object_property(object_node, "spawn_type"),
+            "map_id": self._get_object_property(object_node, "map_id"),
+            "facing": self._get_object_property(object_node, "facing") or "down",
+            "x": x,
+            "y": y,
+        }
+
+    def _is_object_enabled(self, object_node):
+        value = self._get_object_property(object_node, "enabled")
+        if value is None:
+            return True
+        return str(value).strip() not in {"false", "False", "0", "Off"}
 
     def _build_collision_rect(self, object_node):
         if object_node.attrib.get("type") != "collision":
@@ -118,10 +170,9 @@ class TiledMap:
 
         polygon_node = object_node.find("polygon")
         if polygon_node is not None:
-            if self._get_object_property(object_node, "collision_mode") != "bounds":
-                self.warnings.append("Ignored polygon collision without collision_mode=bounds")
-                return None
-            return self._build_polygon_bounds_rect(object_node, polygon_node)
+            if self._get_object_property(object_node, "collision_mode") == "bounds":
+                return self._build_polygon_bounds_rect(object_node, polygon_node)
+            return None
 
         try:
             x = int(float(object_node.attrib["x"]))
@@ -135,7 +186,37 @@ class TiledMap:
             return None
         return pygame.Rect(x, y, width, height)
 
+    def _build_collision_polygon(self, object_node):
+        if object_node.attrib.get("type") != "collision":
+            return None
+        if not self._get_object_bool_property(object_node, "solid"):
+            return None
+        if object_node.find("ellipse") is not None or object_node.find("polyline") is not None:
+            return None
+        if self._get_object_property(object_node, "collision_mode") == "bounds":
+            return None
+
+        polygon_node = object_node.find("polygon")
+        if polygon_node is None:
+            return None
+        return self._parse_polygon_points(object_node, polygon_node)
+
     def _build_polygon_bounds_rect(self, object_node, polygon_node):
+        points = self._parse_polygon_points(object_node, polygon_node)
+        if not points:
+            return None
+
+        left = min(point[0] for point in points)
+        top = min(point[1] for point in points)
+        right = max(point[0] for point in points)
+        bottom = max(point[1] for point in points)
+        width = int(round(right - left))
+        height = int(round(bottom - top))
+        if width <= 0 or height <= 0:
+            return None
+        return pygame.Rect(int(round(left)), int(round(top)), width, height)
+
+    def _parse_polygon_points(self, object_node, polygon_node):
         points_text = polygon_node.attrib.get("points", "")
         if not points_text:
             return None
@@ -153,19 +234,7 @@ class TiledMap:
                 points.append((origin_x + float(raw_x), origin_y + float(raw_y)))
             except ValueError:
                 return None
-
-        if not points:
-            return None
-
-        left = min(point[0] for point in points)
-        top = min(point[1] for point in points)
-        right = max(point[0] for point in points)
-        bottom = max(point[1] for point in points)
-        width = int(round(right - left))
-        height = int(round(bottom - top))
-        if width <= 0 or height <= 0:
-            return None
-        return pygame.Rect(int(round(left)), int(round(top)), width, height)
+        return points if len(points) >= 3 else None
 
     def _get_object_bool_property(self, object_node, property_name):
         value = self._get_object_property(object_node, property_name)
@@ -235,7 +304,9 @@ class ExplorationScreen:
         self.player_visual_size = pygame.Vector2(16, 24)
         self.player_hitbox_size = pygame.Vector2(10, 8)
         self.player_sprite = self._load_player_sprite()
-        self.player_position = pygame.Vector2(self.map_width / 2, self.map_height / 2)
+        self.player_position = self._get_initial_player_position()
+        player_spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
+        self.player_facing = player_spawn.get("facing") if player_spawn is not None else "down"
         self.player_rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
         self._sync_player_rect_from_position()
         self.player_walk_speed = 2
@@ -245,6 +316,7 @@ class ExplorationScreen:
         self.message = self.default_message
         self.message_until_ms = 0
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
+        self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
         self.show_collision_debug = False
         self.interactions = [
             {
@@ -359,7 +431,81 @@ class ExplorationScreen:
         self._sync_player_rect_from_position()
 
     def _collides_with_obstacle(self, candidate):
-        return any(candidate.colliderect(obstacle) for obstacle in self.obstacles)
+        if any(candidate.colliderect(obstacle) for obstacle in self.obstacles):
+            return True
+        return any(self._rect_collides_with_polygon(candidate, polygon) for polygon in self.collision_polygons)
+
+    def _rect_collides_with_polygon(self, rect, polygon_points):
+        rect_points = [rect.topleft, rect.topright, rect.bottomright, rect.bottomleft]
+        if any(self._point_in_polygon(point, polygon_points) for point in rect_points):
+            return True
+        if any(rect.collidepoint(point) for point in polygon_points):
+            return True
+
+        rect_edges = self._rect_edges(rect)
+        polygon_edges = list(zip(polygon_points, polygon_points[1:] + polygon_points[:1]))
+        for rect_start, rect_end in rect_edges:
+            for polygon_start, polygon_end in polygon_edges:
+                if self._segments_intersect(rect_start, rect_end, polygon_start, polygon_end):
+                    return True
+        return False
+
+    def _point_in_polygon(self, point, polygon_points):
+        x, y = point
+        is_inside = False
+        previous_x, previous_y = polygon_points[-1]
+        for current_x, current_y in polygon_points:
+            if ((current_y > y) != (previous_y > y)):
+                intersect_x = (previous_x - current_x) * (y - current_y) / (previous_y - current_y) + current_x
+                if x < intersect_x:
+                    is_inside = not is_inside
+            previous_x, previous_y = current_x, current_y
+        return is_inside
+
+    def _segments_intersect(self, a, b, c, d):
+        def orientation(first, second, third):
+            value = (
+                (second[1] - first[1]) * (third[0] - second[0])
+                - (second[0] - first[0]) * (third[1] - second[1])
+            )
+            if abs(value) < 0.000001:
+                return 0
+            return 1 if value > 0 else 2
+
+        def on_segment(first, second, third):
+            return (
+                min(first[0], third[0]) <= second[0] <= max(first[0], third[0])
+                and min(first[1], third[1]) <= second[1] <= max(first[1], third[1])
+            )
+
+        first_orientation = orientation(a, b, c)
+        second_orientation = orientation(a, b, d)
+        third_orientation = orientation(c, d, a)
+        fourth_orientation = orientation(c, d, b)
+
+        if first_orientation != second_orientation and third_orientation != fourth_orientation:
+            return True
+        if first_orientation == 0 and on_segment(a, c, b):
+            return True
+        if second_orientation == 0 and on_segment(a, d, b):
+            return True
+        if third_orientation == 0 and on_segment(c, a, d):
+            return True
+        if fourth_orientation == 0 and on_segment(c, b, d):
+            return True
+        return False
+
+    def _rect_edges(self, rect):
+        top_left = rect.topleft
+        top_right = rect.topright
+        bottom_right = rect.bottomright
+        bottom_left = rect.bottomleft
+        return [
+            (top_left, top_right),
+            (top_right, bottom_right),
+            (bottom_right, bottom_left),
+            (bottom_left, top_left),
+        ]
 
     def _build_player_rect(self, position):
         rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
@@ -509,6 +655,12 @@ class ExplorationScreen:
         except (OSError, pygame.error, ValueError):
             return None
 
+    def _get_initial_player_position(self):
+        spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
+        if spawn is not None:
+            return pygame.Vector2(spawn["x"], spawn["y"])
+        return pygame.Vector2(self.map_width / 2, self.map_height / 2)
+
     def _get_player_draw_rect(self):
         draw_rect = pygame.Rect(
             0,
@@ -524,6 +676,10 @@ class ExplorationScreen:
             return
         for obstacle in self.obstacles:
             pygame.draw.rect(screen, (220, 80, 80), self._to_screen_rect(obstacle), 1)
+        for polygon in self.collision_polygons:
+            screen_points = [self._to_screen_point(point) for point in polygon]
+            if len(screen_points) >= 3:
+                pygame.draw.lines(screen, (220, 160, 80), True, screen_points, 1)
 
     def _draw_help_panel(self, screen, current_time_ms):
         panel = pygame.Rect(24, 546, 752, 42)
@@ -545,6 +701,12 @@ class ExplorationScreen:
 
     def _to_screen_rect(self, rect):
         return rect.move(-int(self.camera_offset.x), -int(self.camera_offset.y))
+
+    def _to_screen_point(self, point):
+        return (
+            int(round(point[0] - self.camera_offset.x)),
+            int(round(point[1] - self.camera_offset.y)),
+        )
 
     def _fit_panel_text(self, text, max_width):
         text = str(text)
