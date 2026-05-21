@@ -26,8 +26,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 320,
-                "y": 240
+                "x": 497,
+                "y": 1.25
             }
         },
         "assets/automapping/water_collision_rules.tmx": {
@@ -48,15 +48,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                10,
                 9,
+                10,
                 4
             ],
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 709,
-                "y": 573
+                "x": 1176,
+                "y": 172
             }
         },
         "assets/maps/town_demo.tmx": {

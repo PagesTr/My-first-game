@@ -19,6 +19,7 @@ class TiledMap:
         self.layers = []
         self.tiles = {}
         self.collision_rects = []
+        self.warnings = []
         self.error_message = None
         self.is_loaded = False
         self._load()
@@ -51,36 +52,50 @@ class TiledMap:
             self.is_loaded = False
 
     def _load_tileset(self, tileset_node):
-        first_gid = int(tileset_node.attrib["firstgid"])
-        source = tileset_node.attrib.get("source")
-        if source:
-            tileset_path = (self.tmx_path.parent / source).resolve()
-            tileset_root = ET.parse(tileset_path).getroot()
-        else:
-            tileset_path = self.tmx_path
-            tileset_root = tileset_node
+        try:
+            first_gid = int(tileset_node.attrib["firstgid"])
+            source = tileset_node.attrib.get("source")
+            if source:
+                if source.startswith(":/"):
+                    self.warnings.append(f"Ignored special Tiled tileset source: {source}")
+                    return
+                tileset_path = (self.tmx_path.parent / source).resolve()
+                if not tileset_path.exists():
+                    self.warnings.append(f"Ignored missing tileset file: {tileset_path}")
+                    return
+                tileset_root = ET.parse(tileset_path).getroot()
+            else:
+                tileset_path = self.tmx_path
+                tileset_root = tileset_node
 
-        image_node = tileset_root.find("image")
-        if image_node is None:
-            return
+            image_node = tileset_root.find("image")
+            if image_node is None:
+                self.warnings.append(f"Ignored tileset without image: {tileset_path}")
+                return
 
-        tile_width = int(tileset_root.attrib.get("tilewidth", self.tile_width))
-        tile_height = int(tileset_root.attrib.get("tileheight", self.tile_height))
-        columns = int(tileset_root.attrib.get("columns", 0))
-        tile_count = int(tileset_root.attrib.get("tilecount", 0))
-        image_path = (tileset_path.parent / image_node.attrib["source"]).resolve()
-        image = pygame.image.load(str(image_path)).convert_alpha()
+            tile_width = int(tileset_root.attrib.get("tilewidth", self.tile_width))
+            tile_height = int(tileset_root.attrib.get("tileheight", self.tile_height))
+            columns = int(tileset_root.attrib.get("columns", 0))
+            tile_count = int(tileset_root.attrib.get("tilecount", 0))
+            image_path = (tileset_path.parent / image_node.attrib["source"]).resolve()
+            if not image_path.exists():
+                self.warnings.append(f"Ignored missing tileset image: {image_path}")
+                return
+            image = pygame.image.load(str(image_path)).convert_alpha()
 
-        if columns <= 0:
-            columns = image.get_width() // tile_width
-        rows = image.get_height() // tile_height
-        max_tiles = tile_count if tile_count > 0 else columns * rows
+            if columns <= 0:
+                columns = image.get_width() // tile_width
+            rows = image.get_height() // tile_height
+            max_tiles = tile_count if tile_count > 0 else columns * rows
 
-        for local_id in range(max_tiles):
-            column = local_id % columns
-            row = local_id // columns
-            tile_rect = pygame.Rect(column * tile_width, row * tile_height, tile_width, tile_height)
-            self.tiles[first_gid + local_id] = image.subsurface(tile_rect).copy()
+            for local_id in range(max_tiles):
+                column = local_id % columns
+                row = local_id // columns
+                tile_rect = pygame.Rect(column * tile_width, row * tile_height, tile_width, tile_height)
+                self.tiles[first_gid + local_id] = image.subsurface(tile_rect).copy()
+        except Exception as exc:
+            source = tileset_node.attrib.get("source", "<inline tileset>")
+            self.warnings.append(f"Ignored tileset {source}: {exc}")
 
     def _load_object_groups(self, root):
         for object_group in root.findall("objectgroup"):
@@ -98,8 +113,15 @@ class TiledMap:
             return None
         if object_node.find("ellipse") is not None:
             return None
-        if object_node.find("polygon") is not None or object_node.find("polyline") is not None:
+        if object_node.find("polyline") is not None:
             return None
+
+        polygon_node = object_node.find("polygon")
+        if polygon_node is not None:
+            if self._get_object_property(object_node, "collision_mode") != "bounds":
+                self.warnings.append("Ignored polygon collision without collision_mode=bounds")
+                return None
+            return self._build_polygon_bounds_rect(object_node, polygon_node)
 
         try:
             x = int(float(object_node.attrib["x"]))
@@ -113,10 +135,46 @@ class TiledMap:
             return None
         return pygame.Rect(x, y, width, height)
 
+    def _build_polygon_bounds_rect(self, object_node, polygon_node):
+        points_text = polygon_node.attrib.get("points", "")
+        if not points_text:
+            return None
+
+        try:
+            origin_x = float(object_node.attrib["x"])
+            origin_y = float(object_node.attrib["y"])
+        except (KeyError, TypeError, ValueError):
+            return None
+
+        points = []
+        for point_text in points_text.split():
+            try:
+                raw_x, raw_y = point_text.split(",", 1)
+                points.append((origin_x + float(raw_x), origin_y + float(raw_y)))
+            except ValueError:
+                return None
+
+        if not points:
+            return None
+
+        left = min(point[0] for point in points)
+        top = min(point[1] for point in points)
+        right = max(point[0] for point in points)
+        bottom = max(point[1] for point in points)
+        width = int(round(right - left))
+        height = int(round(bottom - top))
+        if width <= 0 or height <= 0:
+            return None
+        return pygame.Rect(int(round(left)), int(round(top)), width, height)
+
     def _get_object_bool_property(self, object_node, property_name):
+        value = self._get_object_property(object_node, property_name)
+        return str(value).strip() in {"true", "True", "1", "On"}
+
+    def _get_object_property(self, object_node, property_name):
         properties_node = object_node.find("properties")
         if properties_node is None:
-            return False
+            return None
 
         for property_node in properties_node.findall("property"):
             if property_node.attrib.get("name") != property_name:
@@ -124,8 +182,8 @@ class TiledMap:
             value = property_node.attrib.get("value")
             if value is None:
                 value = property_node.text
-            return str(value).strip() in {"true", "True", "1", "On"}
-        return False
+            return str(value).strip()
+        return None
 
     def _parse_csv_layer(self, layer_node, data_node):
         layer_width = int(layer_node.attrib.get("width", self.width))
