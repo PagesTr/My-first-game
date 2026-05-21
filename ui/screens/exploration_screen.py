@@ -177,11 +177,13 @@ class ExplorationScreen:
         self.player_visual_size = pygame.Vector2(16, 24)
         self.player_hitbox_size = pygame.Vector2(10, 8)
         self.player_sprite = self._load_player_sprite()
+        self.player_position = pygame.Vector2(self.map_width / 2, self.map_height / 2)
         self.player_rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
-        self.player_rect.center = (self.map_width // 2, self.map_height // 2)
-        self.player_speed = 6
+        self._sync_player_rect_from_position()
+        self.player_walk_speed = 2
+        self.player_run_speed = 4
         self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
-        self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. E pres d'un point. Echap pour rentrer."
+        self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. Shift pour courir. E pres d'un point. Echap pour rentrer."
         self.message = self.default_message
         self.message_until_ms = 0
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
@@ -256,7 +258,8 @@ class ExplorationScreen:
             movement.y += 1
 
         if movement.length_squared() > 0:
-            self._move_player(movement)
+            speed = self.player_run_speed if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] else self.player_walk_speed
+            self._move_player(movement, speed)
 
     def draw(self, screen):
         current_time_ms = pygame.time.get_ticks()
@@ -268,28 +271,53 @@ class ExplorationScreen:
         self._draw_collision_debug(screen)
         self._draw_help_panel(screen, current_time_ms)
 
-    def _move_player(self, movement):
-        movement = movement.normalize() * self.player_speed
+    def _move_player(self, movement, speed):
+        movement = movement.normalize() * speed
         bounds = pygame.Rect(0, 0, self.map_width, self.map_height)
-        candidate = self.player_rect.move(int(movement.x), int(movement.y))
-        candidate.clamp_ip(bounds)
+        candidate_position = self._clamp_player_position(self.player_position + movement, bounds)
+        candidate = self._build_player_rect(candidate_position)
 
         if not self._collides_with_obstacle(candidate):
-            self.player_rect = candidate
+            self.player_position = candidate_position
+            self._sync_player_rect_from_position()
             return
 
-        horizontal = self.player_rect.move(int(movement.x), 0)
-        horizontal.clamp_ip(bounds)
+        horizontal_position = self._clamp_player_position(
+            pygame.Vector2(self.player_position.x + movement.x, self.player_position.y),
+            bounds,
+        )
+        horizontal = self._build_player_rect(horizontal_position)
         if not self._collides_with_obstacle(horizontal):
-            self.player_rect = horizontal
+            self.player_position = horizontal_position
 
-        vertical = self.player_rect.move(0, int(movement.y))
-        vertical.clamp_ip(bounds)
+        vertical_position = self._clamp_player_position(
+            pygame.Vector2(self.player_position.x, self.player_position.y + movement.y),
+            bounds,
+        )
+        vertical = self._build_player_rect(vertical_position)
         if not self._collides_with_obstacle(vertical):
-            self.player_rect = vertical
+            self.player_position = vertical_position
+
+        self._sync_player_rect_from_position()
 
     def _collides_with_obstacle(self, candidate):
         return any(candidate.colliderect(obstacle) for obstacle in self.obstacles)
+
+    def _build_player_rect(self, position):
+        rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
+        rect.center = (round(position.x), round(position.y))
+        return rect
+
+    def _sync_player_rect_from_position(self):
+        self.player_rect = self._build_player_rect(self.player_position)
+
+    def _clamp_player_position(self, position, bounds):
+        half_width = self.player_hitbox_size.x / 2
+        half_height = self.player_hitbox_size.y / 2
+        return pygame.Vector2(
+            min(max(position.x, bounds.left + half_width), bounds.right - half_width),
+            min(max(position.y, bounds.top + half_height), bounds.bottom - half_height),
+        )
 
     def _get_active_interaction(self):
         reach_rect = self.player_rect.inflate(46, 46)

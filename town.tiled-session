@@ -5,26 +5,29 @@
     ],
     "file.lastUsedOpenFilter": "Tous les Fichiers (*)",
     "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
         "assets/automapping/house_rules.tmx": {
             "expandedObjectLayers": [
                 8
             ],
-            "scale": 3,
-            "selectedLayer": 6,
+            "scale": 2,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 347.66666666666663,
-                "y": 148
+                "x": 409,
+                "y": 240
             }
         },
         "assets/automapping/tree_rules.tmx": {
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 1.70703125,
-            "selectedLayer": 0,
+            "scale": 4,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 319.85354691075514,
-                "y": 240.18306636155603
+                "x": 320,
+                "y": 240
             }
         },
         "assets/automapping/water_collision_rules.tmx": {
@@ -45,13 +48,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                9
+                10,
+                9,
+                4
             ],
-            "scale": 1.5,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 294,
-                "y": 218
+                "x": 709,
+                "y": 573
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -100,7 +105,7 @@
             "scaleInDock": 1
         },
         "assets/tilesets/pixel_crawler_roofs.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 2
         },
         "assets/tilesets/pixel_crawler_trees.tsx": {
             "scaleInDock": 1
@@ -110,7 +115,8 @@
             "scaleInEditor": 3
         },
         "assets/tilesets/pixel_crawler_walls.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 2,
+            "scaleInEditor": 1
         },
         "assets/tilesets/pixel_crawler_wizzard_idle.tsx": {
             "scaleInDock": 1
@@ -122,23 +128,28 @@
             "scaleInDock": 1
         },
         "assets/tilesets/water.tsx": {
-            "scaleInEditor": 3
+            "scaleInDock": 3,
+            "scaleInEditor": 1
         }
     },
     "last.externalTilesetPath": "D:/Jeux test/Games/My first game/assets/tilesets",
     "last.imagePath": "D:/Jeux test/Games/My first game/assets/external/pixel_crawler_free_pack/spritesheets/environment/props/static",
     "openFiles": [
+        "assets/automapping/house_rules.tmx",
+        "assets/automapping/tree_rules.tmx",
+        "assets/tilesets/pixel_crawler_walls.tsx",
         "assets/maps/town_01.tmx",
-        "assets/automapping/house_rules.tmx"
+        "assets/tilesets/water.tsx"
     ],
     "project": "town.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
-        "assets/tilesets/water.tsx",
         "assets/automapping/house_rules.tmx",
+        "assets/automapping/tree_rules.tmx",
+        "assets/tilesets/pixel_crawler_walls.tsx",
+        "assets/tilesets/water.tsx",
         "assets/maps/town_01.tmx",
         "assets/tilesets/pixel_crawler_vegetation.tsx",
-        "assets/automapping/tree_rules.tmx",
         "assets/maps/water.tsx",
         "assets/maps/formation_house_test.tmx",
         "assets/maps/town_demo.tmx",
