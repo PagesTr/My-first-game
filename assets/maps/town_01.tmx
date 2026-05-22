@@ -6883,13 +6883,13 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="E - Aller vers la forêt"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
-    <property name="target_state" value=" "/>
-    <property name="trigger_id" value=" "/>
-    <property name="trigger_type" value=" "/>
+    <property name="target_state" value="zone_select"/>
+    <property name="trigger_id" value=" enter_forest_01"/>
+    <property name="trigger_type" value=" state_transition"/>
    </properties>
   </object>
   <object id="3741" name="trigger_enter_futur_01" type="trigger" x="1264" y="528" width="16" height="48">
