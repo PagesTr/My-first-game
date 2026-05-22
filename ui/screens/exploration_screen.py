@@ -365,8 +365,11 @@ class ExplorationScreen:
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
         self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
         self.triggers = list(self.map.triggers) if self.map.is_loaded else []
+        self.active_overlay = None
+        self.inventory_overlay_close_rect = pygame.Rect(0, 0, 0, 0)
+        self.inventory_overlay_slot_rects = []
         self.quick_actions = [
-            {"id": "inventory", "label": "Inventory", "target_state": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "inventory", "label": "Inventory", "overlay": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "quests", "label": "Quests", "target_state": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "skills", "label": "Skills", "target_state": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "achievements", "label": "Achievements", "target_state": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
@@ -415,6 +418,10 @@ class ExplorationScreen:
         ]
 
     def handle_event(self, event):
+        if self.active_overlay is not None:
+            self._handle_overlay_event(event)
+            return
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             action = self._get_quick_action_at(event.pos)
             if action is not None:
@@ -450,6 +457,9 @@ class ExplorationScreen:
             return
 
     def update(self):
+        if self.active_overlay is not None:
+            return
+
         keys = pygame.key.get_pressed()
         movement = pygame.Vector2(0, 0)
         if keys[pygame.K_LEFT] or keys[pygame.K_q]:
@@ -475,6 +485,8 @@ class ExplorationScreen:
         self._draw_collision_debug(screen)
         self._draw_help_panel(screen, current_time_ms)
         self._draw_quick_action_bar(screen)
+        if self.active_overlay == "inventory":
+            self._draw_inventory_overlay(screen)
 
     def _move_player(self, movement, speed):
         movement = movement.normalize() * speed
@@ -639,6 +651,11 @@ class ExplorationScreen:
         return self._get_quick_action_at(mouse_position)
 
     def _activate_quick_action(self, action):
+        overlay = action.get("overlay")
+        if overlay:
+            self._toggle_overlay(overlay)
+            return
+
         if action.get("action") == "main_menu":
             self.game.state = "main_menu"
             return
@@ -650,6 +667,23 @@ class ExplorationScreen:
         target_state = action.get("target_state")
         if target_state:
             self.game.state = target_state
+
+    def _toggle_overlay(self, overlay_id):
+        self.active_overlay = None if self.active_overlay == overlay_id else overlay_id
+
+    def _close_overlay(self):
+        self.active_overlay = None
+
+    def _handle_overlay_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key in (pygame.K_ESCAPE, pygame.K_i):
+                self._close_overlay()
+            return
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.active_overlay == "inventory" and self.inventory_overlay_close_rect.collidepoint(event.pos):
+                self._close_overlay()
+            return
 
     def _activate_interaction(self, interaction):
         action = interaction.get("action")
@@ -839,11 +873,12 @@ class ExplorationScreen:
         for action in self.quick_actions:
             rect = action["rect"]
             is_hovered = action is hovered_action
-            fill_color = (42, 50, 50) if is_hovered else (26, 31, 32)
-            outline_color = (184, 202, 150) if is_hovered else (82, 96, 88)
+            is_active = action.get("overlay") == self.active_overlay
+            fill_color = (52, 65, 58) if is_active else (42, 50, 50) if is_hovered else (26, 31, 32)
+            outline_color = (220, 214, 132) if is_active else (184, 202, 150) if is_hovered else (82, 96, 88)
             pygame.draw.rect(screen, fill_color, rect, border_radius=6)
             pygame.draw.rect(screen, outline_color, rect, 2, border_radius=6)
-            self._draw_quick_action_icon(screen, action, rect, is_hovered)
+            self._draw_quick_action_icon(screen, action, rect, is_hovered or is_active)
 
         if hovered_action is not None and self._get_active_trigger() is None:
             self._draw_quick_action_tooltip(screen, hovered_action, bar_rect)
@@ -926,6 +961,156 @@ class ExplorationScreen:
         pygame.draw.rect(screen, (104, 139, 90), tooltip, 1, border_radius=5)
         screen.blit(text, text.get_rect(center=tooltip.center))
 
+    def _draw_inventory_overlay(self, screen):
+        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        screen.blit(overlay, (0, 0))
+
+        screen_rect = screen.get_rect()
+        panel_width = min(640, screen_rect.width - 64)
+        panel_height = min(470, screen_rect.height - 88)
+        panel = pygame.Rect(0, 0, panel_width, panel_height)
+        panel.center = screen_rect.center
+        pygame.draw.rect(screen, (22, 25, 26), panel, border_radius=8)
+        pygame.draw.rect(screen, (126, 145, 110), panel, 2, border_radius=8)
+
+        title = self.title_font.render("Inventory", True, (232, 226, 184))
+        screen.blit(title, (panel.x + 24, panel.y + 18))
+
+        gold = self._get_player_gold()
+        gold_text = self.body_font.render(f"Gold: {gold}", True, (226, 200, 96))
+        screen.blit(gold_text, (panel.x + 24, panel.y + 52))
+
+        self.inventory_overlay_close_rect = pygame.Rect(panel.right - 46, panel.y + 16, 28, 28)
+        pygame.draw.rect(screen, (54, 58, 58), self.inventory_overlay_close_rect, border_radius=5)
+        pygame.draw.rect(screen, (160, 175, 150), self.inventory_overlay_close_rect, 1, border_radius=5)
+        close_text = self.body_font.render("X", True, (235, 230, 210))
+        screen.blit(close_text, close_text.get_rect(center=self.inventory_overlay_close_rect.center))
+
+        slots = self._get_inventory_slots()
+        slot_size = 52
+        spacing = 8
+        columns = min(6, max(1, (panel.width - 48) // (slot_size + spacing)))
+        grid_x = panel.x + 24
+        grid_y = panel.y + 88
+        max_rows = max(1, (panel.bottom - grid_y - 28) // (slot_size + spacing))
+        self.inventory_overlay_slot_rects = []
+
+        for index, slot in enumerate(slots[: columns * max_rows]):
+            column = index % columns
+            row = index // columns
+            rect = pygame.Rect(
+                grid_x + column * (slot_size + spacing),
+                grid_y + row * (slot_size + spacing),
+                slot_size,
+                slot_size,
+            )
+            self.inventory_overlay_slot_rects.append((index, rect))
+            self._draw_inventory_slot(screen, rect, slot, index)
+
+        hovered_slot = self._get_hovered_inventory_slot(slots)
+        if hovered_slot is not None:
+            tooltip_x = grid_x + columns * (slot_size + spacing) + 20
+            tooltip = pygame.Rect(tooltip_x, grid_y, panel.right - tooltip_x - 24, 132)
+            if tooltip.width < 170:
+                tooltip = pygame.Rect(panel.x + 24, panel.bottom - 116, panel.width - 48, 88)
+            self._draw_inventory_item_tooltip(screen, tooltip, hovered_slot)
+
+    def _draw_inventory_slot(self, screen, rect, slot, index):
+        border_color = self._get_inventory_rarity_color(slot) if slot is not None else (78, 88, 82)
+        fill_color = (34, 39, 39) if slot is None else (41, 47, 45)
+        pygame.draw.rect(screen, fill_color, rect, border_radius=5)
+        pygame.draw.rect(screen, border_color, rect, 2, border_radius=5)
+
+        if slot is None:
+            return
+
+        item_name = self._get_inventory_item_name(slot)
+        label = self._fit_text(self.small_font, item_name, rect.width - 8)
+        label_surface = self.small_font.render(label, True, (235, 232, 210))
+        label_rect = label_surface.get_rect(center=(rect.centerx, rect.centery - 3))
+        screen.blit(label_surface, label_rect)
+
+        quantity = slot.get("quantity")
+        if quantity is not None:
+            quantity_surface = self.small_font.render(str(quantity), True, (242, 228, 178))
+            quantity_rect = quantity_surface.get_rect(bottomright=(rect.right - 4, rect.bottom - 3))
+            screen.blit(quantity_surface, quantity_rect)
+
+    def _draw_inventory_item_tooltip(self, screen, rect, slot):
+        pygame.draw.rect(screen, (18, 21, 22), rect, border_radius=6)
+        pygame.draw.rect(screen, self._get_inventory_rarity_color(slot), rect, 1, border_radius=6)
+
+        item_data = self._get_inventory_item_data(slot)
+        lines = [
+            (self._get_inventory_item_name(slot), self.body_font, (236, 232, 206)),
+        ]
+        item_type = item_data.get("type") or slot.get("kind")
+        if item_type:
+            lines.append((f"Type: {item_type}", self.small_font, (204, 214, 196)))
+        quantity = slot.get("quantity")
+        if quantity is not None:
+            lines.append((f"Quantity: {quantity}", self.small_font, (204, 214, 196)))
+        rarity = slot.get("rarity") or item_data.get("rarity")
+        if rarity:
+            lines.append((f"Rarity: {str(rarity).capitalize()}", self.small_font, self._get_inventory_rarity_color(slot)))
+
+        y = rect.y + 10
+        for text, font, color in lines:
+            fitted = self._fit_text(font, text, rect.width - 18)
+            surface = font.render(fitted, True, color)
+            screen.blit(surface, (rect.x + 10, y))
+            y += surface.get_height() + 5
+
+    def _get_hovered_inventory_slot(self, slots):
+        mouse_position = pygame.mouse.get_pos()
+        for index, rect in self.inventory_overlay_slot_rects:
+            if index < len(slots) and rect.collidepoint(mouse_position):
+                return slots[index]
+        return None
+
+    def _get_inventory_slots(self):
+        player = getattr(self.game, "player", {})
+        inventory = player.get("inventory", {}) if isinstance(player, dict) else {}
+        slots = inventory.get("slots", []) if isinstance(inventory, dict) else []
+        return slots if isinstance(slots, list) else []
+
+    def _get_player_gold(self):
+        player = getattr(self.game, "player", {})
+        if isinstance(player, dict):
+            return player.get("gold", 0)
+        return 0
+
+    def _get_inventory_item_data(self, slot):
+        if slot is None:
+            return {}
+        item_id = slot.get("item")
+        data = getattr(self.game, "data", None)
+        items = getattr(data, "items", {}) if data is not None else {}
+        return items.get(item_id, {}) if isinstance(items, dict) else {}
+
+    def _get_inventory_item_name(self, slot):
+        if slot is None:
+            return ""
+        item_id = slot.get("item", "")
+        item_data = self._get_inventory_item_data(slot)
+        return item_data.get("name", item_id)
+
+    def _get_inventory_rarity_color(self, slot):
+        colors = {
+            "common": (170, 170, 170),
+            "uncommon": (100, 220, 120),
+            "rare": (100, 160, 255),
+            "epic": (180, 120, 255),
+            "legendary": (255, 200, 80),
+            "unique": (240, 90, 90),
+        }
+        if slot is None:
+            return (82, 96, 88)
+        item_data = self._get_inventory_item_data(slot)
+        rarity = slot.get("rarity") or item_data.get("rarity")
+        return colors.get(rarity, (210, 216, 198))
+
     def _draw_help_panel(self, screen, current_time_ms):
         bar_height = 52
         panel = pygame.Rect(24, screen.get_height() - bar_height - 48, screen.get_width() - 48, 42)
@@ -971,5 +1156,14 @@ class ExplorationScreen:
             return text
         ellipsis = "..."
         while text and self.body_font.size(text + ellipsis)[0] > max_width:
+            text = text[:-1]
+        return text + ellipsis if text else ellipsis
+
+    def _fit_text(self, font, text, max_width):
+        text = str(text)
+        if font.size(text)[0] <= max_width:
+            return text
+        ellipsis = "..."
+        while text and font.size(text + ellipsis)[0] > max_width:
             text = text[:-1]
         return text + ellipsis if text else ellipsis
