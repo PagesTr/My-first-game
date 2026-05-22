@@ -21,6 +21,7 @@ class TiledMap:
         self.collision_rects = []
         self.collision_polygons = []
         self.spawns = {}
+        self.triggers = []
         self.warnings = []
         self.error_message = None
         self.is_loaded = False
@@ -104,6 +105,9 @@ class TiledMap:
             if object_group.attrib.get("name") == "94_spawns":
                 self._load_spawns(object_group)
                 continue
+            if object_group.attrib.get("name") == "93_triggers":
+                self._load_triggers(object_group)
+                continue
             if object_group.attrib.get("name") != "90_collisions":
                 continue
             for object_node in object_group.findall("object"):
@@ -119,6 +123,46 @@ class TiledMap:
             spawn = self._build_spawn(object_node)
             if spawn is not None:
                 self.spawns[spawn["spawn_id"]] = spawn
+
+    def _load_triggers(self, object_group):
+        for object_node in object_group.findall("object"):
+            trigger = self._build_trigger(object_node)
+            if trigger is not None:
+                self.triggers.append(trigger)
+
+    def _build_trigger(self, object_node):
+        object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
+        if object_type and object_type != "trigger":
+            return None
+        if not self._is_object_enabled(object_node):
+            return None
+
+        trigger_id = self._get_object_property(object_node, "trigger_id") or object_node.attrib.get("name")
+        if not trigger_id:
+            return None
+
+        try:
+            x = int(float(object_node.attrib["x"]))
+            y = int(float(object_node.attrib["y"]))
+            width = int(float(object_node.attrib["width"]))
+            height = int(float(object_node.attrib["height"]))
+        except (KeyError, TypeError, ValueError):
+            return None
+
+        if width <= 0 or height <= 0:
+            return None
+
+        return {
+            "trigger_id": trigger_id,
+            "trigger_type": self._get_object_property(object_node, "trigger_type"),
+            "prompt": self._get_object_property(object_node, "prompt"),
+            "requires_interact": self._get_object_bool_property(object_node, "requires_interact"),
+            "target_state": self._get_object_property(object_node, "target_state"),
+            "target_map": self._get_object_property(object_node, "target_map"),
+            "target_spawn_id": self._get_object_property(object_node, "target_spawn_id"),
+            "once": self._get_object_bool_property(object_node, "once"),
+            "rect": pygame.Rect(x, y, width, height),
+        }
 
     def _build_spawn(self, object_node):
         object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
@@ -251,7 +295,8 @@ class TiledMap:
             value = property_node.attrib.get("value")
             if value is None:
                 value = property_node.text
-            return str(value).strip()
+            value = str(value).strip()
+            return value if value else None
         return None
 
     def _parse_csv_layer(self, layer_node, data_node):
@@ -319,6 +364,7 @@ class ExplorationScreen:
         self.message_until_ms = pygame.time.get_ticks() + 4000 if self.spawn_debug_message else 0
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
         self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
+        self.triggers = list(self.map.triggers) if self.map.is_loaded else []
         self.show_collision_debug = False
         self.interactions = [
             {
@@ -367,6 +413,11 @@ class ExplorationScreen:
             return
 
         if event.key == pygame.K_e:
+            trigger = self._get_active_trigger()
+            if trigger is not None:
+                self._activate_trigger(trigger)
+                return
+
             interaction = self._get_active_interaction()
             if interaction is not None:
                 self._activate_interaction(interaction)
@@ -532,6 +583,23 @@ class ExplorationScreen:
                 return interaction
         return None
 
+    def _get_active_trigger(self):
+        for trigger in self.triggers:
+            if self.player_rect.colliderect(trigger["rect"]):
+                return trigger
+        return None
+
+    def _activate_trigger(self, trigger):
+        trigger_type = trigger.get("trigger_type")
+        if trigger_type == "state_transition":
+            target_state = trigger.get("target_state")
+            if target_state:
+                self.game.state = target_state
+                return
+
+        self.message = "Trigger non configure."
+        self.message_until_ms = pygame.time.get_ticks() + 2200
+
     def _activate_interaction(self, interaction):
         action = interaction.get("action")
         if action == "return_to_town":
@@ -691,6 +759,8 @@ class ExplorationScreen:
             screen_points = [self._to_screen_point(point) for point in polygon]
             if len(screen_points) >= 3:
                 pygame.draw.lines(screen, (220, 160, 80), True, screen_points, 1)
+        for trigger in self.triggers:
+            pygame.draw.rect(screen, (80, 160, 230), self._to_screen_rect(trigger["rect"]), 1)
 
     def _draw_help_panel(self, screen, current_time_ms):
         panel = pygame.Rect(24, 546, 752, 42)
@@ -700,12 +770,18 @@ class ExplorationScreen:
         if self.message_until_ms and current_time_ms > self.message_until_ms:
             self.message = self.default_message
             self.message_until_ms = 0
+        active_trigger = self._get_active_trigger()
         active_interaction = self._get_active_interaction()
-        text = active_interaction["prompt"] if active_interaction is not None else self.message
+        if active_trigger is not None and active_trigger.get("requires_interact"):
+            text = active_trigger.get("prompt") or "E - Interagir"
+        elif active_interaction is not None:
+            text = active_interaction["prompt"]
+        else:
+            text = self.message
 
         title = self.title_font.render("Exploration", True, (220, 232, 190))
         screen.blit(title, (38, 553))
-        if not self.map.is_loaded and active_interaction is None:
+        if not self.map.is_loaded and active_trigger is None and active_interaction is None:
             text = "Map Tiled indisponible. Affichage de secours actif."
         body = self.body_font.render(self._fit_panel_text(text, 570), True, (220, 220, 205))
         screen.blit(body, (178, 558))
