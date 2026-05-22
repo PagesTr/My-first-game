@@ -6870,7 +6870,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="En construction"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6896,7 +6896,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="En construction"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6909,7 +6909,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="En construction"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6922,7 +6922,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="En construction"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6935,7 +6935,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6948,7 +6948,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6961,7 +6961,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6974,7 +6974,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -6983,11 +6983,11 @@
     <property name="trigger_type" value=" "/>
    </properties>
   </object>
-  <object id="3748" name="trigger_enter_boghouse_01" type="trigger" x="464" y="368" width="32" height="16">
+  <object id="3748" name="trigger_enter_bighouse_01" type="trigger" x="464" y="368" width="32" height="16">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>
@@ -7000,7 +7000,7 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E "/>
+    <property name="prompt" value="Porte fermée"/>
     <property name="requires_interact" type="bool" value="true"/>
     <property name="target_map" value=" "/>
     <property name="target_spawn_id" value=" "/>

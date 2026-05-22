@@ -365,6 +365,16 @@ class ExplorationScreen:
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
         self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
         self.triggers = list(self.map.triggers) if self.map.is_loaded else []
+        self.quick_actions = [
+            {"id": "inventory", "label": "Inventory", "target_state": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "quests", "label": "Quests", "target_state": "quests", "shortcut": pygame.K_q, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "skills", "label": "Skills", "target_state": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "achievements", "label": "Achievements", "target_state": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "professions", "label": "Professions", "target_state": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "mailbox", "label": "Mailbox", "target_state": "mailbox", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "recipes", "label": "Recipes", "target_state": "crafting", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "town", "label": "Town", "action": "return_to_town", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
+        ]
         self.show_collision_debug = False
         self.interactions = [
             {
@@ -405,11 +415,22 @@ class ExplorationScreen:
         ]
 
     def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            action = self._get_quick_action_at(event.pos)
+            if action is not None:
+                self._activate_quick_action(action)
+            return
+
         if event.type != pygame.KEYDOWN:
             return
 
         if event.key == pygame.K_ESCAPE:
             self.game.return_to_town()
+            return
+
+        shortcut_action = self._get_quick_action_for_key(event.key)
+        if shortcut_action is not None:
+            self._activate_quick_action(shortcut_action)
             return
 
         if event.key == pygame.K_e:
@@ -453,6 +474,7 @@ class ExplorationScreen:
         self._draw_player(screen)
         self._draw_collision_debug(screen)
         self._draw_help_panel(screen, current_time_ms)
+        self._draw_quick_action_bar(screen)
 
     def _move_player(self, movement, speed):
         movement = movement.normalize() * speed
@@ -599,6 +621,31 @@ class ExplorationScreen:
 
         self.message = "Trigger non configure."
         self.message_until_ms = pygame.time.get_ticks() + 2200
+
+    def _get_quick_action_for_key(self, key):
+        for action in self.quick_actions:
+            if action.get("shortcut") == key:
+                return action
+        return None
+
+    def _get_quick_action_at(self, position):
+        for action in self.quick_actions:
+            if action["rect"].collidepoint(position):
+                return action
+        return None
+
+    def _get_hovered_quick_action(self):
+        mouse_position = pygame.mouse.get_pos()
+        return self._get_quick_action_at(mouse_position)
+
+    def _activate_quick_action(self, action):
+        if action.get("action") == "return_to_town":
+            self.game.return_to_town()
+            return
+
+        target_state = action.get("target_state")
+        if target_state:
+            self.game.state = target_state
 
     def _activate_interaction(self, interaction):
         action = interaction.get("action")
@@ -762,8 +809,119 @@ class ExplorationScreen:
         for trigger in self.triggers:
             pygame.draw.rect(screen, (80, 160, 230), self._to_screen_rect(trigger["rect"]), 1)
 
+    def _layout_quick_action_bar(self, screen):
+        bar_height = 52
+        button_size = 44
+        spacing = 10
+        total_width = len(self.quick_actions) * button_size + (len(self.quick_actions) - 1) * spacing
+        start_x = (screen.get_width() - total_width) // 2
+        y = screen.get_height() - bar_height + (bar_height - button_size) // 2
+
+        for index, action in enumerate(self.quick_actions):
+            x = start_x + index * (button_size + spacing)
+            action["rect"] = pygame.Rect(x, y, button_size, button_size)
+
+        return pygame.Rect(0, screen.get_height() - bar_height, screen.get_width(), bar_height)
+
+    def _draw_quick_action_bar(self, screen):
+        bar_rect = self._layout_quick_action_bar(screen)
+        pygame.draw.rect(screen, (14, 17, 19), bar_rect)
+        pygame.draw.line(screen, (72, 88, 80), bar_rect.topleft, bar_rect.topright, 2)
+
+        hovered_action = self._get_hovered_quick_action()
+        for action in self.quick_actions:
+            rect = action["rect"]
+            is_hovered = action is hovered_action
+            fill_color = (42, 50, 50) if is_hovered else (26, 31, 32)
+            outline_color = (184, 202, 150) if is_hovered else (82, 96, 88)
+            pygame.draw.rect(screen, fill_color, rect, border_radius=6)
+            pygame.draw.rect(screen, outline_color, rect, 2, border_radius=6)
+            self._draw_quick_action_icon(screen, action, rect, is_hovered)
+
+        if hovered_action is not None and self._get_active_trigger() is None:
+            self._draw_quick_action_tooltip(screen, hovered_action, bar_rect)
+
+    def _draw_quick_action_icon(self, screen, action, rect, is_hovered):
+        color = (236, 226, 178) if is_hovered else (204, 214, 190)
+        shadow = (12, 14, 15)
+        center = rect.center
+        action_id = action["id"]
+
+        if action_id == "inventory":
+            bag = pygame.Rect(rect.x + 13, rect.y + 18, 18, 15)
+            pygame.draw.arc(screen, color, (rect.x + 15, rect.y + 10, 14, 16), 3.35, 6.05, 2)
+            pygame.draw.rect(screen, color, bag, border_radius=4)
+            pygame.draw.rect(screen, shadow, bag.inflate(-8, -8))
+        elif action_id == "quests":
+            page = pygame.Rect(rect.x + 14, rect.y + 11, 16, 23)
+            pygame.draw.rect(screen, color, page, border_radius=2)
+            pygame.draw.line(screen, shadow, (page.x + 4, page.y + 7), (page.right - 4, page.y + 7), 1)
+            pygame.draw.line(screen, shadow, (page.x + 4, page.y + 13), (page.right - 5, page.y + 13), 1)
+        elif action_id == "skills":
+            points = [
+                (center[0], rect.y + 9),
+                (center[0] + 4, center[1] - 2),
+                (rect.right - 9, center[1] - 2),
+                (center[0] + 6, center[1] + 4),
+                (center[0] + 9, rect.bottom - 9),
+                (center[0], center[1] + 7),
+                (center[0] - 9, rect.bottom - 9),
+                (center[0] - 6, center[1] + 4),
+                (rect.x + 9, center[1] - 2),
+                (center[0] - 4, center[1] - 2),
+            ]
+            pygame.draw.polygon(screen, color, points)
+        elif action_id == "achievements":
+            cup = pygame.Rect(rect.x + 15, rect.y + 12, 14, 14)
+            pygame.draw.rect(screen, color, cup, border_radius=3)
+            pygame.draw.arc(screen, color, (rect.x + 7, rect.y + 13, 13, 12), 4.6, 1.6, 2)
+            pygame.draw.arc(screen, color, (rect.right - 20, rect.y + 13, 13, 12), 1.5, 4.8, 2)
+            pygame.draw.rect(screen, color, (center[0] - 2, rect.y + 26, 4, 7))
+            pygame.draw.rect(screen, color, (center[0] - 8, rect.y + 33, 16, 3), border_radius=2)
+        elif action_id == "professions":
+            pygame.draw.line(screen, color, (rect.x + 14, rect.y + 30), (rect.x + 30, rect.y + 14), 4)
+            pygame.draw.rect(screen, color, (rect.x + 24, rect.y + 10, 10, 8), border_radius=2)
+            pygame.draw.line(screen, shadow, (rect.x + 16, rect.y + 28), (rect.x + 20, rect.y + 32), 2)
+        elif action_id == "mailbox":
+            envelope = pygame.Rect(rect.x + 11, rect.y + 15, 22, 16)
+            pygame.draw.rect(screen, color, envelope, border_radius=3)
+            pygame.draw.line(screen, shadow, envelope.topleft, center, 1)
+            pygame.draw.line(screen, shadow, envelope.topright, center, 1)
+        elif action_id == "recipes":
+            left_page = pygame.Rect(rect.x + 11, rect.y + 12, 11, 22)
+            right_page = pygame.Rect(rect.x + 22, rect.y + 12, 11, 22)
+            pygame.draw.rect(screen, color, left_page, border_radius=2)
+            pygame.draw.rect(screen, color, right_page, border_radius=2)
+            pygame.draw.line(screen, shadow, (rect.x + 22, rect.y + 13), (rect.x + 22, rect.y + 34), 1)
+            pygame.draw.line(screen, shadow, (rect.x + 14, rect.y + 19), (rect.x + 19, rect.y + 19), 1)
+            pygame.draw.line(screen, shadow, (rect.x + 25, rect.y + 24), (rect.x + 30, rect.y + 24), 1)
+        elif action_id == "town":
+            roof = [(center[0], rect.y + 10), (rect.x + 11, rect.y + 22), (rect.right - 11, rect.y + 22)]
+            house = pygame.Rect(rect.x + 14, rect.y + 21, 16, 14)
+            pygame.draw.polygon(screen, color, roof)
+            pygame.draw.rect(screen, color, house, border_radius=2)
+            pygame.draw.rect(screen, shadow, (center[0] - 3, rect.y + 27, 6, 8))
+
+        shortcut_text = pygame.key.name(action["shortcut"]).upper()
+        text = self.small_font.render(shortcut_text[:1], True, (18, 22, 22))
+        text_rect = text.get_rect(center=(rect.right - 8, rect.bottom - 8))
+        screen.blit(text, text_rect)
+
+    def _draw_quick_action_tooltip(self, screen, action, bar_rect):
+        shortcut = pygame.key.name(action["shortcut"]).upper()
+        label = f"{action['label']} ({shortcut})"
+        text = self.small_font.render(label, True, (236, 235, 210))
+        tooltip = text.get_rect()
+        tooltip.inflate_ip(16, 8)
+        tooltip.midbottom = (action["rect"].centerx, bar_rect.y - 6)
+        tooltip.clamp_ip(screen.get_rect())
+        pygame.draw.rect(screen, (16, 18, 18), tooltip, border_radius=5)
+        pygame.draw.rect(screen, (104, 139, 90), tooltip, 1, border_radius=5)
+        screen.blit(text, text.get_rect(center=tooltip.center))
+
     def _draw_help_panel(self, screen, current_time_ms):
-        panel = pygame.Rect(24, 546, 752, 42)
+        bar_height = 52
+        panel = pygame.Rect(24, screen.get_height() - bar_height - 48, screen.get_width() - 48, 42)
         pygame.draw.rect(screen, (18, 21, 18), panel, border_radius=8)
         pygame.draw.rect(screen, (104, 139, 90), panel, 2, border_radius=8)
 
@@ -772,19 +930,24 @@ class ExplorationScreen:
             self.message_until_ms = 0
         active_trigger = self._get_active_trigger()
         active_interaction = self._get_active_interaction()
+        hovered_action = self._get_hovered_quick_action()
         if active_trigger is not None and active_trigger.get("requires_interact"):
             text = active_trigger.get("prompt") or "E - Interagir"
+        elif hovered_action is not None:
+            shortcut = pygame.key.name(hovered_action["shortcut"]).upper()
+            text = f"{hovered_action['label']} ({shortcut})"
         elif active_interaction is not None:
             text = active_interaction["prompt"]
         else:
             text = self.message
 
         title = self.title_font.render("Exploration", True, (220, 232, 190))
-        screen.blit(title, (38, 553))
+        screen.blit(title, (panel.x + 14, panel.y + 7))
         if not self.map.is_loaded and active_trigger is None and active_interaction is None:
             text = "Map Tiled indisponible. Affichage de secours actif."
-        body = self.body_font.render(self._fit_panel_text(text, 570), True, (220, 220, 205))
-        screen.blit(body, (178, 558))
+        body_width = max(180, panel.width - 154)
+        body = self.body_font.render(self._fit_panel_text(text, body_width), True, (220, 220, 205))
+        screen.blit(body, (panel.x + 154, panel.y + 12))
 
     def _to_screen_rect(self, rect):
         return rect.move(-int(self.camera_offset.x), -int(self.camera_offset.y))
