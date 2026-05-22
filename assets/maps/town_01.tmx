@@ -6856,7 +6856,12 @@
    </properties>
    <polygon points="0,0 -8.33333,6.66667 55.6667,6.66667 55.6667,-25.3333 87.6667,-25.3333 87.6667,-9.33333 167.667,-9.33333 167.667,-25.3333 199.667,-25.3333 199.667,-73.3333 -24.3333,-73.3333 -24.3333,6.66667 -8.33333,6.66667"/>
   </object>
-  <object id="3770" x="448" y="656" width="32" height="16"/>
+  <object id="3770" name="coll_town_anvil" type="collision" x="448" y="656" width="32" height="16">
+   <properties>
+    <property name="entity_id" value="town_anvil"/>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="6" name="91_npcs"/>
  <objectgroup id="7" name="92_objects"/>
@@ -7004,7 +7009,7 @@
     <property name="trigger_type" value=" "/>
    </properties>
   </object>
-  <object id="3771" template="../templates/objects/trigger.tx" name="trigger_craft_bench" x="440" y="648" width="48" height="32">
+  <object id="3771" template="../templates/objects/trigger.tx" name="trigger_town_anvil" x="440" y="648" width="48" height="32">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
@@ -7013,7 +7018,7 @@
     <property name="target_map" value=""/>
     <property name="target_spawn_id" value=""/>
     <property name="target_state" value="crafting"/>
-    <property name="trigger_id" value="craft_bench"/>
+    <property name="trigger_id" value="town_anvil"/>
     <property name="trigger_type" value="state_transition"/>
    </properties>
   </object>
