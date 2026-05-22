@@ -15,8 +15,8 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 156.33333333333334,
-                "y": 369.66666666666663
+                "x": 406,
+                "y": 240
             }
         },
         "assets/automapping/tree_rules.tmx": {
@@ -26,8 +26,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 497,
-                "y": 1.25
+                "x": 320,
+                "y": 240
             }
         },
         "assets/automapping/water_collision_rules.tmx": {
@@ -53,10 +53,10 @@
                 4
             ],
             "scale": 1,
-            "selectedLayer": 1,
+            "selectedLayer": 12,
             "viewCenter": {
-                "x": 539,
-                "y": 624
+                "x": 645,
+                "y": 616
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -75,7 +75,7 @@
             "scaleInDock": 1
         },
         "assets/tilesets/pixe_crawlers_doors.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 1.5
         },
         "assets/tilesets/pixel_crawler_anvil.tsx": {
             "scaleInDock": 1
@@ -133,7 +133,8 @@
         }
     },
     "last.externalTilesetPath": "D:/Jeux test/Games/My first game/assets/tilesets",
-    "last.imagePath": "D:/Jeux test/Games/My first game/assets/external/pixel_crawler_free_pack/spritesheets/environment/props/static",
+    "last.imagePath": "D:/Jeux test/Games/My first game/assets/external/pixel_crawler_free_pack/spritesheets/environment/structures/stations/anvil",
+    "last.objectTemplatePath": "D:/Jeux test/Games/My first game/assets/templates/objects",
     "openFiles": [
         "assets/automapping/house_rules.tmx",
         "assets/automapping/tree_rules.tmx",
@@ -142,7 +143,7 @@
         "assets/tilesets/water.tsx"
     ],
     "project": "town.tiled-project",
-    "property.type": "string",
+    "property.type": "bool",
     "recentFiles": [
         "assets/automapping/house_rules.tmx",
         "assets/automapping/tree_rules.tmx",

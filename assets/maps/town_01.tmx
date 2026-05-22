@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3738">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3772">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
@@ -9,6 +9,7 @@
  <tileset firstgid="4782" source="../tilesets/pixel_crawler_building_shadows.tsx"/>
  <tileset firstgid="5407" source="../tilesets/pixel_crawler_vegetation.tsx"/>
  <tileset firstgid="6082" source=":/automap-tiles.tsx"/>
+ <tileset firstgid="6087" source="../tilesets/pixel_crawler_anvil_01.tsx"/>
  <layer id="2" name="01_ground" width="80" height="100">
   <data encoding="csv">
 2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2907,2937,2962,2957,2959,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,
@@ -363,9 +364,9 @@
 0,5607,5608,5609,0,3609,3610,0,0,0,0,3812,3813,3814,3813,3815,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3634,3635,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5582,5583,5584,0,3634,3635,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3690,3691,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,5582,5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3715,3716,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3684,3685,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-5582,5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3684,3685,0,0,3709,3710,0,3561,3562,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,5582,5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6151,6152,6153,6154,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3715,3716,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6183,6184,6185,6186,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3684,3685,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+5582,5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6215,6216,6217,6218,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3684,3685,0,0,3709,3710,0,3561,3562,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3709,3710,0,0,0,0,0,3586,3587,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3611,3612,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3861,3760,3761,3760,3761,3861,3783,3784,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -6841,7 +6842,11 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="3733" x="696.5" y="921.5">
+  <object id="3733" name="coll_bighouse_03" type="collision" x="696.5" y="921.5">
+   <properties>
+    <property name="entity_id" value="bighouse_03"/>
+    <property name="solid" type="bool" value="true"/>
+   </properties>
    <polygon points="0,0 -8.5,6.5 7.5,6.5 23.5,6.5 23.5,38.5 39.5,38.5 39.5,-57.5 -152.5,-57.5 -152.5,54.5 -56.5,54.5 -56.5,22.5 -24.5,22.5 -24.5,38.5 -8.5,38.5 -8.5,6.5"/>
   </object>
   <object id="3737" name="coll_woodhouse_01" type="collision" x="88.3333" y="601.333">
@@ -6851,73 +6856,271 @@
    </properties>
    <polygon points="0,0 -8.33333,6.66667 55.6667,6.66667 55.6667,-25.3333 87.6667,-25.3333 87.6667,-9.33333 167.667,-9.33333 167.667,-25.3333 199.667,-25.3333 199.667,-73.3333 -24.3333,-73.3333 -24.3333,6.66667 -8.33333,6.66667"/>
   </object>
+  <object id="3770" x="448" y="656" width="32" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="91_npcs"/>
  <objectgroup id="7" name="92_objects"/>
- <objectgroup id="9" name="93_triggers"/>
- <objectgroup id="10" name="94_spawns">
-  <object id="1096" name="player_start" type="spawn" x="16" y="448">
+ <objectgroup id="9" name="93_triggers">
+  <object id="3739" name="trigger_enter_start_01" type="trigger" x="0" y="416" width="16" height="64">
    <properties>
-    <property name="enabled" type="bool" value="false"/>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3740" name="trigger_enter_forest_01" type="trigger" x="592" y="0" width="64" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3741" name="trigger_enter_futur_01" type="trigger" x="1264" y="528" width="16" height="48">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3742" name="trigger_enter_futur_01" type="trigger" x="1264" y="736" width="16" height="64">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3743" name="trigger_enter_futur_01" type="trigger" x="768" y="1584" width="48" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3744" name="trigger_enter_bighouse_03" type="trigger" x="688" y="928" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3745" name="trigger_enter_bighouse_02" type="trigger" x="928" y="720" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3746" name="trigger_enter_house_02" type="trigger" x="496" y="592" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3747" name="trigger_enter_house_01" type="trigger" x="672" y="416" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3748" name="trigger_enter_boghouse_01" type="trigger" x="464" y="368" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3749" name="trigger_enter_woodhouse_01" type="trigger" x="80" y="608" width="32" height="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E "/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
+    <property name="target_state" value=" "/>
+    <property name="trigger_id" value=" "/>
+    <property name="trigger_type" value=" "/>
+   </properties>
+  </object>
+  <object id="3771" template="../templates/objects/trigger.tx" name="trigger_craft_bench" x="440" y="648" width="48" height="32">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="once" type="bool" value="false"/>
+    <property name="prompt" value="E - enter craft"/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="target_map" value=""/>
+    <property name="target_spawn_id" value=""/>
+    <property name="target_state" value="crafting"/>
+    <property name="trigger_id" value="craft_bench"/>
+    <property name="trigger_type" value="state_transition"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="94_spawns">
+  <object id="3754" name="from_bighouse_01" type="spawn" x="480" y="384">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3755" name="from_woodhouse_01" type="spawn" x="96" y="624">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3756" name="from_bighouse_02" type="spawn" x="944" y="736">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3757" name="from_bighouse_03" type="spawn" x="704" y="944">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3758" name="from_forest" type="spawn" x="624" y="16">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3759" name="from_house_02" type="spawn" x="512" y="608">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3760" name="from_house_01" type="spawn" x="688" y="432">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3761" name="futur_spawn" type="spawn" x="1264" y="544">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3762" name="futur_spawn" type="spawn" x="1264" y="768">
+   <point/>
+  </object>
+  <object id="3763" name="futur_spawn" type="spawn" x="793" y="1583">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3764" name="player_start" type="spawn" x="16" y="448">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
     <property name="facing" value="right"/>
     <property name="map_id" value="town_01"/>
     <property name="spawn_id" value="player_start"/>
     <property name="spawn_type" value="player"/>
    </properties>
-  </object>
-  <object id="1097" name="from_house_02" type="spawn" x="512" y="608">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value="down"/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value="from_house_02"/>
-    <property name="spawn_type" value="player"/>
-   </properties>
-  </object>
-  <object id="1098" name="from_house_01" type="spawn" x="688" y="432">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value="down"/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value="bighouse_02"/>
-    <property name="spawn_type" value="player"/>
-   </properties>
-  </object>
-  <object id="1099" name="from_forest" type="spawn" x="624" y="16">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value="down"/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value="bighouse_02"/>
-    <property name="spawn_type" value="player"/>
-   </properties>
-  </object>
-  <object id="1100" name="futur_spawn" type="spawn" x="792" y="1584">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value=""/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value=""/>
-    <property name="spawn_type" value="player"/>
-   </properties>
-  </object>
-  <object id="1101" name="futur_spawn" type="spawn" x="1264" y="784">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value=""/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value=""/>
-    <property name="spawn_type" value="player"/>
-   </properties>
-  </object>
-  <object id="1102" name="futur_spawn" type="spawn" x="1264" y="552">
-   <properties>
-    <property name="enabled" type="bool" value="false"/>
-    <property name="facing" value=""/>
-    <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value=""/>
-    <property name="spawn_type" value="player"/>
-   </properties>
+   <point/>
   </object>
  </objectgroup>
  <objectgroup id="11" name="95_npc_paths"/>

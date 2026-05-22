@@ -304,6 +304,8 @@ class ExplorationScreen:
         self.player_visual_size = pygame.Vector2(16, 24)
         self.player_hitbox_size = pygame.Vector2(10, 8)
         self.player_sprite = self._load_player_sprite()
+        self.active_spawn_id = None
+        self.spawn_debug_message = ""
         self.player_position = self._get_initial_player_position()
         player_spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
         self.player_facing = player_spawn.get("facing") if player_spawn is not None else "down"
@@ -313,8 +315,8 @@ class ExplorationScreen:
         self.player_run_speed = 4
         self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
         self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. Shift pour courir. E pres d'un point. Echap pour rentrer."
-        self.message = self.default_message
-        self.message_until_ms = 0
+        self.message = self.spawn_debug_message or self.default_message
+        self.message_until_ms = pygame.time.get_ticks() + 4000 if self.spawn_debug_message else 0
         self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
         self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
         self.show_collision_debug = False
@@ -658,7 +660,16 @@ class ExplorationScreen:
     def _get_initial_player_position(self):
         spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
         if spawn is not None:
+            self.active_spawn_id = "player_start"
+            self.spawn_debug_message = f"Spawn player_start loaded at x={spawn['x']:.1f}, y={spawn['y']:.1f}"
             return pygame.Vector2(spawn["x"], spawn["y"])
+
+        self.active_spawn_id = None
+        spawn_ids = sorted(self.map.spawns.keys()) if self.map.is_loaded else []
+        if spawn_ids:
+            self.spawn_debug_message = f"player_start not found. Found: {', '.join(spawn_ids)}"
+        else:
+            self.spawn_debug_message = "No Tiled spawns found"
         return pygame.Vector2(self.map_width / 2, self.map_height / 2)
 
     def _get_player_draw_rect(self):
