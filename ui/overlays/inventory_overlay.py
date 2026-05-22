@@ -1,6 +1,15 @@
 import pygame
 
-from systems.equipment import EQUIPMENT_SLOTS, can_equip_item, equip_item, unequip_item
+from systems.economy import calculate_item_sell_price
+from systems.equipment import (
+    EQUIPMENT_SLOTS,
+    RING_SLOTS,
+    can_equip_item,
+    equip_item,
+    get_equipment_slot,
+    unequip_item,
+)
+from systems.equipment_sets import count_equipped_set_pieces, load_equipment_sets
 from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
 
@@ -14,11 +23,14 @@ class InventoryOverlay:
         self.small_font = pygame.font.Font(None, 19)
         self.close_rect = pygame.Rect(0, 0, 0, 0)
         self.compact_rect = pygame.Rect(0, 0, 0, 0)
+        self.stats_details_rect = pygame.Rect(0, 0, 0, 0)
         self.slot_rects = []
         self.equipment_rects = {}
         self.action_rects = {}
         self.filter_rects = {}
         self.active_filter = "all"
+        self.show_advanced_stats = False
+        self.equipment_sets = load_equipment_sets()
         self.selected_item = None
         self.selected_item_source = None
         self.selected_item_position = None
@@ -86,14 +98,20 @@ class InventoryOverlay:
             feedback = self.small_font.render(self.feedback_message, True, (210, 232, 175))
             screen.blit(feedback, (panel.x + 140, panel.y + 56))
 
-        inventory_rect = pygame.Rect(panel.x + 20, panel.y + 104, 372, panel.height - 128)
-        equipment_rect = pygame.Rect(panel.x + 410, panel.y + 76, panel.right - panel.x - 430, 210)
-        details_rect = pygame.Rect(panel.x + 410, panel.y + 304, panel.right - panel.x - 430, panel.bottom - panel.y - 328)
+        inventory_rect = pygame.Rect(panel.x + 20, panel.y + 104, 372, 232)
+        stats_rect = pygame.Rect(panel.x + 20, panel.y + 354, 180, panel.bottom - panel.y - 378)
+        effects_rect = pygame.Rect(panel.x + 212, panel.y + 354, 180, panel.bottom - panel.y - 378)
+        equipment_rect = pygame.Rect(panel.x + 410, panel.y + 76, panel.right - panel.x - 430, 176)
+        details_rect = pygame.Rect(panel.x + 410, panel.y + 270, panel.right - panel.x - 430, panel.bottom - panel.y - 294)
 
         self._draw_filter_row(screen, pygame.Rect(panel.x + 20, panel.y + 76, 372, 24))
         self._draw_inventory_grid(screen, inventory_rect)
         self._draw_equipment_panel(screen, equipment_rect)
+        self._draw_player_stats_panel(screen, stats_rect)
+        self._draw_active_effects_panel(screen, effects_rect)
         self._draw_details_panel(screen, details_rect)
+        if self.show_advanced_stats:
+            self._draw_advanced_stats_panel(screen, panel)
 
     def _handle_click(self, position):
         if self.close_rect.collidepoint(position):
@@ -102,6 +120,10 @@ class InventoryOverlay:
 
         if self.compact_rect.collidepoint(position):
             self._compact_inventory()
+            return
+
+        if self.stats_details_rect.collidepoint(position):
+            self.show_advanced_stats = not self.show_advanced_stats
             return
 
         for filter_id, rect in self.filter_rects.items():
@@ -245,7 +267,7 @@ class InventoryOverlay:
         equipment = self._get_equipment()
         self.equipment_rects = {}
         slot_width = max(94, (area.width - 8) // 2)
-        slot_height = 33
+        slot_height = 25
         labels = self._equipment_labels()
 
         for index, slot_key in enumerate(EQUIPMENT_SLOTS):
@@ -253,7 +275,7 @@ class InventoryOverlay:
             row = index // 2
             rect = pygame.Rect(
                 area.x + column * (slot_width + 8),
-                area.y + row * (slot_height + 7),
+                area.y + row * (slot_height + 4),
                 slot_width,
                 slot_height,
             )
@@ -269,9 +291,100 @@ class InventoryOverlay:
             slot_label = labels.get(slot_key, slot_key)
             item_label = self._get_item_display_name(item, item_data) if item is not None else "Empty"
             label_surface = self.small_font.render(slot_label, True, (199, 178, 139))
-            screen.blit(label_surface, (rect.x + 5, rect.y + 3))
+            screen.blit(label_surface, (rect.x + 5, rect.y + 2))
             item_surface = self.small_font.render(self._shorten_text(item_label, rect.width - 10, self.small_font), True, border_color if item else (130, 119, 101))
-            screen.blit(item_surface, (rect.x + 5, rect.y + 17))
+            screen.blit(item_surface, (rect.x + 5, rect.y + 13))
+
+    def _draw_player_stats_panel(self, screen, rect):
+        pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
+        pygame.draw.rect(screen, (121, 91, 55), rect, 1, border_radius=6)
+        title = self.small_font.render("Stats", True, (238, 226, 194))
+        screen.blit(title, (rect.x + 8, rect.y + 6))
+
+        self.stats_details_rect = pygame.Rect(rect.right - 58, rect.y + 5, 50, 20)
+        self._draw_button(screen, self.stats_details_rect, "Details")
+
+        player = self._get_player()
+        stats = [
+            ("Max HP", "max_hp", player.get("max_hp", 0)),
+            ("Current HP", "current_hp", player.get("current_hp", 0)),
+            ("Attack", "attack", player.get("attack", 0)),
+            ("Defense", "defense", player.get("defense", 0)),
+            ("Strength", "strength", player.get("strength", player.get("force", 0))),
+            ("Dexterity", "agility", player.get("dexterity", player.get("agility", 0))),
+            ("Intelligence", "intelligence", player.get("intelligence", 0)),
+            ("Vitality", "vitality", player.get("vitality", 0)),
+            ("Wisdom", "wisdom", player.get("wisdom", 0)),
+            ("Luck", "luck", player.get("luck", 0)),
+        ]
+
+        start_y = rect.y + 29
+        column_width = 88
+        for index, (label, stat_key, value) in enumerate(stats):
+            column = index // 5
+            row = index % 5
+            line = f"{label}: {self._format_stat_value(stat_key, value)}"
+            surface = self.small_font.render(self._shorten_text(line, column_width - 4, self.small_font), True, (212, 202, 180))
+            screen.blit(surface, (rect.x + 8 + column * column_width, start_y + row * 15))
+
+    def _draw_advanced_stats_panel(self, screen, parent_rect):
+        rect = pygame.Rect(0, 0, 390, 250)
+        rect.center = parent_rect.center
+        pygame.draw.rect(screen, (24, 21, 20), rect, border_radius=8)
+        pygame.draw.rect(screen, (207, 160, 82), rect, 2, border_radius=8)
+
+        title = self.body_font.render("Advanced Stats", True, (246, 235, 205))
+        screen.blit(title, (rect.x + 16, rect.y + 12))
+
+        player = self._get_player()
+        stats = [
+            ("Magic Attack", "magic_attack", player.get("magic_attack", 0)),
+            ("Magic Defense", "magic_defense", player.get("magic_defense", 0)),
+            ("Accuracy", "accuracy", player.get("accuracy", 0)),
+            ("Dodge", "dodge_chance", player.get("dodge_chance", 0)),
+            ("Block", "block_chance", player.get("block_chance", 0)),
+            ("Crit Chance", "crit_chance", player.get("crit_chance", 0)),
+            ("Crit Damage", "crit_damage", player.get("crit_damage", 0)),
+            ("Initiative", "initiative", player.get("initiative", 0)),
+            ("Healing Power", "healing_power", player.get("healing_power", 0)),
+            ("Status Resist", "status_resistance", player.get("status_resistance", 0)),
+            ("Loot Bonus", "loot_bonus", player.get("loot_bonus", 0)),
+            ("Gold Bonus", "gold_bonus", player.get("gold_bonus", 0)),
+            ("Rare Find", "rare_find_bonus", player.get("rare_find_bonus", 0)),
+            ("XP Bonus", "xp_bonus", player.get("xp_bonus", 0)),
+        ]
+
+        x_positions = [rect.x + 18, rect.x + 205]
+        y_positions = [rect.y + 46, rect.y + 46]
+        for index, (label, stat_key, value) in enumerate(stats):
+            column = index // 7
+            line = f"{label}: {self._format_stat_value(stat_key, value)}"
+            surface = self.small_font.render(self._shorten_text(line, 168, self.small_font), True, (212, 202, 180))
+            screen.blit(surface, (x_positions[column], y_positions[column]))
+            y_positions[column] += 22
+
+        hint = self.small_font.render("Click Details again to close", True, (168, 156, 138))
+        screen.blit(hint, (rect.x + 16, rect.bottom - 28))
+
+    def _draw_active_effects_panel(self, screen, rect):
+        pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
+        pygame.draw.rect(screen, (121, 91, 55), rect, 1, border_radius=6)
+        title = self.small_font.render("Active Effects", True, (238, 226, 194))
+        screen.blit(title, (rect.x + 8, rect.y + 6))
+
+        active_effects = self._get_player().get("active_effects", [])
+        valid_effects = [effect for effect in active_effects if isinstance(effect, dict)]
+        if not valid_effects:
+            none_text = self.small_font.render("None", True, (168, 156, 138))
+            screen.blit(none_text, (rect.x + 8, rect.y + 28))
+            return
+
+        y = rect.y + 28
+        for effect in valid_effects[:4]:
+            line = self._format_effect_line(effect)
+            surface = self.small_font.render(self._shorten_text(line, rect.width - 16, self.small_font), True, (212, 202, 180))
+            screen.blit(surface, (rect.x + 8, y))
+            y += 15
 
     def _draw_details_panel(self, screen, rect):
         pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
@@ -293,41 +406,142 @@ class InventoryOverlay:
         screen.blit(name_surface, (rect.x + 10, y))
         y += 25
 
+        sell_price = calculate_item_sell_price(item, item_data)
         detail_lines = [
-            f"ID: {item.get('item', '-')}",
-            f"Kind: {item.get('kind', '-')}",
-            f"Type: {item_data.get('type', '-')}",
-            f"Rarity: {str(rarity).capitalize()}",
+            ("Item", "section"),
+            (f"Type: {self._get_type_label(item_data.get('type'))}", "normal"),
+            (f"Kind: {item.get('kind', '-')}", "normal"),
+            (f"Rarity: {str(rarity).capitalize()}", "rarity"),
+            (f"Sell price: {sell_price} gold" if sell_price > 0 else "Sell price: -", "normal"),
         ]
         quantity = item.get("quantity")
         if quantity is not None:
-            detail_lines.append(f"Quantity: {quantity}")
+            detail_lines.append((f"Quantity: {quantity}", "normal"))
         level = item.get("level") or item_data.get("level")
         if level is not None:
-            detail_lines.append(f"Level: {level}")
+            detail_lines.append((f"Level: {level}", "normal"))
 
-        for line in detail_lines:
-            surface = self.small_font.render(self._shorten_text(line, rect.width - 20, self.small_font), True, (210, 198, 174))
+        for line, role in detail_lines:
+            color = self._get_detail_role_color(role, item, item_data)
+            surface = self.small_font.render(self._shorten_text(line, rect.width - 20, self.small_font), True, color)
             screen.blit(surface, (rect.x + 10, y))
-            y += 18
+            y += 15
 
-        stats = item.get("stats") or item_data.get("stats")
+        stats = self._get_item_stats(item)
         if isinstance(stats, dict) and stats:
-            y += 2
             stats_label = self.small_font.render("Stats", True, (238, 226, 194))
             screen.blit(stats_label, (rect.x + 10, y))
             y += 17
-            for stat_name, value in list(stats.items())[:4]:
-                stat_text = self.small_font.render(f"{self._format_stat_name(stat_name)}: {value}", True, (190, 215, 184))
+            for stat_name, value in list(stats.items())[:3]:
+                stat_text = self.small_font.render(
+                    f"{self._get_stat_label(stat_name)}: {self._format_stat_value(stat_name, value)}",
+                    True,
+                    (190, 215, 184),
+                )
                 screen.blit(stat_text, (rect.x + 16, y))
-                y += 16
+                y += 15
+
+        y = self._draw_comparison_section(screen, rect, item, y)
+        y = self._draw_set_section(screen, rect, item, y)
 
         description = item_data.get("description")
-        if description and y < rect.bottom - 72:
+        if description and y < rect.bottom - 60:
             y += 4
-            y = self._draw_wrapped_text(screen, description, rect.x + 10, y, rect.width - 20, self.small_font, (191, 181, 158), rect.bottom - 50)
+            self._draw_wrapped_text(screen, description, rect.x + 10, y, rect.width - 20, self.small_font, (191, 181, 158), rect.bottom - 40)
 
         self._draw_action_buttons(screen, rect)
+
+    def _draw_comparison_section(self, screen, rect, item, y):
+        current_item = self._get_comparison_item_for_source(item, self.selected_item_source)
+        if self.selected_item_source is None or self.selected_item_source[0] != "inventory":
+            return y
+        if not can_equip_item(item, self._get_items_data()):
+            return y
+
+        if y > rect.bottom - 78:
+            return y
+
+        title = self.small_font.render("Comparison", True, (238, 226, 194))
+        screen.blit(title, (rect.x + 10, y))
+        y += 16
+
+        if current_item is None:
+            empty = self.small_font.render("Compared slot is empty.", True, (168, 156, 138))
+            screen.blit(empty, (rect.x + 16, y))
+            return y + 15
+
+        current_name = self._get_item_display_name(current_item, self._get_item_data(current_item))
+        compared = self.small_font.render(self._shorten_text(f"Vs: {current_name}", rect.width - 26, self.small_font), True, (200, 190, 168))
+        screen.blit(compared, (rect.x + 16, y))
+        y += 15
+
+        new_stats = self._get_item_stats(item)
+        current_stats = self._get_item_stats(current_item)
+        stat_keys = sorted(set(new_stats) | set(current_stats), key=self._get_stat_label)
+        for stat_key in stat_keys[:3]:
+            new_value = new_stats.get(stat_key, 0)
+            current_value = current_stats.get(stat_key, 0)
+            if not isinstance(new_value, (int, float)) or not isinstance(current_value, (int, float)):
+                continue
+            diff = new_value - current_value
+            color = (105, 210, 124) if diff > 0 else (224, 94, 94) if diff < 0 else (165, 160, 150)
+            line = (
+                f"{self._get_stat_label(stat_key)}: "
+                f"{self._format_stat_value(stat_key, new_value)} vs "
+                f"{self._format_stat_value(stat_key, current_value)} "
+                f"({self._format_stat_difference(stat_key, diff)})"
+            )
+            surface = self.small_font.render(self._shorten_text(line, rect.width - 26, self.small_font), True, color)
+            screen.blit(surface, (rect.x + 16, y))
+            y += 15
+            if y > rect.bottom - 46:
+                break
+        return y
+
+    def _draw_set_section(self, screen, rect, item, y):
+        set_id = self._get_item_set_id(item)
+        if not set_id or y > rect.bottom - 76:
+            return y
+
+        set_data = self._get_set_data(set_id)
+        progress = self._get_set_progress(set_id)
+        set_name = set_data.get("name", str(set_id))
+        title = f"Set: {set_name} ({progress['equipped_count']}/{progress['total_count']})"
+        surface = self.small_font.render(self._shorten_text(title, rect.width - 20, self.small_font), True, (207, 176, 98))
+        screen.blit(surface, (rect.x + 10, y))
+        y += 16
+
+        pieces = []
+        for piece_id in progress["piece_ids"][:3]:
+            piece_data = self._get_items_data().get(piece_id, {})
+            piece_name = piece_data.get("name", piece_id) if isinstance(piece_data, dict) else piece_id
+            marker = "*" if piece_id in progress["equipped_piece_ids"] else "-"
+            pieces.append(f"{marker} {piece_name}")
+        if pieces:
+            piece_line = self._shorten_text(", ".join(pieces), rect.width - 26, self.small_font)
+            piece_surface = self.small_font.render(piece_line, True, (190, 202, 188))
+            screen.blit(piece_surface, (rect.x + 16, y))
+            y += 15
+
+        bonuses = set_data.get("bonuses", {})
+        if isinstance(bonuses, dict):
+            sorted_bonuses = []
+            for threshold_key, threshold_bonuses in bonuses.items():
+                try:
+                    sorted_bonuses.append((int(threshold_key), threshold_bonuses))
+                except (TypeError, ValueError):
+                    continue
+            for threshold, threshold_bonuses in sorted(sorted_bonuses)[:2]:
+                is_active = progress["equipped_count"] >= threshold
+                marker = "*" if is_active else "-"
+                line = f"{marker} {self._format_set_bonus_line(threshold, threshold_bonuses)}"
+                color = (105, 210, 124) if is_active else (145, 136, 120)
+                bonus_surface = self.small_font.render(self._shorten_text(line, rect.width - 26, self.small_font), True, color)
+                screen.blit(bonus_surface, (rect.x + 16, y))
+                y += 15
+                if y > rect.bottom - 46:
+                    break
+        return y
 
     def _draw_action_buttons(self, screen, details_rect):
         actions = self._get_available_actions()
@@ -537,6 +751,10 @@ class InventoryOverlay:
         equipment = player.get("equipment", {}) if isinstance(player, dict) else {}
         return equipment if isinstance(equipment, dict) else {}
 
+    def _get_player(self):
+        player = getattr(self.game, "player", {})
+        return player if isinstance(player, dict) else {}
+
     def _get_player_gold(self):
         player = getattr(self.game, "player", {})
         if isinstance(player, dict):
@@ -558,6 +776,205 @@ class InventoryOverlay:
             return ""
         item_id = item.get("item", "")
         return item_data.get("name") or item_id
+
+    def _get_item_stats(self, item):
+        if not isinstance(item, dict):
+            return {}
+        item_data = self._get_item_data(item)
+        stats = item.get("stats")
+        if stats is None:
+            stats = item_data.get("stats", {})
+        return stats if isinstance(stats, dict) else {}
+
+    def _get_item_set_id(self, item):
+        return self._get_item_data(item).get("set_id")
+
+    def _get_set_data(self, set_id):
+        set_data = self.equipment_sets.get(set_id, {})
+        return set_data if isinstance(set_data, dict) else {}
+
+    def _get_set_piece_ids(self, set_id):
+        piece_ids = []
+        for item_id, item_data in self._get_items_data().items():
+            if isinstance(item_data, dict) and item_data.get("set_id") == set_id:
+                piece_ids.append(item_id)
+        return piece_ids
+
+    def _get_equipped_set_piece_ids(self, set_id):
+        equipped_piece_ids = set()
+        for item in self._get_equipment().values():
+            if not isinstance(item, dict):
+                continue
+            item_data = self._get_item_data(item)
+            if item_data.get("set_id") == set_id:
+                equipped_piece_ids.add(item.get("item"))
+        return equipped_piece_ids
+
+    def _get_set_progress(self, set_id):
+        piece_ids = self._get_set_piece_ids(set_id)
+        set_counts = count_equipped_set_pieces(self._get_player(), self._get_items_data())
+        equipped_piece_ids = self._get_equipped_set_piece_ids(set_id)
+        return {
+            "piece_ids": piece_ids,
+            "equipped_piece_ids": equipped_piece_ids,
+            "equipped_count": set_counts.get(set_id, len(equipped_piece_ids)),
+            "total_count": len(piece_ids),
+        }
+
+    def _get_comparison_item_for_source(self, item, source):
+        if source is None or source[0] != "inventory":
+            return None
+        equipment_type = self._get_equipment_type(item)
+        if equipment_type is None:
+            return None
+        return self._get_comparison_item_for_equipment_type(equipment_type)
+
+    def _get_equipment_type(self, item):
+        item_data = self._get_item_data(item)
+        item_type = item_data.get("type")
+        item_category = item_data.get("category") if item_type == "equipment" else item_type
+        if item_category == "ring":
+            return "ring"
+        return get_equipment_slot(item_data)
+
+    def _get_comparison_item_for_equipment_type(self, equipment_type):
+        equipment = self._get_equipment()
+        if equipment_type != "ring":
+            return equipment.get(equipment_type)
+        for ring_slot in RING_SLOTS:
+            if equipment.get(ring_slot) is None:
+                return None
+        return equipment.get(RING_SLOTS[0])
+
+    def _get_type_label(self, item_type):
+        labels = {
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "resource": "Resource",
+            "material": "Material",
+            "currency": "Currency",
+            "quest": "Quest",
+            "recipe": "Recipe",
+        }
+        if not item_type:
+            return "Unknown"
+        return labels.get(item_type, str(item_type).replace("_", " ").title())
+
+    def _get_detail_role_color(self, role, item, item_data):
+        if role == "section":
+            return (238, 226, 194)
+        if role == "rarity":
+            return self._get_rarity_color(item, item_data)
+        return (210, 198, 174)
+
+    def _format_stat_value(self, stat_key, value):
+        percent_stats = {
+            "accuracy",
+            "dodge_chance",
+            "block_chance",
+            "crit_chance",
+            "status_resistance",
+            "loot_bonus",
+            "gold_bonus",
+            "rare_find_bonus",
+            "xp_bonus",
+        }
+        if stat_key in percent_stats and isinstance(value, (int, float)):
+            return f"{value * 100:.1f}%"
+        if stat_key == "crit_damage":
+            return f"x{value}"
+        return str(value)
+
+    def _format_stat_difference(self, stat_key, diff):
+        if not isinstance(diff, (int, float)):
+            return "="
+        rounded_diff = round(diff, 10)
+        if rounded_diff == 0:
+            return "="
+        sign = "+" if rounded_diff > 0 else "-"
+        absolute_diff = abs(rounded_diff)
+        percent_stats = {
+            "accuracy",
+            "dodge_chance",
+            "block_chance",
+            "crit_chance",
+            "status_resistance",
+            "loot_bonus",
+            "gold_bonus",
+            "rare_find_bonus",
+            "xp_bonus",
+        }
+        if stat_key in percent_stats:
+            return f"{sign}{absolute_diff * 100:.1f}%"
+        if stat_key == "crit_damage":
+            return f"{sign}{absolute_diff:.2f}"
+        if float(absolute_diff).is_integer():
+            return f"{sign}{int(absolute_diff)}"
+        return f"{sign}{absolute_diff:.2f}".rstrip("0").rstrip(".")
+
+    def _format_effect_line(self, effect):
+        name = effect.get("name", effect.get("id", "Unknown Effect"))
+        duration_type = effect.get("duration_type")
+        if duration_type == "combat":
+            duration = f"{effect.get('remaining_combats', 0)} combat(s)"
+        elif duration_type == "time":
+            duration = f"{effect.get('remaining_seconds', 0)}s"
+        else:
+            duration = "Unknown"
+
+        modifier_text = ""
+        modifiers = effect.get("modifiers", {})
+        if isinstance(modifiers, dict):
+            for stat, value in modifiers.items():
+                if isinstance(value, (int, float)):
+                    sign = "+" if value > 0 else "-" if value < 0 else ""
+                    modifier_text = f"{sign}{self._format_stat_value(stat, abs(value))} {self._get_stat_label(stat)}"
+                    break
+        return f"{name} {duration} {modifier_text}".strip()
+
+    def _format_set_bonus_line(self, threshold, bonuses):
+        bonus_parts = []
+        if not isinstance(bonuses, dict):
+            bonuses = {}
+        for stat, value in bonuses.items():
+            if not isinstance(value, (int, float)):
+                continue
+            sign = "+" if value > 0 else ""
+            bonus_parts.append(f"{sign}{self._format_stat_value(stat, value)} {self._get_stat_label(stat)}")
+        bonus_text = ", ".join(bonus_parts) if bonus_parts else "No bonus"
+        return f"{threshold} pieces: {bonus_text}"
+
+    def _get_stat_label(self, stat_name):
+        labels = {
+            "attack": "Attack",
+            "defense": "Defense",
+            "hp": "HP",
+            "max_hp": "Max HP",
+            "current_hp": "Current HP",
+            "force": "Strength",
+            "strength": "Strength",
+            "agility": "Agility",
+            "dexterity": "Dexterity",
+            "intelligence": "Intelligence",
+            "vitality": "Vitality",
+            "wisdom": "Wisdom",
+            "luck": "Luck",
+            "magic_attack": "Magic Attack",
+            "magic_defense": "Magic Defense",
+            "accuracy": "Accuracy",
+            "dodge_chance": "Dodge",
+            "block_chance": "Block",
+            "crit_chance": "Crit Chance",
+            "crit_damage": "Crit Damage",
+            "initiative": "Initiative",
+            "healing_power": "Healing Power",
+            "status_resistance": "Status Resist",
+            "loot_bonus": "Loot Bonus",
+            "gold_bonus": "Gold Bonus",
+            "rare_find_bonus": "Rare Find",
+            "xp_bonus": "XP Bonus",
+        }
+        return labels.get(stat_name, self._format_stat_name(stat_name))
 
     def _get_rarity_color(self, item, item_data=None):
         colors = {
