@@ -885,7 +885,18 @@ class ExplorationScreen:
             self._draw_quick_action_tooltip(screen, hovered_action, bar_rect)
 
     def _draw_quick_action_icon(self, screen, action, rect, is_hovered):
-        color = (236, 226, 178) if is_hovered else (204, 214, 190)
+        icon_colors = {
+            "inventory": (229, 181, 82),
+            "quests": (223, 196, 139),
+            "skills": (102, 170, 232),
+            "achievements": (240, 199, 78),
+            "professions": (184, 152, 104),
+            "mailbox": (219, 197, 157),
+            "recipes": (134, 193, 119),
+            "menu": (158, 151, 134),
+        }
+        base_color = icon_colors.get(action["id"], (204, 214, 190))
+        color = tuple(min(255, component + 24) for component in base_color) if is_hovered else base_color
         shadow = (12, 14, 15)
         center = rect.center
         action_id = action["id"]
