@@ -754,7 +754,7 @@ class MenuScreen:
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
-            self.game.state = "town"
+            self.game.state = "exploration"
             return True
 
         if not self.region_buttons:

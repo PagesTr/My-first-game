@@ -367,13 +367,13 @@ class ExplorationScreen:
         self.triggers = list(self.map.triggers) if self.map.is_loaded else []
         self.quick_actions = [
             {"id": "inventory", "label": "Inventory", "target_state": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "quests", "label": "Quests", "target_state": "quests", "shortcut": pygame.K_q, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "quests", "label": "Quests", "target_state": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "skills", "label": "Skills", "target_state": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "achievements", "label": "Achievements", "target_state": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "professions", "label": "Professions", "target_state": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "mailbox", "label": "Mailbox", "target_state": "mailbox", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "recipes", "label": "Recipes", "target_state": "crafting", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "town", "label": "Town", "action": "return_to_town", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
         ]
         self.show_collision_debug = False
         self.interactions = [
@@ -407,10 +407,10 @@ class ExplorationScreen:
             },
             {
                 "id": "town_exit",
-                "label": "Town",
+                "label": "Menu",
                 "rect": pygame.Rect(self.map_width // 2 - 52, self.map_height - 84, 104, 34),
-                "prompt": "E - Retourner en ville",
-                "action": "return_to_town",
+                "prompt": "E - Retour menu",
+                "action": "main_menu",
             },
         ]
 
@@ -425,7 +425,7 @@ class ExplorationScreen:
             return
 
         if event.key == pygame.K_ESCAPE:
-            self.game.return_to_town()
+            self.game.state = "main_menu"
             return
 
         shortcut_action = self._get_quick_action_for_key(event.key)
@@ -639,6 +639,10 @@ class ExplorationScreen:
         return self._get_quick_action_at(mouse_position)
 
     def _activate_quick_action(self, action):
+        if action.get("action") == "main_menu":
+            self.game.state = "main_menu"
+            return
+
         if action.get("action") == "return_to_town":
             self.game.return_to_town()
             return
@@ -649,6 +653,9 @@ class ExplorationScreen:
 
     def _activate_interaction(self, interaction):
         action = interaction.get("action")
+        if action == "main_menu":
+            self.game.state = "main_menu"
+            return
         if action == "return_to_town":
             self.game.return_to_town()
             return
@@ -688,7 +695,7 @@ class ExplorationScreen:
             elif interaction["id"] == "craft_bench":
                 self._draw_craft_bench(screen, rect, is_active)
             elif interaction["id"] == "town_exit":
-                self._draw_town_exit(screen, rect, is_active)
+                self._draw_menu_exit(screen, rect, is_active)
 
     def _draw_interaction_marker(self, screen, rect, label, is_active):
         color = (238, 214, 126) if is_active else (168, 148, 90)
@@ -728,13 +735,13 @@ class ExplorationScreen:
         pygame.draw.circle(screen, (156, 158, 146), (rect.centerx + 20, rect.y + 8), 7)
         self._draw_interaction_marker(screen, rect, "Craft", is_active)
 
-    def _draw_town_exit(self, screen, rect, is_active):
+    def _draw_menu_exit(self, screen, rect, is_active):
         pygame.draw.rect(screen, (86, 72, 48), rect, border_radius=5)
         pygame.draw.rect(screen, (209, 177, 95), rect, 2, border_radius=5)
-        label = self.small_font.render("Town", True, (245, 230, 180))
+        label = self.small_font.render("Menu", True, (245, 230, 180))
         label_rect = label.get_rect(center=rect.center)
         screen.blit(label, label_rect)
-        self._draw_interaction_marker(screen, rect, "Ville", is_active)
+        self._draw_interaction_marker(screen, rect, "Menu", is_active)
 
     def _draw_npc(self, screen):
         rect = self._to_screen_rect(self.npc_rect)
@@ -895,7 +902,7 @@ class ExplorationScreen:
             pygame.draw.line(screen, shadow, (rect.x + 22, rect.y + 13), (rect.x + 22, rect.y + 34), 1)
             pygame.draw.line(screen, shadow, (rect.x + 14, rect.y + 19), (rect.x + 19, rect.y + 19), 1)
             pygame.draw.line(screen, shadow, (rect.x + 25, rect.y + 24), (rect.x + 30, rect.y + 24), 1)
-        elif action_id == "town":
+        elif action_id == "menu":
             roof = [(center[0], rect.y + 10), (rect.x + 11, rect.y + 22), (rect.right - 11, rect.y + 22)]
             house = pygame.Rect(rect.x + 14, rect.y + 21, 16, 14)
             pygame.draw.polygon(screen, color, roof)

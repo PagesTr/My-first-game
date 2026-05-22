@@ -209,7 +209,7 @@ class Game:
             self.data.classes,
             self.data.skills,
         )
-        self.state = "town"
+        self.state = "exploration"
         self.save_current_game()
 
     def select_zone_for_actions(self, zone_key):
@@ -307,7 +307,7 @@ class Game:
         if self.state == "dungeon":
             self.state = "dungeon"
         else:
-            self.state = "town"
+            self.state = "exploration"
         return {"started": True, "dungeon_id": dungeon_id}
 
     def get_active_dungeon_step(self):
@@ -980,7 +980,7 @@ class Game:
                 self.data.classes,
                 self.data.skills,
             )
-        self.state = "town"
+        self.state = "exploration"
         self.combat = None
         self.auto_mode = False
         self.save_current_game()
