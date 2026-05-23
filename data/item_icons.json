@@ -1,3 +1,15 @@
 {
-  "goblin_ear": "assets/icons/items/all/item_r12_c05.png"
+  "adventurer_relic_ring": "assets/icons/items/all/item_r24_c07.png",
+  "alpha_fang": "assets/icons/items/all/item_r33_c16.png",
+  "amulet_of_life": "assets/icons/items/all/item_r22_c32.png",
+  "amulet_of_power": "assets/icons/items/all/item_r22_c33.png",
+  "amulet_of_wisdom": "assets/icons/items/all/item_r22_c30.png",
+  "ancient_bone": "assets/icons/items/all/item_r32_c11.png",
+  "bone": "assets/icons/items/all/item_r32_c11.png",
+  "bone_signet": "assets/icons/items/all/item_r24_c08.png",
+  "duelist_blade": "assets/icons/items/all/item_r00_c01.png",
+  "duelist_gloves": "assets/icons/items/all/item_r06_c19.png",
+  "duelist_pants": "assets/icons/items/all/item_r06_c35.png",
+  "goblin_ear": "assets/icons/items/all/item_r12_c05.png",
+  "wolf_fang": "assets/icons/items/all/item_r33_c16.png"
 }

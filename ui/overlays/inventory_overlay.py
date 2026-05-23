@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pygame
 
 from systems.economy import calculate_item_sell_price
@@ -31,6 +34,9 @@ class InventoryOverlay:
         self.active_filter = "all"
         self.show_advanced_stats = False
         self.equipment_sets = load_equipment_sets()
+        self.item_icon_map = self._load_item_icon_map()
+        self.item_icon_surfaces = {}
+        self.icon_warnings = []
         self.selected_item = None
         self.selected_item_source = None
         self.selected_item_position = None
@@ -225,6 +231,12 @@ class InventoryOverlay:
         screen.blit(label_surface, label_surface.get_rect(midbottom=(rect.centerx, rect.bottom - 3)))
 
     def _draw_item_icon(self, screen, rect, item, item_data):
+        item_id = item.get("item") if isinstance(item, dict) else None
+        icon_surface = self._get_item_icon_surface(item_id)
+        if icon_surface is not None:
+            self._draw_icon_surface(screen, icon_surface, rect)
+            return
+
         item_type = item_data.get("type")
         category = item_data.get("category") or item_type or item.get("kind")
         center = rect.center
@@ -402,7 +414,14 @@ class InventoryOverlay:
         rarity = item.get("rarity") or item_data.get("rarity") or "common"
         y = rect.y + 10
 
-        name_surface = self.body_font.render(self._shorten_text(name, rect.width - 20, self.body_font), True, self._get_rarity_color(item, item_data))
+        detail_icon = self._get_item_icon_surface(item.get("item"))
+        name_width = rect.width - 20
+        if detail_icon is not None:
+            icon_rect = pygame.Rect(rect.right - 44, rect.y + 8, 32, 32)
+            self._draw_icon_surface(screen, detail_icon, icon_rect)
+            name_width -= 40
+
+        name_surface = self.body_font.render(self._shorten_text(name, name_width, self.body_font), True, self._get_rarity_color(item, item_data))
         screen.blit(name_surface, (rect.x + 10, y))
         y += 25
 
@@ -765,6 +784,53 @@ class InventoryOverlay:
         data = getattr(self.game, "data", None)
         items = getattr(data, "items", {}) if data is not None else {}
         return items if isinstance(items, dict) else {}
+
+    def _load_item_icon_map(self):
+        icon_map_path = Path("data/item_icons.json")
+        if not icon_map_path.exists():
+            return {}
+        try:
+            raw_mapping = json.loads(icon_map_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {}
+        if not isinstance(raw_mapping, dict):
+            return {}
+        return {
+            str(item_id): str(icon_path)
+            for item_id, icon_path in raw_mapping.items()
+            if item_id and isinstance(icon_path, str) and icon_path.strip()
+        }
+
+    def _get_item_icon_surface(self, item_id):
+        if not item_id:
+            return None
+        item_id = str(item_id)
+        if item_id in self.item_icon_surfaces:
+            return self.item_icon_surfaces[item_id]
+
+        icon_path = self.item_icon_map.get(item_id)
+        if not icon_path:
+            self.item_icon_surfaces[item_id] = None
+            return None
+
+        path = Path(icon_path)
+        if not path.exists():
+            self.icon_warnings.append(f"Missing icon for {item_id}: {icon_path}")
+            self.item_icon_surfaces[item_id] = None
+            return None
+
+        try:
+            surface = pygame.image.load(str(path)).convert_alpha()
+        except (OSError, pygame.error):
+            self.icon_warnings.append(f"Invalid icon for {item_id}: {icon_path}")
+            surface = None
+        self.item_icon_surfaces[item_id] = surface
+        return surface
+
+    def _draw_icon_surface(self, screen, icon_surface, rect):
+        icon_size = min(32, rect.width, rect.height)
+        scaled_icon = pygame.transform.scale(icon_surface, (icon_size, icon_size))
+        screen.blit(scaled_icon, scaled_icon.get_rect(center=rect.center))
 
     def _get_item_data(self, item):
         if item is None:
