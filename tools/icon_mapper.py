@@ -8,12 +8,12 @@ ITEMS_PATH = Path("data/items.json")
 ICON_INDEX_PATH = Path("assets/icons/items/index.json")
 ICON_TAGS_PATH = Path("assets/icons/items/icon_tags.json")
 MAPPING_PATH = Path("data/item_icons.json")
-WINDOW_SIZE = (1600, 900)
-ITEM_PANEL_RECT = pygame.Rect(0, 0, 380, 900)
-ICON_PANEL_RECT = pygame.Rect(380, 0, 820, 900)
-DETAIL_PANEL_RECT = pygame.Rect(1200, 0, 400, 900)
+WINDOW_SIZE = (1800, 950)
+ITEM_PANEL_RECT = pygame.Rect(0, 0, 380, 950)
+ICON_PANEL_RECT = pygame.Rect(380, 0, 1000, 950)
+DETAIL_PANEL_RECT = pygame.Rect(1380, 0, 420, 950)
 RIGHT_INSET = 16
-RIGHT_PANEL_WIDTH = 368
+RIGHT_PANEL_WIDTH = 388
 ITEM_FILTERS = ("All", "Equipment", "Consumable", "Resource", "Quest", "Unmapped")
 FAMILIES = (
     "equipment",
@@ -59,6 +59,23 @@ SUBCATEGORIES = {
     "misc": ("unknown",),
 }
 ICON_FILTERS = ("All", "Suggested", "Uncategorized", "Favorites", "Used", "Unused", *FAMILIES)
+VISIBLE_ICON_FILTERS = (
+    "All",
+    "Suggested",
+    "Uncategorized",
+    "Favorites",
+    "Used",
+    "Unused",
+    "weapon",
+    "armor",
+    "accessory",
+    "consumable",
+    "material",
+    "monster_part",
+    "profession_tool",
+    "quest_item",
+    "misc",
+)
 FAMILY_SHORTCUTS = {
     pygame.K_1: "weapon",
     pygame.K_2: "armor",
@@ -125,6 +142,7 @@ class IconMapper:
         self.status_message = ""
         self.dirty = False
         self.dirty_tags = False
+        self.help_menu_open = False
         self.running = True
         self.last_icon_click_time = 0
         self.last_icon_click_index = None
@@ -137,6 +155,8 @@ class IconMapper:
         self.family_rects = []
         self.subcategory_rects = []
         self.button_rects = {}
+        self.help_button_rect = pygame.Rect(0, 0, 0, 0)
+        self.help_menu_rect = pygame.Rect(0, 0, 0, 0)
         self.warnings = self._validate_existing_mapping()
         if self.duplicate_icon_count:
             self.status_message = f"Ignored {self.duplicate_icon_count} duplicate icon entries"
@@ -172,6 +192,8 @@ class IconMapper:
         self._draw_item_panel()
         self._draw_icon_panel()
         self._draw_detail_panel()
+        if self.help_menu_open:
+            self._draw_help_menu()
 
     def _draw_item_panel(self):
         panel = ITEM_PANEL_RECT
@@ -236,7 +258,7 @@ class IconMapper:
         search_color = (236, 222, 150) if self.search_target == "icon" else (190, 190, 176)
         self.screen.blit(self.small_font.render(self._shorten_middle(icon_search, 80), True, search_color), (panel.x + 112, 18))
 
-        filter_bottom = self._draw_icon_filters(pygame.Rect(panel.x + 16, 42, panel.width - 32, 110))
+        filter_bottom = self._draw_icon_filters(pygame.Rect(panel.x + 16, 42, panel.width - 32, 52))
         visible_icons = self._get_visible_icons()
         grid_width = panel.width - 32
         columns = max(1, grid_width // (self.icon_grid_size + 36))
@@ -251,8 +273,11 @@ class IconMapper:
         self.icon_rects = []
 
         if not visible_icons:
-            message = self.font.render("No icons for this filter", True, (190, 190, 176))
-            self.screen.blit(message, message.get_rect(center=(panel.centerx, start_y + 80)))
+            lines = [
+                f"No icons for filter: {self.active_icon_filter}",
+                "Use All or tag icons with Paint mode.",
+            ]
+            self._draw_text_lines(lines, panel.x + 32, start_y + 50, 24, start_y + 110, self.font, (190, 190, 176), max_chars=70)
             return
 
         for index in range(first_index, last_index):
@@ -286,11 +311,13 @@ class IconMapper:
         self.icon_filter_rects = []
         x = area.x
         y = area.y
-        for label in ICON_FILTERS:
+        for label in VISIBLE_ICON_FILTERS:
             width = max(54, self.small_font.size(label)[0] + 14)
             if x + width > area.right:
                 x = area.x
                 y += 24
+            if y >= area.y + 48:
+                break
             rect = pygame.Rect(x, y, width, 20)
             self.icon_filter_rects.append((label, rect))
             active = label == self.active_icon_filter
@@ -311,7 +338,7 @@ class IconMapper:
         self._draw_help_status_panel()
 
     def _draw_item_details_panel(self):
-        rect = pygame.Rect(1216, 16, RIGHT_PANEL_WIDTH, 150)
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 16, RIGHT_PANEL_WIDTH, 135)
         content = self._draw_panel(rect, "Item Details")
         item = self.items[self.selected_item_index] if self.items else None
         if not item:
@@ -324,10 +351,10 @@ class IconMapper:
             f"Category: {item['category']}",
             f"Current: {self.mapping.get(item['id'], '-')}",
         ]
-        self._draw_text_lines(lines, content.x, content.y, 18, content.bottom, self.small_font, (220, 214, 196))
+        self._draw_text_lines(lines, content.x, content.y, 17, content.bottom, self.small_font, (220, 214, 196), max_chars=58)
 
     def _draw_icon_preview_panel(self):
-        rect = pygame.Rect(1216, 176, RIGHT_PANEL_WIDTH, 140)
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 160, RIGHT_PANEL_WIDTH, 125)
         content = self._draw_panel(rect, "Icon Preview")
         item = self.items[self.selected_item_index] if self.items else None
         selected_path = self.icons[self.selected_icon_index]["path"] if self.selected_icon_index is not None else None
@@ -336,10 +363,10 @@ class IconMapper:
         self._draw_icon_preview("Selected", selected_path, pygame.Rect(content.x + 184, content.y, 168, 58))
         used_by = self._get_items_using_icon(selected_path) if selected_path else []
         used_text = f"Used by: {self._format_used_by(used_by)}" if used_by else "Used by: -"
-        self._draw_text_lines([used_text], content.x, content.y + 74, 18, content.bottom, self.small_font, (190, 190, 176))
+        self._draw_text_lines([used_text], content.x, content.y + 66, 18, content.bottom, self.small_font, (190, 190, 176), max_chars=58)
 
     def _draw_icon_taxonomy_panel(self):
-        rect = pygame.Rect(1216, 326, RIGHT_PANEL_WIDTH, 170)
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 294, RIGHT_PANEL_WIDTH, 135)
         content = self._draw_panel(rect, "Icon Taxonomy")
         icon = self.icons[self.selected_icon_index] if self.selected_icon_index is not None else None
         if not icon:
@@ -356,33 +383,23 @@ class IconMapper:
         ]
         if self.tag_input_active:
             lines.append(f"Input: {self.tag_input_text}")
-        self._draw_text_lines(lines, content.x, content.y, 18, content.bottom, self.small_font, (210, 205, 188))
+        self._draw_text_lines(lines, content.x, content.y, 16, content.bottom, self.small_font, (210, 205, 188), max_chars=58)
 
     def _draw_active_tagging_panel(self):
-        rect = pygame.Rect(1216, 506, RIGHT_PANEL_WIDTH, 150)
-        content = self._draw_panel(rect, "Active Tagging")
-        paint = "on" if self.paint_mode else "off"
-        sub_filter = "on" if self.only_active_subcategory else "off"
-        lines = [
-            f"Family: {self.active_family}",
-            f"Subcategory: {self.active_subcategory}",
-            f"Paint mode: {paint}",
-            f"Only active subcategory: {sub_filter}",
-            "1-0 family | Tab subcategory",
-            "G apply | P paint | O filter",
-        ]
-        self._draw_text_lines(lines, content.x, content.y, 18, content.bottom, self.small_font, (220, 214, 196))
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 438, RIGHT_PANEL_WIDTH, 245)
+        content = self._draw_panel(rect, "Taxonomy Controls")
+        self._draw_taxonomy_controls(content)
 
     def _draw_action_panel(self):
-        rect = pygame.Rect(1216, 666, RIGHT_PANEL_WIDTH, 110)
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 692, RIGHT_PANEL_WIDTH, 115)
         content = self._draw_panel(rect, "Actions")
         self.button_rects = {
-            "save": pygame.Rect(content.x, content.y, 104, 30),
-            "clear": pygame.Rect(content.x + 116, content.y, 104, 30),
-            "quit": pygame.Rect(content.x + 232, content.y, 104, 30),
-            "next_unmapped": pygame.Rect(content.x, content.y + 42, 104, 30),
-            "assign_next": pygame.Rect(content.x + 116, content.y + 42, 104, 30),
-            "apply_tags": pygame.Rect(content.x + 232, content.y + 42, 104, 30),
+            "save": pygame.Rect(content.x, content.y, 112, 30),
+            "clear": pygame.Rect(content.x + 124, content.y, 112, 30),
+            "quit": pygame.Rect(content.x + 248, content.y, 112, 30),
+            "next_unmapped": pygame.Rect(content.x, content.y + 42, 112, 30),
+            "assign_next": pygame.Rect(content.x + 124, content.y + 42, 112, 30),
+            "apply_tags": pygame.Rect(content.x + 248, content.y + 42, 112, 30),
         }
         labels = {
             "next_unmapped": "Next",
@@ -393,20 +410,93 @@ class IconMapper:
             self._draw_button(button_rect, labels.get(action, action.title()))
 
     def _draw_help_status_panel(self):
-        rect = pygame.Rect(1216, 786, RIGHT_PANEL_WIDTH, 100)
-        content = self._draw_panel(rect, "Help / Status")
+        rect = pygame.Rect(DETAIL_PANEL_RECT.x + RIGHT_INSET, 816, RIGHT_PANEL_WIDTH, 118)
+        content = self._draw_panel(rect, "Status")
         mapped_count = sum(1 for item in self.items if item["id"] in self.mapping)
         status = self.status_message or f"Ignored {self.duplicate_icon_count} duplicate icon entries"
         lines = [
             f"{mapped_count} / {len(self.items)} mapped",
+            f"Active taxonomy: {self.active_family}/{self.active_subcategory}",
             status,
-            "1-0 family | Tab subcategory | G apply",
-            "P paint | T tags | A assign+next | S save",
-            "Esc clear/quit",
         ]
         if self.warnings:
-            lines.insert(2, self.warnings[0])
-        self._draw_text_lines(lines, content.x, content.y, 17, content.bottom, self.small_font, (210, 205, 160))
+            lines.append(self.warnings[0])
+        self._draw_text_lines(lines, content.x, content.y, 17, content.bottom - 6, self.small_font, (210, 205, 160), max_chars=50)
+        self.help_button_rect = pygame.Rect(content.right - 72, content.bottom - 30, 68, 26)
+        self._draw_button(self.help_button_rect, "Help")
+
+    def _draw_help_menu(self):
+        self.help_menu_rect = pygame.Rect(WINDOW_SIZE[0] - 560, 250, 520, 420)
+        overlay = pygame.Surface(WINDOW_SIZE, pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 80))
+        self.screen.blit(overlay, (0, 0))
+        pygame.draw.rect(self.screen, (30, 27, 24), self.help_menu_rect, border_radius=8)
+        pygame.draw.rect(self.screen, (190, 150, 82), self.help_menu_rect, 2, border_radius=8)
+        title = self.title_font.render("Help", True, (246, 236, 205))
+        self.screen.blit(title, (self.help_menu_rect.x + 18, self.help_menu_rect.y + 14))
+
+        left_x = self.help_menu_rect.x + 22
+        right_x = self.help_menu_rect.x + 270
+        top_y = self.help_menu_rect.y + 54
+        self._draw_help_section(
+            "Navigation",
+            [
+                "Mouse wheel: scroll items or icons",
+                "Up/Down: select item",
+                "PageUp/PageDown: scroll items",
+                "+/-: icon zoom",
+            ],
+            left_x,
+            top_y,
+        )
+        self._draw_help_section(
+            "Mapping",
+            [
+                "Click item: select item",
+                "Click icon: select icon",
+                "Double-click icon: assign",
+                "Enter: assign selected icon",
+                "A: assign + next",
+                "N: next unmapped",
+                "C: clear mapping",
+                "S: save",
+            ],
+            right_x,
+            top_y,
+        )
+        self._draw_help_section(
+            "Tagging",
+            [
+                "1-0: set active family",
+                "Tab / Shift+Tab: cycle subcategory",
+                "G: apply active taxonomy",
+                "P: paint mode",
+                "F: favorite",
+                "T: edit tags",
+                "Shift+T: edit tags for selection",
+                "O: only active subcategory",
+            ],
+            left_x,
+            top_y + 160,
+        )
+        self._draw_help_section(
+            "Selection / Search",
+            [
+                "Ctrl+Click: add/remove selection",
+                "Shift+Click: select icon range",
+                "Esc: clear search/selection or quit",
+                "/ or Ctrl+F: switch search target",
+                "Type text: search current target",
+                "Backspace: delete search text",
+            ],
+            right_x,
+            top_y + 190,
+        )
+
+    def _draw_help_section(self, title, lines, x, y):
+        title_surface = self.font.render(title, True, (232, 190, 105))
+        self.screen.blit(title_surface, (x, y))
+        self._draw_text_lines(lines, x, y + 24, 17, self.help_menu_rect.bottom - 18, self.small_font, (220, 214, 196), max_chars=34)
 
     def _draw_icon_preview(self, label, icon_path, rect):
         title = self.small_font.render(label, True, (220, 214, 196))
@@ -434,14 +524,14 @@ class IconMapper:
         self.screen.blit(title_surface, (rect.x + 10, rect.y + 8))
         return pygame.Rect(rect.x + 10, rect.y + 34, rect.width - 20, rect.height - 44)
 
-    def _draw_text_lines(self, lines, start_x, start_y, line_height, max_y, font, color):
+    def _draw_text_lines(self, lines, start_x, start_y, line_height, max_y, font, color, max_chars=54):
         y = start_y
         for index, line in enumerate(lines):
             if y + line_height > max_y:
                 ellipsis = font.render("...", True, color)
                 self.screen.blit(ellipsis, (start_x, max_y - line_height))
                 return
-            rendered = font.render(self._shorten_middle(line, 54), True, color)
+            rendered = font.render(self._shorten_middle(line, max_chars), True, color)
             self.screen.blit(rendered, (start_x, y))
             y += line_height
 
@@ -449,32 +539,71 @@ class IconMapper:
         scaled = pygame.transform.scale(surface, (size, size))
         self.screen.blit(scaled, scaled.get_rect(center=center))
 
-    def _draw_taxonomy_controls(self, x, y):
+    def _draw_taxonomy_controls(self, content):
         self.family_rects = []
         self.subcategory_rects = []
-        paint = "PAINT MODE" if self.paint_mode else "Paint off"
-        active = f"Active: {self.active_family}/{self.active_subcategory}"
-        self.screen.blit(self.small_font.render(paint, True, (245, 190, 90) if self.paint_mode else (160, 155, 142)), (x, y))
-        self.screen.blit(self.small_font.render(self._shorten(active, 32), True, (220, 214, 196)), (x, y + 18))
-        family_y = y + 40
+        paint = "on" if self.paint_mode else "off"
+        sub_filter = "on" if self.only_active_subcategory else "off"
+        summary_lines = [
+            f"Icon filter: {self.active_icon_filter}",
+            f"Active taxonomy: {self.active_family}/{self.active_subcategory}",
+            f"Paint mode: {paint}",
+            f"Only subcategory: {sub_filter}",
+        ]
+        self._draw_text_lines(summary_lines, content.x, content.y, 15, content.y + 62, self.small_font, (220, 214, 196), max_chars=58)
+
+        x = content.x
+        family_y = content.y + 66
+        button_gap = 5
+        family_columns = 4
+        family_width = (content.width - button_gap * (family_columns - 1)) // family_columns
+        button_height = 15
         for index, family in enumerate(FAMILIES):
-            rect = pygame.Rect(x + (index % 2) * 82, family_y + (index // 2) * 18, 78, 16)
+            rect = pygame.Rect(
+                x + (index % family_columns) * (family_width + button_gap),
+                family_y + (index // family_columns) * (button_height + 4),
+                family_width,
+                button_height,
+            )
             self.family_rects.append((family, rect))
             is_active = family == self.active_family
             pygame.draw.rect(self.screen, (74, 58, 36) if is_active else (37, 38, 43), rect, border_radius=3)
-            text = self.small_font.render(self._shorten(family, 11), True, (240, 235, 215) if is_active else (178, 178, 164))
+            text = self.small_font.render(self._shorten(family, 10), True, (240, 235, 215) if is_active else (178, 178, 164))
             self.screen.blit(text, (rect.x + 3, rect.y + 1))
-        family_rows = (len(FAMILIES) + 1) // 2
-        sub_y = family_y + family_rows * 18 + 8
-        for index, subcategory in enumerate(self._get_active_subcategories()[:8]):
-            rect = pygame.Rect(x + (index % 2) * 82, sub_y + (index // 2) * 18, 78, 16)
+
+        family_rows = (len(FAMILIES) + family_columns - 1) // family_columns
+        sub_y = family_y + family_rows * (button_height + 4) + 8
+        subcategories = self._get_active_subcategories()
+        subcategory_columns = 4
+        subcategory_width = (content.width - button_gap * (subcategory_columns - 1)) // subcategory_columns
+        max_subcategory_rows = max(2, (content.bottom - sub_y - 18) // (button_height + 4))
+        max_subcategories = max(8, max_subcategory_rows * subcategory_columns)
+        visible_subcategories = subcategories[:max_subcategories]
+        for index, subcategory in enumerate(visible_subcategories):
+            rect = pygame.Rect(
+                x + (index % subcategory_columns) * (subcategory_width + button_gap),
+                sub_y + (index // subcategory_columns) * (button_height + 4),
+                subcategory_width,
+                button_height,
+            )
             self.subcategory_rects.append((subcategory, rect))
             is_active = subcategory == self.active_subcategory
             pygame.draw.rect(self.screen, (56, 60, 78) if is_active else (37, 38, 43), rect, border_radius=3)
-            text = self.small_font.render(self._shorten(subcategory, 11), True, (235, 235, 220) if is_active else (178, 178, 164))
+            text = self.small_font.render(self._shorten(subcategory, 10), True, (235, 235, 220) if is_active else (178, 178, 164))
             self.screen.blit(text, (rect.x + 3, rect.y + 1))
+        if len(subcategories) > len(visible_subcategories):
+            text = self.small_font.render("Tab for more", True, (190, 190, 176))
+            self.screen.blit(text, (content.x, content.bottom - 14))
 
     def _handle_click(self, position):
+        if self.help_button_rect.collidepoint(position):
+            self.help_menu_open = not self.help_menu_open
+            return
+        if self.help_menu_open:
+            if self.help_menu_rect.collidepoint(position):
+                return
+            self.help_menu_open = False
+            return
         for label, rect in self.filter_rects:
             if rect.collidepoint(position):
                 self.active_filter = label
@@ -520,6 +649,10 @@ class IconMapper:
 
     def _handle_keydown(self, event):
         key = event.key
+        if self.help_menu_open:
+            if key == pygame.K_ESCAPE:
+                self.help_menu_open = False
+            return
         if self.tag_input_active:
             self._handle_tag_input_key(event)
             return
