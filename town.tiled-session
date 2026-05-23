@@ -1,5 +1,5 @@
 {
-    "activeFile": "",
+    "activeFile": "assets/tilesets/characters_16x24.tsx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -83,15 +83,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                10,
+                4,
                 9,
-                4
+                10
             ],
-            "scale": 0.75,
-            "selectedLayer": 9,
+            "scale": 2,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 676,
-                "y": 899.9999999999999
+                "x": 604.5,
+                "y": 553.5
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -105,6 +105,14 @@
         "assets/maps/water.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "assets/tilesets/characters.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "assets/tilesets/characters_16x24.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
         },
         "assets/tilesets/forest_ground_16x16_final.tsx": {
             "scaleInDock": 1,
@@ -176,8 +184,9 @@
             "scaleInEditor": 1
         }
     },
+    "frame.defaultDuration": 200,
     "last.externalTilesetPath": "D:/Jeux test/Games/My first game/assets/tilesets",
-    "last.imagePath": "C:/Users/Trist/Downloads",
+    "last.imagePath": "D:/Jeux test/Games/My first game/assets/external/FANTASY RPG - Medieval townsfolk (by Franuka) v1.0",
     "last.objectTemplatePath": "D:/Jeux test/Games/My first game/assets/templates/objects",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
@@ -186,28 +195,28 @@
         "assets/maps/town_01.tmx",
         "assets/tilesets/water.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
-        "assets/tilesets/forest_ground_16x16_final.tsx",
-        "assets/tilesets/pixel_crawler_floors.tsx"
+        "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/characters_16x24.tsx"
     ],
     "project": "town.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "assets/tilesets/forest_ground_16x16_final.tsx",
-        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx",
         "assets/tilesets/pixel_crawler_walls.tsx",
         "assets/maps/town_01.tmx",
         "assets/tilesets/water.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/characters_16x24.tsx",
+        "assets/tilesets/characters.tsx",
+        "assets/tilesets/forest_ground_16x16_final.tsx",
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx",
         "assets/automapping/tree_rules.tmx",
         "assets/automapping/house_rules.tmx",
-        "assets/tilesets/pixel_crawler_vegetation.tsx",
-        "assets/maps/water.tsx",
-        "assets/maps/formation_house_test.tmx"
+        "assets/tilesets/pixel_crawler_vegetation.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 16,
+        "height": 24,
         "width": 16
     }
 }
