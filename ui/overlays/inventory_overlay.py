@@ -217,7 +217,7 @@ class InventoryOverlay:
 
         icon_rect = rect.inflate(-12, -15)
         icon_rect.y -= 2
-        self._draw_item_icon(screen, icon_rect, slot, item_data)
+        used_mapped_icon = self._draw_item_icon(screen, icon_rect, slot, item_data)
 
         quantity = slot.get("quantity")
         if quantity is not None:
@@ -225,17 +225,18 @@ class InventoryOverlay:
             quantity_rect = quantity_surface.get_rect(bottomright=(rect.right - 4, rect.bottom - 2))
             screen.blit(quantity_surface, quantity_rect)
 
-        item_name = self._get_item_display_name(slot, item_data)
-        label = self._shorten_text(item_name, rect.width - 4, self.small_font)
-        label_surface = self.small_font.render(label, True, (230, 217, 190))
-        screen.blit(label_surface, label_surface.get_rect(midbottom=(rect.centerx, rect.bottom - 3)))
+        if not used_mapped_icon:
+            item_name = self._get_item_display_name(slot, item_data)
+            label = self._shorten_text(item_name, rect.width - 4, self.small_font)
+            label_surface = self.small_font.render(label, True, (230, 217, 190))
+            screen.blit(label_surface, label_surface.get_rect(midbottom=(rect.centerx, rect.bottom - 3)))
 
     def _draw_item_icon(self, screen, rect, item, item_data):
         item_id = item.get("item") if isinstance(item, dict) else None
         icon_surface = self._get_item_icon_surface(item_id)
         if icon_surface is not None:
             self._draw_icon_surface(screen, icon_surface, rect)
-            return
+            return True
 
         item_type = item_data.get("type")
         category = item_data.get("category") or item_type or item.get("kind")
@@ -271,6 +272,7 @@ class InventoryOverlay:
             pygame.draw.rect(screen, (116, 100, 78), rect.inflate(-6, -6), border_radius=3)
             question = self.small_font.render("?", True, (245, 230, 190))
             screen.blit(question, question.get_rect(center=center))
+        return False
 
     def _draw_equipment_panel(self, screen, area):
         title = self.body_font.render("Equipment", True, (238, 226, 194))
@@ -414,12 +416,10 @@ class InventoryOverlay:
         rarity = item.get("rarity") or item_data.get("rarity") or "common"
         y = rect.y + 10
 
-        detail_icon = self._get_item_icon_surface(item.get("item"))
         name_width = rect.width - 20
-        if detail_icon is not None:
-            icon_rect = pygame.Rect(rect.right - 44, rect.y + 8, 32, 32)
-            self._draw_icon_surface(screen, detail_icon, icon_rect)
-            name_width -= 40
+        icon_rect = pygame.Rect(rect.right - 44, rect.y + 8, 32, 32)
+        self._draw_item_icon(screen, icon_rect, item, item_data)
+        name_width -= 40
 
         name_surface = self.body_font.render(self._shorten_text(name, name_width, self.body_font), True, self._get_rarity_color(item, item_data))
         screen.blit(name_surface, (rect.x + 10, y))
