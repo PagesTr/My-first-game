@@ -1,3 +1,4 @@
+import copy
 import json
 import re
 from pathlib import Path
@@ -161,6 +162,33 @@ def prompt_skill_id(skills):
         return skill_id
 
 
+def generate_skill_id(class_id, name):
+    raw_value = f"{class_id}_{name}".lower()
+    raw_value = re.sub(r"[\s-]+", "_", raw_value)
+    raw_value = re.sub(r"[^a-z0-9_]", "", raw_value)
+    raw_value = re.sub(r"_+", "_", raw_value).strip("_")
+    if not raw_value or not raw_value[0].isalpha():
+        raw_value = f"skill_{raw_value}".strip("_")
+    return raw_value
+
+
+def make_unique_skill_id(base_id, skills):
+    if base_id not in skills:
+        return base_id
+
+    suffix = 2
+    while f"{base_id}_{suffix}" in skills:
+        suffix += 1
+    return f"{base_id}_{suffix}"
+
+
+def prompt_skill_id_or_generate(skills, class_id, name):
+    generated_id = make_unique_skill_id(generate_skill_id(class_id, name), skills)
+    if prompt_yes_no(f'Use generated id "{generated_id}"?'):
+        return generated_id
+    return prompt_skill_id(skills)
+
+
 def prompt_class_id(classes):
     while True:
         class_id = prompt_text("Class")
@@ -168,6 +196,22 @@ def prompt_class_id(classes):
             return None
         if class_id in classes:
             return class_id
+        print("Unknown class. Available classes: " + ", ".join(sorted(classes)))
+
+
+def prompt_class_id_with_default(classes, default_class):
+    while True:
+        value = input(f"Class [{default_class}]: ").strip()
+        if value.lower() == "cancel":
+            return None
+        if not value:
+            if default_class in classes:
+                return default_class
+            print("The current class is unknown. Choose a valid class.")
+            print("Available classes: " + ", ".join(sorted(classes)))
+            continue
+        if value in classes:
+            return value
         print("Unknown class. Available classes: " + ", ".join(sorted(classes)))
 
 
@@ -195,6 +239,77 @@ def prompt_stat_values(title):
 
 def make_level_dicts():
     return {"1": {}, "2": {}, "3": {}, "4": {}}
+
+
+def prompt_level_values(field_name, value_type="float", minimum=None, maximum=None, allow_zero=True):
+    while True:
+        raw_value = input(f"{field_name} levels 1-4: ").strip()
+        if raw_value.lower() == "cancel":
+            return None
+
+        parts = [part for part in re.split(r"[\s,]+", raw_value) if part]
+        if len(parts) != 4:
+            print("Enter exactly 4 values, separated by commas or spaces. Type 'cancel' to abort.")
+            continue
+
+        values = {}
+        has_error = False
+        for index, part in enumerate(parts, start=1):
+            try:
+                if value_type == "int":
+                    if re.search(r"[.eE]", part):
+                        raise ValueError
+                    number = int(part)
+                else:
+                    number = float(part)
+            except ValueError:
+                print(f"Invalid value for level {index}: {part}")
+                has_error = True
+                break
+
+            if not allow_zero and number == 0:
+                print(f"Value for level {index} cannot be zero.")
+                has_error = True
+                break
+            if minimum is not None and number < minimum:
+                print(f"Value for level {index} must be at least {minimum}.")
+                has_error = True
+                break
+            if maximum is not None and number > maximum:
+                print(f"Value for level {index} must be at most {maximum}.")
+                has_error = True
+                break
+            values[str(index)] = number
+
+        if not has_error:
+            return values
+
+
+def preview_skill(skill_id, skill):
+    print()
+    print(f"Skill preview: {skill_id}")
+    print(f"Status: {get_engine_support_status(skill_id, skill)}")
+    print()
+    print(json.dumps(skill, indent=2, ensure_ascii=False))
+
+
+def preview_existing_skill(skills):
+    skill_id = prompt_text("Skill id")
+    if skill_id is None:
+        return
+    if skill_id not in skills:
+        print("Unknown skill id.")
+        return
+    preview_skill(skill_id, skills[skill_id])
+
+
+def confirm_skill_add(skill_id, skill, skills):
+    preview_skill(skill_id, skill)
+    if not prompt_yes_no("Add this skill?"):
+        print("Skill creation cancelled.")
+        return False
+    skills[skill_id] = skill
+    return True
 
 
 def list_skills(skills):
@@ -266,7 +381,7 @@ def create_passive_skill(skills, classes):
             return False
         enhanced["stat_modifiers_per_character_level"] = values
 
-    skills[skill_id] = {
+    skill = {
         "name": name,
         "class": class_id,
         "type": "passive",
@@ -275,6 +390,8 @@ def create_passive_skill(skills, classes):
         "levels": levels,
         "enhanced": enhanced,
     }
+    if not confirm_skill_add(skill_id, skill, skills):
+        return False
     print(f"Created passive skill: {skill_id}")
     return True
 
@@ -364,7 +481,7 @@ def create_active_skill(skills, classes):
             if field != "cooldown" or value != 0:
                 enhanced[field] = value
 
-    skills[skill_id] = {
+    skill = {
         "name": name,
         "class": class_id,
         "type": "active",
@@ -373,8 +490,93 @@ def create_active_skill(skills, classes):
         "levels": levels,
         "enhanced": enhanced,
     }
-    print(f"Created active skill: {skill_id} ({get_engine_support_status(skill_id, skills[skill_id])})")
+    if not confirm_skill_add(skill_id, skill, skills):
+        return False
+    print(f"Created active skill: {skill_id} ({get_engine_support_status(skill_id, skill)})")
     return True
+
+
+def quick_create_active_skill(skills, classes):
+    class_id = prompt_class_id(classes)
+    if class_id is None:
+        return False
+    name = prompt_text("Name")
+    if name is None:
+        return False
+    skill_id = prompt_skill_id_or_generate(skills, class_id, name)
+    if skill_id is None:
+        return False
+    description = prompt_text("Description")
+    if description is None:
+        return False
+
+    template = prompt_choice(
+        "Active template",
+        {
+            "1": "Damage multiplier after taking damage",
+            "2": "Damage multiplier when enemy low HP",
+            "3": "Generic damage multiplier before player attack",
+        },
+    )
+    if template is None:
+        return False
+
+    trigger_by_template = {
+        "1": "before_player_attack_after_damage_taken",
+        "2": "before_player_attack_when_enemy_low_hp",
+        "3": "before_player_attack",
+    }
+    trigger = trigger_by_template[template]
+
+    fields = ["damage_multiplier"]
+    if template == "2":
+        fields.append("enemy_hp_threshold")
+        if prompt_yes_no("Add cooldown?"):
+            fields.append("cooldown")
+    else:
+        fields.append("cooldown")
+
+    levels = make_level_dicts()
+    enhanced = {}
+
+    for field in fields:
+        values = prompt_quick_field_values(field)
+        if values is None:
+            return False
+        enhanced_value = prompt_active_field(field, f"Enhanced {field}")
+        if enhanced_value is None:
+            return False
+
+        for level, value in values.items():
+            if field != "cooldown" or value != 0:
+                levels[level][field] = value
+            if field == "enemy_hp_threshold" and value > 0.75:
+                print(f"[WARNING] enemy_hp_threshold for level {level} is above 0.75.")
+
+        if field != "cooldown" or enhanced_value != 0:
+            enhanced[field] = enhanced_value
+
+    skill = {
+        "name": name,
+        "class": class_id,
+        "type": "active",
+        "trigger": trigger,
+        "description": description,
+        "levels": levels,
+        "enhanced": enhanced,
+    }
+    if not confirm_skill_add(skill_id, skill, skills):
+        return False
+    print(f"Created active skill: {skill_id} ({get_engine_support_status(skill_id, skill)})")
+    return True
+
+
+def prompt_quick_field_values(field):
+    if field == "cooldown":
+        return prompt_level_values(field, value_type="int", minimum=0)
+    if field == "enemy_hp_threshold":
+        return prompt_level_values(field, value_type="float", minimum=0.01, maximum=1.0, allow_zero=False)
+    return prompt_level_values(field, value_type="float", minimum=0.000001, allow_zero=False)
 
 
 def prompt_active_field(field, label):
@@ -392,6 +594,241 @@ def prompt_active_step(field):
     if field == "cooldown":
         return prompt_int(f"{field} step per level")
     return prompt_float(f"{field} step per level")
+
+
+def duplicate_skill(skills, classes):
+    list_skills(skills)
+    source_id = prompt_text("Source skill id")
+    if source_id is None:
+        return False
+    if source_id not in skills:
+        print("Unknown source skill id.")
+        return False
+    if not isinstance(skills[source_id], dict):
+        print("Source skill is invalid and cannot be duplicated.")
+        return False
+
+    source_skill = skills[source_id]
+    new_skill = copy.deepcopy(source_skill)
+    new_name = prompt_text("New name")
+    if new_name is None:
+        return False
+    old_class = source_skill.get("class", "")
+    new_class = prompt_class_id_with_default(classes, old_class)
+    if new_class is None:
+        return False
+    new_id = prompt_skill_id_or_generate(skills, new_class, new_name)
+    if new_id is None:
+        return False
+
+    old_description = source_skill.get("description", "")
+    new_description = prompt_text(f"New description [{old_description}]", allow_empty=True)
+    if new_description is None:
+        return False
+    if not new_description:
+        new_description = old_description
+
+    new_skill["name"] = new_name
+    new_skill["class"] = new_class
+    new_skill["description"] = new_description
+
+    if not confirm_skill_add(new_id, new_skill, skills):
+        return False
+    print(f"Duplicated skill: {source_id} -> {new_id}")
+    return True
+
+
+def edit_skill(skills, classes):
+    skill_id = prompt_text("Skill id")
+    if skill_id is None:
+        return False
+    if skill_id not in skills:
+        print("Unknown skill id.")
+        return False
+    if not isinstance(skills[skill_id], dict):
+        print("This skill is invalid and cannot be edited.")
+        return False
+
+    dirty = False
+    while True:
+        print()
+        print("1. Rename skill")
+        print("2. Change description")
+        print("3. Change class")
+        print("4. Change trigger")
+        print("5. Edit level field values")
+        print("6. Edit enhanced field value")
+        print("7. Preview current skill")
+        print("0. Back")
+        choice = input("> ").strip()
+
+        if choice == "1":
+            dirty = apply_skill_edit(skills, skill_id, edit_skill_name) or dirty
+        elif choice == "2":
+            dirty = apply_skill_edit(skills, skill_id, edit_skill_description) or dirty
+        elif choice == "3":
+            dirty = apply_skill_edit(skills, skill_id, lambda skill: edit_skill_class(skill, classes)) or dirty
+        elif choice == "4":
+            dirty = apply_skill_edit(skills, skill_id, edit_skill_trigger) or dirty
+        elif choice == "5":
+            dirty = apply_skill_edit(skills, skill_id, edit_level_field_values) or dirty
+        elif choice == "6":
+            dirty = apply_skill_edit(skills, skill_id, edit_enhanced_field_value) or dirty
+        elif choice == "7":
+            preview_skill(skill_id, skills[skill_id])
+        elif choice == "0":
+            return dirty
+        else:
+            print("Invalid menu choice.")
+
+
+def apply_skill_edit(skills, skill_id, edit_function):
+    previous_skill = copy.deepcopy(skills[skill_id])
+    changed = edit_function(skills[skill_id])
+    if not changed:
+        return False
+
+    preview_skill(skill_id, skills[skill_id])
+    if prompt_yes_no("Keep this change?"):
+        return True
+
+    skills[skill_id] = previous_skill
+    print("Change discarded.")
+    return False
+
+
+def edit_skill_name(skill):
+    value = prompt_text("New name")
+    if value is None:
+        return False
+    skill["name"] = value
+    return True
+
+
+def edit_skill_description(skill):
+    value = prompt_text("New description")
+    if value is None:
+        return False
+    skill["description"] = value
+    return True
+
+
+def edit_skill_class(skill, classes):
+    value = prompt_class_id(classes)
+    if value is None:
+        return False
+    skill["class"] = value
+    return True
+
+
+def edit_skill_trigger(skill):
+    triggers = sorted(SUPPORTED_NOW_TRIGGERS) + sorted(DATA_ONLY_TRIGGERS)
+    print("Allowed triggers:")
+    for trigger in triggers:
+        print(f"- {trigger}")
+    value = prompt_text("New trigger")
+    if value is None:
+        return False
+    if value not in triggers:
+        print("Unknown trigger.")
+        return False
+    skill["trigger"] = value
+    print(f"New status: {get_engine_support_status('<current>', skill)}")
+    return True
+
+
+def edit_level_field_values(skill):
+    field = prompt_editable_field()
+    if field is None:
+        return False
+
+    levels = skill.setdefault("levels", make_level_dicts())
+    if not isinstance(levels, dict):
+        print("Levels must be a dictionary before editing.")
+        return False
+    for level in LEVEL_KEYS:
+        levels.setdefault(level, {})
+
+    if field in {"damage_multiplier", "cooldown", "enemy_hp_threshold"}:
+        values = prompt_values_for_field(field)
+        if values is None:
+            return False
+        for level, value in values.items():
+            if field == "cooldown" and value == 0:
+                levels[level].pop("cooldown", None)
+            else:
+                levels[level][field] = value
+        return True
+
+    stat = prompt_allowed_stat()
+    if stat is None:
+        return False
+    values = prompt_level_values(stat, value_type="float")
+    if values is None:
+        return False
+    for level, value in values.items():
+        levels[level].setdefault(field, {})[stat] = value
+    return True
+
+
+def edit_enhanced_field_value(skill):
+    field = prompt_editable_field()
+    if field is None:
+        return False
+    enhanced = skill.setdefault("enhanced", {})
+    if not isinstance(enhanced, dict):
+        print("Enhanced must be a dictionary before editing.")
+        return False
+
+    if field in {"damage_multiplier", "cooldown", "enemy_hp_threshold"}:
+        value = prompt_active_field(field, f"Enhanced {field}")
+        if value is None:
+            return False
+        if field == "cooldown" and value == 0:
+            enhanced.pop("cooldown", None)
+        else:
+            enhanced[field] = value
+        return True
+
+    stat = prompt_allowed_stat()
+    if stat is None:
+        return False
+    value = prompt_float(f"Enhanced {field}.{stat}")
+    if value is None:
+        return False
+    enhanced.setdefault(field, {})[stat] = value
+    return True
+
+
+def prompt_editable_field():
+    return prompt_choice(
+        "Field",
+        {
+            "damage_multiplier": "damage_multiplier",
+            "cooldown": "cooldown",
+            "enemy_hp_threshold": "enemy_hp_threshold",
+            "stat_modifiers": "stat_modifiers",
+            "stat_modifiers_per_character_level": "stat_modifiers_per_character_level",
+        },
+    )
+
+
+def prompt_allowed_stat():
+    while True:
+        stat = prompt_text("Stat")
+        if stat is None:
+            return None
+        if stat in ALLOWED_STATS:
+            return stat
+        print("Unknown stat. Allowed stats: " + ", ".join(sorted(ALLOWED_STATS)))
+
+
+def prompt_values_for_field(field):
+    if field == "cooldown":
+        return prompt_level_values(field, value_type="int", minimum=0)
+    if field == "enemy_hp_threshold":
+        return prompt_level_values(field, value_type="float", minimum=0.01, maximum=1.0, allow_zero=False)
+    return prompt_level_values(field, value_type="float", minimum=0.000001, allow_zero=False)
 
 
 def validate_skills(skills, classes):
@@ -457,7 +894,30 @@ def validate_skills(skills, classes):
         if get_engine_support_status(skill_id, skill) == "invalid":
             errors.append(f"{location}: engine support status is invalid.")
 
+        if skill_type == "active":
+            if trigger in DATA_ONLY_TRIGGERS:
+                warnings.append(f"{location}: active skill uses data_only trigger '{trigger}'.")
+            if not skill_has_field(skill, "damage_multiplier"):
+                warnings.append(f"{location}: active skill has no damage_multiplier.")
+        elif skill_type == "passive":
+            if not skill_has_field(skill, "stat_modifiers") and not skill_has_field(
+                skill, "stat_modifiers_per_character_level"
+            ):
+                warnings.append(
+                    f"{location}: passive skill has no stat_modifiers or stat_modifiers_per_character_level."
+                )
+
     return errors, warnings
+
+
+def skill_has_field(skill, field):
+    levels = skill.get("levels")
+    if isinstance(levels, dict):
+        for level_data in levels.values():
+            if isinstance(level_data, dict) and field in level_data:
+                return True
+    enhanced = skill.get("enhanced")
+    return isinstance(enhanced, dict) and field in enhanced
 
 
 def validate_skill_values(errors, warnings, location, data):
@@ -595,9 +1055,13 @@ def main():
         print("1. List skills")
         print("2. Create passive skill")
         print("3. Create active skill")
-        print("4. Validate skills")
-        print("5. Show skill report")
-        print("6. Save skills")
+        print("4. Quick create active skill")
+        print("5. Duplicate skill")
+        print("6. Edit skill")
+        print("7. Validate skills")
+        print("8. Show skill report")
+        print("9. Preview skill JSON")
+        print("10. Save skills")
         print("0. Quit")
         choice = input("> ").strip()
 
@@ -610,11 +1074,22 @@ def main():
             if create_active_skill(skills, classes):
                 dirty = True
         elif choice == "4":
+            if quick_create_active_skill(skills, classes):
+                dirty = True
+        elif choice == "5":
+            if duplicate_skill(skills, classes):
+                dirty = True
+        elif choice == "6":
+            if edit_skill(skills, classes):
+                dirty = True
+        elif choice == "7":
             errors, warnings = validate_skills(skills, classes)
             show_validation_result(errors, warnings)
-        elif choice == "5":
+        elif choice == "8":
             show_skill_report(skills)
-        elif choice == "6":
+        elif choice == "9":
+            preview_existing_skill(skills)
+        elif choice == "10":
             errors, warnings = validate_skills(skills, classes)
             show_validation_result(errors, warnings)
             if errors:

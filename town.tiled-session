@@ -83,9 +83,9 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
+                10,
                 4,
-                9,
-                10
+                9
             ],
             "scale": 2,
             "selectedLayer": 6,
@@ -113,6 +113,10 @@
         "assets/tilesets/characters_16x24.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 5.5
+        },
+        "assets/tilesets/characters_24x36.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
         },
         "assets/tilesets/forest_ground_16x16_final.tsx": {
             "scaleInDock": 1,
@@ -196,7 +200,8 @@
         "assets/tilesets/water.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/pixel_crawler_floors.tsx",
-        "assets/tilesets/characters_16x24.tsx"
+        "assets/tilesets/characters_16x24.tsx",
+        "assets/tilesets/characters_24x36.tsx"
     ],
     "project": "town.tiled-project",
     "property.type": "bool",
@@ -206,13 +211,13 @@
         "assets/tilesets/water.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/characters_24x36.tsx",
         "assets/tilesets/characters_16x24.tsx",
         "assets/tilesets/characters.tsx",
         "assets/tilesets/forest_ground_16x16_final.tsx",
         "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx",
         "assets/automapping/tree_rules.tmx",
-        "assets/automapping/house_rules.tmx",
-        "assets/tilesets/pixel_crawler_vegetation.tsx"
+        "assets/automapping/house_rules.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
