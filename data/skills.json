@@ -1,4 +1,43 @@
 {
+  "deadly_strengh": {
+    "name": "Deadly strengh",
+    "class": "warrior",
+    "type": "passive",
+    "trigger": "always",
+    "description": "Strengh is your mojo",
+    "levels": {
+      "1": {
+        "stat_modifiers": {
+          "strength": 2.0,
+          "attack": 1.0
+        }
+      },
+      "2": {
+        "stat_modifiers": {
+          "strength": 4.0,
+          "attack": 1.0
+        }
+      },
+      "3": {
+        "stat_modifiers": {
+          "strength": 6.0,
+          "attack": 1.0
+        }
+      },
+      "4": {
+        "stat_modifiers": {
+          "strength": 8.0,
+          "attack": 2.0
+        }
+      }
+    },
+    "enhanced": {
+      "stat_modifiers": {
+        "strength": 15.0,
+        "attack": 8.0
+      }
+    }
+  },
   "warrior_comeback_strike": {
     "name": "Comeback Strike",
     "class": "warrior",
@@ -19,7 +58,7 @@
         "cooldown": 3
       },
       "4": {
-        "damage_multiplier": 1.60,
+        "damage_multiplier": 1.6,
         "cooldown": 3
       }
     },
@@ -40,16 +79,16 @@
         "damage_multiplier": 1.25
       },
       "2": {
-        "enemy_hp_threshold": 0.30,
-        "damage_multiplier": 1.30
+        "enemy_hp_threshold": 0.3,
+        "damage_multiplier": 1.3
       },
       "3": {
         "enemy_hp_threshold": 0.35,
-        "damage_multiplier": 1.40
+        "damage_multiplier": 1.4
       },
       "4": {
-        "enemy_hp_threshold": 0.40,
-        "damage_multiplier": 1.50
+        "enemy_hp_threshold": 0.4,
+        "damage_multiplier": 1.5
       }
     },
     "enhanced": {
