@@ -38,6 +38,754 @@
       }
     }
   },
+  "archer_finishing_blow": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_10": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_11": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_12": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_13": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_14": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_15": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_16": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_17": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_18": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_19": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_2": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_20": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_21": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_22": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_3": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_4": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_5": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_6": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_7": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_8": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
+  "archer_finishing_blow_9": {
+    "name": "Finishing Blow",
+    "class": "archer",
+    "type": "active",
+    "trigger": "before_player_attack_when_enemy_low_hp",
+    "description": "Deal increased damage when the enemy is low on HP.",
+    "levels": {
+      "1": {
+        "damage_multiplier": 1.2,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.2
+      },
+      "2": {
+        "damage_multiplier": 1.3,
+        "cooldown": 3,
+        "enemy_hp_threshold": 0.25
+      },
+      "3": {
+        "damage_multiplier": 1.4,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.3
+      },
+      "4": {
+        "damage_multiplier": 1.55,
+        "cooldown": 2,
+        "enemy_hp_threshold": 0.35
+      }
+    },
+    "enhanced": {
+      "damage_multiplier": 1.8,
+      "cooldown": 1,
+      "enemy_hp_threshold": 0.45
+    }
+  },
   "deadly_strengh": {
     "name": "Deadly strengh",
     "class": "warrior",
