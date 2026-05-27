@@ -4,6 +4,7 @@ from pathlib import Path
 import pygame
 
 from systems.skills import (
+    enhance_skill,
     equip_skill,
     get_available_class_skills,
     get_player_skill_state,
@@ -38,6 +39,7 @@ class SkillOverlay:
         self.active_slots_rect = pygame.Rect(0, 0, 0, 0)
         self.detail_rect = pygame.Rect(0, 0, 0, 0)
         self.learn_button_rect = pygame.Rect(0, 0, 0, 0)
+        self.enhance_button_rect = pygame.Rect(0, 0, 0, 0)
         self.equip_button_rect = pygame.Rect(0, 0, 0, 0)
         self.prev_page_rect = pygame.Rect(0, 0, 0, 0)
         self.next_page_rect = pygame.Rect(0, 0, 0, 0)
@@ -106,6 +108,10 @@ class SkillOverlay:
 
         if self.learn_button_rect.collidepoint(position):
             self._learn_or_upgrade_selected_skill()
+            return True
+
+        if self.enhance_button_rect.collidepoint(position):
+            self._enhance_selected_skill()
             return True
 
         if self.equip_button_rect.collidepoint(position):
@@ -187,8 +193,8 @@ class SkillOverlay:
 
     def _layout_rects(self):
         panel = self.panel_rect
-        top = panel.y + 90
-        detail_height = min(150, max(125, int(panel.h * 0.27)))
+        top = panel.y + 82
+        detail_height = min(190, max(175, int(panel.h * 0.36)))
         top_panel_bottom = panel.bottom - detail_height - 18
         top_panel_height = max(170, top_panel_bottom - top)
         gap = 14
@@ -198,8 +204,10 @@ class SkillOverlay:
         self.library_rect = pygame.Rect(panel.x + 18, top, library_width, top_panel_height)
         self.active_slots_rect = pygame.Rect(self.library_rect.right + gap, top, active_width, top_panel_height)
         self.detail_rect = pygame.Rect(panel.x + 18, top_panel_bottom + 12, panel.w - 36, detail_height - 4)
-        self.learn_button_rect = pygame.Rect(self.detail_rect.right - 304, self.detail_rect.bottom - 42, 140, 28)
-        self.equip_button_rect = pygame.Rect(self.detail_rect.right - 154, self.detail_rect.bottom - 42, 136, 28)
+        button_y = self.detail_rect.bottom - 34
+        self.learn_button_rect = pygame.Rect(self.detail_rect.right - 402, button_y, 124, 26)
+        self.enhance_button_rect = pygame.Rect(self.detail_rect.right - 268, button_y, 118, 26)
+        self.equip_button_rect = pygame.Rect(self.detail_rect.right - 140, button_y, 122, 26)
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -266,7 +274,7 @@ class SkillOverlay:
     def _draw_skill_grid(self, screen, rect, skills):
         columns = 4
         rows = 3
-        spacing = 10
+        spacing = 7
         grid_top = rect.y + 38
         pagination_height = 26
         available_width = rect.w - 36
@@ -274,7 +282,7 @@ class SkillOverlay:
         slot_size = min(
             66,
             max(
-                54,
+                50,
                 min(
                     (available_width - spacing * (columns - 1)) // columns,
                     (available_height - spacing * (rows - 1)) // rows,
@@ -495,6 +503,7 @@ class SkillOverlay:
         name = skill_data.get("name", skill_id)
         level_data = self._get_skill_level_data(skill_data, self.selected_level_tab, skill_state)
         effect_lines = self._format_skill_effect_lines(skill_data, level_data)
+        action_top = self.learn_button_rect.y - 24
 
         title = self.header_font.render(self._truncate_text(name, self.header_font, rect.w - 32), True, (246, 235, 205))
         screen.blit(title, (rect.x + 14, rect.y + 10))
@@ -511,30 +520,40 @@ class SkillOverlay:
         y = tab_bottom + 8
         for line in description_lines:
             screen.blit(self.small_font.render(line, True, (210, 218, 220)), (rect.x + 14, y))
-            y += 18
+            y += 16
 
-        effect_y = y + 2
-        effect_x = rect.x + 14
-        max_effect_y = self.learn_button_rect.y - 6
-        if not effect_lines:
-            effect_lines = [("No level data.", (160, 168, 176))]
-        for line, color in effect_lines:
-            if effect_y + 18 > max_effect_y:
-                more = self.small_font.render("More effects available.", True, (160, 168, 176))
-                screen.blit(more, (effect_x, effect_y))
-                break
-            text = self.small_font.render(self._truncate_text(line, self.small_font, rect.w - 348), True, color)
-            screen.blit(text, (effect_x, effect_y))
-            effect_y += 18
+        effects_rect = pygame.Rect(rect.x + 14, y + 1, rect.w - 32, max(20, action_top - y - 4))
+        self._draw_skill_effects(screen, effects_rect, effect_lines)
+
+        if self.status_message:
+            message = self.small_font.render(
+                self._truncate_text(self.status_message, self.small_font, rect.w - 430),
+                True,
+                (238, 205, 140),
+            )
+            screen.blit(message, (rect.x + 14, self.learn_button_rect.y + 5))
 
         action_label, action_enabled = self._get_learn_action(player, level)
         self._draw_button(screen, self.learn_button_rect, action_label, enabled=action_enabled, warm=action_enabled)
+        enhance_label, enhance_enabled = self._get_enhance_action(player, skill_data, skill_state)
+        self._draw_button(screen, self.enhance_button_rect, enhance_label, enabled=enhance_enabled, warm=enhance_enabled)
 
         if skill_type == "active" and level > 0:
             equipped = is_skill_equipped(player, skill_id)
             self._draw_button(screen, self.equip_button_rect, "Unequip" if equipped else "Equip", active=equipped, enabled=True)
         else:
             self._draw_button(screen, self.equip_button_rect, "Passive" if level > 0 else "Equip", enabled=False)
+
+    def _draw_skill_effects(self, screen, rect, effect_lines):
+        if not effect_lines:
+            effect_lines = [("No level data.", (160, 168, 176))]
+        y = rect.y
+        line_height = 16
+        max_lines = max(1, rect.h // line_height)
+        for line, color in effect_lines[:max_lines]:
+            text = self.small_font.render(self._truncate_text(line, self.small_font, rect.w), True, color)
+            screen.blit(text, (rect.x, y))
+            y += line_height
 
     def _draw_level_tabs(self, screen, skill_data, skill_state, area):
         tabs = [
@@ -746,6 +765,18 @@ class SkillOverlay:
         label = "Learn" if level == 0 else "Upgrade"
         return label, player.get("skill_points", 0) > 0
 
+    def _get_enhance_action(self, player, skill_data, skill_state):
+        if skill_state.get("enhanced") is True:
+            return "Enhanced", False
+        if not isinstance(skill_data, dict) or not isinstance(skill_data.get("enhanced"), dict):
+            return "Enhance", False
+        if skill_state.get("level", 0) < 4:
+            return "Enhance", False
+        enhanced_points = player.get("enhanced_skill_points", 0)
+        if not isinstance(enhanced_points, (int, float)) or isinstance(enhanced_points, bool):
+            enhanced_points = 0
+        return "Enhance", enhanced_points > 0
+
     def _is_level_tab_available(self, skill_data, tab_id):
         if tab_id == "current":
             return True
@@ -824,7 +855,7 @@ class SkillOverlay:
         level = skill_state.get("level", 0) if isinstance(skill_state, dict) else 0
         enhanced = skill_state.get("enhanced", False) if isinstance(skill_state, dict) else False
         if tab_id == "enhanced":
-            return "Enhanced version"
+            return "Current enhanced" if enhanced else "Enhanced version"
         if tab_id == "current":
             return "Enhanced" if enhanced else "Current" if level > 0 else "Preview"
         if tab_id in {"1", "2", "3", "4"}:
@@ -866,7 +897,7 @@ class SkillOverlay:
 
     def _format_numeric_value(self, field_key, value):
         if field_key == "damage_multiplier":
-            return f"x{self._format_plain_number(value)}"
+            return f"x{float(value):.2f}"
         if field_key == "enemy_hp_threshold":
             return f"{int(round(value * 100))}%"
         if field_key == "cooldown":
@@ -922,6 +953,43 @@ class SkillOverlay:
         self._recalculate_player_stats(previous_max_hp)
         self._save_current_game()
         self.status_message = "Skill learned." if level == 0 else "Skill upgraded."
+
+    def _enhance_selected_skill(self):
+        player = getattr(self.game, "player", None)
+        if not isinstance(player, dict) or not self.selected_skill_id:
+            self.status_message = "No skill selected."
+            return
+
+        skill_data = self._get_skill_data(self._get_skills_data(), self.selected_skill_id)
+        skill_state = get_player_skill_state(player, self.selected_skill_id)
+        if skill_state.get("enhanced") is True:
+            self.status_message = "Skill already enhanced."
+            return
+        if not isinstance(skill_data.get("enhanced"), dict):
+            self.status_message = "Cannot enhance skill."
+            return
+        if skill_state.get("level", 0) < 4:
+            self.status_message = "Reach level 4 first."
+            return
+        enhanced_points = player.get("enhanced_skill_points", 0)
+        if not isinstance(enhanced_points, (int, float)) or isinstance(enhanced_points, bool):
+            enhanced_points = 0
+        enhanced_points = max(0, enhanced_points)
+        if enhanced_points <= 0:
+            self.status_message = "Not enough enhanced points."
+            return
+
+        previous_max_hp = player.get("max_hp", 0)
+        if enhance_skill(player, self.selected_skill_id):
+            player["enhanced_skill_points"] = max(0, enhanced_points - 1)
+            self._recalculate_player_stats(previous_max_hp)
+            self._save_current_game()
+            self.status_message = "Skill enhanced."
+            if self._is_level_tab_available(skill_data, "enhanced"):
+                self.selected_level_tab = "enhanced"
+            return
+
+        self.status_message = "Cannot enhance skill."
 
     def _toggle_selected_skill_equipped(self):
         player = getattr(self.game, "player", None)
