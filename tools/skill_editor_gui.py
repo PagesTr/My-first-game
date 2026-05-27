@@ -316,6 +316,10 @@ class SkillEditorGui:
         self.form.setdefault("enhanced_values", {})
         self.form.setdefault("stat", "max_hp")
         self.form.setdefault("per_level_stat", "max_hp")
+        self.form.setdefault("extra_level_stat_modifiers", {})
+        self.form.setdefault("extra_level_per_stat_modifiers", {})
+        self.form.setdefault("extra_enhanced_stat_modifiers", {})
+        self.form.setdefault("extra_enhanced_per_stat_modifiers", {})
 
         self.inputs.append(("skill_id", TextInput((x, y, 360, 30), self.form.get("skill_id", ""))))
         self.inputs.append(("name", TextInput((x, y + 38, 360, 30), self.form.get("name", ""))))
@@ -380,6 +384,10 @@ class SkillEditorGui:
         enhanced_values = {}
         stat = "max_hp"
         per_level_stat = "max_hp"
+        extra_level_stat_modifiers = {}
+        extra_level_per_stat_modifiers = {}
+        extra_enhanced_stat_modifiers = {}
+        extra_enhanced_per_stat_modifiers = {}
 
         levels = skill.get("levels", {})
         if isinstance(levels, dict):
@@ -390,8 +398,10 @@ class SkillEditorGui:
                 level_values[level]["damage_multiplier"] = stringify_number(level_data.get("damage_multiplier"))
                 level_values[level]["cooldown"] = stringify_number(level_data.get("cooldown"))
                 level_values[level]["enemy_hp_threshold"] = stringify_number(level_data.get("enemy_hp_threshold"))
-                stat, level_values[level]["stat_value"] = first_stat_value(level_data.get("stat_modifiers"), stat)
-                per_level_stat, level_values[level]["per_level_value"] = first_stat_value(
+                stat, level_values[level]["stat_value"], extra_level_stat_modifiers[level] = split_stat_values(
+                    level_data.get("stat_modifiers"), stat
+                )
+                per_level_stat, level_values[level]["per_level_value"], extra_level_per_stat_modifiers[level] = split_stat_values(
                     level_data.get("stat_modifiers_per_character_level"), per_level_stat
                 )
 
@@ -400,8 +410,10 @@ class SkillEditorGui:
             enhanced_values["damage_multiplier"] = stringify_number(enhanced.get("damage_multiplier"))
             enhanced_values["cooldown"] = stringify_number(enhanced.get("cooldown"))
             enhanced_values["enemy_hp_threshold"] = stringify_number(enhanced.get("enemy_hp_threshold"))
-            stat, enhanced_values["stat_value"] = first_stat_value(enhanced.get("stat_modifiers"), stat)
-            per_level_stat, enhanced_values["per_level_value"] = first_stat_value(
+            stat, enhanced_values["stat_value"], extra_enhanced_stat_modifiers = split_stat_values(
+                enhanced.get("stat_modifiers"), stat
+            )
+            per_level_stat, enhanced_values["per_level_value"], extra_enhanced_per_stat_modifiers = split_stat_values(
                 enhanced.get("stat_modifiers_per_character_level"), per_level_stat
             )
 
@@ -416,6 +428,10 @@ class SkillEditorGui:
             "enhanced_values": enhanced_values,
             "stat": stat,
             "per_level_stat": per_level_stat,
+            "extra_level_stat_modifiers": extra_level_stat_modifiers,
+            "extra_level_per_stat_modifiers": extra_level_per_stat_modifiers,
+            "extra_enhanced_stat_modifiers": extra_enhanced_stat_modifiers,
+            "extra_enhanced_per_stat_modifiers": extra_enhanced_per_stat_modifiers,
         }
 
     def build_skill_from_form(self):
@@ -448,8 +464,16 @@ class SkillEditorGui:
                 level_data["enemy_hp_threshold"] = threshold
             if skill_type == "passive" and self.form.get("stat") and stat_value is not None:
                 level_data["stat_modifiers"] = {self.form["stat"]: stat_value}
+            if skill_type == "passive":
+                extra_stats = self.form.get("extra_level_stat_modifiers", {}).get(level, {})
+                if extra_stats:
+                    level_data.setdefault("stat_modifiers", {}).update(extra_stats)
             if skill_type == "passive" and self.form.get("per_level_stat") and per_level_value is not None:
                 level_data["stat_modifiers_per_character_level"] = {self.form["per_level_stat"]: per_level_value}
+            if skill_type == "passive":
+                extra_per_stats = self.form.get("extra_level_per_stat_modifiers", {}).get(level, {})
+                if extra_per_stats:
+                    level_data.setdefault("stat_modifiers_per_character_level", {}).update(extra_per_stats)
 
         enhanced_values = self.form.get("enhanced_values", {})
         damage = parse_float(enhanced_values.get("damage_multiplier", ""))
@@ -466,8 +490,14 @@ class SkillEditorGui:
             skill["enhanced"]["enemy_hp_threshold"] = threshold
         if skill_type == "passive" and self.form.get("stat") and stat_value is not None:
             skill["enhanced"]["stat_modifiers"] = {self.form["stat"]: stat_value}
+        if skill_type == "passive" and self.form.get("extra_enhanced_stat_modifiers"):
+            skill["enhanced"].setdefault("stat_modifiers", {}).update(self.form["extra_enhanced_stat_modifiers"])
         if skill_type == "passive" and self.form.get("per_level_stat") and per_level_value is not None:
             skill["enhanced"]["stat_modifiers_per_character_level"] = {self.form["per_level_stat"]: per_level_value}
+        if skill_type == "passive" and self.form.get("extra_enhanced_per_stat_modifiers"):
+            skill["enhanced"].setdefault("stat_modifiers_per_character_level", {}).update(
+                self.form["extra_enhanced_per_stat_modifiers"]
+            )
 
         return skill
 
@@ -520,6 +550,143 @@ class SkillEditorGui:
         }
         self.rebuild_form_inputs()
         self.messages = ["[OK] New passive draft created."]
+
+    def load_template(self, template_name):
+        class_id = self.get_template_class()
+        builders = {
+            "Execute": self.build_execute_template,
+            "Revenge": self.build_revenge_template,
+            "Damage Boost": self.build_damage_boost_template,
+            "Stat Passive": self.build_stat_passive_template,
+            "Crit Passive": self.build_crit_passive_template,
+            "Gathering Passive": self.build_gathering_passive_template,
+        }
+        skill = builders[template_name](class_id)
+        skill_id = generate_unique_skill_id(self.skills, class_id, skill["name"])
+        self.selected_id = skill_id
+        self.original_skill = None
+        self.draft = True
+        self.form = self.form_from_skill(skill_id, skill)
+        self.rebuild_form_inputs()
+        self.messages = [f"[OK] Template loaded: {template_name}. Adjust values, then click Apply Changes."]
+        if template_name == "Damage Boost":
+            self.messages.append("[WARNING] This template is data only until the combat engine supports this trigger.")
+
+    def get_template_class(self):
+        self.sync_inputs_to_form()
+        current_class = self.form.get("class", "")
+        if current_class in self.classes:
+            return current_class
+        return self.class_options[0] if self.class_options else ""
+
+    def build_execute_template(self, class_id):
+        return {
+            "name": "Finishing Blow",
+            "class": class_id,
+            "type": "active",
+            "trigger": "before_player_attack_when_enemy_low_hp",
+            "description": "Deal increased damage when the enemy is low on HP.",
+            "levels": {
+                "1": {"damage_multiplier": 1.20, "enemy_hp_threshold": 0.20, "cooldown": 3},
+                "2": {"damage_multiplier": 1.30, "enemy_hp_threshold": 0.25, "cooldown": 3},
+                "3": {"damage_multiplier": 1.40, "enemy_hp_threshold": 0.30, "cooldown": 2},
+                "4": {"damage_multiplier": 1.55, "enemy_hp_threshold": 0.35, "cooldown": 2},
+            },
+            "enhanced": {"damage_multiplier": 1.80, "enemy_hp_threshold": 0.45, "cooldown": 1},
+        }
+
+    def build_revenge_template(self, class_id):
+        return {
+            "name": "Revenge Strike",
+            "class": class_id,
+            "type": "active",
+            "trigger": "before_player_attack_after_damage_taken",
+            "description": "Deal increased damage after taking damage.",
+            "levels": {
+                "1": {"damage_multiplier": 1.20, "cooldown": 4},
+                "2": {"damage_multiplier": 1.30, "cooldown": 4},
+                "3": {"damage_multiplier": 1.45, "cooldown": 3},
+                "4": {"damage_multiplier": 1.60, "cooldown": 3},
+            },
+            "enhanced": {"damage_multiplier": 1.90, "cooldown": 2},
+        }
+
+    def build_damage_boost_template(self, class_id):
+        return {
+            "name": "Damage Boost",
+            "class": class_id,
+            "type": "active",
+            "trigger": "before_player_attack",
+            "description": "Increase damage before attacking.",
+            "levels": {
+                "1": {"damage_multiplier": 1.10, "cooldown": 3},
+                "2": {"damage_multiplier": 1.20, "cooldown": 3},
+                "3": {"damage_multiplier": 1.30, "cooldown": 2},
+                "4": {"damage_multiplier": 1.40, "cooldown": 2},
+            },
+            "enhanced": {"damage_multiplier": 1.60, "cooldown": 1},
+        }
+
+    def build_stat_passive_template(self, class_id):
+        stat = {"warrior": "strength", "archer": "dexterity", "mage": "intelligence"}.get(class_id, "max_hp")
+        return self.build_single_per_level_passive(
+            class_id,
+            "Stat Training",
+            "Increase a main stat based on character level.",
+            stat,
+            [1, 2, 3, 4],
+            6,
+        )
+
+    def build_crit_passive_template(self, class_id):
+        return {
+            "name": "Critical Training",
+            "class": class_id,
+            "type": "passive",
+            "trigger": "always",
+            "description": "Increase critical chance and critical damage.",
+            "levels": {
+                "1": {"stat_modifiers": {"crit_chance": 0.02, "crit_damage": 0.10}},
+                "2": {"stat_modifiers": {"crit_chance": 0.03, "crit_damage": 0.15}},
+                "3": {"stat_modifiers": {"crit_chance": 0.04, "crit_damage": 0.20}},
+                "4": {"stat_modifiers": {"crit_chance": 0.05, "crit_damage": 0.30}},
+            },
+            "enhanced": {"stat_modifiers": {"crit_chance": 0.08, "crit_damage": 0.50}},
+        }
+
+    def build_gathering_passive_template(self, class_id):
+        mastery_stat, xp_stat = {
+            "warrior": ("prospector_mastery", "prospector_xp_bonus"),
+            "archer": ("archaeologist_mastery", "archaeologist_xp_bonus"),
+            "mage": ("druid_mastery", "druid_xp_bonus"),
+        }.get(class_id, ("druid_mastery", "druid_xp_bonus"))
+        values = [0.03, 0.05, 0.08, 0.12]
+        return {
+            "name": "Gathering Focus",
+            "class": class_id,
+            "type": "passive",
+            "trigger": "always",
+            "description": "Improve profession mastery and profession experience gain.",
+            "levels": {
+                level: {"stat_modifiers": {mastery_stat: values[index], xp_stat: values[index]}}
+                for index, level in enumerate(LEVEL_KEYS)
+            },
+            "enhanced": {"stat_modifiers": {mastery_stat: 0.18, xp_stat: 0.18}},
+        }
+
+    def build_single_per_level_passive(self, class_id, name, description, stat, values, enhanced_value):
+        return {
+            "name": name,
+            "class": class_id,
+            "type": "passive",
+            "trigger": "always",
+            "description": description,
+            "levels": {
+                level: {"stat_modifiers_per_character_level": {stat: values[index]}}
+                for index, level in enumerate(LEVEL_KEYS)
+            },
+            "enhanced": {"stat_modifiers_per_character_level": {stat: enhanced_value}},
+        }
 
     def duplicate_selected(self):
         if not self.selected_id or self.selected_id not in self.skills:
@@ -914,6 +1081,8 @@ class SkillEditorGui:
         for label, offset in zip(["Damage", "Cooldown", "Enemy HP", "Flat value", "Per-level value"], [22, 128, 206, 312, 398]):
             draw_text(self.screen, self.small_font, label, self.center_rect.x + offset, grid_y + 238, MUTED)
 
+        self.draw_templates_section(grid_y + 284)
+
         action_y = self.center_rect.bottom - 52
         actions = [
             ("Apply Changes", self.apply_changes, 124),
@@ -927,6 +1096,29 @@ class SkillEditorGui:
             button.draw(self.screen, self.small_font)
             self.center_buttons.append(button)
             x += width + 10
+
+    def draw_templates_section(self, y):
+        draw_text(self.screen, self.font, "Templates", self.center_rect.x + 20, y)
+        help_text = "Templates create editable drafts. Apply Changes adds them to memory; Save writes skills.json."
+        draw_text(self.screen, self.small_font, help_text, self.center_rect.x + 118, y + 3, MUTED)
+        templates = [
+            ("Execute", 82),
+            ("Revenge", 86),
+            ("Damage Boost", 118),
+            ("Stat Passive", 112),
+            ("Crit Passive", 108),
+            ("Gathering Passive", 150),
+        ]
+        x = self.center_rect.x + 20
+        button_y = y + 28
+        for label, width in templates:
+            if x + width > self.center_rect.right - 18:
+                x = self.center_rect.x + 20
+                button_y += 38
+            button = Button((x, button_y, width, 30), label, lambda template=label: self.load_template(template))
+            button.draw(self.screen, self.small_font)
+            self.center_buttons.append(button)
+            x += width + 8
 
     def add_dropdown(self, key, options, rect, max_visible=8):
         value = self.form.get(key, "")
@@ -1025,6 +1217,14 @@ def first_stat_value(value, default_stat):
         stat = next(iter(value))
         return stat, stringify_number(value.get(stat))
     return default_stat, ""
+
+
+def split_stat_values(value, default_stat):
+    if not isinstance(value, dict) or not value:
+        return default_stat, "", {}
+    stat = next(iter(value))
+    extra_values = {key: amount for key, amount in value.items() if key != stat}
+    return stat, stringify_number(value.get(stat)), extra_values
 
 
 def format_validation_messages(errors, warnings):
