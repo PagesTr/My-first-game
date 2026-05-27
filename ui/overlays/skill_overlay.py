@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pygame
 
 from systems.skills import (
@@ -30,13 +33,17 @@ class SkillOverlay:
         self.small_font = pygame.font.Font(None, 18)
         self.panel_rect = pygame.Rect(0, 0, 0, 0)
         self.close_rect = pygame.Rect(0, 0, 0, 0)
-        self.active_rect = pygame.Rect(0, 0, 0, 0)
-        self.passive_rect = pygame.Rect(0, 0, 0, 0)
+        self.grid_rect = pygame.Rect(0, 0, 0, 0)
         self.detail_rect = pygame.Rect(0, 0, 0, 0)
         self.learn_button_rect = pygame.Rect(0, 0, 0, 0)
         self.equip_button_rect = pygame.Rect(0, 0, 0, 0)
-        self.skill_row_rects = []
+        self.prev_page_rect = pygame.Rect(0, 0, 0, 0)
+        self.next_page_rect = pygame.Rect(0, 0, 0, 0)
+        self.skill_page = 0
+        self.skill_slot_rects = []
         self.level_tab_rects = []
+        self.skill_icon_map = self._load_skill_icon_map()
+        self.skill_icon_surfaces = {}
 
     def open(self):
         self.opened = True
@@ -69,6 +76,17 @@ class SkillOverlay:
             self.close()
             return True
 
+        available_skills = self._get_available_skills()
+        total_pages = self._get_total_skill_pages(available_skills)
+        if self.prev_page_rect.collidepoint(position) and self.skill_page > 0:
+            self.skill_page -= 1
+            self._select_first_page_skill_if_needed(available_skills)
+            return True
+        if self.next_page_rect.collidepoint(position) and self.skill_page < total_pages - 1:
+            self.skill_page += 1
+            self._select_first_page_skill_if_needed(available_skills)
+            return True
+
         for tab_id, rect, enabled in self.level_tab_rects:
             if rect.collidepoint(position):
                 if enabled:
@@ -83,7 +101,7 @@ class SkillOverlay:
             self._toggle_selected_skill_equipped()
             return True
 
-        for skill_id, rect in self.skill_row_rects:
+        for skill_id, rect in self.skill_slot_rects:
             if rect.collidepoint(position):
                 self.selected_skill_id = skill_id
                 self._normalize_selected_level_tab(self._get_skill_data(self._get_skills_data(), skill_id))
@@ -114,20 +132,22 @@ class SkillOverlay:
             self._draw_message(screen, "No skills available.")
             return
 
-        active_skills, passive_skills = self._get_skill_groups(player, skills_data)
-        if not active_skills and not passive_skills:
+        available_skills = self._get_available_skills()
+        if not available_skills:
             self._draw_message(screen, "No skills available.")
             return
 
-        if self.selected_skill_id not in {skill_id for skill_id, _ in active_skills + passive_skills}:
-            self.selected_skill_id = (active_skills + passive_skills)[0][0]
+        if self.selected_skill_id not in {skill_id for skill_id, _ in available_skills}:
+            self.selected_skill_id = available_skills[0][0]
 
         self._normalize_selected_level_tab(self._get_skill_data(skills_data, self.selected_skill_id))
-        self.skill_row_rects = []
+        self.skill_slot_rects = []
         self.level_tab_rects = []
         self._draw_summary(screen, player)
-        self._draw_skill_list(screen, self.active_rect, "Active skills", active_skills)
-        self._draw_skill_list(screen, self.passive_rect, "Passive skills", passive_skills)
+        total_pages = self._get_total_skill_pages(available_skills)
+        self.skill_page = max(0, min(self.skill_page, total_pages - 1))
+        self._draw_skill_grid(screen, self.grid_rect, available_skills)
+        self._draw_pagination(screen, self.grid_rect, total_pages)
         selected_data = self._get_skill_data(skills_data, self.selected_skill_id)
         self._draw_skill_details(screen, self.detail_rect, self.selected_skill_id, selected_data)
 
@@ -144,10 +164,7 @@ class SkillOverlay:
         top = panel.y + 102
         detail_height = min(230, max(195, int(panel.h * 0.42)))
         list_bottom = panel.bottom - detail_height - 18
-        gap = 14
-        column_width = (panel.w - 50) // 2
-        self.active_rect = pygame.Rect(panel.x + 18, top, column_width, max(170, list_bottom - top))
-        self.passive_rect = pygame.Rect(self.active_rect.right + gap, top, column_width, max(170, list_bottom - top))
+        self.grid_rect = pygame.Rect(panel.x + 18, top, panel.w - 36, max(170, list_bottom - top))
         self.detail_rect = pygame.Rect(panel.x + 18, list_bottom + 12, panel.w - 36, detail_height - 4)
         self.learn_button_rect = pygame.Rect(self.detail_rect.right - 304, self.detail_rect.bottom - 42, 140, 28)
         self.equip_button_rect = pygame.Rect(self.detail_rect.right - 154, self.detail_rect.bottom - 42, 136, 28)
@@ -189,58 +206,146 @@ class SkillOverlay:
             message = self.small_font.render(self._truncate_text(self.status_message, self.small_font, self.panel_rect.w - 48), True, (238, 205, 140))
             screen.blit(message, (self.panel_rect.x + 24, self.panel_rect.y + 80))
 
-    def _draw_skill_list(self, screen, rect, title, skills):
+    def _draw_skill_grid(self, screen, rect, skills):
         pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
         pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
-        title_surface = self.header_font.render(title, True, (246, 235, 205))
+        title_surface = self.header_font.render("Skills", True, (246, 235, 205))
         screen.blit(title_surface, (rect.x + 12, rect.y + 10))
-
-        y = rect.y + 44
-        row_height = 70
-        for skill_id, skill_data in skills:
-            if y + row_height > rect.bottom - 8:
-                more = self.small_font.render("More skills available.", True, (160, 168, 176))
-                screen.blit(more, (rect.x + 14, rect.bottom - 24))
-                break
-            row = pygame.Rect(rect.x + 10, y, rect.w - 20, row_height - 8)
-            self.skill_row_rects.append((skill_id, row))
-            self._draw_skill_row(screen, row, skill_id, skill_data, skill_id == self.selected_skill_id)
-            y += row_height
 
         if not skills:
             empty = self.body_font.render("No skills available.", True, (160, 168, 176))
             screen.blit(empty, (rect.x + 14, rect.y + 48))
+            return
 
-    def _draw_skill_row(self, screen, rect, skill_id, skill_data, selected=False):
-        player = getattr(self.game, "player", {}) or {}
-        skills_data = self._get_skills_data()
-        skill_type = get_skill_type(skills_data, skill_id)
-        skill_state = get_player_skill_state(player, skill_id)
+        columns = 6
+        rows = 3
+        spacing = 8
+        grid_top = rect.y + 44
+        available_width = rect.w - 28
+        available_height = rect.bottom - grid_top - 36
+        slot_size = min(60, max(46, min((available_width - spacing * (columns - 1)) // columns, (available_height - spacing * (rows - 1)) // rows)))
+        total_grid_width = columns * slot_size + (columns - 1) * spacing
+        start_x = rect.x + (rect.w - total_grid_width) // 2
+        page_skills = self._get_current_page_skills(skills)
+
+        for index, (skill_id, skill_data) in enumerate(page_skills):
+            column = index % columns
+            row = index // columns
+            slot_rect = pygame.Rect(
+                start_x + column * (slot_size + spacing),
+                grid_top + row * (slot_size + spacing),
+                slot_size,
+                slot_size,
+            )
+            self.skill_slot_rects.append((skill_id, slot_rect))
+            self._draw_skill_slot(screen, slot_rect, skill_id, skill_data, skill_id == self.selected_skill_id)
+
+    def _draw_skill_slot(self, screen, rect, skill_id, skill_data, selected):
+        skill_state = self._get_skill_state(skill_id)
         level = skill_state["level"]
-        enhanced = skill_state["enhanced"]
-        status = self._get_skill_status(player, skills_data, skill_id, skill_type, level)
+        skill_type = get_skill_type(self._get_skills_data(), skill_id)
+        equipped = level > 0 and skill_type == "active" and is_skill_equipped(getattr(self.game, "player", {}) or {}, skill_id)
+        can_upgrade = level < 4 and (getattr(self.game, "player", {}) or {}).get("skill_points", 0) > 0
 
         if selected:
             bg, border = (45, 55, 58), (235, 230, 190)
-        elif level > 0 and skill_type == "active":
-            bg, border = (36, 49, 55), (82, 125, 148)
-        elif level > 0:
-            bg, border = (38, 56, 46), (70, 118, 78)
+        elif level <= 0:
+            bg, border = (35, 34, 34), (86, 84, 82)
+        elif equipped:
+            bg, border = (34, 54, 52), (112, 220, 150)
+        elif can_upgrade:
+            bg, border = (48, 43, 32), (218, 178, 92)
         else:
-            bg, border = (38, 35, 32), (78, 64, 46)
-        pygame.draw.rect(screen, bg, rect, border_radius=5)
-        pygame.draw.rect(screen, border, rect, 2 if selected else 1, border_radius=5)
+            bg, border = (36, 45, 52), (118, 156, 182)
 
-        name = skill_data.get("name", skill_id) if isinstance(skill_data, dict) else skill_id
-        title = self.body_font.render(self._truncate_text(name, self.body_font, rect.w - 24), True, (246, 235, 205))
-        screen.blit(title, (rect.x + 10, rect.y + 8))
+        pygame.draw.rect(screen, bg, rect, border_radius=7)
+        pygame.draw.rect(screen, border, rect, 2, border_radius=7)
+        icon_rect = rect.inflate(-14, -18)
+        icon_rect.y += 2
+        self._draw_skill_icon(screen, icon_rect, skill_id, skill_data, skill_state)
+        self._draw_skill_badges(screen, rect, skill_id, skill_data, skill_state)
 
-        details = f"{skill_type.title()} | Level {level} | {status}"
-        if enhanced:
-            details = f"{details} | Enhanced"
-        detail_color = (145, 220, 165) if "Equipped" in status or "Passive active" in status else (190, 202, 210)
-        detail = self.small_font.render(self._truncate_text(details, self.small_font, rect.w - 24), True, detail_color)
-        screen.blit(detail, (rect.x + 10, rect.y + 36))
+    def _draw_skill_icon(self, screen, rect, skill_id, skill_data, skill_state):
+        visibility = self._get_skill_visibility(skill_id, skill_data, skill_state)
+        if visibility == "secret":
+            pygame.draw.rect(screen, (18, 16, 17), rect, border_radius=5)
+            return
+        if visibility == "undiscovered":
+            text = self.header_font.render("?", True, (150, 145, 138))
+            screen.blit(text, text.get_rect(center=rect.center))
+            return
+
+        icon = self._get_skill_icon_surface(skill_id)
+        if icon is not None:
+            size = min(rect.w, rect.h)
+            icon = pygame.transform.scale(icon, (size, size))
+            screen.blit(icon, icon.get_rect(center=rect.center))
+        else:
+            self._draw_fallback_skill_icon(screen, rect, get_skill_type(self._get_skills_data(), skill_id))
+
+        if visibility == "known_locked":
+            veil = pygame.Surface(rect.size, pygame.SRCALPHA)
+            veil.fill((0, 0, 0, 115))
+            screen.blit(veil, rect.topleft)
+
+    def _draw_fallback_skill_icon(self, screen, rect, skill_type):
+        center = rect.center
+        if skill_type == "passive":
+            points = [
+                (center[0], rect.y + 2),
+                (center[0] + 5, center[1] - 4),
+                (rect.right - 3, center[1]),
+                (center[0] + 5, center[1] + 4),
+                (center[0], rect.bottom - 2),
+                (center[0] - 5, center[1] + 4),
+                (rect.x + 3, center[1]),
+                (center[0] - 5, center[1] - 4),
+            ]
+            pygame.draw.polygon(screen, (126, 190, 148), points)
+            pygame.draw.circle(screen, (230, 220, 164), center, max(3, rect.w // 8))
+            return
+        if skill_type == "active":
+            pygame.draw.line(screen, (216, 224, 230), (rect.x + 7, rect.bottom - 6), (rect.right - 5, rect.y + 5), 4)
+            pygame.draw.polygon(screen, (230, 202, 116), [(rect.right - 5, rect.y + 5), (rect.right - 14, rect.y + 7), (rect.right - 7, rect.y + 16)])
+            pygame.draw.line(screen, (95, 70, 46), (rect.x + 6, rect.bottom - 5), (rect.x + 14, rect.bottom - 13), 4)
+            return
+        text = self.header_font.render("?", True, (220, 212, 190))
+        screen.blit(text, text.get_rect(center=center))
+
+    def _draw_skill_badges(self, screen, rect, skill_id, skill_data, skill_state):
+        player = getattr(self.game, "player", {}) or {}
+        level = skill_state["level"]
+        skill_type = get_skill_type(self._get_skills_data(), skill_id)
+        level_label = "Max" if level >= 4 else f"Lv {level}"
+        badge = pygame.Rect(rect.x + 4, rect.bottom - 18, 34, 14)
+        pygame.draw.rect(screen, (22, 24, 26), badge, border_radius=4)
+        pygame.draw.rect(screen, (118, 91, 54), badge, 1, border_radius=4)
+        text = self.small_font.render(level_label, True, (246, 235, 205))
+        screen.blit(text, text.get_rect(center=badge.center))
+
+        if level > 0 and skill_type == "active" and is_skill_equipped(player, skill_id):
+            pygame.draw.circle(screen, (112, 220, 150), (rect.right - 10, rect.y + 10), 5)
+            marker = self.small_font.render("E", True, (18, 32, 24))
+            screen.blit(marker, marker.get_rect(center=(rect.right - 10, rect.y + 10)))
+
+        if level < 4 and player.get("skill_points", 0) > 0:
+            plus = pygame.Rect(rect.right - 18, rect.bottom - 18, 14, 14)
+            pygame.draw.rect(screen, (132, 99, 42), plus, border_radius=4)
+            pygame.draw.rect(screen, (245, 198, 92), plus, 1, border_radius=4)
+            text = self.small_font.render("+", True, (255, 235, 160))
+            screen.blit(text, text.get_rect(center=plus.center))
+
+        if skill_state.get("enhanced") is True:
+            pygame.draw.circle(screen, (204, 146, 222), (rect.x + 10, rect.y + 10), 5)
+
+    def _draw_pagination(self, screen, rect, total_pages):
+        y = rect.bottom - 28
+        self.prev_page_rect = pygame.Rect(rect.x + 12, y, 38, 22)
+        self.next_page_rect = pygame.Rect(rect.right - 50, y, 38, 22)
+        self._draw_button(screen, self.prev_page_rect, "<", enabled=self.skill_page > 0)
+        self._draw_button(screen, self.next_page_rect, ">", enabled=self.skill_page < total_pages - 1)
+        page_label = self.small_font.render(f"Page {self.skill_page + 1} / {total_pages}", True, (204, 191, 168))
+        screen.blit(page_label, page_label.get_rect(center=(rect.centerx, y + 11)))
 
     def _draw_skill_details(self, screen, rect, skill_id, skill_data):
         pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
@@ -352,6 +457,78 @@ class SkillOverlay:
         if not isinstance(skills_data, dict):
             return {}
         return {skill_id: skill_data for skill_id, skill_data in skills_data.items() if isinstance(skill_data, dict)}
+
+    def _get_available_skills(self):
+        player = getattr(self.game, "player", None)
+        skills_data = self._get_skills_data()
+        if not isinstance(player, dict) or not skills_data:
+            return []
+        skills = get_available_class_skills(skills_data, player)
+        return sorted(
+            [(skill_id, skill_data) for skill_id, skill_data in skills if isinstance(skill_data, dict)],
+            key=lambda item: (
+                0 if get_skill_type(skills_data, item[0]) == "active" else 1,
+                item[1].get("name", item[0]),
+                item[0],
+            ),
+        )
+
+    def _get_skill_state(self, skill_id):
+        player = getattr(self.game, "player", {}) or {}
+        if not isinstance(player, dict):
+            return {"level": 0, "enhanced": False}
+        return get_player_skill_state(player, skill_id)
+
+    def _get_skill_visibility(self, skill_id, skill_data, skill_state):
+        if skill_state.get("level", 0) <= 0:
+            return "known_locked"
+        return "learned"
+
+    def _get_total_skill_pages(self, skills):
+        skills_per_page = 18
+        return max(1, (len(skills) + skills_per_page - 1) // skills_per_page)
+
+    def _get_current_page_skills(self, skills):
+        skills_per_page = 18
+        total_pages = self._get_total_skill_pages(skills)
+        self.skill_page = max(0, min(self.skill_page, total_pages - 1))
+        start = self.skill_page * skills_per_page
+        return skills[start:start + skills_per_page]
+
+    def _select_first_page_skill_if_needed(self, skills):
+        if self.selected_skill_id in {skill_id for skill_id, _ in skills}:
+            return
+        page_skills = self._get_current_page_skills(skills)
+        self.selected_skill_id = page_skills[0][0] if page_skills else None
+        if self.selected_skill_id:
+            self._normalize_selected_level_tab(self._get_skill_data(self._get_skills_data(), self.selected_skill_id))
+
+    def _load_skill_icon_map(self):
+        path = Path("data/skill_icons.json")
+        if not path.exists():
+            return {}
+        try:
+            with path.open("r", encoding="utf-8") as handle:
+                data = json.load(handle)
+        except (OSError, json.JSONDecodeError):
+            return {}
+        if not isinstance(data, dict):
+            return {}
+        return {str(skill_id): str(icon_path) for skill_id, icon_path in data.items() if isinstance(icon_path, str)}
+
+    def _get_skill_icon_surface(self, skill_id):
+        if skill_id in self.skill_icon_surfaces:
+            return self.skill_icon_surfaces[skill_id]
+        icon_path = self.skill_icon_map.get(skill_id)
+        if not icon_path:
+            self.skill_icon_surfaces[skill_id] = None
+            return None
+        try:
+            surface = pygame.image.load(icon_path).convert_alpha()
+        except (OSError, pygame.error, TypeError, ValueError):
+            surface = None
+        self.skill_icon_surfaces[skill_id] = surface
+        return surface
 
     def _get_skill_groups(self, player, skills_data):
         available_skills = get_available_class_skills(skills_data, player)
