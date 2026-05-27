@@ -36,6 +36,11 @@ except ModuleNotFoundError:
 
 WINDOW_SIZE = (1400, 850)
 LEVEL_KEYS = ("1", "2", "3", "4")
+LEFT_PANEL_X = 10
+LEFT_PANEL_Y = 10
+FILTER_ROW_HEIGHT = 34
+BUTTON_ROW_Y = 166
+SKILL_LIST_START_Y = 212
 BACKGROUND = (25, 28, 34)
 PANEL = (34, 38, 46)
 PANEL_ALT = (42, 47, 56)
@@ -47,6 +52,12 @@ WARNING = (232, 181, 82)
 ERROR = (232, 96, 96)
 OK = (104, 196, 128)
 INPUT_BG = (24, 27, 33)
+
+ENGINE_STATUS_LABELS = {
+    "supported_now": "usable now",
+    "data_only": "data only",
+    "invalid": "invalid",
+}
 
 
 def draw_text(surface, font, text, x, y, color=TEXT):
@@ -172,6 +183,63 @@ class Button:
         surface.blit(font.render(self.label, True, TEXT), text_rect)
 
 
+class Dropdown:
+    def __init__(self, rect, label, options, value, on_select, max_visible=8, scroll_offset=0):
+        self.rect = pygame.Rect(rect)
+        self.label = label
+        self.options = list(options)
+        self.value = value
+        self.on_select = on_select
+        self.max_visible = max_visible
+        self.scroll_offset = max(0, min(scroll_offset, max(0, len(self.options) - self.max_visible)))
+        self.option_height = 28
+
+    def draw(self, surface, font, open_menu=False):
+        pygame.draw.rect(surface, INPUT_BG, self.rect, border_radius=4)
+        pygame.draw.rect(surface, ACCENT if open_menu else BORDER, self.rect, 1, border_radius=4)
+        display = str(self.value)
+        while font.size(display)[0] > self.rect.width - 24 and display:
+            display = display[:-1]
+        draw_text(surface, font, display, self.rect.x + 8, self.rect.y + 6)
+        draw_text(surface, font, "v", self.rect.right - 16, self.rect.y + 6, MUTED)
+
+    def draw_options(self, surface, font):
+        menu_rect = self.get_menu_rect()
+        pygame.draw.rect(surface, INPUT_BG, menu_rect, border_radius=4)
+        pygame.draw.rect(surface, ACCENT, menu_rect, 1, border_radius=4)
+        for index, option in enumerate(self.visible_options()):
+            option_rect = pygame.Rect(menu_rect.x, menu_rect.y + index * self.option_height, menu_rect.width, self.option_height)
+            if option == self.value:
+                pygame.draw.rect(surface, PANEL_ALT, option_rect)
+            display = str(option)
+            while font.size(display)[0] > option_rect.width - 12 and display:
+                display = display[:-1]
+            draw_text(surface, font, display, option_rect.x + 6, option_rect.y + 6)
+        if len(self.options) > self.max_visible:
+            draw_text(surface, font, "scroll", menu_rect.right - 48, menu_rect.bottom - 20, MUTED)
+
+    def visible_options(self):
+        end = self.scroll_offset + self.max_visible
+        return self.options[self.scroll_offset : end]
+
+    def get_menu_rect(self):
+        height = max(1, len(self.visible_options())) * self.option_height
+        y = self.rect.bottom + 2
+        if y + height > WINDOW_SIZE[1] - 8:
+            y = max(8, self.rect.y - height - 2)
+        return pygame.Rect(self.rect.x, y, self.rect.width, height)
+
+    def option_at(self, pos):
+        menu_rect = self.get_menu_rect()
+        if not menu_rect.collidepoint(pos):
+            return None
+        index = (pos[1] - menu_rect.y) // self.option_height
+        options = self.visible_options()
+        if 0 <= index < len(options):
+            return options[int(index)]
+        return None
+
+
 class SkillEditorGui:
     def __init__(self):
         pygame.init()
@@ -190,7 +258,7 @@ class SkillEditorGui:
         self.inputs = []
         self.buttons = []
         self.filter_mode = "All"
-        self.search_input = TextInput((16, 56, 298, 30))
+        self.search_input = TextInput((LEFT_PANEL_X + 14, LEFT_PANEL_Y + 70, 298, 30))
         self.list_scroll = 0
         self.preview_scroll = 0
         self.messages = []
@@ -202,12 +270,15 @@ class SkillEditorGui:
         self.left_buttons = []
         self.center_buttons = []
         self.right_buttons = []
+        self.dropdowns = []
+        self.open_dropdown_key = None
+        self.dropdown_scrolls = {}
         self.class_options = []
         self.trigger_options = []
         self.type_options = ["active", "passive"]
         self.stat_options = sorted(ALLOWED_STATS)
 
-        self.left_rect = pygame.Rect(10, 10, 330, 830)
+        self.left_rect = pygame.Rect(LEFT_PANEL_X, LEFT_PANEL_Y, 330, 830)
         self.center_rect = pygame.Rect(350, 10, 620, 830)
         self.right_rect = pygame.Rect(980, 10, 410, 830)
         self.load_data()
@@ -250,36 +321,36 @@ class SkillEditorGui:
         self.inputs.append(("name", TextInput((x, y + 38, 360, 30), self.form.get("name", ""))))
         self.inputs.append(("description", TextInput((x, y + 190, 470, 30), self.form.get("description", ""))))
 
-        grid_y = y + 274
+        grid_y = y + 306
         columns = [
-            ("damage_multiplier", 78),
-            ("cooldown", 66),
-            ("enemy_hp_threshold", 76),
-            ("stat_value", 66),
-            ("per_level_value", 66),
+            ("damage_multiplier", 70, 88),
+            ("cooldown", 170, 82),
+            ("enemy_hp_threshold", 270, 86),
+            ("stat_value", 370, 92),
+            ("per_level_value", 480, 104),
         ]
         for row, level in enumerate(LEVEL_KEYS):
             level_data = self.form["level_values"].setdefault(level, {})
             row_y = grid_y + 32 + row * 38
-            col_x = self.center_rect.x + 64
-            for key, width in columns:
+            for key, offset, width in columns:
                 text = level_data.get(key, "")
-                self.inputs.append((f"level:{level}:{key}", TextInput((col_x, row_y, width, 28), text, numeric=True)))
-                col_x += width + 8
+                self.inputs.append(
+                    (f"level:{level}:{key}", TextInput((self.center_rect.x + offset, row_y, width, 28), text, numeric=True))
+                )
 
         enhanced_y = grid_y + 210
         enhanced_fields = [
-            ("damage_multiplier", 98),
-            ("cooldown", 70),
-            ("enemy_hp_threshold", 98),
-            ("stat_value", 78),
-            ("per_level_value", 78),
+            ("damage_multiplier", 22, 98),
+            ("cooldown", 128, 70),
+            ("enemy_hp_threshold", 206, 98),
+            ("stat_value", 312, 90),
+            ("per_level_value", 412, 104),
         ]
-        col_x = self.center_rect.x + 22
-        for key, width in enhanced_fields:
+        for key, offset, width in enhanced_fields:
             text = self.form["enhanced_values"].get(key, "")
-            self.inputs.append((f"enhanced:{key}", TextInput((col_x, enhanced_y + 34, width, 28), text, numeric=True)))
-            col_x += width + 8
+            self.inputs.append(
+                (f"enhanced:{key}", TextInput((self.center_rect.x + offset, enhanced_y + 34, width, 28), text, numeric=True))
+            )
 
     def sync_inputs_to_form(self):
         for key, input_box in self.inputs:
@@ -552,6 +623,14 @@ class SkillEditorGui:
         except Exception as error:
             self.messages = [f"[ERROR] Save failed: {error}"]
 
+    def show_engine_help(self):
+        self.messages = [
+            "[OK] Engine status:",
+            "usable now: the current combat engine can use this skill.",
+            "data only: saved but not interpreted yet.",
+            "invalid: the skill definition has errors.",
+        ]
+
     def reload(self):
         if self.dirty and not self.reload_confirm:
             self.reload_confirm = True
@@ -573,21 +652,13 @@ class SkillEditorGui:
         self.sync_inputs_to_form()
         return self.form.get("skill_id", "").strip()
 
-    def cycle_value(self, key, options):
-        if not options:
-            return
-        current = self.form.get(key, options[0])
-        try:
-            index = options.index(current)
-        except ValueError:
-            index = -1
-        self.form[key] = options[(index + 1) % len(options)]
-        if key == "type" and self.form[key] == "passive":
+    def select_dropdown_value(self, key, value):
+        self.sync_inputs_to_form()
+        self.form[key] = value
+        if key == "type" and value == "passive":
             self.form["trigger"] = "always"
         self.rebuild_form_inputs()
-
-    def cycle_stat(self, key):
-        self.cycle_value(key, self.stat_options)
+        self.open_dropdown_key = None
 
     def filtered_skill_ids(self):
         search = self.search_input.text.strip().lower()
@@ -604,7 +675,7 @@ class SkillEditorGui:
                 continue
             if self.filter_mode == "Passive" and skill_type != "passive":
                 continue
-            if self.filter_mode == "Supported" and status != "supported_now":
+            if self.filter_mode == "Usable" and status != "supported_now":
                 continue
             if self.filter_mode == "Data only" and status != "data_only":
                 continue
@@ -621,11 +692,21 @@ class SkillEditorGui:
             return
 
         if event.type == pygame.MOUSEWHEEL:
+            open_dropdown = self.get_open_dropdown()
+            if open_dropdown:
+                max_scroll = max(0, len(open_dropdown.options) - open_dropdown.max_visible)
+                current_scroll = self.dropdown_scrolls.get(self.open_dropdown_key, 0)
+                self.dropdown_scrolls[self.open_dropdown_key] = max(0, min(max_scroll, current_scroll - event.y))
+                return
             mouse_pos = pygame.mouse.get_pos()
             if self.left_rect.collidepoint(mouse_pos):
                 self.list_scroll = max(0, self.list_scroll - event.y * 26)
             elif self.right_rect.collidepoint(mouse_pos):
                 self.preview_scroll = max(0, self.preview_scroll - event.y * 26)
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.handle_dropdown_click(event.pos):
+                return
 
         if self.search_input.handle_event(event):
             return
@@ -647,6 +728,31 @@ class SkillEditorGui:
         self.handle_center_click(event.pos)
         self.handle_right_click(event.pos)
 
+    def handle_dropdown_click(self, pos):
+        open_dropdown = self.get_open_dropdown()
+        if open_dropdown:
+            option = open_dropdown.option_at(pos)
+            if option is not None:
+                open_dropdown.on_select(option)
+                return True
+            if open_dropdown.rect.collidepoint(pos):
+                self.open_dropdown_key = None
+                return True
+            self.open_dropdown_key = None
+            return True
+
+        for key, dropdown in self.dropdowns:
+            if dropdown.rect.collidepoint(pos):
+                self.open_dropdown_key = key
+                return True
+        return False
+
+    def get_open_dropdown(self):
+        for key, dropdown in self.dropdowns:
+            if key == self.open_dropdown_key:
+                return dropdown
+        return None
+
     def focus_next_input(self):
         all_inputs = [self.search_input] + [input_box for _, input_box in self.inputs]
         focused_index = None
@@ -664,7 +770,7 @@ class SkillEditorGui:
                 button.action()
                 return
 
-        list_top = self.left_rect.y + 190
+        list_top = self.left_rect.y + SKILL_LIST_START_Y
         row_height = 58
         ids = self.filtered_skill_ids()
         index = (pos[1] - list_top + self.list_scroll) // row_height
@@ -688,7 +794,13 @@ class SkillEditorGui:
         self.draw_left_panel()
         self.draw_center_panel()
         self.draw_right_panel()
+        self.draw_open_dropdown()
         pygame.display.flip()
+
+    def draw_open_dropdown(self):
+        dropdown = self.get_open_dropdown()
+        if dropdown:
+            dropdown.draw_options(self.screen, self.font)
 
     def draw_panel(self, rect, title):
         pygame.draw.rect(self.screen, PANEL, rect, border_radius=6)
@@ -697,24 +809,22 @@ class SkillEditorGui:
 
     def draw_left_panel(self):
         self.draw_panel(self.left_rect, "Skill list")
-        filters = ["All", "Active", "Passive", "Supported", "Data only", "Invalid"]
+        filters = ["All", "Active", "Passive", "Usable", "Data only", "Invalid"]
         self.left_buttons = []
-        x = self.left_rect.x + 12
-        y = self.left_rect.y + 90
-        for label in filters:
-            width = 88 if label == "Data only" else 72
-            button = Button((x, y, width, 28), label, lambda value=label: self.set_filter(value))
-            button.draw(self.screen, self.small_font, self.filter_mode == label)
-            self.left_buttons.append(button)
-            x += width + 6
-            if x > self.left_rect.right - 80:
-                x = self.left_rect.x + 12
-                y += 34
+        filter_rows = [filters[:3], filters[3:]]
+        for row_index, row_filters in enumerate(filter_rows):
+            x = self.left_rect.x + 12
+            y = self.left_rect.y + 112 + row_index * FILTER_ROW_HEIGHT
+            for label in row_filters:
+                width = 92 if label == "Data only" else 88
+                button = Button((x, y, width, 28), label, lambda value=label: self.set_filter(value))
+                button.draw(self.screen, self.small_font, self.filter_mode == label)
+                self.left_buttons.append(button)
+                x += width + 8
 
-        draw_text(self.screen, self.small_font, "Search", self.left_rect.x + 14, 38, MUTED)
+        draw_text(self.screen, self.small_font, "Search", self.left_rect.x + 14, self.left_rect.y + 52, MUTED)
         self.search_input.draw(self.screen, self.font)
 
-        action_y = 148
         actions = [
             ("New Passive", self.make_new_passive),
             ("New Active", self.make_new_active),
@@ -722,12 +832,20 @@ class SkillEditorGui:
         ]
         x = self.left_rect.x + 12
         for label, action in actions:
-            button = Button((x, action_y, 96, 30), label, action)
+            width = 96
+            if label == "Duplicate":
+                width = 92
+            button = Button((x, self.left_rect.y + BUTTON_ROW_Y, width, 30), label, action)
             button.draw(self.screen, self.small_font)
             self.left_buttons.append(button)
-            x += 102
+            x += width + 8
 
-        list_clip = pygame.Rect(self.left_rect.x + 8, self.left_rect.y + 190, self.left_rect.width - 16, 630)
+        list_clip = pygame.Rect(
+            self.left_rect.x + 8,
+            self.left_rect.y + SKILL_LIST_START_Y,
+            self.left_rect.width - 16,
+            self.left_rect.bottom - self.left_rect.y - SKILL_LIST_START_Y - 10,
+        )
         old_clip = self.screen.get_clip()
         self.screen.set_clip(list_clip)
         y = list_clip.y - self.list_scroll
@@ -740,7 +858,8 @@ class SkillEditorGui:
                 pygame.draw.rect(self.screen, ACCENT if selected else BORDER, row, 1, border_radius=4)
                 status = get_engine_support_status(skill_id, skill) if isinstance(skill, dict) else "invalid"
                 draw_text(self.screen, self.small_font, skill_id[:34], row.x + 8, row.y + 6)
-                meta = f"{skill.get('class', '?')} | {skill.get('type', '?')} | {status}" if isinstance(skill, dict) else "invalid"
+                engine = engine_status_label(status)
+                meta = f"{skill.get('class', '?')} | {skill.get('type', '?')} | {engine}" if isinstance(skill, dict) else "invalid"
                 draw_text(self.screen, self.small_font, meta[:38], row.x + 8, row.y + 28, MUTED)
             y += 58
         self.screen.set_clip(old_clip)
@@ -751,6 +870,7 @@ class SkillEditorGui:
 
     def draw_center_panel(self):
         self.draw_panel(self.center_rect, "Skill form")
+        self.dropdowns = []
         y = self.center_rect.y + 54
         labels = [
             ("skill_id", y),
@@ -767,39 +887,31 @@ class SkillEditorGui:
             input_box.draw(self.screen, self.font)
 
         self.center_buttons = []
-        self.add_cycle_button("class", self.class_options, (self.center_rect.x + 110, y + 76, 190, 30))
-        self.add_cycle_button("type", self.type_options, (self.center_rect.x + 110, y + 114, 190, 30))
-        self.add_cycle_button("trigger", self.trigger_options, (self.center_rect.x + 110, y + 152, 360, 30))
+        self.add_dropdown("class", self.class_options, (self.center_rect.x + 110, y + 76, 190, 30))
+        self.add_dropdown("type", self.type_options, (self.center_rect.x + 110, y + 114, 190, 30))
+        self.add_dropdown("trigger", self.trigger_options, (self.center_rect.x + 110, y + 152, 360, 30), max_visible=7)
         generate_button = Button((self.center_rect.x + 478, y, 112, 30), "Generate ID", self.generate_id_for_form)
         generate_button.draw(self.screen, self.small_font)
         self.center_buttons.append(generate_button)
 
-        grid_y = y + 274
+        stats_y = y + 238
+        draw_text(self.screen, self.small_font, "Flat stat", self.center_rect.x + 20, stats_y + 7, MUTED)
+        self.add_dropdown("stat", self.stat_options, (self.center_rect.x + 100, stats_y, 180, 30), max_visible=8)
+        draw_text(self.screen, self.small_font, "Per-level stat", self.center_rect.x + 306, stats_y + 7, MUTED)
+        self.add_dropdown("per_level_stat", self.stat_options, (self.center_rect.x + 410, stats_y, 180, 30), max_visible=8)
+
+        grid_y = y + 306
         draw_text(self.screen, self.font, "Levels", self.center_rect.x + 20, grid_y - 28)
-        headers = ["Level", "damage", "cooldown", "enemy hp", "stat", "stat val", "per stat", "per val"]
-        positions = [20, 64, 150, 224, 308, 390, 464, 540]
+        headers = ["Level", "Damage", "Cooldown", "Enemy HP", "Flat value", "Per-level value"]
+        positions = [20, 70, 170, 270, 370, 480]
         for header, offset in zip(headers, positions):
             draw_text(self.screen, self.small_font, header, self.center_rect.x + offset, grid_y, MUTED)
         for row, level in enumerate(LEVEL_KEYS):
             row_y = grid_y + 38 + row * 38
             draw_text(self.screen, self.font, level, self.center_rect.x + 28, row_y + 4)
 
-        stat_button = Button(
-            (self.center_rect.x + 300, grid_y + 186, 120, 28),
-            f"Stat: {self.form.get('stat', '')}",
-            lambda: self.cycle_stat("stat"),
-        )
-        per_stat_button = Button(
-            (self.center_rect.x + 430, grid_y + 186, 160, 28),
-            f"Per: {self.form.get('per_level_stat', '')}",
-            lambda: self.cycle_stat("per_level_stat"),
-        )
-        stat_button.draw(self.screen, self.small_font)
-        per_stat_button.draw(self.screen, self.small_font)
-        self.center_buttons.extend([stat_button, per_stat_button])
-
         draw_text(self.screen, self.font, "Enhanced", self.center_rect.x + 20, grid_y + 210)
-        for label, offset in zip(["damage", "cooldown", "enemy hp", "stat val", "per val"], [22, 128, 206, 312, 398]):
+        for label, offset in zip(["Damage", "Cooldown", "Enemy HP", "Flat value", "Per-level value"], [22, 128, 206, 312, 398]):
             draw_text(self.screen, self.small_font, label, self.center_rect.x + offset, grid_y + 238, MUTED)
 
         action_y = self.center_rect.bottom - 52
@@ -816,11 +928,20 @@ class SkillEditorGui:
             self.center_buttons.append(button)
             x += width + 10
 
-    def add_cycle_button(self, key, options, rect):
-        label = f"{self.form.get(key, '')}"
-        button = Button(rect, label, lambda: self.cycle_value(key, options))
-        button.draw(self.screen, self.font)
-        self.center_buttons.append(button)
+    def add_dropdown(self, key, options, rect, max_visible=8):
+        value = self.form.get(key, "")
+        dropdown_options = options_with_current(options, value)
+        dropdown = Dropdown(
+            rect,
+            key,
+            dropdown_options,
+            value,
+            lambda selected, field=key: self.select_dropdown_value(field, selected),
+            max_visible=max_visible,
+            scroll_offset=self.dropdown_scrolls.get(key, 0),
+        )
+        dropdown.draw(self.screen, self.font, self.open_dropdown_key == key)
+        self.dropdowns.append((key, dropdown))
 
     def draw_right_panel(self):
         self.draw_panel(self.right_rect, "Preview / validation")
@@ -828,18 +949,29 @@ class SkillEditorGui:
         skill_id = self.get_form_skill_id() or "<none>"
         skill = self.build_skill_from_form() if self.form else {}
         status = get_engine_support_status(skill_id, skill) if self.form else "invalid"
-        draw_text(self.screen, self.font, f"Status: {status}", self.right_rect.x + 14, self.right_rect.y + 44, status_color(status))
+        draw_text(
+            self.screen,
+            self.font,
+            f"Engine: {engine_status_label(status)}",
+            self.right_rect.x + 14,
+            self.right_rect.y + 44,
+            status_color(status),
+        )
         dirty_text = "Dirty: yes" if self.dirty else "Dirty: no"
         draw_text(self.screen, self.small_font, dirty_text, self.right_rect.x + 300, self.right_rect.y + 48, WARNING if self.dirty else MUTED)
 
-        message_rect = pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 76, self.right_rect.width - 28, 145)
+        help_button = Button((self.right_rect.x + 14, self.right_rect.y + 72, 170, 26), "Help: engine status", self.show_engine_help)
+        help_button.draw(self.screen, self.small_font)
+        self.right_buttons.append(help_button)
+
+        message_rect = pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 108, self.right_rect.width - 28, 113)
         pygame.draw.rect(self.screen, INPUT_BG, message_rect, border_radius=4)
         pygame.draw.rect(self.screen, BORDER, message_rect, 1, border_radius=4)
         y = message_rect.y + 8
-        for message in self.messages[:6]:
+        for message in self.messages[:4]:
             color = ERROR if message.startswith("[ERROR]") else WARNING if message.startswith("[WARNING]") else OK
-            draw_wrapped_text(self.screen, self.small_font, message, pygame.Rect(message_rect.x + 8, y, message_rect.width - 16, 34), color)
-            y += 34
+            draw_wrapped_text(self.screen, self.small_font, message, pygame.Rect(message_rect.x + 8, y, message_rect.width - 16, 24), color, line_height=16)
+            y += 26
 
         preview_rect = pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 236, self.right_rect.width - 28, 470)
         pygame.draw.rect(self.screen, INPUT_BG, preview_rect, border_radius=4)
@@ -903,6 +1035,17 @@ def format_validation_messages(errors, warnings):
     elif not errors:
         messages.insert(0, "[OK] Skills data is valid with warnings.")
     return messages
+
+
+def options_with_current(options, current):
+    result = list(options)
+    if current and current not in result:
+        result.insert(0, current)
+    return result
+
+
+def engine_status_label(status):
+    return ENGINE_STATUS_LABELS.get(status, "invalid")
 
 
 def status_color(status):
