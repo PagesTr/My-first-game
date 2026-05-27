@@ -59,6 +59,63 @@ ENGINE_STATUS_LABELS = {
     "invalid": "invalid",
 }
 
+TEMPLATE_HELP = {
+    "Execute": {
+        "title": "Execute",
+        "role": "finishing move when enemy HP is low.",
+        "engine_status": "usable now",
+        "best_for": "warrior, archer, aggressive classes.",
+        "generated_fields": "damage_multiplier, enemy_hp_threshold, cooldown.",
+        "tuning_tips": "increase threshold to trigger more often, increase cooldown to reduce power.",
+        "warning": "high threshold values can make the skill trigger too often.",
+    },
+    "Revenge": {
+        "title": "Revenge",
+        "role": "stronger attack after taking damage.",
+        "engine_status": "usable now",
+        "best_for": "warrior, tank, defensive builds.",
+        "generated_fields": "damage_multiplier, cooldown.",
+        "tuning_tips": "lower cooldown makes it more reliable, higher damage multiplier makes it burstier.",
+        "warning": "this is best for characters that survive several turns.",
+    },
+    "Damage Boost": {
+        "title": "Damage Boost",
+        "role": "generic damage boost before attacking.",
+        "engine_status": "data only",
+        "best_for": "mage, archer, future offensive builds.",
+        "generated_fields": "damage_multiplier, cooldown.",
+        "tuning_tips": "keep multipliers modest until the generic skill engine exists.",
+        "warning": "this template is saved in data but is not interpreted yet by the current combat engine.",
+    },
+    "Stat Passive": {
+        "title": "Stat Passive",
+        "role": "passive stat growth by character level.",
+        "engine_status": "usable now",
+        "best_for": "class identity and long-term progression.",
+        "generated_fields": "stat_modifiers_per_character_level.",
+        "tuning_tips": "per-level values scale strongly over time.",
+        "warning": "high per-level bonuses can break progression quickly.",
+    },
+    "Crit Passive": {
+        "title": "Crit Passive",
+        "role": "improve critical chance and critical damage.",
+        "engine_status": "usable now",
+        "best_for": "archer, rogue-like builds, high dexterity characters.",
+        "generated_fields": "stat_modifiers with crit_chance and crit_damage.",
+        "tuning_tips": "crit_chance should stay low because it compounds with crit_damage.",
+        "warning": "crit scaling can become unstable if both values grow too fast.",
+    },
+    "Gathering Passive": {
+        "title": "Gathering Passive",
+        "role": "improve profession mastery and profession XP gain.",
+        "engine_status": "usable now if these stats are used by gathering systems.",
+        "best_for": "profession-focused builds.",
+        "generated_fields": "profession mastery stat and profession xp bonus stat.",
+        "tuning_tips": "keep bonuses small because gathering repeats often.",
+        "warning": "this affects resource economy and crafting speed.",
+    },
+}
+
 
 def draw_text(surface, font, text, x, y, color=TEXT):
     rendered = font.render(str(text), True, color)
@@ -67,19 +124,7 @@ def draw_text(surface, font, text, x, y, color=TEXT):
 
 
 def draw_wrapped_text(surface, font, text, rect, color=TEXT, line_height=20):
-    words = str(text).split()
-    lines = []
-    current = ""
-    for word in words:
-        candidate = f"{current} {word}".strip()
-        if font.size(candidate)[0] <= rect.width:
-            current = candidate
-        else:
-            if current:
-                lines.append(current)
-            current = word
-    if current:
-        lines.append(current)
+    lines = wrap_text(text, font, rect.width)
 
     y = rect.y
     for line in lines:
@@ -87,6 +132,23 @@ def draw_wrapped_text(surface, font, text, rect, color=TEXT, line_height=20):
             break
         draw_text(surface, font, line, rect.x, y, color)
         y += line_height
+
+
+def wrap_text(text, font, max_width):
+    words = str(text).split()
+    lines = []
+    current = ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if font.size(candidate)[0] <= max_width:
+            current = candidate
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
 
 
 def parse_float(value):
@@ -273,6 +335,7 @@ class SkillEditorGui:
         self.dropdowns = []
         self.open_dropdown_key = None
         self.dropdown_scrolls = {}
+        self.selected_template_help = None
         self.class_options = []
         self.trigger_options = []
         self.type_options = ["active", "passive"]
@@ -552,6 +615,7 @@ class SkillEditorGui:
         self.messages = ["[OK] New passive draft created."]
 
     def load_template(self, template_name):
+        self.selected_template_help = template_name
         class_id = self.get_template_class()
         builders = {
             "Execute": self.build_execute_template,
@@ -1165,7 +1229,9 @@ class SkillEditorGui:
             draw_wrapped_text(self.screen, self.small_font, message, pygame.Rect(message_rect.x + 8, y, message_rect.width - 16, 24), color, line_height=16)
             y += 26
 
-        preview_rect = pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 236, self.right_rect.width - 28, 470)
+        self.draw_template_help_panel(pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 236, self.right_rect.width - 28, 160))
+
+        preview_rect = pygame.Rect(self.right_rect.x + 14, self.right_rect.y + 408, self.right_rect.width - 28, 298)
         pygame.draw.rect(self.screen, INPUT_BG, preview_rect, border_radius=4)
         pygame.draw.rect(self.screen, BORDER, preview_rect, 1, border_radius=4)
         lines = format_json_preview(skill).splitlines()
@@ -1196,6 +1262,42 @@ class SkillEditorGui:
                 x += 190
             else:
                 x = self.right_rect.x + 14
+
+    def draw_template_help_panel(self, rect):
+        pygame.draw.rect(self.screen, INPUT_BG, rect, border_radius=4)
+        pygame.draw.rect(self.screen, BORDER, rect, 1, border_radius=4)
+        draw_text(self.screen, self.font, "Template Help", rect.x + 8, rect.y + 8)
+
+        help_data = get_template_help(self.selected_template_help)
+        if not help_data:
+            message = "No help available for this template." if self.selected_template_help else (
+                "Select a template to see its design role, engine status, generated fields, and tuning tips."
+            )
+            draw_wrapped_text(self.screen, self.small_font, message, pygame.Rect(rect.x + 8, rect.y + 36, rect.width - 16, rect.height - 44), MUTED, 16)
+            return
+
+        title = help_data.get("title", self.selected_template_help or "Template")
+        engine = help_data.get("engine_status", "invalid")
+        draw_text(self.screen, self.small_font, title, rect.x + 126, rect.y + 10, TEXT)
+        draw_text(self.screen, self.small_font, f"Engine: {engine}", rect.x + 226, rect.y + 10, template_engine_color(engine))
+
+        lines = [
+            ("Role", help_data.get("role", "")),
+            ("Best", help_data.get("best_for", "")),
+            ("Fields", help_data.get("generated_fields", "")),
+            ("Tips", help_data.get("tuning_tips", "")),
+            ("Warning", help_data.get("warning", "")),
+        ]
+        y = rect.y + 34
+        for label, value in lines:
+            color = WARNING if label == "Warning" else MUTED
+            text = f"{label}: {value}"
+            wrapped = wrap_text(text, self.small_font, rect.width - 16)
+            for line in wrapped[:2]:
+                if y + 16 > rect.bottom - 4:
+                    return
+                draw_text(self.screen, self.small_font, line, rect.x + 8, y, color)
+                y += 16
 
     def run(self):
         while self.running:
@@ -1244,8 +1346,22 @@ def options_with_current(options, current):
     return result
 
 
+def get_template_help(template_id):
+    if not template_id:
+        return None
+    return TEMPLATE_HELP.get(template_id)
+
+
 def engine_status_label(status):
     return ENGINE_STATUS_LABELS.get(status, "invalid")
+
+
+def template_engine_color(engine_status):
+    if str(engine_status).startswith("usable now"):
+        return OK
+    if str(engine_status).startswith("data only"):
+        return WARNING
+    return ERROR
 
 
 def status_color(status):
