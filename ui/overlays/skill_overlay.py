@@ -22,6 +22,7 @@ class SkillOverlay:
         self.game = game
         self.opened = False
         self.selected_skill_id = None
+        self.selected_level_tab = "current"
         self.status_message = ""
         self.title_font = pygame.font.Font(None, 38)
         self.header_font = pygame.font.Font(None, 27)
@@ -35,6 +36,7 @@ class SkillOverlay:
         self.learn_button_rect = pygame.Rect(0, 0, 0, 0)
         self.equip_button_rect = pygame.Rect(0, 0, 0, 0)
         self.skill_row_rects = []
+        self.level_tab_rects = []
 
     def open(self):
         self.opened = True
@@ -67,6 +69,12 @@ class SkillOverlay:
             self.close()
             return True
 
+        for tab_id, rect, enabled in self.level_tab_rects:
+            if rect.collidepoint(position):
+                if enabled:
+                    self.selected_level_tab = tab_id
+                return True
+
         if self.learn_button_rect.collidepoint(position):
             self._learn_or_upgrade_selected_skill()
             return True
@@ -78,6 +86,7 @@ class SkillOverlay:
         for skill_id, rect in self.skill_row_rects:
             if rect.collidepoint(position):
                 self.selected_skill_id = skill_id
+                self._normalize_selected_level_tab(self._get_skill_data(self._get_skills_data(), skill_id))
                 self.status_message = ""
                 return True
 
@@ -113,7 +122,9 @@ class SkillOverlay:
         if self.selected_skill_id not in {skill_id for skill_id, _ in active_skills + passive_skills}:
             self.selected_skill_id = (active_skills + passive_skills)[0][0]
 
+        self._normalize_selected_level_tab(self._get_skill_data(skills_data, self.selected_skill_id))
         self.skill_row_rects = []
+        self.level_tab_rects = []
         self._draw_summary(screen, player)
         self._draw_skill_list(screen, self.active_rect, "Active skills", active_skills)
         self._draw_skill_list(screen, self.passive_rect, "Passive skills", passive_skills)
@@ -131,7 +142,7 @@ class SkillOverlay:
     def _layout_rects(self):
         panel = self.panel_rect
         top = panel.y + 102
-        detail_height = min(170, max(140, panel.h // 3))
+        detail_height = min(230, max(195, int(panel.h * 0.42)))
         list_bottom = panel.bottom - detail_height - 18
         gap = 14
         column_width = (panel.w - 50) // 2
@@ -245,18 +256,39 @@ class SkillOverlay:
         skill_state = get_player_skill_state(player, skill_id)
         level = skill_state["level"]
         name = skill_data.get("name", skill_id)
+        level_data = self._get_skill_level_data(skill_data, self.selected_level_tab, skill_state)
+        effect_lines = self._format_skill_effect_lines(skill_data, level_data)
 
         title = self.header_font.render(self._truncate_text(name, self.header_font, rect.w - 32), True, (246, 235, 205))
         screen.blit(title, (rect.x + 14, rect.y + 10))
-        meta = f"{skill_type.title()} | Level {level} / 4"
-        meta_surface = self.body_font.render(meta, True, (190, 202, 210))
+        meta = (
+            f"{skill_type.title()} | Current level: {level} / 4 | "
+            f"Selected tab: {self._get_level_tab_label(self.selected_level_tab)} | "
+            f"View: {self._get_level_view_label(skill_state)}"
+        )
+        meta_surface = self.body_font.render(self._truncate_text(meta, self.body_font, rect.w - 32), True, (190, 202, 210))
         screen.blit(meta_surface, (rect.x + 14, rect.y + 38))
 
-        description_lines = self._wrap_text(skill_data.get("description", "No description."), self.body_font, rect.w - 348, 3)
-        y = rect.y + 64
+        tab_bottom = self._draw_level_tabs(screen, skill_data, skill_state, pygame.Rect(rect.x + 14, rect.y + 64, rect.w - 28, 26))
+        description_lines = self._wrap_text(skill_data.get("description", "No description."), self.small_font, rect.w - 348, 2)
+        y = tab_bottom + 8
         for line in description_lines:
-            screen.blit(self.body_font.render(line, True, (210, 218, 220)), (rect.x + 14, y))
-            y += 20
+            screen.blit(self.small_font.render(line, True, (210, 218, 220)), (rect.x + 14, y))
+            y += 18
+
+        effect_y = y + 2
+        effect_x = rect.x + 14
+        max_effect_y = self.learn_button_rect.y - 6
+        if not effect_lines:
+            effect_lines = [("No level data.", (160, 168, 176))]
+        for line, color in effect_lines:
+            if effect_y + 18 > max_effect_y:
+                more = self.small_font.render("More effects available.", True, (160, 168, 176))
+                screen.blit(more, (effect_x, effect_y))
+                break
+            text = self.small_font.render(self._truncate_text(line, self.small_font, rect.w - 348), True, color)
+            screen.blit(text, (effect_x, effect_y))
+            effect_y += 18
 
         action_label, action_enabled = self._get_learn_action(player, level)
         self._draw_button(screen, self.learn_button_rect, action_label, enabled=action_enabled, warm=action_enabled)
@@ -266,6 +298,42 @@ class SkillOverlay:
             self._draw_button(screen, self.equip_button_rect, "Unequip" if equipped else "Equip", active=equipped, enabled=True)
         else:
             self._draw_button(screen, self.equip_button_rect, "Passive" if level > 0 else "Equip", enabled=False)
+
+    def _draw_level_tabs(self, screen, skill_data, skill_state, area):
+        tabs = [
+            ("current", "Current"),
+            ("1", "Lv 1"),
+            ("2", "Lv 2"),
+            ("3", "Lv 3"),
+            ("4", "Lv 4"),
+            ("enhanced", "Enhanced"),
+        ]
+        self.level_tab_rects = []
+        x = area.x
+        for tab_id, label in tabs:
+            width = max(58, self.small_font.size(label)[0] + 16)
+            if x + width > area.right:
+                break
+            enabled = self._is_level_tab_available(skill_data, tab_id)
+            rect = pygame.Rect(x, area.y, width, area.h)
+            self.level_tab_rects.append((tab_id, rect, enabled))
+            active = tab_id == self.selected_level_tab
+            if tab_id == "enhanced" and enabled:
+                bg = (58, 45, 70) if active else (44, 35, 52)
+                border = (218, 178, 108) if active else (116, 86, 132)
+                color = (246, 226, 174)
+            elif enabled:
+                bg = (80, 58, 35) if active else (44, 37, 32)
+                border = (235, 198, 92) if active else (105, 82, 52)
+                color = (246, 235, 205)
+            else:
+                bg, border, color = (38, 35, 32), (74, 68, 62), (130, 124, 116)
+            pygame.draw.rect(screen, bg, rect, border_radius=5)
+            pygame.draw.rect(screen, border, rect, 2 if active else 1, border_radius=5)
+            text = self.small_font.render(self._truncate_text(label, self.small_font, rect.w - 6), True, color)
+            screen.blit(text, text.get_rect(center=rect.center))
+            x += width + 6
+        return area.bottom
 
     def _draw_button(self, screen, rect, label, active=False, enabled=True, warm=False):
         if warm and enabled:
@@ -309,6 +377,12 @@ class SkillOverlay:
         active_skills, passive_skills = self._get_skill_groups(player, skills_data)
         skills = active_skills + passive_skills
         self.selected_skill_id = skills[0][0] if skills else None
+        self.selected_level_tab = "current"
+
+    def _normalize_selected_level_tab(self, skill_data):
+        if self._is_level_tab_available(skill_data, self.selected_level_tab):
+            return
+        self.selected_level_tab = "current"
 
     def _get_skill_status(self, player, skills_data, skill_id, skill_type, level):
         if level == 0:
@@ -326,6 +400,158 @@ class SkillOverlay:
             return "Max", False
         label = "Learn" if level == 0 else "Upgrade"
         return label, player.get("skill_points", 0) > 0
+
+    def _is_level_tab_available(self, skill_data, tab_id):
+        if tab_id == "current":
+            return True
+        if not isinstance(skill_data, dict):
+            return False
+        if tab_id == "enhanced":
+            return isinstance(skill_data.get("enhanced"), dict)
+        levels = skill_data.get("levels", {})
+        return isinstance(levels, dict) and isinstance(levels.get(tab_id), dict)
+
+    def _get_skill_level_data(self, skill_data, tab_id, skill_state):
+        if not isinstance(skill_data, dict):
+            return None
+        if not isinstance(skill_state, dict):
+            skill_state = {"level": 0, "enhanced": False}
+
+        levels = skill_data.get("levels", {})
+        if not isinstance(levels, dict):
+            levels = {}
+
+        if tab_id == "current":
+            if skill_state.get("enhanced") is True and isinstance(skill_data.get("enhanced"), dict):
+                return skill_data.get("enhanced")
+            level = skill_state.get("level", 0)
+            if level > 0:
+                return levels.get(str(level))
+            return levels.get("1")
+
+        if tab_id in {"1", "2", "3", "4"}:
+            return levels.get(tab_id)
+
+        if tab_id == "enhanced":
+            return skill_data.get("enhanced") if isinstance(skill_data.get("enhanced"), dict) else None
+
+        return None
+
+    def _format_skill_effect_lines(self, skill_data, level_data):
+        if not isinstance(skill_data, dict) or not isinstance(level_data, dict):
+            return [("No data for this level.", (160, 168, 176))]
+
+        lines = []
+        stat_modifiers = level_data.get("stat_modifiers")
+        if isinstance(stat_modifiers, dict):
+            for stat_key, value in stat_modifiers.items():
+                if isinstance(value, (int, float)) and not isinstance(value, bool):
+                    lines.append((f"{self._format_signed_value(value)} {self._format_stat_label(stat_key)}", (170, 230, 178)))
+
+        per_level_modifiers = level_data.get("stat_modifiers_per_character_level")
+        if isinstance(per_level_modifiers, dict):
+            for stat_key, value in per_level_modifiers.items():
+                if isinstance(value, (int, float)) and not isinstance(value, bool):
+                    label = self._format_stat_label(stat_key)
+                    lines.append((f"{self._format_signed_value(value)} {label} per character level", (170, 230, 178)))
+
+        known_fields = {"stat_modifiers", "stat_modifiers_per_character_level"}
+        for field_key, value in level_data.items():
+            if field_key in known_fields:
+                continue
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                lines.append((f"{self._format_field_label(field_key)}: {self._format_numeric_value(field_key, value)}", self._get_effect_line_color(field_key)))
+            elif isinstance(value, dict):
+                for nested_key, nested_value in list(value.items())[:3]:
+                    nested_label = f"{self._format_field_label(field_key)} {self._format_field_label(nested_key)}"
+                    lines.append((f"{nested_label}: {nested_value}", (210, 218, 220)))
+            elif value is not None:
+                lines.append((f"{self._format_field_label(field_key)}: {value}", (210, 218, 220)))
+
+        trigger = skill_data.get("trigger")
+        if trigger:
+            lines.append((f"Trigger: {self._format_trigger_label(trigger)}", (176, 205, 225)))
+
+        return lines or [("No level data.", (160, 168, 176))]
+
+    def _get_level_view_label(self, skill_state):
+        tab_id = self.selected_level_tab
+        level = skill_state.get("level", 0) if isinstance(skill_state, dict) else 0
+        enhanced = skill_state.get("enhanced", False) if isinstance(skill_state, dict) else False
+        if tab_id == "enhanced":
+            return "Enhanced version"
+        if tab_id == "current":
+            return "Enhanced" if enhanced else "Current" if level > 0 else "Preview"
+        if tab_id in {"1", "2", "3", "4"}:
+            tab_level = int(tab_id)
+            if tab_level == level and not enhanced:
+                return "Current"
+            if tab_level > level:
+                return "Preview"
+            return "Previous"
+        return "Preview"
+
+    def _get_level_tab_label(self, tab_id):
+        if tab_id == "current":
+            return "Current"
+        if tab_id == "enhanced":
+            return "Enhanced"
+        if tab_id in {"1", "2", "3", "4"}:
+            return f"Lv {tab_id}"
+        return "Unknown"
+
+    def _format_stat_label(self, stat_key):
+        labels = {
+            "max_hp": "Max HP",
+            "current_hp": "Current HP",
+            "hp": "HP",
+        }
+        return labels.get(str(stat_key), self._format_field_label(stat_key))
+
+    def _format_field_label(self, field_key):
+        labels = {
+            "damage_multiplier": "Damage multiplier",
+            "enemy_hp_threshold": "Enemy HP threshold",
+            "max_hp": "Max HP",
+            "current_hp": "Current HP",
+            "hp": "HP",
+        }
+        key = str(field_key or "unknown")
+        return labels.get(key, key.replace("_", " ").capitalize())
+
+    def _format_numeric_value(self, field_key, value):
+        if field_key == "damage_multiplier":
+            return f"x{self._format_plain_number(value)}"
+        if field_key == "enemy_hp_threshold":
+            return f"{int(round(value * 100))}%"
+        if field_key == "cooldown":
+            turns = int(value) if float(value).is_integer() else value
+            return f"{turns} turns"
+        return self._format_plain_number(value)
+
+    def _format_trigger_label(self, trigger):
+        labels = {
+            "always": "Always active",
+            "before_player_attack_after_damage_taken": "After taking damage",
+            "before_player_attack_when_enemy_low_hp": "When enemy HP is low",
+        }
+        return labels.get(str(trigger), self._format_field_label(trigger))
+
+    def _format_signed_value(self, value):
+        prefix = "+" if value >= 0 else ""
+        return f"{prefix}{self._format_plain_number(value)}"
+
+    def _format_plain_number(self, value):
+        if isinstance(value, float) and value.is_integer():
+            return str(int(value))
+        return str(value)
+
+    def _get_effect_line_color(self, field_key):
+        if field_key in {"cooldown", "enemy_hp_threshold"}:
+            return (176, 205, 225)
+        if field_key == "damage_multiplier":
+            return (224, 232, 190)
+        return (210, 218, 220)
 
     def _learn_or_upgrade_selected_skill(self):
         player = getattr(self.game, "player", None)

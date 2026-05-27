@@ -1,4 +1,43 @@
 {
+  "archer_critical_training": {
+    "name": "Critical Training",
+    "class": "archer",
+    "type": "passive",
+    "trigger": "always",
+    "description": "Increase critical chance and critical damage.",
+    "levels": {
+      "1": {
+        "stat_modifiers": {
+          "crit_chance": 0.02,
+          "crit_damage": 0.1
+        }
+      },
+      "2": {
+        "stat_modifiers": {
+          "crit_chance": 0.03,
+          "crit_damage": 0.15
+        }
+      },
+      "3": {
+        "stat_modifiers": {
+          "crit_chance": 0.04,
+          "crit_damage": 0.2
+        }
+      },
+      "4": {
+        "stat_modifiers": {
+          "crit_chance": 0.05,
+          "crit_damage": 0.3
+        }
+      }
+    },
+    "enhanced": {
+      "stat_modifiers": {
+        "crit_chance": 0.08,
+        "crit_damage": 0.5
+      }
+    }
+  },
   "deadly_strengh": {
     "name": "Deadly strengh",
     "class": "warrior",
