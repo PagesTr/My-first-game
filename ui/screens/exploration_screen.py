@@ -5,6 +5,7 @@ import pygame
 
 from ui.overlays.achievement_overlay import AchievementOverlay
 from ui.overlays.inventory_overlay import InventoryOverlay
+from ui.overlays.quest_overlay import QuestOverlay
 from ui.overlays.skill_overlay import SkillOverlay
 
 
@@ -372,10 +373,11 @@ class ExplorationScreen:
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
         self.inventory_overlay = InventoryOverlay(self.game)
+        self.quest_overlay = QuestOverlay(self.game)
         self.skill_overlay = SkillOverlay(self.game)
         self.quick_actions = [
             {"id": "inventory", "label": "Inventory", "overlay": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "quests", "label": "Quests", "target_state": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "quests", "label": "Quests", "overlay": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "skills", "label": "Skills", "overlay": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "achievements", "label": "Achievements", "overlay": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "professions", "label": "Professions", "target_state": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
@@ -440,6 +442,10 @@ class ExplorationScreen:
             elif self.active_overlay == "skills":
                 self.skill_overlay.handle_event(event)
                 if not self.skill_overlay.is_open():
+                    self.active_overlay = None
+            elif self.active_overlay == "quests":
+                self.quest_overlay.handle_event(event)
+                if not self.quest_overlay.is_open():
                     self.active_overlay = None
             return
 
@@ -512,6 +518,8 @@ class ExplorationScreen:
             self.achievement_overlay.draw(screen)
         elif self.active_overlay == "skills":
             self.skill_overlay.draw(screen)
+        elif self.active_overlay == "quests":
+            self.quest_overlay.draw(screen)
 
     def _move_player(self, movement, speed):
         movement = movement.normalize() * speed
@@ -700,6 +708,7 @@ class ExplorationScreen:
                 self.active_overlay = None
                 return
             self.achievement_overlay.close()
+            self.quest_overlay.close()
             self.skill_overlay.close()
             self.inventory_overlay.open()
             self.active_overlay = "inventory"
@@ -711,6 +720,7 @@ class ExplorationScreen:
                 self.active_overlay = None
                 return
             self.inventory_overlay.close()
+            self.quest_overlay.close()
             self.skill_overlay.close()
             self.achievement_overlay.open()
             self.active_overlay = "achievements"
@@ -723,8 +733,21 @@ class ExplorationScreen:
                 return
             self.inventory_overlay.close()
             self.achievement_overlay.close()
+            self.quest_overlay.close()
             self.skill_overlay.open()
             self.active_overlay = "skills"
+            return
+
+        if overlay_id == "quests":
+            if self.active_overlay == "quests":
+                self.quest_overlay.close()
+                self.active_overlay = None
+                return
+            self.inventory_overlay.close()
+            self.achievement_overlay.close()
+            self.skill_overlay.close()
+            self.quest_overlay.open()
+            self.active_overlay = "quests"
 
     def _close_overlay(self):
         if self.active_overlay == "inventory":
@@ -733,6 +756,8 @@ class ExplorationScreen:
             self.achievement_overlay.close()
         elif self.active_overlay == "skills":
             self.skill_overlay.close()
+        elif self.active_overlay == "quests":
+            self.quest_overlay.close()
         self.active_overlay = None
 
     def _activate_interaction(self, interaction):
