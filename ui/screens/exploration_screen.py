@@ -5,6 +5,7 @@ import pygame
 
 from ui.overlays.achievement_overlay import AchievementOverlay
 from ui.overlays.inventory_overlay import InventoryOverlay
+from ui.overlays.profession_overlay import ProfessionOverlay
 from ui.overlays.quest_overlay import QuestOverlay
 from ui.overlays.skill_overlay import SkillOverlay
 
@@ -373,6 +374,7 @@ class ExplorationScreen:
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
         self.inventory_overlay = InventoryOverlay(self.game)
+        self.profession_overlay = ProfessionOverlay(self.game)
         self.quest_overlay = QuestOverlay(self.game)
         self.skill_overlay = SkillOverlay(self.game)
         self.quick_actions = [
@@ -380,7 +382,7 @@ class ExplorationScreen:
             {"id": "quests", "label": "Quests", "overlay": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "skills", "label": "Skills", "overlay": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "achievements", "label": "Achievements", "overlay": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "professions", "label": "Professions", "target_state": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "professions", "label": "Professions", "overlay": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "mailbox", "label": "Mailbox", "target_state": "mailbox", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "recipes", "label": "Recipes", "target_state": "crafting", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
@@ -702,7 +704,7 @@ class ExplorationScreen:
             self.game.state = target_state
 
     def _toggle_overlay(self, overlay_id):
-        if overlay_id not in {"inventory", "quests", "achievements", "skills"}:
+        if overlay_id not in {"inventory", "quests", "achievements", "skills", "professions"}:
             return
         if self.active_overlay == overlay_id:
             self._close_active_overlay()
@@ -739,6 +741,7 @@ class ExplorationScreen:
             "quests": self.quest_overlay,
             "achievements": self.achievement_overlay,
             "skills": self.skill_overlay,
+            "professions": self.profession_overlay,
         }
         return overlays.get(overlay_id)
 
