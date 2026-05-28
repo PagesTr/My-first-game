@@ -426,13 +426,7 @@ class ExplorationScreen:
 
     def handle_event(self, event):
         if self.active_overlay is not None:
-            overlay = self._get_active_overlay()
-            if overlay is not None:
-                overlay.handle_event(event)
-                if not overlay.is_open():
-                    self.active_overlay = None
-            else:
-                self.active_overlay = None
+            self._handle_overlay_event(event)
             return
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -468,6 +462,30 @@ class ExplorationScreen:
             self.message = "Le garde forestier hoche la tete. Rien de dangereux a signaler. Pour l'instant."
             self.message_until_ms = pygame.time.get_ticks() + 2800
             return
+
+    def _handle_overlay_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            action = self._get_quick_action_at(event.pos)
+            if action is not None:
+                self._activate_quick_action(action)
+                return
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self._close_active_overlay()
+                return
+            shortcut_action = self._get_quick_action_for_key(event.key)
+            if shortcut_action is not None and shortcut_action.get("overlay"):
+                self._activate_quick_action(shortcut_action)
+                return
+
+        overlay = self._get_active_overlay()
+        if overlay is not None:
+            overlay.handle_event(event)
+            if not overlay.is_open():
+                self.active_overlay = None
+        else:
+            self.active_overlay = None
 
     def update(self):
         if self.active_overlay is not None:

@@ -24,6 +24,7 @@ class InventoryOverlay:
         self.title_font = pygame.font.Font(None, 34)
         self.body_font = pygame.font.Font(None, 23)
         self.small_font = pygame.font.Font(None, 19)
+        self.panel_rect = pygame.Rect(0, 0, 0, 0)
         self.close_rect = pygame.Rect(0, 0, 0, 0)
         self.compact_rect = pygame.Rect(0, 0, 0, 0)
         self.stats_details_rect = pygame.Rect(0, 0, 0, 0)
@@ -66,6 +67,9 @@ class InventoryOverlay:
             return True
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.panel_rect.width > 0 and not self.panel_rect.collidepoint(event.pos):
+                self.close()
+                return True
             self._handle_click(event.pos)
             return True
 
@@ -80,6 +84,7 @@ class InventoryOverlay:
         screen.blit(overlay, (0, 0))
 
         panel = self._get_panel_rect(screen)
+        self.panel_rect = panel
         pygame.draw.rect(screen, (34, 27, 22), panel, border_radius=8)
         pygame.draw.rect(screen, (171, 132, 70), panel, 2, border_radius=8)
         pygame.draw.rect(screen, (78, 56, 36), panel.inflate(-8, -8), 1, border_radius=6)
