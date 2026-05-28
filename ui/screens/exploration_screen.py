@@ -426,27 +426,13 @@ class ExplorationScreen:
 
     def handle_event(self, event):
         if self.active_overlay is not None:
-            if event.type == pygame.KEYDOWN:
-                shortcut_action = self._get_quick_action_for_key(event.key)
-                if shortcut_action is not None and shortcut_action.get("overlay") not in (None, self.active_overlay):
-                    self._activate_quick_action(shortcut_action)
-                    return
-            if self.active_overlay == "inventory":
-                self.inventory_overlay.handle_event(event)
-                if not self.inventory_overlay.is_open():
+            overlay = self._get_active_overlay()
+            if overlay is not None:
+                overlay.handle_event(event)
+                if not overlay.is_open():
                     self.active_overlay = None
-            elif self.active_overlay == "achievements":
-                self.achievement_overlay.handle_event(event)
-                if not self.achievement_overlay.is_open():
-                    self.active_overlay = None
-            elif self.active_overlay == "skills":
-                self.skill_overlay.handle_event(event)
-                if not self.skill_overlay.is_open():
-                    self.active_overlay = None
-            elif self.active_overlay == "quests":
-                self.quest_overlay.handle_event(event)
-                if not self.quest_overlay.is_open():
-                    self.active_overlay = None
+            else:
+                self.active_overlay = None
             return
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -510,16 +496,12 @@ class ExplorationScreen:
         self._draw_npc(screen)
         self._draw_player(screen)
         self._draw_collision_debug(screen)
-        self._draw_help_panel(screen, current_time_ms)
+        if not self._is_overlay_open():
+            self._draw_help_panel(screen, current_time_ms)
         self._draw_quick_action_bar(screen)
-        if self.active_overlay == "inventory":
-            self.inventory_overlay.draw(screen)
-        elif self.active_overlay == "achievements":
-            self.achievement_overlay.draw(screen)
-        elif self.active_overlay == "skills":
-            self.skill_overlay.draw(screen)
-        elif self.active_overlay == "quests":
-            self.quest_overlay.draw(screen)
+        overlay = self._get_active_overlay()
+        if overlay is not None:
+            overlay.draw(screen)
 
     def _move_player(self, movement, speed):
         movement = movement.normalize() * speed
@@ -702,63 +684,45 @@ class ExplorationScreen:
             self.game.state = target_state
 
     def _toggle_overlay(self, overlay_id):
-        if overlay_id == "inventory":
-            if self.active_overlay == "inventory":
-                self.inventory_overlay.close()
-                self.active_overlay = None
-                return
-            self.achievement_overlay.close()
-            self.quest_overlay.close()
-            self.skill_overlay.close()
-            self.inventory_overlay.open()
-            self.active_overlay = "inventory"
+        if overlay_id not in {"inventory", "quests", "achievements", "skills"}:
             return
-
-        if overlay_id == "achievements":
-            if self.active_overlay == "achievements":
-                self.achievement_overlay.close()
-                self.active_overlay = None
-                return
-            self.inventory_overlay.close()
-            self.quest_overlay.close()
-            self.skill_overlay.close()
-            self.achievement_overlay.open()
-            self.active_overlay = "achievements"
+        if self.active_overlay == overlay_id:
+            self._close_active_overlay()
             return
+        self._open_overlay(overlay_id)
 
-        if overlay_id == "skills":
-            if self.active_overlay == "skills":
-                self.skill_overlay.close()
-                self.active_overlay = None
-                return
-            self.inventory_overlay.close()
-            self.achievement_overlay.close()
-            self.quest_overlay.close()
-            self.skill_overlay.open()
-            self.active_overlay = "skills"
+    def _open_overlay(self, overlay_id):
+        overlay = self._get_overlay(overlay_id)
+        if overlay is None:
             return
-
-        if overlay_id == "quests":
-            if self.active_overlay == "quests":
-                self.quest_overlay.close()
-                self.active_overlay = None
-                return
-            self.inventory_overlay.close()
-            self.achievement_overlay.close()
-            self.skill_overlay.close()
-            self.quest_overlay.open()
-            self.active_overlay = "quests"
+        self._close_active_overlay()
+        overlay.open()
+        self.active_overlay = overlay_id
 
     def _close_overlay(self):
-        if self.active_overlay == "inventory":
-            self.inventory_overlay.close()
-        elif self.active_overlay == "achievements":
-            self.achievement_overlay.close()
-        elif self.active_overlay == "skills":
-            self.skill_overlay.close()
-        elif self.active_overlay == "quests":
-            self.quest_overlay.close()
+        self._close_active_overlay()
+
+    def _close_active_overlay(self):
+        overlay = self._get_active_overlay()
+        if overlay is not None:
+            overlay.close()
         self.active_overlay = None
+
+    def _is_overlay_open(self):
+        overlay = self._get_active_overlay()
+        return overlay is not None and overlay.is_open()
+
+    def _get_active_overlay(self):
+        return self._get_overlay(self.active_overlay)
+
+    def _get_overlay(self, overlay_id):
+        overlays = {
+            "inventory": self.inventory_overlay,
+            "quests": self.quest_overlay,
+            "achievements": self.achievement_overlay,
+            "skills": self.skill_overlay,
+        }
+        return overlays.get(overlay_id)
 
     def _activate_interaction(self, interaction):
         action = interaction.get("action")
@@ -775,9 +739,13 @@ class ExplorationScreen:
 
     def _update_camera(self, screen):
         max_x = max(0, self.map_width - screen.get_width())
-        max_y = max(0, self.map_height - screen.get_height())
+        gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
+        max_y = max(0, self.map_height - gameplay_height)
         self.camera_offset.x = min(max(self.player_rect.centerx - screen.get_width() // 2, 0), max_x)
-        self.camera_offset.y = min(max(self.player_rect.centery - screen.get_height() // 2, 0), max_y)
+        self.camera_offset.y = min(max(self.player_rect.centery - gameplay_height // 2, 0), max_y)
+
+    def _get_bottom_bar_height(self):
+        return 52
 
     def _draw_map(self, screen):
         if self.map.is_loaded:
@@ -926,7 +894,7 @@ class ExplorationScreen:
             pygame.draw.rect(screen, (80, 160, 230), self._to_screen_rect(trigger["rect"]), 1)
 
     def _layout_quick_action_bar(self, screen):
-        bar_height = 52
+        bar_height = self._get_bottom_bar_height()
         button_size = 44
         spacing = 10
         total_width = len(self.quick_actions) * button_size + (len(self.quick_actions) - 1) * spacing
@@ -1048,11 +1016,6 @@ class ExplorationScreen:
         screen.blit(text, text.get_rect(center=tooltip.center))
 
     def _draw_help_panel(self, screen, current_time_ms):
-        bar_height = 52
-        panel = pygame.Rect(24, screen.get_height() - bar_height - 48, screen.get_width() - 48, 42)
-        pygame.draw.rect(screen, (18, 21, 18), panel, border_radius=8)
-        pygame.draw.rect(screen, (104, 139, 90), panel, 2, border_radius=8)
-
         if self.message_until_ms and current_time_ms > self.message_until_ms:
             self.message = self.default_message
             self.message_until_ms = 0
@@ -1066,16 +1029,18 @@ class ExplorationScreen:
             text = f"{hovered_action['label']} ({shortcut})"
         elif active_interaction is not None:
             text = active_interaction["prompt"]
-        else:
-            text = self.message
-
-        title = self.title_font.render("Exploration", True, (220, 232, 190))
-        screen.blit(title, (panel.x + 14, panel.y + 7))
-        if not self.map.is_loaded and active_trigger is None and active_interaction is None:
+        elif not self.map.is_loaded:
             text = "Map Tiled indisponible. Affichage de secours actif."
-        body_width = max(180, panel.width - 154)
-        body = self.body_font.render(self._fit_panel_text(text, body_width), True, (220, 220, 205))
-        screen.blit(body, (panel.x + 154, panel.y + 12))
+        else:
+            return
+
+        bar_height = self._get_bottom_bar_height()
+        body_width = min(screen.get_width() - 48, max(260, self.body_font.size(text)[0] + 24))
+        panel = pygame.Rect(24, screen.get_height() - bar_height - 36, body_width, 28)
+        pygame.draw.rect(screen, (18, 21, 18), panel, border_radius=7)
+        pygame.draw.rect(screen, (104, 139, 90), panel, 1, border_radius=7)
+        body = self.body_font.render(self._fit_panel_text(text, panel.width - 18), True, (220, 220, 205))
+        screen.blit(body, (panel.x + 9, panel.y + 6))
 
     def _to_screen_rect(self, rect):
         return rect.move(-int(self.camera_offset.x), -int(self.camera_offset.y))
