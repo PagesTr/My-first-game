@@ -9,6 +9,7 @@ from ui.overlays.inventory_overlay import InventoryOverlay
 from ui.overlays.profession_overlay import ProfessionOverlay
 from ui.overlays.quest_overlay import QuestOverlay
 from ui.overlays.skill_overlay import SkillOverlay
+from ui.overlays.trials_overlay import TrialsOverlay
 
 
 TILED_FLIP_FLAGS = 0xE0000000
@@ -379,15 +380,16 @@ class ExplorationScreen:
         self.profession_overlay = ProfessionOverlay(self.game)
         self.quest_overlay = QuestOverlay(self.game)
         self.skill_overlay = SkillOverlay(self.game)
+        self.trials_overlay = TrialsOverlay(self.game)
         self.quick_actions = [
             {"id": "inventory", "label": "Inventory", "overlay": "inventory", "shortcut": pygame.K_i, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "quests", "label": "Quests", "overlay": "quests", "shortcut": pygame.K_j, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "skills", "label": "Skills", "overlay": "skills", "shortcut": pygame.K_k, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "achievements", "label": "Achievements", "overlay": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "professions", "label": "Professions", "overlay": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "mailbox", "label": "Mailbox", "target_state": "mailbox", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "trials", "label": "Trials", "overlay": "trials", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "recipes", "label": "Recipes", "overlay": "craft_book", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
         ]
         self.show_collision_debug = False
         self.interactions = [
@@ -709,7 +711,7 @@ class ExplorationScreen:
             self.game.state = target_state
 
     def _toggle_overlay(self, overlay_id):
-        if overlay_id not in {"inventory", "quests", "achievements", "skills", "professions", "craft_book"}:
+        if overlay_id not in {"inventory", "quests", "achievements", "skills", "professions", "craft_book", "trials"}:
             return
         if self.active_overlay == overlay_id:
             self._close_active_overlay()
@@ -756,6 +758,7 @@ class ExplorationScreen:
             "skills": self.skill_overlay,
             "professions": self.profession_overlay,
             "craft_book": self.craft_book_overlay,
+            "trials": self.trials_overlay,
         }
         return overlays.get(overlay_id)
 
@@ -968,7 +971,7 @@ class ExplorationScreen:
             "skills": (102, 170, 232),
             "achievements": (240, 199, 78),
             "professions": (184, 152, 104),
-            "mailbox": (219, 197, 157),
+            "trials": (218, 176, 72),
             "recipes": (134, 193, 119),
             "menu": (158, 151, 134),
         }
@@ -1013,11 +1016,12 @@ class ExplorationScreen:
             pygame.draw.line(screen, color, (rect.x + 14, rect.y + 30), (rect.x + 30, rect.y + 14), 4)
             pygame.draw.rect(screen, color, (rect.x + 24, rect.y + 10, 10, 8), border_radius=2)
             pygame.draw.line(screen, shadow, (rect.x + 16, rect.y + 28), (rect.x + 20, rect.y + 32), 2)
-        elif action_id == "mailbox":
-            envelope = pygame.Rect(rect.x + 11, rect.y + 15, 22, 16)
-            pygame.draw.rect(screen, color, envelope, border_radius=3)
-            pygame.draw.line(screen, shadow, envelope.topleft, center, 1)
-            pygame.draw.line(screen, shadow, envelope.topright, center, 1)
+        elif action_id == "trials":
+            base = pygame.Rect(rect.x + 12, rect.y + 30, 20, 4)
+            pygame.draw.rect(screen, color, base, border_radius=2)
+            pygame.draw.rect(screen, color, (center[0] - 3, rect.y + 18, 6, 12), border_radius=2)
+            pygame.draw.polygon(screen, color, [(center[0], rect.y + 9), (center[0] + 10, rect.y + 16), (center[0] + 6, rect.y + 28), (center[0] - 6, rect.y + 28), (center[0] - 10, rect.y + 16)])
+            pygame.draw.polygon(screen, shadow, [(center[0], rect.y + 14), (center[0] + 4, rect.y + 18), (center[0], rect.y + 22), (center[0] - 4, rect.y + 18)])
         elif action_id == "recipes":
             left_page = pygame.Rect(rect.x + 11, rect.y + 12, 11, 22)
             right_page = pygame.Rect(rect.x + 22, rect.y + 12, 11, 22)

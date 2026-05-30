@@ -128,8 +128,8 @@ class MenuScreen:
         )
         self.mailbox_button = MenuButton(
             (400, 490, 300, 54),
-            "Mailbox",
-            "View combat reports",
+            "Notice Board",
+            "Dev notes and letters",
         )
         self.professions_button = MenuButton(
             (400, 426, 300, 54),

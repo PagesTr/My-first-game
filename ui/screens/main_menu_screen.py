@@ -1,6 +1,7 @@
 import pygame
 
 from systems.save_load import has_save_file
+from ui.overlays.notice_board_overlay import NoticeBoardOverlay
 
 
 PALETTE = {
@@ -59,11 +60,21 @@ class MainMenuScreen:
         self.continue_button = Button((292, 254, 216, 52), "Continue")
         self.new_game_button = Button((292, 322, 216, 52), "New Game")
         self.quit_button = Button((292, 390, 216, 52), "Quit")
+        self.notice_board_button = Button((626, 24, 134, 40), "Notice Board")
+        self.notice_board_overlay = NoticeBoardOverlay(self.game)
         self.message = ""
         self.message_until = 0
 
     def handle_event(self, event):
+        if self.notice_board_overlay.is_open():
+            self.notice_board_overlay.handle_event(event)
+            return
+
         if event.type != pygame.MOUSEBUTTONDOWN:
+            return
+
+        if self.notice_board_button.is_clicked(event.pos):
+            self.notice_board_overlay.open()
             return
 
         self.continue_button.enabled = has_save_file()
@@ -96,6 +107,7 @@ class MainMenuScreen:
         self.continue_button.draw(screen, self.button_font)
         self.new_game_button.draw(screen, self.button_font)
         self.quit_button.draw(screen, self.button_font)
+        self.notice_board_button.draw(screen, self.subtitle_font)
 
         if not self.continue_button.enabled:
             no_save = self.subtitle_font.render("No save found", True, PALETTE["muted"])
@@ -108,6 +120,9 @@ class MainMenuScreen:
             self.message = ""
 
         self._draw_footer(screen)
+
+        if self.notice_board_overlay.is_open():
+            self.notice_board_overlay.draw(screen)
 
     def _set_message(self, message):
         self.message = message
