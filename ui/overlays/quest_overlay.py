@@ -3,6 +3,23 @@ import pygame
 from systems.quests import get_quest_progress
 
 
+OVERLAY_DIM = (0, 0, 0, 150)
+PANEL_BG = (28, 25, 20)
+PANEL_BG_SECONDARY = (34, 31, 25)
+CARD_BG = (38, 36, 30)
+CARD_BG_SELECTED = (48, 45, 36)
+BORDER_NORMAL = (118, 92, 45)
+BORDER_BRIGHT = (205, 170, 80)
+BORDER_SELECTED = (238, 205, 110)
+TEXT_PRIMARY = (238, 232, 205)
+TEXT_SECONDARY = (190, 184, 160)
+TEXT_MUTED = (130, 124, 105)
+SUCCESS = (98, 190, 125)
+WARNING = (218, 176, 72)
+DISABLED_BG = (42, 40, 36)
+DISABLED_TEXT = (120, 116, 105)
+
+
 class QuestOverlay:
     def __init__(self, game):
         if not pygame.font.get_init():
@@ -111,27 +128,27 @@ class QuestOverlay:
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 170))
+        overlay.fill(OVERLAY_DIM)
         screen.blit(overlay, (0, 0))
 
     def _draw_panel(self, screen, rect, title):
-        pygame.draw.rect(screen, (34, 27, 22), rect, border_radius=8)
-        pygame.draw.rect(screen, (171, 132, 70), rect, 2, border_radius=8)
-        pygame.draw.rect(screen, (78, 56, 36), rect.inflate(-8, -8), 1, border_radius=6)
-        text = self.title_font.render(title, True, (246, 235, 205))
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect.inflate(-8, -8), 1, border_radius=6)
+        text = self.title_font.render(title, True, TEXT_PRIMARY)
         screen.blit(text, (rect.x + 20, rect.y + 12))
 
     def _draw_message(self, screen, message):
-        text = self.body_font.render(message, True, (236, 224, 195))
+        text = self.body_font.render(message, True, TEXT_PRIMARY)
         screen.blit(text, (self.panel_rect.x + 24, self.panel_rect.y + 76))
 
     def _draw_active_quests(self, screen, active_quest_ids):
         self._draw_box(screen, self.list_rect)
-        title = self.header_font.render("Quetes actives", True, (246, 235, 205))
+        title = self.header_font.render("Quetes actives", True, TEXT_PRIMARY)
         screen.blit(title, (self.list_rect.x + 12, self.list_rect.y + 10))
 
         if not active_quest_ids:
-            text = self.body_font.render("Aucune quete active", True, (160, 168, 176))
+            text = self.body_font.render("Aucune quete active", True, TEXT_MUTED)
             screen.blit(text, (self.list_rect.x + 14, self.list_rect.y + 48))
             return
 
@@ -140,7 +157,7 @@ class QuestOverlay:
         for quest_id in active_quest_ids:
             if y + row_height > self.list_rect.bottom - 10:
                 remaining = len(active_quest_ids) - len(self.quest_row_rects)
-                text = self.small_font.render(f"+{remaining} autres quetes", True, (160, 168, 176))
+                text = self.small_font.render(f"+{remaining} autres quetes", True, TEXT_MUTED)
                 screen.blit(text, (self.list_rect.x + 14, self.list_rect.bottom - 26))
                 break
             quest = self._get_quest_data(quest_id)
@@ -157,7 +174,7 @@ class QuestOverlay:
     def _draw_selected_quest(self, screen, quest_id):
         self._draw_box(screen, self.detail_rect)
         if not quest_id:
-            text = self.body_font.render("Selectionne une quete", True, (160, 168, 176))
+            text = self.body_font.render("Selectionne une quete", True, TEXT_MUTED)
             screen.blit(text, (self.detail_rect.x + 14, self.detail_rect.y + 16))
             return
 
@@ -169,24 +186,24 @@ class QuestOverlay:
         title = self.header_font.render(
             self._truncate_text(quest.get("name", quest_id) or quest_id, self.header_font, self.detail_rect.w - 28),
             True,
-            (246, 235, 205),
+            TEXT_PRIMARY,
         )
         screen.blit(title, (x, y))
         y += 30
 
         for line in self._wrap_text(quest.get("description", ""), self.small_font, self.detail_rect.w - 28, 3):
-            text = self.small_font.render(line, True, (210, 218, 220))
+            text = self.small_font.render(line, True, TEXT_SECONDARY)
             screen.blit(text, (x, y))
             y += 18
 
         y += 3
-        progress = self.body_font.render(f"Progression : {total_current} / {total_required}", True, (230, 224, 180))
+        progress = self.body_font.render(f"Progression : {total_current} / {total_required}", True, TEXT_PRIMARY)
         screen.blit(progress, (x, y))
         y += 22
         self._draw_progress_bar(screen, pygame.Rect(x, y, self.detail_rect.w - 28, 12), total_current, total_required)
         y += 24
 
-        heading = self.body_font.render("Objectifs", True, (246, 235, 205))
+        heading = self.body_font.render("Objectifs", True, TEXT_PRIMARY)
         screen.blit(heading, (x, y))
         y += 22
         objectives = quest.get("objectives", []) if isinstance(quest.get("objectives"), list) else []
@@ -194,41 +211,41 @@ class QuestOverlay:
             current = get_quest_progress(getattr(self.game, "player", {}), quest_id, index)
             required = self._get_required_amount(objective)
             label = self._format_objective(objective, current, required)
-            color = (145, 215, 160) if required > 0 and current >= required else (220, 208, 178)
+            color = SUCCESS if required > 0 and current >= required else TEXT_SECONDARY
             text = self.small_font.render(self._truncate_text(label, self.small_font, self.detail_rect.w - 28), True, color)
             screen.blit(text, (x, y))
             y += 18
 
         y += 3
-        reward_title = self.body_font.render("Recompenses", True, (246, 235, 205))
+        reward_title = self.body_font.render("Recompenses", True, TEXT_PRIMARY)
         screen.blit(reward_title, (x, y))
         y += 22
         rewards = quest.get("rewards", []) if isinstance(quest.get("rewards"), list) else []
         if not rewards:
-            text = self.small_font.render("Aucune recompense", True, (160, 168, 176))
+            text = self.small_font.render("Aucune recompense", True, TEXT_MUTED)
             screen.blit(text, (x, y))
         for reward in rewards[:4]:
             text = self.small_font.render(
                 self._truncate_text(f"- {self._format_reward(reward)}", self.small_font, self.detail_rect.w - 28),
                 True,
-                (205, 220, 190),
+                TEXT_SECONDARY,
             )
             screen.blit(text, (x, y))
             y += 18
 
         mood = self._get_quest_mood_line(total_current, total_required)
-        text = self.small_font.render(self._truncate_text(mood, self.small_font, self.detail_rect.w - 28), True, (170, 180, 170))
+        text = self.small_font.render(self._truncate_text(mood, self.small_font, self.detail_rect.w - 28), True, TEXT_MUTED)
         screen.blit(text, (x, self.detail_rect.bottom - 22))
 
     def _draw_recently_completed(self, screen):
         self._draw_box(screen, self.completed_rect)
-        title = self.body_font.render("Terminees recemment", True, (246, 235, 205))
+        title = self.body_font.render("Terminees recemment", True, TEXT_PRIMARY)
         screen.blit(title, (self.completed_rect.x + 12, self.completed_rect.y + 8))
 
         completed = self._get_quests_state().get("last_completed", [])
         completed = completed[-3:] if isinstance(completed, list) else []
         if not completed:
-            text = self.small_font.render("Aucune terminee recemment", True, (160, 168, 176))
+            text = self.small_font.render("Aucune terminee recemment", True, TEXT_MUTED)
             screen.blit(text, (self.completed_rect.x + 12, self.completed_rect.y + 36))
             return
 
@@ -237,18 +254,18 @@ class QuestOverlay:
         for quest_id in completed:
             quest = self._get_quest_data(quest_id)
             name = quest.get("name", quest_id) if isinstance(quest, dict) else quest_id
-            text = self.small_font.render(self._truncate_text(str(name), self.small_font, self.completed_rect.w - 24), True, (205, 220, 190))
+            text = self.small_font.render(self._truncate_text(str(name), self.small_font, self.completed_rect.w - 24), True, TEXT_SECONDARY)
             screen.blit(text, (x, y))
             y += 16
 
     def _draw_box(self, screen, rect):
-        pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
-        pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 2, border_radius=6)
 
     def _draw_button(self, screen, rect, label, active=False, enabled=True):
-        bg = (80, 58, 35) if active else (44, 37, 32) if enabled else (38, 35, 32)
-        border = (235, 198, 92) if active else (105, 82, 52) if enabled else (74, 68, 62)
-        color = (246, 235, 205) if enabled else (130, 124, 116)
+        bg = CARD_BG_SELECTED if active else CARD_BG if enabled else DISABLED_BG
+        border = BORDER_SELECTED if active else BORDER_NORMAL if enabled else DISABLED_TEXT
+        color = TEXT_PRIMARY if enabled else DISABLED_TEXT
         pygame.draw.rect(screen, bg, rect, border_radius=5)
         pygame.draw.rect(screen, border, rect, 2 if active else 1, border_radius=5)
         text = self.body_font.render(self._truncate_text(label, self.body_font, rect.w - 12), True, color)
@@ -354,12 +371,12 @@ class QuestOverlay:
         return total_current, total_required
 
     def _draw_progress_bar(self, screen, rect, current, total):
-        pygame.draw.rect(screen, (20, 24, 28), rect, border_radius=5)
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=5)
         ratio = 0 if total <= 0 else max(0, min(current / total, 1))
         fill = pygame.Rect(rect.x, rect.y, int(rect.w * ratio), rect.h)
         if fill.w > 0:
-            pygame.draw.rect(screen, (120, 178, 104), fill, border_radius=5)
-        pygame.draw.rect(screen, (130, 110, 72), rect, 1, border_radius=5)
+            pygame.draw.rect(screen, SUCCESS, fill, border_radius=5)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=5)
 
     def _get_quest_mood_line(self, current, total):
         if total > 0 and current >= total:

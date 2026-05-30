@@ -6,6 +6,23 @@ from systems.professions import (
 )
 
 
+OVERLAY_DIM = (0, 0, 0, 150)
+PANEL_BG = (28, 25, 20)
+PANEL_BG_SECONDARY = (34, 31, 25)
+CARD_BG = (38, 36, 30)
+CARD_BG_SELECTED = (48, 45, 36)
+BORDER_NORMAL = (118, 92, 45)
+BORDER_BRIGHT = (205, 170, 80)
+BORDER_SELECTED = (238, 205, 110)
+TEXT_PRIMARY = (238, 232, 205)
+TEXT_SECONDARY = (190, 184, 160)
+TEXT_MUTED = (130, 124, 105)
+SUCCESS = (98, 190, 125)
+WARNING = (218, 176, 72)
+DISABLED_BG = (42, 40, 36)
+DISABLED_TEXT = (120, 116, 105)
+
+
 class ProfessionOverlay:
     def __init__(self, game):
         if not pygame.font.get_init():
@@ -100,11 +117,11 @@ class ProfessionOverlay:
 
     def _draw_profession_list(self, screen, professions, player):
         self.profession_card_rects = []
-        pygame.draw.rect(screen, (28, 32, 34), self.list_rect, border_radius=8)
-        pygame.draw.rect(screen, (137, 104, 55), self.list_rect, 2, border_radius=8)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, self.list_rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, self.list_rect, 2, border_radius=8)
 
         if not professions:
-            text = self.body_font.render("No professions available.", True, (214, 205, 176))
+            text = self.body_font.render("No professions available.", True, TEXT_SECONDARY)
             screen.blit(text, (self.list_rect.x + 18, self.list_rect.y + 18))
             return
 
@@ -126,30 +143,30 @@ class ProfessionOverlay:
         progress = get_profession_progress(player, profession_id)
         professions = self._get_professions_data()
         mastery = get_profession_mastery(player, profession_id, professions)
-        border = (232, 202, 96) if selected else (91, 77, 54)
-        fill = (49, 41, 31) if selected else (35, 38, 38)
+        border = BORDER_SELECTED if selected else BORDER_NORMAL
+        fill = CARD_BG_SELECTED if selected else CARD_BG
 
         pygame.draw.rect(screen, fill, rect, border_radius=7)
         pygame.draw.rect(screen, border, rect, 2, border_radius=7)
 
         name = profession_data.get("name", profession_id) if isinstance(profession_data, dict) else profession_id
-        name_text = self.body_font.render(self._truncate_text(name, self.body_font, rect.width - 24), True, (239, 229, 194))
+        name_text = self.body_font.render(self._truncate_text(name, self.body_font, rect.width - 24), True, TEXT_PRIMARY)
         screen.blit(name_text, (rect.x + 12, rect.y + 10))
 
         level = progress.get("level", 0)
         xp = progress.get("xp", 0)
         next_xp = progress.get("next_xp", 0)
         info = f"Level {level}  Mastery {mastery}"
-        info_text = self.small_font.render(info, True, (194, 206, 190))
+        info_text = self.small_font.render(info, True, TEXT_SECONDARY)
         screen.blit(info_text, (rect.x + 12, rect.y + 38))
 
-        xp_text = self.small_font.render(f"XP {xp} / {next_xp}", True, (214, 205, 176))
+        xp_text = self.small_font.render(f"XP {xp} / {next_xp}", True, TEXT_SECONDARY)
         screen.blit(xp_text, (rect.x + 12, rect.y + 58))
         self._draw_progress_bar(screen, pygame.Rect(rect.x + 12, rect.y + 78, rect.width - 24, 8), xp, next_xp)
 
     def _draw_profession_detail(self, screen, professions, player):
-        pygame.draw.rect(screen, (28, 32, 34), self.detail_rect, border_radius=8)
-        pygame.draw.rect(screen, (137, 104, 55), self.detail_rect, 2, border_radius=8)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, self.detail_rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, self.detail_rect, 2, border_radius=8)
 
         profession_id = self.selected_profession_id
         profession_data = professions.get(profession_id)
@@ -171,13 +188,13 @@ class ProfessionOverlay:
         y = self.detail_rect.y + 16
         max_width = self.detail_rect.width - 36
         name = profession_data.get("name", profession_id)
-        name_text = self.header_font.render(self._truncate_text(name, self.header_font, max_width), True, (244, 232, 190))
+        name_text = self.header_font.render(self._truncate_text(name, self.header_font, max_width), True, TEXT_PRIMARY)
         screen.blit(name_text, (x, y))
         y += 30
 
         description = profession_data.get("description", "")
         for line in self._wrap_text(description, self.small_font, max_width, 2):
-            self._draw_text_line(screen, x, y, line, self.small_font, (200, 195, 174))
+            self._draw_text_line(screen, x, y, line, self.small_font, TEXT_SECONDARY)
             y += 20
         if description:
             y += 4
@@ -201,17 +218,17 @@ class ProfessionOverlay:
             y += 21
 
         y += 6
-        self._draw_text_line(screen, x, y, "Used in:", self.body_font, (244, 232, 190))
+        self._draw_text_line(screen, x, y, "Used in:", self.body_font, TEXT_PRIMARY)
         y += 24
         zones = self._get_profession_usable_zones(profession_id)
         if not zones:
-            self._draw_text_line(screen, x + 12, y, "No known gathering zones.", self.small_font, (183, 179, 163))
+            self._draw_text_line(screen, x + 12, y, "No known gathering zones.", self.small_font, TEXT_MUTED)
             return
 
         for zone_id in zones[:5]:
             zone_name = self._get_zone_name(zone_id)
             line = self._truncate_text(f"- {zone_name}", self.small_font, max_width - 12)
-            self._draw_text_line(screen, x + 12, y, line, self.small_font, (200, 195, 174))
+            self._draw_text_line(screen, x + 12, y, line, self.small_font, TEXT_SECONDARY)
             y += 20
 
     def _get_player_bonus_value(self, stat_key):
@@ -283,22 +300,22 @@ class ProfessionOverlay:
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((3, 5, 6, 176))
+        overlay.fill(OVERLAY_DIM)
         screen.blit(overlay, (0, 0))
 
     def _draw_panel(self, screen, rect, title):
-        pygame.draw.rect(screen, (22, 24, 25), rect, border_radius=10)
-        pygame.draw.rect(screen, (114, 78, 38), rect, 3, border_radius=10)
-        pygame.draw.rect(screen, (202, 164, 82), rect.inflate(-8, -8), 1, border_radius=8)
-        title_text = self.title_font.render(title, True, (244, 232, 190))
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=10)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=10)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect.inflate(-8, -8), 1, border_radius=8)
+        title_text = self.title_font.render(title, True, TEXT_PRIMARY)
         screen.blit(title_text, (rect.x + 22, rect.y + 17))
-        subtitle = self.small_font.render("Gathering progress and mastery", True, (183, 179, 163))
+        subtitle = self.small_font.render("Gathering progress and mastery", True, TEXT_SECONDARY)
         screen.blit(subtitle, (rect.x + 24, rect.y + 52))
 
     def _draw_button(self, screen, rect, label, active=False, enabled=True):
-        fill = (70, 55, 35) if active else (46, 44, 40)
-        border = (223, 190, 96) if active else (123, 101, 61)
-        text_color = (244, 232, 190) if enabled else (119, 116, 104)
+        fill = CARD_BG_SELECTED if active and enabled else CARD_BG if enabled else DISABLED_BG
+        border = BORDER_SELECTED if active and enabled else BORDER_NORMAL if enabled else DISABLED_TEXT
+        text_color = TEXT_PRIMARY if enabled else DISABLED_TEXT
         pygame.draw.rect(screen, fill, rect, border_radius=6)
         pygame.draw.rect(screen, border, rect, 2, border_radius=6)
         text = self.small_font.render(label, True, text_color)
@@ -307,19 +324,19 @@ class ProfessionOverlay:
     def _draw_progress_bar(self, screen, rect, current, maximum):
         current = current if isinstance(current, (int, float)) else 0
         maximum = maximum if isinstance(maximum, (int, float)) else 0
-        pygame.draw.rect(screen, (18, 20, 20), rect, border_radius=4)
-        pygame.draw.rect(screen, (88, 77, 55), rect, 1, border_radius=4)
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=4)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=4)
         if maximum <= 0:
             return
         ratio = max(0.0, min(1.0, current / maximum))
         fill = pygame.Rect(rect.x, rect.y, int(rect.width * ratio), rect.height)
-        pygame.draw.rect(screen, (88, 156, 105), fill, border_radius=4)
+        pygame.draw.rect(screen, SUCCESS, fill, border_radius=4)
 
     def _draw_message(self, screen, message):
-        text = self.body_font.render(message, True, (214, 205, 176))
+        text = self.body_font.render(message, True, TEXT_SECONDARY)
         screen.blit(text, text.get_rect(center=self.panel_rect.center))
 
-    def _draw_text_line(self, screen, x, y, text, font, color=(214, 205, 176)):
+    def _draw_text_line(self, screen, x, y, text, font, color=TEXT_SECONDARY):
         screen.blit(font.render(str(text), True, color), (x, y))
 
     def _truncate_text(self, text, font, max_width):

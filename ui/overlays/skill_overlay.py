@@ -18,6 +18,24 @@ from systems.skills import (
 from systems.stats import prepare_player_for_combat
 
 
+OVERLAY_DIM = (0, 0, 0, 150)
+PANEL_BG = (28, 25, 20)
+PANEL_BG_SECONDARY = (34, 31, 25)
+CARD_BG = (38, 36, 30)
+CARD_BG_SELECTED = (48, 45, 36)
+BORDER_NORMAL = (118, 92, 45)
+BORDER_BRIGHT = (205, 170, 80)
+BORDER_SELECTED = (238, 205, 110)
+TEXT_PRIMARY = (238, 232, 205)
+TEXT_SECONDARY = (190, 184, 160)
+TEXT_MUTED = (130, 124, 105)
+SUCCESS = (98, 190, 125)
+INFO = (95, 155, 190)
+WARNING = (218, 176, 72)
+DISABLED_BG = (42, 40, 36)
+DISABLED_TEXT = (120, 116, 105)
+
+
 class SkillOverlay:
     def __init__(self, game):
         if not pygame.font.get_init():
@@ -211,30 +229,30 @@ class SkillOverlay:
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 170))
+        overlay.fill(OVERLAY_DIM)
         screen.blit(overlay, (0, 0))
 
     def _draw_panel(self, screen, rect, title):
-        pygame.draw.rect(screen, (34, 27, 22), rect, border_radius=8)
-        pygame.draw.rect(screen, (171, 132, 70), rect, 2, border_radius=8)
-        pygame.draw.rect(screen, (78, 56, 36), rect.inflate(-8, -8), 1, border_radius=6)
-        text = self.title_font.render(title, True, (246, 235, 205))
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect.inflate(-8, -8), 1, border_radius=6)
+        text = self.title_font.render(title, True, TEXT_PRIMARY)
         screen.blit(text, (rect.x + 20, rect.y + 12))
 
     def _draw_message(self, screen, message):
-        text = self.body_font.render(message, True, (236, 224, 195))
+        text = self.body_font.render(message, True, TEXT_PRIMARY)
         screen.blit(text, (self.panel_rect.x + 24, self.panel_rect.y + 76))
 
     def _draw_summary(self, screen, player):
         used_slots = len(player.get("equipped_skills", [])) if isinstance(player.get("equipped_skills", []), list) else 0
         slot_count = get_skill_slot_count(player)
         parts = [
-            ("Skill points: ", (204, 191, 168)),
-            (str(player.get("skill_points", 0)), (245, 198, 92)),
-            ("   Enhanced points: ", (204, 191, 168)),
-            (str(player.get("enhanced_skill_points", 0)), (245, 198, 92)),
-            ("   Active slots: ", (204, 191, 168)),
-            (f"{used_slots} / {slot_count}", (190, 220, 235)),
+            ("Skill points: ", TEXT_SECONDARY),
+            (str(player.get("skill_points", 0)), WARNING),
+            ("   Enhanced points: ", TEXT_SECONDARY),
+            (str(player.get("enhanced_skill_points", 0)), WARNING),
+            ("   Active slots: ", TEXT_SECONDARY),
+            (f"{used_slots} / {slot_count}", TEXT_PRIMARY),
         ]
         x = self.panel_rect.x + 24
         y = self.panel_rect.y + 58
@@ -243,17 +261,17 @@ class SkillOverlay:
             screen.blit(surface, (x, y))
             x += surface.get_width()
         if self.status_message:
-            message = self.small_font.render(self._truncate_text(self.status_message, self.small_font, self.panel_rect.w - 48), True, (238, 205, 140))
+            message = self.small_font.render(self._truncate_text(self.status_message, self.small_font, self.panel_rect.w - 48), True, WARNING)
             screen.blit(message, (self.panel_rect.x + 24, self.panel_rect.y + 80))
 
     def _draw_skill_library_panel(self, screen, rect, skills):
-        pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
-        pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 2, border_radius=6)
         self._draw_skill_kind_tabs(screen, pygame.Rect(rect.x + 12, rect.y + 10, rect.w - 24, 26))
 
         if not skills:
             label = "No active skills available." if self.skill_kind_tab == "active" else "No passive skills available."
-            empty = self.body_font.render(label, True, (160, 168, 176))
+            empty = self.body_font.render(label, True, TEXT_MUTED)
             screen.blit(empty, (rect.x + 14, rect.y + 48))
             return
 
@@ -308,18 +326,18 @@ class SkillOverlay:
             self._draw_skill_slot(screen, slot_rect, skill_id, skill_data, skill_id == self.selected_skill_id)
 
     def _draw_active_slots_panel(self, screen, rect):
-        pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
-        pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 2, border_radius=6)
 
         player = getattr(self.game, "player", {}) or {}
         if not isinstance(player, dict):
-            text = self.small_font.render("No active slots.", True, (160, 168, 176))
+            text = self.small_font.render("No active slots.", True, TEXT_MUTED)
             screen.blit(text, (rect.x + 12, rect.y + 14))
             return
 
         slot_count = max(0, get_skill_slot_count(player))
         if slot_count <= 0:
-            text = self.small_font.render("No active slots.", True, (160, 168, 176))
+            text = self.small_font.render("No active slots.", True, TEXT_MUTED)
             screen.blit(text, (rect.x + 12, rect.y + 14))
             return
 
@@ -335,13 +353,13 @@ class SkillOverlay:
             self._draw_active_slot(screen, slot_rect, skill_id, skill_id == self.selected_skill_id)
 
         if slot_count > slots_to_draw:
-            more = self.small_font.render(f"+{slot_count - slots_to_draw} more", True, (160, 168, 176))
+            more = self.small_font.render(f"+{slot_count - slots_to_draw} more", True, TEXT_MUTED)
             screen.blit(more, (rect.x + 12, rect.bottom - 24))
 
     def _draw_active_slot(self, screen, rect, skill_id, selected=False):
         has_skill = bool(skill_id)
-        bg = (34, 54, 52) if has_skill else (38, 35, 32)
-        border = (235, 230, 190) if selected else (112, 220, 150) if has_skill else (74, 68, 62)
+        bg = CARD_BG_SELECTED if has_skill else CARD_BG
+        border = BORDER_SELECTED if selected else SUCCESS if has_skill else BORDER_NORMAL
         pygame.draw.rect(screen, bg, rect, border_radius=6)
         pygame.draw.rect(screen, border, rect, 2 if selected else 1, border_radius=6)
 
@@ -350,13 +368,13 @@ class SkillOverlay:
             skill_data = self._get_skill_data(self._get_skills_data(), skill_id)
             self._draw_skill_icon(screen, icon_rect, skill_id, skill_data, self._get_skill_state(skill_id))
             name = self._get_skill_name(skill_id)
-            color = (246, 235, 205)
-            pygame.draw.circle(screen, (112, 220, 150), (rect.right - 12, rect.centery), 5)
+            color = TEXT_PRIMARY
+            pygame.draw.circle(screen, SUCCESS, (rect.right - 12, rect.centery), 5)
         else:
-            pygame.draw.rect(screen, (24, 24, 24), icon_rect, border_radius=4)
-            pygame.draw.rect(screen, (74, 68, 62), icon_rect, 1, border_radius=4)
+            pygame.draw.rect(screen, DISABLED_BG, icon_rect, border_radius=4)
+            pygame.draw.rect(screen, BORDER_NORMAL, icon_rect, 1, border_radius=4)
             name = "Empty"
-            color = (150, 144, 136)
+            color = TEXT_MUTED
 
         label = self.small_font.render(self._truncate_text(name, self.small_font, rect.w - 58), True, color)
         screen.blit(label, (rect.x + 44, rect.y + 12))
@@ -369,15 +387,15 @@ class SkillOverlay:
         can_upgrade = level < 4 and (getattr(self.game, "player", {}) or {}).get("skill_points", 0) > 0
 
         if selected:
-            bg, border = (45, 55, 58), (235, 230, 190)
+            bg, border = CARD_BG_SELECTED, BORDER_SELECTED
         elif level <= 0:
-            bg, border = (35, 34, 34), (86, 84, 82)
+            bg, border = DISABLED_BG, BORDER_NORMAL
         elif equipped:
-            bg, border = (34, 54, 52), (112, 220, 150)
+            bg, border = CARD_BG_SELECTED, SUCCESS
         elif can_upgrade:
-            bg, border = (48, 43, 32), (218, 178, 92)
+            bg, border = CARD_BG_SELECTED, WARNING
         else:
-            bg, border = (36, 45, 52), (118, 156, 182)
+            bg, border = CARD_BG, BORDER_NORMAL
 
         pygame.draw.rect(screen, bg, rect, border_radius=8)
         pygame.draw.rect(screen, border, rect, 3 if selected else 2, border_radius=8)
@@ -390,10 +408,10 @@ class SkillOverlay:
     def _draw_skill_icon(self, screen, rect, skill_id, skill_data, skill_state):
         visibility = self._get_skill_visibility(skill_id, skill_data, skill_state)
         if visibility == "secret":
-            pygame.draw.rect(screen, (18, 16, 17), rect, border_radius=5)
+            pygame.draw.rect(screen, PANEL_BG, rect, border_radius=5)
             return
         if visibility == "undiscovered":
-            text = self.header_font.render("?", True, (150, 145, 138))
+            text = self.header_font.render("?", True, TEXT_MUTED)
             screen.blit(text, text.get_rect(center=rect.center))
             return
 
@@ -423,15 +441,15 @@ class SkillOverlay:
                 (rect.x + 3, center[1]),
                 (center[0] - 5, center[1] - 4),
             ]
-            pygame.draw.polygon(screen, (126, 190, 148), points)
-            pygame.draw.circle(screen, (230, 220, 164), center, max(3, rect.w // 8))
+            pygame.draw.polygon(screen, SUCCESS, points)
+            pygame.draw.circle(screen, TEXT_PRIMARY, center, max(3, rect.w // 8))
             return
         if skill_type == "active":
-            pygame.draw.line(screen, (216, 224, 230), (rect.x + 7, rect.bottom - 6), (rect.right - 5, rect.y + 5), 4)
-            pygame.draw.polygon(screen, (230, 202, 116), [(rect.right - 5, rect.y + 5), (rect.right - 14, rect.y + 7), (rect.right - 7, rect.y + 16)])
+            pygame.draw.line(screen, TEXT_PRIMARY, (rect.x + 7, rect.bottom - 6), (rect.right - 5, rect.y + 5), 4)
+            pygame.draw.polygon(screen, WARNING, [(rect.right - 5, rect.y + 5), (rect.right - 14, rect.y + 7), (rect.right - 7, rect.y + 16)])
             pygame.draw.line(screen, (95, 70, 46), (rect.x + 6, rect.bottom - 5), (rect.x + 14, rect.bottom - 13), 4)
             return
-        text = self.header_font.render("?", True, (220, 212, 190))
+        text = self.header_font.render("?", True, TEXT_PRIMARY)
         screen.blit(text, text.get_rect(center=center))
 
     def _draw_skill_badges(self, screen, rect, skill_id, skill_data, skill_state):
@@ -442,21 +460,21 @@ class SkillOverlay:
         badge_width = 42 if level < 4 else 38
         badge = pygame.Rect(0, rect.bottom - 20, badge_width, 16)
         badge.centerx = rect.centerx
-        pygame.draw.rect(screen, (22, 24, 26), badge, border_radius=4)
-        pygame.draw.rect(screen, (118, 91, 54), badge, 1, border_radius=4)
-        text = self.small_font.render(level_label, True, (246, 235, 205))
+        pygame.draw.rect(screen, PANEL_BG, badge, border_radius=4)
+        pygame.draw.rect(screen, BORDER_NORMAL, badge, 1, border_radius=4)
+        text = self.small_font.render(level_label, True, TEXT_PRIMARY)
         screen.blit(text, text.get_rect(center=badge.center))
 
         if level > 0 and skill_type == "active" and is_skill_equipped(player, skill_id):
-            pygame.draw.circle(screen, (112, 220, 150), (rect.right - 12, rect.y + 12), 6)
+            pygame.draw.circle(screen, SUCCESS, (rect.right - 12, rect.y + 12), 6)
             marker = self.small_font.render("E", True, (18, 32, 24))
             screen.blit(marker, marker.get_rect(center=(rect.right - 12, rect.y + 12)))
 
         if level < 4 and player.get("skill_points", 0) > 0:
             plus = pygame.Rect(rect.right - 21, rect.bottom - 21, 17, 17)
-            pygame.draw.rect(screen, (132, 99, 42), plus, border_radius=4)
-            pygame.draw.rect(screen, (245, 198, 92), plus, 1, border_radius=4)
-            text = self.small_font.render("+", True, (255, 235, 160))
+            pygame.draw.rect(screen, (116, 82, 34), plus, border_radius=4)
+            pygame.draw.rect(screen, WARNING, plus, 1, border_radius=4)
+            text = self.small_font.render("+", True, TEXT_PRIMARY)
             screen.blit(text, text.get_rect(center=plus.center))
 
         if skill_state.get("enhanced") is True:
@@ -484,14 +502,14 @@ class SkillOverlay:
         else:
             self.prev_page_rect = pygame.Rect(0, 0, 0, 0)
             self.next_page_rect = pygame.Rect(0, 0, 0, 0)
-        page_label = self.small_font.render(f"Page {self.skill_page + 1} / {total_pages}", True, (204, 191, 168))
+        page_label = self.small_font.render(f"Page {self.skill_page + 1} / {total_pages}", True, TEXT_SECONDARY)
         screen.blit(page_label, page_label.get_rect(center=(rect.centerx, y + 11)))
 
     def _draw_skill_details(self, screen, rect, skill_id, skill_data):
-        pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
-        pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 2, border_radius=6)
         if not skill_id or not isinstance(skill_data, dict):
-            text = self.body_font.render("No skill selected.", True, (160, 168, 176))
+            text = self.body_font.render("No skill selected.", True, TEXT_MUTED)
             screen.blit(text, (rect.x + 14, rect.y + 14))
             return
 
@@ -505,21 +523,21 @@ class SkillOverlay:
         effect_lines = self._format_skill_effect_lines(skill_data, level_data)
         action_top = self.learn_button_rect.y - 24
 
-        title = self.header_font.render(self._truncate_text(name, self.header_font, rect.w - 32), True, (246, 235, 205))
+        title = self.header_font.render(self._truncate_text(name, self.header_font, rect.w - 32), True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 14, rect.y + 10))
         meta = (
             f"{skill_type.title()} | Current level: {level} / 4 | "
             f"Selected tab: {self._get_level_tab_label(self.selected_level_tab)} | "
             f"View: {self._get_level_view_label(skill_state)}"
         )
-        meta_surface = self.body_font.render(self._truncate_text(meta, self.body_font, rect.w - 32), True, (190, 202, 210))
+        meta_surface = self.body_font.render(self._truncate_text(meta, self.body_font, rect.w - 32), True, TEXT_SECONDARY)
         screen.blit(meta_surface, (rect.x + 14, rect.y + 38))
 
         tab_bottom = self._draw_level_tabs(screen, skill_data, skill_state, pygame.Rect(rect.x + 14, rect.y + 64, rect.w - 28, 26))
         description_lines = self._wrap_text(skill_data.get("description", "No description."), self.small_font, rect.w - 348, 2)
         y = tab_bottom + 8
         for line in description_lines:
-            screen.blit(self.small_font.render(line, True, (210, 218, 220)), (rect.x + 14, y))
+            screen.blit(self.small_font.render(line, True, TEXT_SECONDARY), (rect.x + 14, y))
             y += 16
 
         effects_rect = pygame.Rect(rect.x + 14, y + 1, rect.w - 32, max(20, action_top - y - 4))
@@ -529,7 +547,7 @@ class SkillOverlay:
             message = self.small_font.render(
                 self._truncate_text(self.status_message, self.small_font, rect.w - 430),
                 True,
-                (238, 205, 140),
+                WARNING,
             )
             screen.blit(message, (rect.x + 14, self.learn_button_rect.y + 5))
 
@@ -575,15 +593,15 @@ class SkillOverlay:
             self.level_tab_rects.append((tab_id, rect, enabled))
             active = tab_id == self.selected_level_tab
             if tab_id == "enhanced" and enabled:
-                bg = (58, 45, 70) if active else (44, 35, 52)
-                border = (218, 178, 108) if active else (116, 86, 132)
-                color = (246, 226, 174)
+                bg = CARD_BG_SELECTED if active else CARD_BG
+                border = BORDER_SELECTED if active else BORDER_NORMAL
+                color = TEXT_PRIMARY
             elif enabled:
-                bg = (80, 58, 35) if active else (44, 37, 32)
-                border = (235, 198, 92) if active else (105, 82, 52)
-                color = (246, 235, 205)
+                bg = CARD_BG_SELECTED if active else CARD_BG
+                border = BORDER_SELECTED if active else BORDER_NORMAL
+                color = TEXT_PRIMARY
             else:
-                bg, border, color = (38, 35, 32), (74, 68, 62), (130, 124, 116)
+                bg, border, color = DISABLED_BG, DISABLED_TEXT, DISABLED_TEXT
             pygame.draw.rect(screen, bg, rect, border_radius=5)
             pygame.draw.rect(screen, border, rect, 2 if active else 1, border_radius=5)
             text = self.small_font.render(self._truncate_text(label, self.small_font, rect.w - 6), True, color)
@@ -594,11 +612,11 @@ class SkillOverlay:
     def _draw_button(self, screen, rect, label, active=False, enabled=True, warm=False):
         font = self.small_font if rect.h <= 26 else self.body_font
         if warm and enabled:
-            bg, border, color = (132, 99, 42), (245, 198, 92), (255, 235, 160)
+            bg, border, color = (116, 82, 34), BORDER_SELECTED, TEXT_PRIMARY
         else:
-            bg = (56, 82, 90) if active else (44, 37, 32) if enabled else (38, 35, 32)
-            border = (120, 190, 210) if active else (105, 82, 52) if enabled else (74, 68, 62)
-            color = (246, 235, 205) if enabled else (130, 124, 116)
+            bg = CARD_BG_SELECTED if active else CARD_BG if enabled else DISABLED_BG
+            border = BORDER_SELECTED if active else BORDER_NORMAL if enabled else DISABLED_TEXT
+            color = TEXT_PRIMARY if enabled else DISABLED_TEXT
         pygame.draw.rect(screen, bg, rect, border_radius=5)
         pygame.draw.rect(screen, border, rect, 1 if rect.h < 30 else 2, border_radius=5)
         text = font.render(self._truncate_text(label, font, rect.w - 8), True, color)

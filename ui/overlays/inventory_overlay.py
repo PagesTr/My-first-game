@@ -17,6 +17,24 @@ from systems.inventory import compact_inventory, use_consumable_item
 from systems.stats import prepare_player_for_combat
 
 
+OVERLAY_DIM = (0, 0, 0, 150)
+PANEL_BG = (28, 25, 20)
+PANEL_BG_SECONDARY = (34, 31, 25)
+CARD_BG = (38, 36, 30)
+CARD_BG_SELECTED = (48, 45, 36)
+BORDER_NORMAL = (118, 92, 45)
+BORDER_BRIGHT = (205, 170, 80)
+BORDER_SELECTED = (238, 205, 110)
+TEXT_PRIMARY = (238, 232, 205)
+TEXT_SECONDARY = (190, 184, 160)
+TEXT_MUTED = (130, 124, 105)
+SUCCESS = (98, 190, 125)
+WARNING = (218, 176, 72)
+DANGER = (160, 80, 70)
+DISABLED_BG = (42, 40, 36)
+DISABLED_TEXT = (120, 116, 105)
+
+
 class InventoryOverlay:
     def __init__(self, game):
         self.game = game
@@ -80,16 +98,16 @@ class InventoryOverlay:
             return
 
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 165))
+        overlay.fill(OVERLAY_DIM)
         screen.blit(overlay, (0, 0))
 
         panel = self._get_panel_rect(screen)
         self.panel_rect = panel
-        pygame.draw.rect(screen, (34, 27, 22), panel, border_radius=8)
-        pygame.draw.rect(screen, (171, 132, 70), panel, 2, border_radius=8)
-        pygame.draw.rect(screen, (78, 56, 36), panel.inflate(-8, -8), 1, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG, panel, border_radius=8)
+        pygame.draw.rect(screen, BORDER_BRIGHT, panel, 2, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, panel.inflate(-8, -8), 1, border_radius=6)
 
-        title = self.title_font.render("Inventory", True, (246, 235, 205))
+        title = self.title_font.render("Inventory", True, TEXT_PRIMARY)
         screen.blit(title, (panel.x + 20, panel.y + 14))
 
         self.close_rect = pygame.Rect(panel.right - 44, panel.y + 14, 28, 28)
@@ -98,15 +116,15 @@ class InventoryOverlay:
         self._draw_button(screen, self.compact_rect, "Compact")
 
         if not isinstance(getattr(self.game, "player", None), dict):
-            message = self.body_font.render("No player inventory available.", True, (236, 224, 195))
+            message = self.body_font.render("No player inventory available.", True, TEXT_PRIMARY)
             screen.blit(message, (panel.x + 24, panel.y + 76))
             return
 
-        gold_text = self.body_font.render(f"Gold: {self._get_player_gold()}", True, (237, 194, 83))
+        gold_text = self.body_font.render(f"Gold: {self._get_player_gold()}", True, WARNING)
         screen.blit(gold_text, (panel.x + 22, panel.y + 52))
 
         if self.feedback_message and pygame.time.get_ticks() < self.feedback_until_ms:
-            feedback = self.small_font.render(self.feedback_message, True, (210, 232, 175))
+            feedback = self.small_font.render(self.feedback_message, True, SUCCESS)
             screen.blit(feedback, (panel.x + 140, panel.y + 56))
 
         inventory_rect = pygame.Rect(panel.x + 20, panel.y + 104, 372, 232)
@@ -178,14 +196,14 @@ class InventoryOverlay:
             rect = pygame.Rect(x, area.y, width, area.height)
             self.filter_rects[filter_id] = rect
             is_active = filter_id == self.active_filter
-            pygame.draw.rect(screen, (80, 58, 35) if is_active else (44, 37, 32), rect, border_radius=4)
-            pygame.draw.rect(screen, (215, 176, 91) if is_active else (105, 82, 52), rect, 1, border_radius=4)
-            text = self.small_font.render(label, True, (246, 235, 205) if is_active else (204, 191, 168))
+            pygame.draw.rect(screen, CARD_BG_SELECTED if is_active else CARD_BG, rect, border_radius=4)
+            pygame.draw.rect(screen, BORDER_SELECTED if is_active else BORDER_NORMAL, rect, 1, border_radius=4)
+            text = self.small_font.render(label, True, TEXT_PRIMARY if is_active else TEXT_SECONDARY)
             screen.blit(text, text.get_rect(center=rect.center))
             x += width + 6
 
     def _draw_inventory_grid(self, screen, area):
-        label = self.body_font.render("Bag", True, (238, 226, 194))
+        label = self.body_font.render("Bag", True, TEXT_PRIMARY)
         screen.blit(label, (area.x, area.y - 24))
 
         slot_size = 46
@@ -212,10 +230,10 @@ class InventoryOverlay:
         is_selected = source == self.selected_item_source
         item_data = self._get_item_data(slot)
         rarity_color = self._get_rarity_color(slot, item_data)
-        pygame.draw.rect(screen, (38, 31, 27) if slot is None else (50, 40, 31), rect, border_radius=5)
-        pygame.draw.rect(screen, rarity_color if slot is not None else (84, 70, 50), rect, 2, border_radius=5)
+        pygame.draw.rect(screen, CARD_BG if slot is None else CARD_BG_SELECTED, rect, border_radius=5)
+        pygame.draw.rect(screen, rarity_color if slot is not None else BORDER_NORMAL, rect, 2, border_radius=5)
         if is_selected:
-            pygame.draw.rect(screen, (248, 220, 113), rect.inflate(4, 4), 2, border_radius=6)
+            pygame.draw.rect(screen, BORDER_SELECTED, rect.inflate(4, 4), 2, border_radius=6)
 
         if slot is None:
             return
@@ -226,14 +244,14 @@ class InventoryOverlay:
 
         quantity = slot.get("quantity")
         if quantity is not None:
-            quantity_surface = self.small_font.render(str(quantity), True, (255, 236, 170))
+            quantity_surface = self.small_font.render(str(quantity), True, TEXT_PRIMARY)
             quantity_rect = quantity_surface.get_rect(bottomright=(rect.right - 4, rect.bottom - 2))
             screen.blit(quantity_surface, quantity_rect)
 
         if not used_mapped_icon:
             item_name = self._get_item_display_name(slot, item_data)
             label = self._shorten_text(item_name, rect.width - 4, self.small_font)
-            label_surface = self.small_font.render(label, True, (230, 217, 190))
+            label_surface = self.small_font.render(label, True, TEXT_PRIMARY)
             screen.blit(label_surface, label_surface.get_rect(midbottom=(rect.centerx, rect.bottom - 3)))
 
     def _draw_item_icon(self, screen, rect, item, item_data):
@@ -280,7 +298,7 @@ class InventoryOverlay:
         return False
 
     def _draw_equipment_panel(self, screen, area):
-        title = self.body_font.render("Equipment", True, (238, 226, 194))
+        title = self.body_font.render("Equipment", True, TEXT_PRIMARY)
         screen.blit(title, (area.x, area.y - 24))
 
         equipment = self._get_equipment()
@@ -303,21 +321,21 @@ class InventoryOverlay:
             source = ("equipment", slot_key)
             is_selected = source == self.selected_item_source
             item_data = self._get_item_data(item)
-            border_color = self._get_rarity_color(item, item_data) if item else (91, 74, 54)
-            pygame.draw.rect(screen, (38, 31, 27), rect, border_radius=4)
-            pygame.draw.rect(screen, (248, 220, 113) if is_selected else border_color, rect, 2, border_radius=4)
+            border_color = self._get_rarity_color(item, item_data) if item else BORDER_NORMAL
+            pygame.draw.rect(screen, CARD_BG, rect, border_radius=4)
+            pygame.draw.rect(screen, BORDER_SELECTED if is_selected else border_color, rect, 2, border_radius=4)
 
             slot_label = labels.get(slot_key, slot_key)
             item_label = self._get_item_display_name(item, item_data) if item is not None else "Empty"
-            label_surface = self.small_font.render(slot_label, True, (199, 178, 139))
+            label_surface = self.small_font.render(slot_label, True, TEXT_SECONDARY)
             screen.blit(label_surface, (rect.x + 5, rect.y + 2))
-            item_surface = self.small_font.render(self._shorten_text(item_label, rect.width - 10, self.small_font), True, border_color if item else (130, 119, 101))
+            item_surface = self.small_font.render(self._shorten_text(item_label, rect.width - 10, self.small_font), True, border_color if item else TEXT_MUTED)
             screen.blit(item_surface, (rect.x + 5, rect.y + 13))
 
     def _draw_player_stats_panel(self, screen, rect):
-        pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
-        pygame.draw.rect(screen, (121, 91, 55), rect, 1, border_radius=6)
-        title = self.small_font.render("Stats", True, (238, 226, 194))
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=6)
+        title = self.small_font.render("Stats", True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 8, rect.y + 6))
 
         self.stats_details_rect = pygame.Rect(rect.right - 58, rect.y + 5, 50, 20)
@@ -343,16 +361,16 @@ class InventoryOverlay:
             column = index // 5
             row = index % 5
             line = f"{label}: {self._format_stat_value(stat_key, value)}"
-            surface = self.small_font.render(self._shorten_text(line, column_width - 4, self.small_font), True, (212, 202, 180))
+            surface = self.small_font.render(self._shorten_text(line, column_width - 4, self.small_font), True, TEXT_SECONDARY)
             screen.blit(surface, (rect.x + 8 + column * column_width, start_y + row * 15))
 
     def _draw_advanced_stats_panel(self, screen, parent_rect):
         rect = pygame.Rect(0, 0, 390, 250)
         rect.center = parent_rect.center
-        pygame.draw.rect(screen, (24, 21, 20), rect, border_radius=8)
-        pygame.draw.rect(screen, (207, 160, 82), rect, 2, border_radius=8)
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=8)
 
-        title = self.body_font.render("Advanced Stats", True, (246, 235, 205))
+        title = self.body_font.render("Advanced Stats", True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 16, rect.y + 12))
 
         player = self._get_player()
@@ -378,41 +396,41 @@ class InventoryOverlay:
         for index, (label, stat_key, value) in enumerate(stats):
             column = index // 7
             line = f"{label}: {self._format_stat_value(stat_key, value)}"
-            surface = self.small_font.render(self._shorten_text(line, 168, self.small_font), True, (212, 202, 180))
+            surface = self.small_font.render(self._shorten_text(line, 168, self.small_font), True, TEXT_SECONDARY)
             screen.blit(surface, (x_positions[column], y_positions[column]))
             y_positions[column] += 22
 
-        hint = self.small_font.render("Click Details again to close", True, (168, 156, 138))
+        hint = self.small_font.render("Click Details again to close", True, TEXT_MUTED)
         screen.blit(hint, (rect.x + 16, rect.bottom - 28))
 
     def _draw_active_effects_panel(self, screen, rect):
-        pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
-        pygame.draw.rect(screen, (121, 91, 55), rect, 1, border_radius=6)
-        title = self.small_font.render("Active Effects", True, (238, 226, 194))
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=6)
+        title = self.small_font.render("Active Effects", True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 8, rect.y + 6))
 
         active_effects = self._get_player().get("active_effects", [])
         valid_effects = [effect for effect in active_effects if isinstance(effect, dict)]
         if not valid_effects:
-            none_text = self.small_font.render("None", True, (168, 156, 138))
+            none_text = self.small_font.render("None", True, TEXT_MUTED)
             screen.blit(none_text, (rect.x + 8, rect.y + 28))
             return
 
         y = rect.y + 28
         for effect in valid_effects[:4]:
             line = self._format_effect_line(effect)
-            surface = self.small_font.render(self._shorten_text(line, rect.width - 16, self.small_font), True, (212, 202, 180))
+            surface = self.small_font.render(self._shorten_text(line, rect.width - 16, self.small_font), True, TEXT_SECONDARY)
             screen.blit(surface, (rect.x + 8, y))
             y += 15
 
     def _draw_details_panel(self, screen, rect):
-        pygame.draw.rect(screen, (30, 25, 22), rect, border_radius=6)
-        pygame.draw.rect(screen, (121, 91, 55), rect, 1, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=6)
         self.action_rects = {}
 
         item = self._get_selected_item()
         if item is None:
-            text = self.small_font.render("Select an item to view details.", True, (205, 190, 164))
+            text = self.small_font.render("Select an item to view details.", True, TEXT_SECONDARY)
             screen.blit(text, (rect.x + 12, rect.y + 12))
             return
 
@@ -453,14 +471,14 @@ class InventoryOverlay:
 
         stats = self._get_item_stats(item)
         if isinstance(stats, dict) and stats:
-            stats_label = self.small_font.render("Stats", True, (238, 226, 194))
+            stats_label = self.small_font.render("Stats", True, TEXT_PRIMARY)
             screen.blit(stats_label, (rect.x + 10, y))
             y += 17
             for stat_name, value in list(stats.items())[:3]:
                 stat_text = self.small_font.render(
                     f"{self._get_stat_label(stat_name)}: {self._format_stat_value(stat_name, value)}",
                     True,
-                    (190, 215, 184),
+                    SUCCESS,
                 )
                 screen.blit(stat_text, (rect.x + 16, y))
                 y += 15
@@ -471,7 +489,7 @@ class InventoryOverlay:
         description = item_data.get("description")
         if description and y < rect.bottom - 60:
             y += 4
-            self._draw_wrapped_text(screen, description, rect.x + 10, y, rect.width - 20, self.small_font, (191, 181, 158), rect.bottom - 40)
+            self._draw_wrapped_text(screen, description, rect.x + 10, y, rect.width - 20, self.small_font, TEXT_SECONDARY, rect.bottom - 40)
 
         self._draw_action_buttons(screen, rect)
 
@@ -485,17 +503,17 @@ class InventoryOverlay:
         if y > rect.bottom - 78:
             return y
 
-        title = self.small_font.render("Comparison", True, (238, 226, 194))
+        title = self.small_font.render("Comparison", True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 10, y))
         y += 16
 
         if current_item is None:
-            empty = self.small_font.render("Compared slot is empty.", True, (168, 156, 138))
+            empty = self.small_font.render("Compared slot is empty.", True, TEXT_MUTED)
             screen.blit(empty, (rect.x + 16, y))
             return y + 15
 
         current_name = self._get_item_display_name(current_item, self._get_item_data(current_item))
-        compared = self.small_font.render(self._shorten_text(f"Vs: {current_name}", rect.width - 26, self.small_font), True, (200, 190, 168))
+        compared = self.small_font.render(self._shorten_text(f"Vs: {current_name}", rect.width - 26, self.small_font), True, TEXT_SECONDARY)
         screen.blit(compared, (rect.x + 16, y))
         y += 15
 
@@ -508,7 +526,7 @@ class InventoryOverlay:
             if not isinstance(new_value, (int, float)) or not isinstance(current_value, (int, float)):
                 continue
             diff = new_value - current_value
-            color = (105, 210, 124) if diff > 0 else (224, 94, 94) if diff < 0 else (165, 160, 150)
+            color = SUCCESS if diff > 0 else DANGER if diff < 0 else TEXT_MUTED
             line = (
                 f"{self._get_stat_label(stat_key)}: "
                 f"{self._format_stat_value(stat_key, new_value)} vs "
@@ -531,7 +549,7 @@ class InventoryOverlay:
         progress = self._get_set_progress(set_id)
         set_name = set_data.get("name", str(set_id))
         title = f"Set: {set_name} ({progress['equipped_count']}/{progress['total_count']})"
-        surface = self.small_font.render(self._shorten_text(title, rect.width - 20, self.small_font), True, (207, 176, 98))
+        surface = self.small_font.render(self._shorten_text(title, rect.width - 20, self.small_font), True, WARNING)
         screen.blit(surface, (rect.x + 10, y))
         y += 16
 
@@ -543,7 +561,7 @@ class InventoryOverlay:
             pieces.append(f"{marker} {piece_name}")
         if pieces:
             piece_line = self._shorten_text(", ".join(pieces), rect.width - 26, self.small_font)
-            piece_surface = self.small_font.render(piece_line, True, (190, 202, 188))
+            piece_surface = self.small_font.render(piece_line, True, TEXT_SECONDARY)
             screen.blit(piece_surface, (rect.x + 16, y))
             y += 15
 
@@ -559,7 +577,7 @@ class InventoryOverlay:
                 is_active = progress["equipped_count"] >= threshold
                 marker = "*" if is_active else "-"
                 line = f"{marker} {self._format_set_bonus_line(threshold, threshold_bonuses)}"
-                color = (105, 210, 124) if is_active else (145, 136, 120)
+                color = SUCCESS if is_active else TEXT_MUTED
                 bonus_surface = self.small_font.render(self._shorten_text(line, rect.width - 26, self.small_font), True, color)
                 screen.blit(bonus_surface, (rect.x + 16, y))
                 y += 15
@@ -579,11 +597,11 @@ class InventoryOverlay:
             x += width + 8
 
     def _draw_button(self, screen, rect, label):
-        pygame.draw.rect(screen, (72, 49, 31), rect, border_radius=5)
-        pygame.draw.rect(screen, (188, 144, 74), rect, 1, border_radius=5)
+        pygame.draw.rect(screen, CARD_BG, rect, border_radius=5)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 1, border_radius=5)
         highlight = pygame.Rect(rect.x + 2, rect.y + 2, rect.width - 4, 1)
-        pygame.draw.rect(screen, (228, 187, 104), highlight)
-        text = self.small_font.render(label, True, (246, 235, 205))
+        pygame.draw.rect(screen, BORDER_SELECTED, highlight)
+        text = self.small_font.render(label, True, TEXT_PRIMARY)
         screen.blit(text, text.get_rect(center=rect.center))
 
     def _get_item_at_position(self, position):

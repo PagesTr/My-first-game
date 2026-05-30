@@ -1,0 +1,23 @@
+{
+  "id": "archer_pixellab_idle_front",
+  "source": "pixellab",
+  "style_reference": "docs/art_direction.md",
+  "frame_width": 32,
+  "frame_height": 48,
+  "frame_count": 4,
+  "direction": "front",
+  "animation": "idle",
+  "anchor": "bottom-center",
+  "pixellab_object_id": "df04b924-bedf-4c1b-8b11-ffc36a465d92",
+  "pixellab_animation_group_id": "fc80cd3c-599f-4adf-8767-a28e0012961d",
+  "files": {
+    "sheet": "archer_pixellab_idle_front_sheet.png",
+    "preview": "archer_pixellab_idle_front_preview.png",
+    "frames": [
+      "archer_pixellab_idle_front_0.png",
+      "archer_pixellab_idle_front_1.png",
+      "archer_pixellab_idle_front_2.png",
+      "archer_pixellab_idle_front_3.png"
+    ]
+  }
+}

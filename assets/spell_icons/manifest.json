@@ -1,0 +1,18 @@
+{
+  "sheet": "spell_icons_sheet.png",
+  "icon_size": 64,
+  "icons": {
+    "fireball": "fireball.png",
+    "ice_shard": "ice_shard.png",
+    "lightning_bolt": "lightning_bolt.png",
+    "healing_leaf": "healing_leaf.png",
+    "poison_skull": "poison_skull.png",
+    "arcane_star": "arcane_star.png",
+    "stone_shield": "stone_shield.png",
+    "wind_swirl": "wind_swirl.png",
+    "water_wave": "water_wave.png",
+    "shadow_dagger": "shadow_dagger.png",
+    "holy_sun": "holy_sun.png",
+    "meteor": "meteor.png"
+  }
+}

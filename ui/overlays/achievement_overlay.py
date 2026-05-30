@@ -7,6 +7,24 @@ from systems.achievements import (
 )
 
 
+OVERLAY_DIM = (0, 0, 0, 150)
+PANEL_BG = (28, 25, 20)
+PANEL_BG_SECONDARY = (34, 31, 25)
+CARD_BG = (38, 36, 30)
+CARD_BG_SELECTED = (48, 45, 36)
+BORDER_NORMAL = (118, 92, 45)
+BORDER_BRIGHT = (205, 170, 80)
+BORDER_SELECTED = (238, 205, 110)
+TEXT_PRIMARY = (238, 232, 205)
+TEXT_SECONDARY = (190, 184, 160)
+TEXT_MUTED = (130, 124, 105)
+SUCCESS = (98, 190, 125)
+INFO = (95, 155, 190)
+WARNING = (218, 176, 72)
+DISABLED_BG = (42, 40, 36)
+DISABLED_TEXT = (120, 116, 105)
+
+
 CATEGORIES = [
     ("all", "All"),
     ("claimable", "Claimable"),
@@ -167,18 +185,18 @@ class AchievementOverlay:
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 170))
+        overlay.fill(OVERLAY_DIM)
         screen.blit(overlay, (0, 0))
 
     def _draw_panel(self, screen, rect, title):
-        pygame.draw.rect(screen, (34, 27, 22), rect, border_radius=8)
-        pygame.draw.rect(screen, (171, 132, 70), rect, 2, border_radius=8)
-        pygame.draw.rect(screen, (78, 56, 36), rect.inflate(-8, -8), 1, border_radius=6)
-        text = self.title_font.render(title, True, (246, 235, 205))
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=8)
+        pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=8)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect.inflate(-8, -8), 1, border_radius=6)
+        text = self.title_font.render(title, True, TEXT_PRIMARY)
         screen.blit(text, (rect.x + 20, rect.y + 12))
 
     def _draw_message(self, screen, message):
-        text = self.body_font.render(message, True, (236, 224, 195))
+        text = self.body_font.render(message, True, TEXT_PRIMARY)
         screen.blit(text, (self.panel_rect.x + 24, self.panel_rect.y + 76))
 
     def _draw_summary(self, screen):
@@ -196,9 +214,9 @@ class AchievementOverlay:
         x = self.panel_rect.x + 24
         y = self.panel_rect.y + 56
         base = f"Unlocked: {unlocked_count} / {visible_total}   Claimable: "
-        base_text = self.body_font.render(base, True, (204, 191, 168))
+        base_text = self.body_font.render(base, True, TEXT_SECONDARY)
         screen.blit(base_text, (x, y))
-        color = (245, 198, 92) if claimable_count > 0 else (204, 191, 168)
+        color = WARNING if claimable_count > 0 else TEXT_SECONDARY
         screen.blit(self.body_font.render(str(claimable_count), True, color), (x + base_text.get_width(), y))
 
     def _draw_category_tabs(self, screen):
@@ -232,7 +250,7 @@ class AchievementOverlay:
 
         self.row_rects = []
         if not page_items:
-            empty = self.body_font.render("No achievements here.", True, (160, 168, 176))
+            empty = self.body_font.render("No achievements here.", True, TEXT_MUTED)
             screen.blit(empty, (self.list_rect.x + 16, self.list_rect.y + 18))
         y = self.list_rect.y + 10
         row_height = self._get_row_height()
@@ -242,7 +260,7 @@ class AchievementOverlay:
             self._draw_list_row(screen, row, achievement_id, achievement, achievement_id == self.selected_achievement_id)
             y += row_height
 
-        page_label = self.small_font.render(f"Page {self.page + 1} / {total_pages}", True, (204, 191, 168))
+        page_label = self.small_font.render(f"Page {self.page + 1} / {total_pages}", True, TEXT_SECONDARY)
         screen.blit(page_label, page_label.get_rect(center=(self.list_rect.centerx, self.prev_rect.centery)))
         self._draw_button(screen, self.prev_rect, "<", enabled=self.page > 0)
         self._draw_button(screen, self.next_rect, ">", enabled=self.page < total_pages - 1)
@@ -255,18 +273,18 @@ class AchievementOverlay:
         almost = required > 0 and current / required >= 0.8 and status == "locked"
 
         if hidden:
-            label, bg, badge_bg, badge_text = "HIDE", (37, 40, 45), (78, 78, 86), (190, 190, 198)
+            label, bg, badge_bg, badge_text = "HIDE", DISABLED_BG, (72, 68, 60), TEXT_MUTED
         elif status == "claimable":
-            label, bg, badge_bg, badge_text = "CLAIM", (69, 58, 39), (132, 99, 42), (255, 224, 130)
+            label, bg, badge_bg, badge_text = "CLAIM", CARD_BG_SELECTED, (116, 82, 34), TEXT_PRIMARY
         elif status == "claimed":
-            label, bg, badge_bg, badge_text = "DONE", (38, 56, 46), (58, 106, 72), (190, 235, 190)
+            label, bg, badge_bg, badge_text = "DONE", CARD_BG, (45, 88, 56), TEXT_PRIMARY
         elif in_progress:
-            label, bg, badge_bg, badge_text = "TODO", (42, 52, 64), (62, 82, 104), (190, 210, 230)
+            label, bg, badge_bg, badge_text = "TODO", CARD_BG, (54, 74, 86), TEXT_PRIMARY
         else:
-            label, bg, badge_bg, badge_text = "TODO", (38, 46, 55), (68, 74, 82), (178, 184, 190)
+            label, bg, badge_bg, badge_text = "TODO", CARD_BG, (64, 60, 52), TEXT_MUTED
 
         pygame.draw.rect(screen, bg, row, border_radius=5)
-        border = (235, 230, 190) if selected else (154, 122, 58) if status == "claimable" else (70, 58, 42)
+        border = BORDER_SELECTED if selected else WARNING if status == "claimable" else BORDER_NORMAL
         pygame.draw.rect(screen, border, row, 2 if selected or status == "claimable" else 1, border_radius=5)
 
         badge = pygame.Rect(row.x + 6, row.y + 7, 52, 22)
@@ -279,17 +297,17 @@ class AchievementOverlay:
             name = f"{name} - Reward ready"
         elif almost:
             name = f"{name} - Almost"
-        color = (246, 226, 150) if status == "claimable" else (215, 224, 230)
+        color = WARNING if status == "claimable" else TEXT_PRIMARY
         text = self.body_font.render(self._truncate_text(name, self.body_font, row.w - 138), True, color)
         screen.blit(text, (row.x + 66, row.y + 8))
-        progress_text = self.small_font.render(f"{current}/{required}", True, (176, 188, 198))
+        progress_text = self.small_font.render(f"{current}/{required}", True, TEXT_SECONDARY)
         screen.blit(progress_text, (row.right - progress_text.get_width() - 8, row.y + 10))
 
     def _draw_selected_achievement(self, screen):
         self._draw_content_box(screen, self.detail_rect)
         achievement = self._get_achievement_data(self.selected_achievement_id)
         if not isinstance(achievement, dict) or not achievement:
-            text = self.body_font.render("No achievement selected", True, (160, 168, 176))
+            text = self.body_font.render("No achievement selected", True, TEXT_MUTED)
             screen.blit(text, (self.detail_rect.x + 16, self.detail_rect.y + 18))
             return
 
@@ -299,14 +317,14 @@ class AchievementOverlay:
         x = self.detail_rect.x + 16
         y = self.detail_rect.y + 14
         name = "Hidden achievement" if hidden else achievement.get("name", self.selected_achievement_id)
-        title = self.header_font.render(self._truncate_text(name, self.header_font, self.detail_rect.w - 32), True, (246, 235, 205))
+        title = self.header_font.render(self._truncate_text(name, self.header_font, self.detail_rect.w - 32), True, TEXT_PRIMARY)
         screen.blit(title, (x, y))
         y += 31
 
         self._draw_status_badge(screen, pygame.Rect(x, y, 150, 24), self._get_detail_status_label(status, current, required), status)
         y += 31
         meta = f"{achievement.get('category', 'unknown').title()} | Tier {achievement.get('tier', 0)}"
-        self._draw_line(screen, meta, x, y, (190, 202, 210))
+        self._draw_line(screen, meta, x, y, TEXT_SECONDARY)
         y += 24
 
         detail_lines = ["Description: Hidden", "Objective: Hidden"] if hidden else [
@@ -314,25 +332,25 @@ class AchievementOverlay:
             self._format_objective(achievement),
         ]
         for line in detail_lines:
-            y = self._draw_wrapped_text(screen, line, x, y, self.detail_rect.w - 32, (210, 218, 220))
+            y = self._draw_wrapped_text(screen, line, x, y, self.detail_rect.w - 32, TEXT_SECONDARY)
             y += 2
 
-        self._draw_line(screen, f"Progress: {current} / {required}", x, y, (220, 220, 170))
+        self._draw_line(screen, f"Progress: {current} / {required}", x, y, TEXT_PRIMARY)
         y += 22
         self._draw_progress_bar(screen, pygame.Rect(x, y, self.detail_rect.w - 32, 14), current, required)
         y += 24
 
-        rewards_title = self.body_font.render("Rewards", True, (246, 235, 205))
+        rewards_title = self.body_font.render("Rewards", True, TEXT_PRIMARY)
         screen.blit(rewards_title, (x, y))
         y += 22
         rewards = achievement.get("rewards", [])
         if not isinstance(rewards, list):
             rewards = []
         if not rewards:
-            self._draw_line(screen, "No reward.", x, y, (160, 168, 176))
+            self._draw_line(screen, "No reward.", x, y, TEXT_MUTED)
         for reward in rewards[:4]:
             prefix = "DONE" if status == "claimed" else "CLAIM" if status == "claimable" else "-"
-            self._draw_line(screen, f"{prefix} {self._format_reward(reward)}", x, y, (205, 220, 190))
+            self._draw_line(screen, f"{prefix} {self._format_reward(reward)}", x, y, TEXT_SECONDARY)
             y += 20
 
         self._draw_detail_action_area(screen, status, x)
@@ -341,52 +359,52 @@ class AchievementOverlay:
         action_y = self.detail_rect.bottom + 16
         message = self._format_claim_result_message()
         if message:
-            self._draw_line(screen, message, x, action_y, (238, 205, 140), self.detail_rect.w - 180)
+            self._draw_line(screen, message, x, action_y, WARNING, self.detail_rect.w - 180)
         if status == "claimable":
             self._draw_button(screen, self.claim_button_rect, "Claim Reward", warm=True)
         elif status == "claimed":
-            self._draw_line(screen, "Reward already claimed.", x, action_y, (170, 220, 170), self.detail_rect.w - 180)
+            self._draw_line(screen, "Reward already claimed.", x, action_y, SUCCESS, self.detail_rect.w - 180)
         elif not message:
-            self._draw_line(screen, "Complete this achievement first.", x, action_y, (170, 180, 190), self.detail_rect.w - 180)
+            self._draw_line(screen, "Complete this achievement first.", x, action_y, TEXT_MUTED, self.detail_rect.w - 180)
 
     def _draw_status_badge(self, screen, rect, label, status):
         if status == "claimable":
-            bg, border, color = (132, 99, 42), (245, 198, 92), (255, 235, 160)
+            bg, border, color = (116, 82, 34), WARNING, TEXT_PRIMARY
         elif status == "claimed":
-            bg, border, color = (58, 106, 72), (150, 220, 150), (210, 245, 210)
+            bg, border, color = (45, 88, 56), SUCCESS, TEXT_PRIMARY
         elif label == "IN PROGRESS":
-            bg, border, color = (62, 82, 104), (150, 185, 220), (210, 230, 245)
+            bg, border, color = (42, 58, 66), INFO, TEXT_PRIMARY
         else:
-            bg, border, color = (62, 66, 72), (130, 138, 146), (220, 225, 230)
+            bg, border, color = DISABLED_BG, BORDER_NORMAL, TEXT_SECONDARY
         pygame.draw.rect(screen, bg, rect, border_radius=5)
         pygame.draw.rect(screen, border, rect, 2, border_radius=5)
         text = self.small_font.render(label, True, color)
         screen.blit(text, text.get_rect(center=rect.center))
 
     def _draw_content_box(self, screen, rect):
-        pygame.draw.rect(screen, (31, 28, 25), rect, border_radius=6)
-        pygame.draw.rect(screen, (118, 91, 54), rect, 2, border_radius=6)
+        pygame.draw.rect(screen, PANEL_BG_SECONDARY, rect, border_radius=6)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 2, border_radius=6)
 
     def _draw_button(self, screen, rect, label, active=False, enabled=True, warm=False, font=None):
         font = font or self.body_font
         if warm and enabled:
-            bg, border, color = (132, 99, 42), (245, 198, 92), (255, 235, 160)
+            bg, border, color = (116, 82, 34), BORDER_SELECTED, TEXT_PRIMARY
         else:
-            bg = (80, 58, 35) if active else (44, 37, 32) if enabled else (38, 35, 32)
-            border = (215, 176, 91) if active else (105, 82, 52) if enabled else (74, 68, 62)
-            color = (246, 235, 205) if enabled else (130, 124, 116)
+            bg = CARD_BG_SELECTED if active else CARD_BG if enabled else DISABLED_BG
+            border = BORDER_SELECTED if active else BORDER_NORMAL if enabled else DISABLED_TEXT
+            color = TEXT_PRIMARY if enabled else DISABLED_TEXT
         pygame.draw.rect(screen, bg, rect, border_radius=5)
         pygame.draw.rect(screen, border, rect, 1 if rect.h < 30 else 2, border_radius=5)
         text = font.render(self._truncate_text(label, font, rect.w - 8), True, color)
         screen.blit(text, text.get_rect(center=rect.center))
 
     def _draw_progress_bar(self, screen, rect, current, required):
-        pygame.draw.rect(screen, (20, 24, 28), rect, border_radius=5)
+        pygame.draw.rect(screen, PANEL_BG, rect, border_radius=5)
         ratio = 0 if required <= 0 else max(0, min(current / required, 1))
         fill = pygame.Rect(rect.x, rect.y, int(rect.w * ratio), rect.h)
         if fill.w > 0:
-            pygame.draw.rect(screen, (120, 178, 104), fill, border_radius=5)
-        pygame.draw.rect(screen, (130, 140, 148), rect, 1, border_radius=5)
+            pygame.draw.rect(screen, SUCCESS, fill, border_radius=5)
+        pygame.draw.rect(screen, BORDER_NORMAL, rect, 1, border_radius=5)
 
     def _draw_line(self, screen, text, x, y, color, max_width=None):
         max_width = max_width or self.detail_rect.w - 32

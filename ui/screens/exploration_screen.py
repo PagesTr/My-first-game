@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import pygame
 
 from ui.overlays.achievement_overlay import AchievementOverlay
+from ui.overlays.craft_book_overlay import CraftBookOverlay
 from ui.overlays.inventory_overlay import InventoryOverlay
 from ui.overlays.profession_overlay import ProfessionOverlay
 from ui.overlays.quest_overlay import QuestOverlay
@@ -373,6 +374,7 @@ class ExplorationScreen:
         self.triggers = list(self.map.triggers) if self.map.is_loaded else []
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
+        self.craft_book_overlay = CraftBookOverlay(self.game)
         self.inventory_overlay = InventoryOverlay(self.game)
         self.profession_overlay = ProfessionOverlay(self.game)
         self.quest_overlay = QuestOverlay(self.game)
@@ -384,7 +386,7 @@ class ExplorationScreen:
             {"id": "achievements", "label": "Achievements", "overlay": "achievements", "shortcut": pygame.K_a, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "professions", "label": "Professions", "overlay": "professions", "shortcut": pygame.K_p, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "mailbox", "label": "Mailbox", "target_state": "mailbox", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
-            {"id": "recipes", "label": "Recipes", "target_state": "crafting", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
+            {"id": "recipes", "label": "Recipes", "overlay": "craft_book", "shortcut": pygame.K_r, "rect": pygame.Rect(0, 0, 0, 0)},
             {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_t, "rect": pygame.Rect(0, 0, 0, 0)},
         ]
         self.show_collision_debug = False
@@ -704,7 +706,7 @@ class ExplorationScreen:
             self.game.state = target_state
 
     def _toggle_overlay(self, overlay_id):
-        if overlay_id not in {"inventory", "quests", "achievements", "skills", "professions"}:
+        if overlay_id not in {"inventory", "quests", "achievements", "skills", "professions", "craft_book"}:
             return
         if self.active_overlay == overlay_id:
             self._close_active_overlay()
@@ -742,6 +744,7 @@ class ExplorationScreen:
             "achievements": self.achievement_overlay,
             "skills": self.skill_overlay,
             "professions": self.profession_overlay,
+            "craft_book": self.craft_book_overlay,
         }
         return overlays.get(overlay_id)
 

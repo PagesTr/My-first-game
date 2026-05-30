@@ -1,0 +1,22 @@
+{
+  "id": "mage_idle_front",
+  "source": "imagegen",
+  "style_reference": "docs/art_direction.md",
+  "frame_width": 32,
+  "frame_height": 48,
+  "frame_count": 4,
+  "direction": "front",
+  "animation": "idle",
+  "anchor": "bottom-center",
+  "files": {
+    "source_chroma": "mage_idle_front_source_chroma.png",
+    "sheet": "mage_idle_front_sheet.png",
+    "preview": "mage_idle_front_preview.png",
+    "frames": [
+      "mage_idle_front_0.png",
+      "mage_idle_front_1.png",
+      "mage_idle_front_2.png",
+      "mage_idle_front_3.png"
+    ]
+  }
+}
