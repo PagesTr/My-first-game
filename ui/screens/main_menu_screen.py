@@ -81,6 +81,11 @@ class MainMenuScreen:
         if self.continue_button.is_clicked(event.pos):
             if not self.game.load_saved_game():
                 self._set_message("Failed to load save")
+                return
+            if hasattr(self.game, "open_exploration"):
+                self.game.open_exploration()
+            else:
+                self.game.state = "exploration"
             return
 
         if self.new_game_button.is_clicked(event.pos):
