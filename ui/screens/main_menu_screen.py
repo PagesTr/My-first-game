@@ -5,23 +5,23 @@ from ui.overlays.notice_board_overlay import NoticeBoardOverlay
 
 
 PALETTE = {
-    "sky_top": (18, 24, 32),
-    "sky_bottom": (20, 42, 35),
+    "sky_top": (18, 20, 24),
+    "sky_bottom": (42, 34, 27),
     "forest_back": (18, 46, 37),
     "forest_front": (12, 28, 24),
     "ground": (17, 20, 22),
     "ground_light": (36, 41, 34),
-    "panel": (37, 45, 54),
-    "panel_dark": (27, 34, 42),
-    "panel_light": (64, 73, 78),
-    "border": (92, 82, 58),
-    "border_light": (192, 172, 105),
+    "panel": (38, 34, 28),
+    "panel_dark": (25, 22, 18),
+    "panel_light": (86, 70, 45),
+    "border": (118, 92, 45),
+    "border_light": (205, 170, 80),
     "text": (238, 232, 214),
-    "muted": (174, 184, 174),
+    "muted": (190, 184, 160),
     "gold": (228, 188, 86),
-    "button": (42, 58, 54),
-    "button_disabled": (38, 42, 46),
-    "button_border": (192, 172, 105),
+    "button": (76, 58, 38),
+    "button_disabled": (42, 40, 36),
+    "button_border": (205, 170, 80),
     "shadow": (8, 10, 13),
 }
 
@@ -57,10 +57,10 @@ class MainMenuScreen:
         self.header_font = pygame.font.Font(None, 34)
         self.subtitle_font = pygame.font.Font(None, 24)
         self.button_font = pygame.font.Font(None, 30)
-        self.continue_button = Button((292, 254, 216, 52), "Continue")
-        self.new_game_button = Button((292, 322, 216, 52), "New Game")
-        self.quit_button = Button((292, 390, 216, 52), "Quit")
-        self.notice_board_button = Button((626, 24, 134, 40), "Notice Board")
+        self.continue_button = Button((292, 248, 216, 52), "Continue")
+        self.new_game_button = Button((292, 316, 216, 52), "New Game")
+        self.notice_board_button = Button((292, 384, 216, 52), "Notice Board")
+        self.quit_button = Button((292, 452, 216, 52), "Quit")
         self.notice_board_overlay = NoticeBoardOverlay(self.game)
         self.message = ""
         self.message_until = 0
@@ -71,10 +71,6 @@ class MainMenuScreen:
             return
 
         if event.type != pygame.MOUSEBUTTONDOWN:
-            return
-
-        if self.notice_board_button.is_clicked(event.pos):
-            self.notice_board_overlay.open()
             return
 
         self.continue_button.enabled = has_save_file()
@@ -90,6 +86,10 @@ class MainMenuScreen:
 
         if self.new_game_button.is_clicked(event.pos):
             self.game.start_new_game()
+            return
+
+        if self.notice_board_button.is_clicked(event.pos):
+            self.notice_board_overlay.open()
             return
 
         if self.quit_button.is_clicked(event.pos):
@@ -111,12 +111,12 @@ class MainMenuScreen:
 
         self.continue_button.draw(screen, self.button_font)
         self.new_game_button.draw(screen, self.button_font)
+        self.notice_board_button.draw(screen, self.button_font)
         self.quit_button.draw(screen, self.button_font)
-        self.notice_board_button.draw(screen, self.subtitle_font)
 
         if not self.continue_button.enabled:
             no_save = self.subtitle_font.render("No save found", True, PALETTE["muted"])
-            no_save_rect = no_save.get_rect(center=(400, 311))
+            no_save_rect = no_save.get_rect(center=(400, 308))
             screen.blit(no_save, no_save_rect)
 
         if self.message and pygame.time.get_ticks() <= self.message_until:
@@ -178,7 +178,7 @@ class MainMenuScreen:
         screen.blit(title, title_rect)
 
         subtitle = self.subtitle_font.render(
-            "Every expedition ends. Progress remains.",
+            "The forest keeps count.",
             True,
             PALETTE["muted"],
         )
@@ -186,7 +186,7 @@ class MainMenuScreen:
         screen.blit(subtitle, subtitle_rect)
 
     def _draw_menu_panel(self, screen):
-        panel_rect = pygame.Rect(248, 208, 304, 266)
+        panel_rect = pygame.Rect(248, 194, 304, 322)
         pygame.draw.rect(screen, PALETTE["shadow"], panel_rect.move(5, 5))
         pygame.draw.rect(screen, PALETTE["panel"], panel_rect)
         pygame.draw.rect(screen, PALETTE["border"], panel_rect, 3)
@@ -199,7 +199,7 @@ class MainMenuScreen:
             2,
         )
         header = self.header_font.render("Main Menu", True, PALETTE["text"])
-        header_rect = header.get_rect(center=(400, 232))
+        header_rect = header.get_rect(center=(400, panel_rect.y + 30))
         screen.blit(header, header_rect)
 
     def _draw_message(self, screen, message):
@@ -212,7 +212,7 @@ class MainMenuScreen:
         screen.blit(text, text_rect)
 
     def _draw_footer(self, screen):
-        version = self.subtitle_font.render("Version: prototype", True, (120, 130, 140))
+        version = self.subtitle_font.render("Prototype build", True, (130, 124, 105))
         screen.blit(version, (50, 548))
-        hint = self.subtitle_font.render("Forest build", True, PALETTE["muted"])
-        screen.blit(hint, (650, 548))
+        hint = self.subtitle_font.render("Top-down exploration", True, PALETTE["muted"])
+        screen.blit(hint, (604, 548))
