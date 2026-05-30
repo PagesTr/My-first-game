@@ -664,6 +664,9 @@ class ExplorationScreen:
         trigger_type = trigger.get("trigger_type")
         if trigger_type == "state_transition":
             target_state = trigger.get("target_state")
+            if target_state == "crafting":
+                self._open_craft_book_overlay(allow_craft=True)
+                return
             if target_state:
                 self.game.state = target_state
                 return
@@ -714,12 +717,20 @@ class ExplorationScreen:
         self._open_overlay(overlay_id)
 
     def _open_overlay(self, overlay_id):
+        if overlay_id == "craft_book":
+            self._open_craft_book_overlay(allow_craft=False)
+            return
         overlay = self._get_overlay(overlay_id)
         if overlay is None:
             return
         self._close_active_overlay()
         overlay.open()
         self.active_overlay = overlay_id
+
+    def _open_craft_book_overlay(self, allow_craft=False):
+        self._close_active_overlay()
+        self.craft_book_overlay.open(allow_craft=allow_craft)
+        self.active_overlay = "craft_book"
 
     def _close_overlay(self):
         self._close_active_overlay()

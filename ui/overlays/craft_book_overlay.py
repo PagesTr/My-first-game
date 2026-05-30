@@ -3,14 +3,25 @@ import pygame
 try:
     from systems.crafting import (
         can_craft_recipe,
+        craft_recipe,
         count_individual_item,
         count_stackable_item,
     )
 except ImportError:
-    from systems.crafting import can_craft
+    from systems.crafting import can_craft, craft_item
 
     def can_craft_recipe(inventory, recipe):
         return can_craft(inventory, recipe)
+
+    def craft_recipe(inventory, recipes, recipe_id, items):
+        recipe = recipes.get(recipe_id) if isinstance(recipes, dict) else None
+        if not isinstance(recipe, dict):
+            return {"crafted": False, "recipe_id": recipe_id, "reason": "unknown_recipe"}
+        if not can_craft(inventory, recipe):
+            return {"crafted": False, "recipe_id": recipe_id, "reason": "missing_ingredients"}
+        if not craft_item(inventory, recipe, items):
+            return {"crafted": False, "recipe_id": recipe_id, "reason": "inventory_full"}
+        return {"crafted": True, "recipe_id": recipe_id, "result": recipe.get("result", {})}
 
     def count_stackable_item(inventory, item_id):
         if not isinstance(inventory, dict) or not isinstance(inventory.get("slots"), list):
@@ -58,9 +69,13 @@ class CraftBookOverlay:
 
         self.game = game
         self.opened = False
+        self.allow_craft = False
         self.selected_filter = "All"
         self.selected_recipe_id = None
         self.recipe_scroll_offset = 0
+        self.message = ""
+        self.message_success = None
+        self.message_until = 0
         self.title_font = pygame.font.Font(None, 38)
         self.header_font = pygame.font.Font(None, 27)
         self.body_font = pygame.font.Font(None, 22)
@@ -71,10 +86,15 @@ class CraftBookOverlay:
         self.list_rect = pygame.Rect(0, 0, 0, 0)
         self.detail_rect = pygame.Rect(0, 0, 0, 0)
         self.station_message_rect = pygame.Rect(0, 0, 0, 0)
+        self.craft_button_rect = pygame.Rect(0, 0, 0, 0)
         self.recipe_row_rects = []
 
-    def open(self):
+    def open(self, allow_craft=False):
+        self.allow_craft = bool(allow_craft)
         self.opened = True
+        self.message = ""
+        self.message_success = None
+        self.message_until = 0
         self._select_first_filtered_recipe_if_needed(force=False)
 
     def close(self):
@@ -113,12 +133,20 @@ class CraftBookOverlay:
                 self.selected_filter = filter_name
                 self.recipe_scroll_offset = 0
                 self._select_first_filtered_recipe_if_needed(force=True)
+                self.message = ""
+                self.message_success = None
                 return True
 
         for recipe_id, rect in self.recipe_row_rects:
             if rect.collidepoint(position):
                 self.selected_recipe_id = recipe_id
+                self.message = ""
+                self.message_success = None
                 return True
+
+        if self.allow_craft and self.craft_button_rect.collidepoint(position):
+            self._try_craft()
+            return True
 
         return True
 
@@ -148,6 +176,39 @@ class CraftBookOverlay:
         self._draw_recipe_list(screen)
         self._draw_recipe_detail(screen)
         self._draw_station_message(screen)
+        self._draw_message(screen)
+
+    def _try_craft(self):
+        if not self.allow_craft:
+            self._set_message("Crafting requires a station.", False)
+            return
+
+        player = getattr(self.game, "player", None)
+        inventory = self._get_inventory()
+        recipes = self._get_recipes_data()
+        if not isinstance(player, dict) or not isinstance(inventory.get("slots"), list) or not self.selected_recipe_id:
+            self._set_message("Cannot craft.", False)
+            return
+
+        recipe = self._get_selected_recipe()
+        if not recipe:
+            self._set_message("Cannot craft.", False)
+            return
+        if not self._is_recipe_available(recipe):
+            self._set_message("Missing ingredients.", False)
+            return
+
+        result = craft_recipe(inventory, recipes, self.selected_recipe_id, self._get_items_data())
+        if isinstance(result, dict) and result.get("crafted") is True:
+            if hasattr(self.game, "record_craft_quest_progress"):
+                self.game.record_craft_quest_progress(self.selected_recipe_id, result)
+            if hasattr(self.game, "save_current_game"):
+                self.game.save_current_game()
+            self._set_message(f"Crafted: {self._get_recipe_result_name(recipe)}", True)
+            self._select_first_filtered_recipe_if_needed(force=False)
+            return
+
+        self._set_message(self._get_craft_failure_message(result), False)
 
     def _draw_recipe_list(self, screen):
         self.recipe_row_rects = []
@@ -220,6 +281,8 @@ class CraftBookOverlay:
         if not recipe:
             text = self.body_font.render("Select a recipe.", True, TEXT_MUTED)
             screen.blit(text, (self.detail_rect.x + 16, self.detail_rect.y + 18))
+            if self.allow_craft:
+                self._draw_button(screen, self.craft_button_rect, "Craft", enabled=False, warm=True)
             return
 
         x = self.detail_rect.x + 16
@@ -241,6 +304,8 @@ class CraftBookOverlay:
         y = self._draw_result(screen, recipe, x, y, max_width)
         y += 8
         self._draw_result_stats(screen, recipe, x, y, max_width)
+        if self.allow_craft:
+            self._draw_button(screen, self.craft_button_rect, "Craft", enabled=available, warm=available)
 
     def _draw_ingredients(self, screen, recipe, x, y, max_width):
         title = self.body_font.render("Ingredients", True, TEXT_PRIMARY)
@@ -296,7 +361,7 @@ class CraftBookOverlay:
         title = self.body_font.render("Stats", True, TEXT_PRIMARY)
         screen.blit(title, (x, y))
         y += 23
-        bottom = self.detail_rect.bottom - 10
+        bottom = self.craft_button_rect.y - 8 if self.allow_craft else self.detail_rect.bottom - 10
         for line in self._format_item_stats(stats)[:8]:
             if y + 18 > bottom:
                 break
@@ -480,6 +545,21 @@ class CraftBookOverlay:
             return f"x{value}"
         return str(value)
 
+    def _get_craft_failure_message(self, result):
+        reason = result.get("reason") if isinstance(result, dict) else None
+        messages = {
+            "unknown_recipe": "Unknown recipe",
+            "missing_ingredients": "Missing ingredients",
+            "inventory_full": "Inventory full",
+            "invalid_recipe": "Cannot craft",
+        }
+        return messages.get(reason, "Cannot craft")
+
+    def _set_message(self, message, success=None):
+        self.message = message
+        self.message_success = success
+        self.message_until = pygame.time.get_ticks() + 1800 if message else 0
+
     def _scroll_recipes(self, direction):
         recipe_ids = self._get_filtered_recipe_ids()
         max_visible = self._get_max_visible_recipe_rows()
@@ -524,6 +604,7 @@ class CraftBookOverlay:
             bottom - content_top - 42,
         )
         self.station_message_rect = pygame.Rect(self.detail_rect.x, self.panel_rect.bottom - 48, self.detail_rect.width, 24)
+        self.craft_button_rect = pygame.Rect(self.detail_rect.right - 118, self.panel_rect.bottom - 50, 100, 28)
 
     def _draw_overlay_background(self, screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -534,9 +615,11 @@ class CraftBookOverlay:
         pygame.draw.rect(screen, PANEL_BG, rect, border_radius=10)
         pygame.draw.rect(screen, BORDER_BRIGHT, rect, 2, border_radius=10)
         pygame.draw.rect(screen, BORDER_NORMAL, rect.inflate(-8, -8), 1, border_radius=8)
-        title = self.title_font.render("Craft Book", True, TEXT_PRIMARY)
+        title_text = "Crafting Station" if self.allow_craft else "Craft Book"
+        title = self.title_font.render(title_text, True, TEXT_PRIMARY)
         screen.blit(title, (rect.x + 22, rect.y + 16))
-        subtitle = self.small_font.render("Consult known recipes", True, TEXT_SECONDARY)
+        subtitle_text = "Craft available recipes" if self.allow_craft else "Consult known recipes"
+        subtitle = self.small_font.render(subtitle_text, True, TEXT_SECONDARY)
         screen.blit(subtitle, (rect.x + 24, rect.y + 52))
 
     def _draw_button(self, screen, rect, label, active=False, enabled=True, warm=False, font=None):
@@ -557,8 +640,23 @@ class CraftBookOverlay:
         screen.blit(text, (self.panel_rect.x + 24, self.panel_rect.y + 82))
 
     def _draw_station_message(self, screen):
-        message = "Use a crafting station to craft this recipe."
-        text = self.small_font.render(self._truncate_text(message, self.small_font, self.station_message_rect.width), True, TEXT_SECONDARY)
+        if self.message and pygame.time.get_ticks() <= self.message_until:
+            return
+        message = "Select a ready recipe to craft." if self.allow_craft else "Use a crafting station to craft this recipe."
+        max_width = self.station_message_rect.width - (124 if self.allow_craft else 0)
+        text = self.small_font.render(self._truncate_text(message, self.small_font, max_width), True, TEXT_SECONDARY)
+        screen.blit(text, (self.station_message_rect.x, self.station_message_rect.y + 4))
+
+    def _draw_message(self, screen):
+        if not self.message:
+            return
+        if pygame.time.get_ticks() > self.message_until:
+            self.message = ""
+            self.message_success = None
+            return
+        color = SUCCESS if self.message_success is True else DANGER if self.message_success is False else TEXT_SECONDARY
+        max_width = self.station_message_rect.width - (124 if self.allow_craft else 0)
+        text = self.small_font.render(self._truncate_text(self.message, self.small_font, max_width), True, color)
         screen.blit(text, (self.station_message_rect.x, self.station_message_rect.y + 4))
 
     def _truncate_text(self, text, font, max_width):
