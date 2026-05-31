@@ -349,9 +349,14 @@ class ExplorationScreen:
         self.title_font = pygame.font.Font(None, 34)
         self.body_font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
-        self.map = TiledMap(Path("assets/maps/town_01.tmx"))
-        self.map_width = self.map.pixel_width if self.map.is_loaded else 800
-        self.map_height = self.map.pixel_height if self.map.is_loaded else 600
+        self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. Shift pour courir. E pres d'un point. Echap pour rentrer."
+        self.message = self.default_message
+        self.message_until_ms = 0
+        self.map_directory = Path("assets/maps")
+        self.current_map_id = "town_01"
+        self.map = None
+        self.map_width = 800
+        self.map_height = 600
         self.camera_offset = pygame.Vector2(0, 0)
         self.tile_size = 16
         self.player_visual_size = pygame.Vector2(16, 24)
@@ -359,20 +364,16 @@ class ExplorationScreen:
         self.player_sprite = self._load_player_sprite()
         self.active_spawn_id = None
         self.spawn_debug_message = ""
-        self.player_position = self._get_initial_player_position()
-        player_spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
-        self.player_facing = player_spawn.get("facing") if player_spawn is not None else "down"
+        self.player_position = pygame.Vector2(self.map_width / 2, self.map_height / 2)
+        self.player_facing = "down"
         self.player_rect = pygame.Rect(0, 0, int(self.player_hitbox_size.x), int(self.player_hitbox_size.y))
-        self._sync_player_rect_from_position()
         self.player_walk_speed = 2
         self.player_run_speed = 4
+        self.obstacles = []
+        self.collision_polygons = []
+        self.triggers = []
+        self._load_map(self.current_map_id)
         self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
-        self.default_message = "Explore la clairiere. Fleches ou ZQSD pour bouger. Shift pour courir. E pres d'un point. Echap pour rentrer."
-        self.message = self.spawn_debug_message or self.default_message
-        self.message_until_ms = pygame.time.get_ticks() + 4000 if self.spawn_debug_message else 0
-        self.obstacles = list(self.map.collision_rects) if self.map.is_loaded else []
-        self.collision_polygons = list(self.map.collision_polygons) if self.map.is_loaded else []
-        self.triggers = list(self.map.triggers) if self.map.is_loaded else []
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
         self.craft_book_overlay = CraftBookOverlay(self.game)
@@ -641,6 +642,77 @@ class ExplorationScreen:
     def _sync_player_rect_from_position(self):
         self.player_rect = self._build_player_rect(self.player_position)
 
+    def _load_map(self, map_id, spawn_id=None):
+        map_id = self._clean_tiled_value(map_id)
+        spawn_id = self._clean_tiled_value(spawn_id)
+        if map_id is None:
+            self.spawn_debug_message = "Map id missing."
+            self._show_temporary_message(self.spawn_debug_message)
+            return False
+
+        loaded_map = TiledMap(self.map_directory / f"{map_id}.tmx")
+        self.map = loaded_map
+        self.current_map_id = map_id
+        self.map_width = loaded_map.pixel_width if loaded_map.is_loaded else 800
+        self.map_height = loaded_map.pixel_height if loaded_map.is_loaded else 600
+        self.obstacles = list(loaded_map.collision_rects) if loaded_map.is_loaded else []
+        self.collision_polygons = list(loaded_map.collision_polygons) if loaded_map.is_loaded else []
+        self.triggers = list(loaded_map.triggers) if loaded_map.is_loaded else []
+
+        self.player_position, spawn = self._get_spawn_position(spawn_id)
+        self.active_spawn_id = spawn.get("spawn_id") if spawn is not None else None
+        if spawn is not None:
+            self.player_facing = self._clean_tiled_value(spawn.get("facing")) or self.player_facing
+        self._sync_player_rect_from_position()
+        self.camera_offset.update(0, 0)
+
+        if not loaded_map.is_loaded:
+            self.spawn_debug_message = loaded_map.error_message or f"Map {map_id} unavailable."
+            self._show_temporary_message(self.spawn_debug_message)
+            return False
+
+        self._show_temporary_message(self.spawn_debug_message)
+        return True
+
+    def _get_spawn_position(self, spawn_id=None):
+        spawn_id = self._clean_tiled_value(spawn_id)
+        spawn = None
+        if self.map is not None and self.map.is_loaded:
+            if spawn_id is not None:
+                spawn = self.map.spawns.get(spawn_id)
+                if spawn is None:
+                    self.spawn_debug_message = f"Spawn {spawn_id} not found. Using fallback."
+            if spawn is None:
+                spawn = self.map.spawns.get("player_start")
+                if spawn is not None and spawn_id is None:
+                    self.spawn_debug_message = "Spawn player_start loaded."
+
+        if spawn is not None:
+            if spawn_id is not None and spawn.get("spawn_id") == spawn_id:
+                self.spawn_debug_message = f"Spawn {spawn_id} loaded."
+            return pygame.Vector2(spawn["x"], spawn["y"]), spawn
+
+        spawn_ids = sorted(self.map.spawns.keys()) if self.map is not None and self.map.is_loaded else []
+        if spawn_id is None:
+            if spawn_ids:
+                self.spawn_debug_message = f"player_start not found. Found: {', '.join(spawn_ids)}"
+            else:
+                self.spawn_debug_message = "No Tiled spawns found."
+        return pygame.Vector2(self.map_width / 2, self.map_height / 2), None
+
+    def _clean_tiled_value(self, value):
+        if value is None:
+            return None
+        value = str(value).strip()
+        return value or None
+
+    def _show_temporary_message(self, message, duration_ms=2200):
+        message = self._clean_tiled_value(message)
+        if message is None:
+            return
+        self.message = message
+        self.message_until_ms = pygame.time.get_ticks() + duration_ms
+
     def _clamp_player_position(self, position, bounds):
         half_width = self.player_hitbox_size.x / 2
         half_height = self.player_hitbox_size.y / 2
@@ -663,9 +735,14 @@ class ExplorationScreen:
         return None
 
     def _activate_trigger(self, trigger):
-        trigger_type = trigger.get("trigger_type")
+        trigger_type = self._clean_tiled_value(trigger.get("trigger_type"))
         if trigger_type == "state_transition":
-            target_state = trigger.get("target_state")
+            target_map = self._clean_tiled_value(trigger.get("target_map"))
+            if target_map:
+                self._load_map(target_map, trigger.get("target_spawn_id"))
+                return
+
+            target_state = self._clean_tiled_value(trigger.get("target_state"))
             if target_state == "crafting":
                 self._open_craft_book_overlay(allow_craft=True)
                 return
@@ -673,8 +750,12 @@ class ExplorationScreen:
                 self.game.state = target_state
                 return
 
-        self.message = "Trigger non configure."
-        self.message_until_ms = pygame.time.get_ticks() + 2200
+        prompt = self._clean_tiled_value(trigger.get("prompt"))
+        if prompt:
+            self._show_temporary_message(prompt)
+            return
+
+        self._show_temporary_message("Trigger non configure.")
 
     def _get_quick_action_for_key(self, key):
         for action in self.quick_actions:
