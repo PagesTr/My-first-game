@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="futur_spawn" type="spawn">
+  <properties>
+   <property name="enabled" type="bool" value="true"/>
+   <property name="facing" value=""/>
+   <property name="map_id" value="town_01"/>
+   <property name="spawn_id" value=""/>
+   <property name="spawn_type" value="player"/>
+  </properties>
+  <point/>
+ </object>
+</template>

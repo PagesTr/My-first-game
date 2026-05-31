@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3773">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3772">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
@@ -6885,10 +6885,10 @@
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="once" type="bool" value="false"/>
-    <property name="prompt" value="E - Go to forest"/>
+    <property name="prompt" value="E - Aller vers la forêt"/>
     <property name="requires_interact" type="bool" value="true"/>
-    <property name="target_map" value=" forest_01"/>
-    <property name="target_spawn_id" value=" spawn_from_town"/>
+    <property name="target_map" value=" "/>
+    <property name="target_spawn_id" value=" "/>
     <property name="target_state" value="zone_select"/>
     <property name="trigger_id" value=" enter_forest_01"/>
     <property name="trigger_type" value=" state_transition"/>
@@ -7066,12 +7066,12 @@
    </properties>
    <point/>
   </object>
-  <object id="3758" name="spawn_from_forest" type="spawn" x="624" y="16">
+  <object id="3758" name="from_forest" type="spawn" x="624" y="16">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="facing" value=""/>
     <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value="spawn_from_forest"/>
+    <property name="spawn_id" value=""/>
     <property name="spawn_type" value="player"/>
    </properties>
    <point/>
@@ -7109,7 +7109,16 @@
   <object id="3762" name="futur_spawn" type="spawn" x="1264" y="768">
    <point/>
   </object>
-  <object id="3763" template="../templates/objects/futur_spawn.tx" type="spawn" x="793" y="1583"/>
+  <object id="3763" name="futur_spawn" type="spawn" x="793" y="1583">
+   <properties>
+    <property name="enabled" type="bool" value="true"/>
+    <property name="facing" value=""/>
+    <property name="map_id" value="town_01"/>
+    <property name="spawn_id" value=""/>
+    <property name="spawn_type" value="player"/>
+   </properties>
+   <point/>
+  </object>
   <object id="3764" name="player_start" type="spawn" x="16" y="448">
    <properties>
     <property name="enabled" type="bool" value="true"/>

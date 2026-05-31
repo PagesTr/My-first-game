@@ -73,6 +73,19 @@
                 "y": 36.72727272727273
             }
         },
+        "assets/maps/Vierge.tmx": {
+            "expandedObjectLayers": [
+                4,
+                10,
+                9
+            ],
+            "scale": 1.1380208333333333,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 479.7803203661328,
+                "y": 319.8535469107552
+            }
+        },
         "assets/maps/formation_house_test.tmx": {
             "scale": 3.9866071428571423,
             "selectedLayer": 0,
@@ -84,14 +97,14 @@
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
                 4,
-                9,
-                10
+                10,
+                9
             ],
-            "scale": 2,
+            "scale": 1.5,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 464,
-                "y": 664
+                "x": 682.6666666666665,
+                "y": 13.333333333333371
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -100,6 +113,14 @@
             "viewCenter": {
                 "x": 639.7070938215103,
                 "y": 480.36613272311206
+            }
+        },
+        "assets/maps/vierge.tmx": {
+            "scale": 0.558125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 840.3135498320269,
+                "y": 765.0615901455768
             }
         },
         "assets/maps/water.tsx": {
@@ -192,6 +213,7 @@
     "last.externalTilesetPath": "D:/Jeux test/Games/My first game/assets/tilesets",
     "last.imagePath": "D:/Jeux test/Games/My first game/assets/external/FANTASY RPG - Medieval townsfolk (by Franuka) v1.0",
     "last.objectTemplatePath": "D:/Jeux test/Games/My first game/assets/templates/objects",
+    "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
@@ -206,6 +228,8 @@
     "project": "town.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "assets/maps/vierge.tmx",
+        "assets/maps/Vierge.tmx",
         "assets/tilesets/pixel_crawler_walls.tsx",
         "assets/tilesets/characters_24x36.tsx",
         "assets/tilesets/characters_16x24.tsx",
@@ -215,9 +239,7 @@
         "assets/maps/town_01.tmx",
         "assets/tilesets/characters.tsx",
         "assets/tilesets/forest_ground_16x16_final.tsx",
-        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx",
-        "assets/automapping/tree_rules.tmx",
-        "assets/automapping/house_rules.tmx"
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
