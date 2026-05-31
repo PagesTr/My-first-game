@@ -1249,16 +1249,7 @@
  </objectgroup>
  <objectgroup id="6" name="91_npcs"/>
  <objectgroup id="7" name="92_objects"/>
- <objectgroup id="9" name="93_triggers"/>
- <objectgroup id="10" name="94_spawns">
-  <object id="3942" template="../templates/objects/futur_spawn.tx" name="spawn_from_town" x="496" y="624">
-   <properties>
-    <property name="facing" value="north"/>
-    <property name="map_id" value="forest_01"/>
-    <property name="spawn_id" value="spawn_from_town"/>
-   </properties>
-  </object>
-  <object id="3943" template="../templates/objects/futur_spawn.tx" x="944" y="304"/>
+ <objectgroup id="9" name="93_triggers">
   <object id="3944" template="../templates/objects/trigger.tx" name="trigger_town_01" x="480" y="624" width="32" height="16">
    <properties>
     <property name="prompt" value="E - Go to town"/>
@@ -1270,6 +1261,16 @@
    </properties>
   </object>
   <object id="3945" template="../templates/objects/trigger.tx" x="944" y="288" width="16" height="32"/>
+ </objectgroup>
+ <objectgroup id="10" name="94_spawns">
+  <object id="3942" template="../templates/objects/futur_spawn.tx" name="spawn_from_town" x="496" y="624">
+   <properties>
+    <property name="facing" value="north"/>
+    <property name="map_id" value="forest_01"/>
+    <property name="spawn_id" value="spawn_from_town"/>
+   </properties>
+  </object>
+  <object id="3943" template="../templates/objects/futur_spawn.tx" x="944" y="304"/>
  </objectgroup>
  <objectgroup id="11" name="95_npc_paths"/>
 </map>
