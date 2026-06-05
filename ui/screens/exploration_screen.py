@@ -26,6 +26,7 @@ class TiledMap:
         self.pixel_height = 0
         self.layers = []
         self.tiles = {}
+        self.tile_animations = {}
         self.collision_rects = []
         self.collision_polygons = []
         self.spawns = {}
@@ -104,9 +105,46 @@ class TiledMap:
                 row = local_id // columns
                 tile_rect = pygame.Rect(column * tile_width, row * tile_height, tile_width, tile_height)
                 self.tiles[first_gid + local_id] = image.subsurface(tile_rect).copy()
+
+            self._load_tile_animations(tileset_root, first_gid)
         except Exception as exc:
             source = tileset_node.attrib.get("source", "<inline tileset>")
             self.warnings.append(f"Ignored tileset {source}: {exc}")
+
+    def _load_tile_animations(self, tileset_root, first_gid):
+        for tile_node in tileset_root.findall("tile"):
+            animation_node = tile_node.find("animation")
+            if animation_node is None:
+                continue
+
+            try:
+                animated_gid = first_gid + int(tile_node.attrib["id"])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            if animated_gid not in self.tiles:
+                continue
+
+            frames = []
+            total_duration = 0
+            for frame_node in animation_node.findall("frame"):
+                try:
+                    frame_gid = first_gid + int(frame_node.attrib["tileid"])
+                    duration_ms = int(frame_node.attrib["duration"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+
+                if duration_ms <= 0 or frame_gid not in self.tiles:
+                    continue
+
+                frames.append((frame_gid, duration_ms))
+                total_duration += duration_ms
+
+            if frames and total_duration > 0:
+                self.tile_animations[animated_gid] = {
+                    "frames": frames,
+                    "total_duration": total_duration,
+                }
 
     def _load_object_groups(self, root):
         for object_group in root.findall("objectgroup"):
@@ -316,7 +354,26 @@ class TiledMap:
                 values.append(int(raw_value) & ~TILED_FLIP_FLAGS)
         return [values[index:index + layer_width] for index in range(0, len(values), layer_width)]
 
+    def _get_animated_gid(self, gid, current_time_ms):
+        animation = self.tile_animations.get(gid)
+        if not animation:
+            return gid
+
+        frames = animation.get("frames")
+        total_duration = animation.get("total_duration")
+        if not frames or not total_duration:
+            return gid
+
+        elapsed_ms = current_time_ms % total_duration
+        frame_start_ms = 0
+        for frame_gid, duration_ms in frames:
+            frame_start_ms += duration_ms
+            if elapsed_ms < frame_start_ms:
+                return frame_gid
+        return gid
+
     def draw(self, screen, camera_offset):
+        current_time_ms = pygame.time.get_ticks()
         offset_x, offset_y = camera_offset
         first_column = max(0, offset_x // self.tile_width)
         first_row = max(0, offset_y // self.tile_height)
@@ -332,7 +389,8 @@ class TiledMap:
                     gid = row[column_index]
                     if gid == 0:
                         continue
-                    tile = self.tiles.get(gid)
+                    display_gid = self._get_animated_gid(gid, current_time_ms)
+                    tile = self.tiles.get(display_gid)
                     if tile is not None:
                         screen.blit(
                             tile,
