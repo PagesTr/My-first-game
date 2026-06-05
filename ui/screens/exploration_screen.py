@@ -419,7 +419,10 @@ class ExplorationScreen:
         self.tile_size = 16
         self.player_visual_size = pygame.Vector2(16, 24)
         self.player_hitbox_size = pygame.Vector2(10, 8)
-        self.player_sprite = self._load_player_sprite()
+        self.player_animations = self._load_player_animations()
+        self.player_animation_state = "idle"
+        self.player_animation_frame_duration_ms = 140
+        self.player_is_moving = False
         self.active_spawn_id = None
         self.spawn_debug_message = ""
         self.player_position = pygame.Vector2(self.map_width / 2, self.map_height / 2)
@@ -508,6 +511,7 @@ class ExplorationScreen:
         if self.active_overlay is not None:
             return
 
+        self.player_is_moving = False
         keys = pygame.key.get_pressed()
         movement = pygame.Vector2(0, 0)
         if keys[pygame.K_LEFT] or keys[pygame.K_q]:
@@ -520,6 +524,7 @@ class ExplorationScreen:
             movement.y += 1
 
         if movement.length_squared() > 0:
+            self.player_is_moving = True
             speed = self.player_run_speed if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] else self.player_walk_speed
             self._move_player(movement, speed)
 
@@ -537,6 +542,11 @@ class ExplorationScreen:
             overlay.draw(screen)
 
     def _move_player(self, movement, speed):
+        if abs(movement.x) > abs(movement.y):
+            self.player_facing = "right" if movement.x > 0 else "left"
+        elif movement.y != 0:
+            self.player_facing = "down" if movement.y > 0 else "up"
+
         movement = movement.normalize() * speed
         bounds = pygame.Rect(0, 0, self.map_width, self.map_height)
         candidate_position = self._clamp_player_position(self.player_position + movement, bounds)
@@ -878,28 +888,62 @@ class ExplorationScreen:
         draw_rect = self._to_screen_rect(self._get_player_draw_rect())
         pygame.draw.ellipse(screen, (10, 25, 18), hitbox_rect.inflate(8, 2))
 
-        if self.player_sprite is not None:
-            screen.blit(self.player_sprite, draw_rect)
+        player_frame = self._get_player_frame()
+        if player_frame is not None:
+            screen.blit(player_frame, draw_rect)
             return
 
         pygame.draw.rect(screen, (66, 122, 166), draw_rect, border_radius=3)
         pygame.draw.circle(screen, (226, 188, 140), (draw_rect.centerx, draw_rect.y + 5), 5)
 
-    def _load_player_sprite(self):
-        sprite_path = Path("assets/sprites/player/base/idle/idle_down_sheet.png")
+    def _load_player_animations(self):
+        animations = {}
+        for state in ("idle", "walk"):
+            animations[state] = {}
+            for direction in ("down", "up", "left", "right"):
+                sheet_path = Path(f"assets/sprites/player/base/{state}/{state}_{direction}_sheet.png")
+                frames = self._load_player_animation_sheet(sheet_path)
+                if frames:
+                    animations[state][direction] = frames
+        return animations
+
+    def _load_player_animation_sheet(self, path):
         try:
-            sheet = pygame.image.load(str(sprite_path)).convert_alpha()
+            sheet = pygame.image.load(str(path)).convert_alpha()
             frame_size = sheet.get_height()
-            frame = sheet.subsurface(pygame.Rect(0, 0, frame_size, frame_size)).copy()
-            content_rect = frame.get_bounding_rect(min_alpha=1)
-            if content_rect.width > 0 and content_rect.height > 0:
-                frame = frame.subsurface(content_rect).copy()
-            return pygame.transform.scale(
-                frame,
-                (int(self.player_visual_size.x), int(self.player_visual_size.y)),
-            )
+            if frame_size <= 0:
+                return []
+
+            frame_count = sheet.get_width() // frame_size
+            frames = []
+            for frame_index in range(frame_count):
+                frame_rect = pygame.Rect(frame_index * frame_size, 0, frame_size, frame_size)
+                frame = sheet.subsurface(frame_rect).copy()
+                content_rect = frame.get_bounding_rect(min_alpha=1)
+                if content_rect.width > 0 and content_rect.height > 0:
+                    frame = frame.subsurface(content_rect).copy()
+                frames.append(
+                    pygame.transform.scale(
+                        frame,
+                        (int(self.player_visual_size.x), int(self.player_visual_size.y)),
+                    )
+                )
+            return frames
         except (OSError, pygame.error, ValueError):
+            return []
+
+    def _get_player_frame(self):
+        state = "walk" if self.player_is_moving else "idle"
+        self.player_animation_state = state
+
+        frames = self.player_animations.get(state, {}).get(self.player_facing)
+        if not frames:
+            frames = self.player_animations.get("idle", {}).get("down")
+        if not frames:
             return None
+
+        frame_index = (pygame.time.get_ticks() // self.player_animation_frame_duration_ms) % len(frames)
+        return frames[frame_index]
 
     def _get_initial_player_position(self):
         spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
