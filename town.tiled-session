@@ -1,5 +1,5 @@
 {
-    "activeFile": "assets/maps/town_01.tmx",
+    "activeFile": "assets/maps/forest_01.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -86,6 +86,18 @@
                 "y": 319.8535469107552
             }
         },
+        "assets/maps/forest_01.tmx": {
+            "expandedObjectLayers": [
+                9,
+                10
+            ],
+            "scale": 1.1380208333333333,
+            "selectedLayer": 12,
+            "viewCenter": {
+                "x": 495.5972540045767,
+                "y": 268.00915331807784
+            }
+        },
         "assets/maps/formation_house_test.tmx": {
             "scale": 3.9866071428571423,
             "selectedLayer": 0,
@@ -96,15 +108,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                4,
+                9,
                 10,
-                9
+                4
             ],
             "scale": 1.5,
-            "selectedLayer": 12,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 682.6666666666665,
-                "y": 13.333333333333371
+                "x": 658,
+                "y": 850
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -147,7 +159,8 @@
             "scaleInDock": 1
         },
         "assets/tilesets/pixe_crawlers_doors.tsx": {
-            "scaleInDock": 1.5
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
         },
         "assets/tilesets/pixel_crawler_anvil.tsx": {
             "scaleInDock": 1
@@ -223,23 +236,25 @@
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/pixel_crawler_floors.tsx",
         "assets/tilesets/characters_16x24.tsx",
-        "assets/tilesets/characters_24x36.tsx"
+        "assets/tilesets/characters_24x36.tsx",
+        "assets/tilesets/pixe_crawlers_doors.tsx",
+        "assets/maps/forest_01.tmx"
     ],
     "project": "town.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "assets/tilesets/pixel_crawler_walls.tsx",
+        "assets/maps/town_01.tmx",
+        "assets/tilesets/water.tsx",
+        "assets/tilesets/pixel_crawler_anvil_01.tsx",
+        "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/characters_16x24.tsx",
+        "assets/tilesets/characters_24x36.tsx",
+        "assets/tilesets/pixe_crawlers_doors.tsx",
+        "assets/maps/forest_01.tmx",
         "assets/maps/vierge.tmx",
         "assets/maps/Vierge.tmx",
-        "assets/tilesets/pixel_crawler_walls.tsx",
-        "assets/tilesets/characters_24x36.tsx",
-        "assets/tilesets/characters_16x24.tsx",
-        "assets/tilesets/pixel_crawler_floors.tsx",
-        "assets/tilesets/pixel_crawler_anvil_01.tsx",
-        "assets/tilesets/water.tsx",
-        "assets/maps/town_01.tmx",
-        "assets/tilesets/characters.tsx",
-        "assets/tilesets/forest_ground_16x16_final.tsx",
-        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx"
+        "assets/tilesets/characters.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

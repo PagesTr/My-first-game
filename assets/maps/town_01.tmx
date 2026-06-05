@@ -7069,7 +7069,7 @@
   <object id="3758" name="spawn_from_forest" type="spawn" x="624" y="16">
    <properties>
     <property name="enabled" type="bool" value="true"/>
-    <property name="facing" value=""/>
+    <property name="facing" value="south"/>
     <property name="map_id" value="town_01"/>
     <property name="spawn_id" value="spawn_from_forest"/>
     <property name="spawn_type" value="player"/>

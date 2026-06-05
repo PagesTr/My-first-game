@@ -373,7 +373,6 @@ class ExplorationScreen:
         self.collision_polygons = []
         self.triggers = []
         self._load_map(self.current_map_id)
-        self.npc_rect = pygame.Rect(self.player_rect.x + 112, self.player_rect.y - 64, 28, 34)
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
         self.craft_book_overlay = CraftBookOverlay(self.game)
@@ -393,43 +392,6 @@ class ExplorationScreen:
             {"id": "menu", "label": "Menu", "action": "main_menu", "shortcut": pygame.K_m, "rect": pygame.Rect(0, 0, 0, 0)},
         ]
         self.show_collision_debug = False
-        self.interactions = [
-            {
-                "id": "quests",
-                "label": "Quetes",
-                "rect": pygame.Rect(self.player_rect.x + 96, self.player_rect.y - 16, 88, 56),
-                "prompt": "E - Voir les quetes",
-                "target_state": "quests",
-            },
-            {
-                "id": "forest_path",
-                "label": "Foret",
-                "rect": pygame.Rect(self.map_width - 132, max(48, self.map_height // 2 - 40), 88, 72),
-                "prompt": "E - Aller vers la foret",
-                "target_state": "zone_select",
-            },
-            {
-                "id": "dungeon_gate",
-                "label": "Donjons",
-                "rect": pygame.Rect(46, max(48, self.map_height // 2 - 48), 96, 86),
-                "prompt": "E - Entrer dans les donjons",
-                "target_state": "dungeon",
-            },
-            {
-                "id": "craft_bench",
-                "label": "Craft",
-                "rect": pygame.Rect(self.player_rect.x - 168, self.player_rect.y + 96, 112, 54),
-                "prompt": "E - Ouvrir le craft",
-                "target_state": "crafting",
-            },
-            {
-                "id": "town_exit",
-                "label": "Menu",
-                "rect": pygame.Rect(self.map_width // 2 - 52, self.map_height - 84, 104, 34),
-                "prompt": "E - Retour menu",
-                "action": "main_menu",
-            },
-        ]
 
     def handle_event(self, event):
         if self.active_overlay is not None:
@@ -459,16 +421,6 @@ class ExplorationScreen:
             if trigger is not None:
                 self._activate_trigger(trigger)
                 return
-
-            interaction = self._get_active_interaction()
-            if interaction is not None:
-                self._activate_interaction(interaction)
-                return
-
-        if event.key == pygame.K_e and self.player_rect.colliderect(self.npc_rect.inflate(58, 58)):
-            self.message = "Le garde forestier hoche la tete. Rien de dangereux a signaler. Pour l'instant."
-            self.message_until_ms = pygame.time.get_ticks() + 2800
-            return
 
     def _handle_overlay_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -517,8 +469,6 @@ class ExplorationScreen:
         current_time_ms = pygame.time.get_ticks()
         self._update_camera(screen)
         self._draw_map(screen)
-        self._draw_interactions(screen)
-        self._draw_npc(screen)
         self._draw_player(screen)
         self._draw_collision_debug(screen)
         if not self._is_overlay_open():
@@ -721,18 +671,19 @@ class ExplorationScreen:
             min(max(position.y, bounds.top + half_height), bounds.bottom - half_height),
         )
 
-    def _get_active_interaction(self):
-        reach_rect = self.player_rect.inflate(46, 46)
-        for interaction in self.interactions:
-            if reach_rect.colliderect(interaction["rect"]):
-                return interaction
-        return None
-
     def _get_active_trigger(self):
+        reach_rect = self._get_trigger_reach_rect()
+        reachable_trigger = None
         for trigger in self.triggers:
-            if self.player_rect.colliderect(trigger["rect"]):
+            trigger_rect = trigger["rect"]
+            if self.player_rect.colliderect(trigger_rect):
                 return trigger
-        return None
+            if trigger.get("requires_interact") and reachable_trigger is None and reach_rect.colliderect(trigger_rect):
+                reachable_trigger = trigger
+        return reachable_trigger
+
+    def _get_trigger_reach_rect(self):
+        return self.player_rect.inflate(24, 24)
 
     def _activate_trigger(self, trigger):
         trigger_type = self._clean_tiled_value(trigger.get("trigger_type"))
@@ -843,19 +794,6 @@ class ExplorationScreen:
         }
         return overlays.get(overlay_id)
 
-    def _activate_interaction(self, interaction):
-        action = interaction.get("action")
-        if action == "main_menu":
-            self.game.state = "main_menu"
-            return
-        if action == "return_to_town":
-            self.game.return_to_town()
-            return
-
-        target_state = interaction.get("target_state")
-        if target_state:
-            self.game.state = target_state
-
     def _update_camera(self, screen):
         max_x = max(0, self.map_width - screen.get_width())
         gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
@@ -876,76 +814,6 @@ class ExplorationScreen:
         for y in range(0, screen.get_height(), 8):
             shade = 28 + int(y * 0.025)
             pygame.draw.rect(screen, (18, min(72, shade + 28), 35), (0, y, screen.get_width(), 8))
-
-    def _draw_interactions(self, screen):
-        active = self._get_active_interaction()
-        for interaction in self.interactions:
-            rect = self._to_screen_rect(interaction["rect"])
-            is_active = interaction is active
-            if interaction["id"] == "quests":
-                self._draw_quest_post(screen, rect, is_active)
-            elif interaction["id"] == "forest_path":
-                self._draw_forest_exit(screen, rect, is_active)
-            elif interaction["id"] == "dungeon_gate":
-                self._draw_dungeon_gate(screen, rect, is_active)
-            elif interaction["id"] == "craft_bench":
-                self._draw_craft_bench(screen, rect, is_active)
-            elif interaction["id"] == "town_exit":
-                self._draw_menu_exit(screen, rect, is_active)
-
-    def _draw_interaction_marker(self, screen, rect, label, is_active):
-        color = (238, 214, 126) if is_active else (168, 148, 90)
-        pygame.draw.circle(screen, color, (rect.centerx, rect.y - 10), 5)
-        text = self.small_font.render(label, True, (235, 226, 190))
-        text_rect = text.get_rect(center=(rect.centerx, rect.y - 24))
-        screen.blit(text, text_rect)
-
-    def _draw_quest_post(self, screen, rect, is_active):
-        pygame.draw.rect(screen, (83, 58, 38), (rect.x + 12, rect.y + 10, 14, rect.h - 10))
-        board = pygame.Rect(rect.x + 24, rect.y + 4, rect.w - 30, 34)
-        pygame.draw.rect(screen, (118, 84, 50), board, border_radius=4)
-        pygame.draw.rect(screen, (224, 190, 104), board, 2, border_radius=4)
-        pygame.draw.line(screen, (60, 42, 30), (board.x + 10, board.y + 12), (board.right - 10, board.y + 12), 2)
-        pygame.draw.line(screen, (60, 42, 30), (board.x + 10, board.y + 22), (board.right - 18, board.y + 22), 2)
-        self._draw_interaction_marker(screen, rect, "Quetes", is_active)
-
-    def _draw_forest_exit(self, screen, rect, is_active):
-        pygame.draw.ellipse(screen, (54, 82, 38), rect)
-        pygame.draw.arc(screen, (151, 124, 76), rect.inflate(-10, -8), 3.3, 6.1, 4)
-        pygame.draw.polygon(screen, (28, 94, 44), [(rect.x + 24, rect.y + 46), (rect.x + 44, rect.y + 10), (rect.x + 66, rect.y + 46)])
-        self._draw_interaction_marker(screen, rect, "Foret", is_active)
-
-    def _draw_dungeon_gate(self, screen, rect, is_active):
-        pygame.draw.ellipse(screen, (13, 17, 18), rect)
-        pygame.draw.arc(screen, (93, 86, 78), rect, 3.2, 6.2, 6)
-        inner = rect.inflate(-26, -18)
-        pygame.draw.ellipse(screen, (4, 8, 10), inner)
-        self._draw_interaction_marker(screen, rect, "Donjons", is_active)
-
-    def _draw_craft_bench(self, screen, rect, is_active):
-        top = pygame.Rect(rect.x + 8, rect.y + 12, rect.w - 16, 18)
-        pygame.draw.rect(screen, (103, 69, 42), top, border_radius=4)
-        pygame.draw.rect(screen, (196, 151, 84), top, 2, border_radius=4)
-        pygame.draw.rect(screen, (72, 48, 31), (rect.x + 20, rect.y + 30, 10, 22))
-        pygame.draw.rect(screen, (72, 48, 31), (rect.right - 30, rect.y + 30, 10, 22))
-        pygame.draw.circle(screen, (156, 158, 146), (rect.centerx + 20, rect.y + 8), 7)
-        self._draw_interaction_marker(screen, rect, "Craft", is_active)
-
-    def _draw_menu_exit(self, screen, rect, is_active):
-        pygame.draw.rect(screen, (86, 72, 48), rect, border_radius=5)
-        pygame.draw.rect(screen, (209, 177, 95), rect, 2, border_radius=5)
-        label = self.small_font.render("Menu", True, (245, 230, 180))
-        label_rect = label.get_rect(center=rect.center)
-        screen.blit(label, label_rect)
-        self._draw_interaction_marker(screen, rect, "Menu", is_active)
-
-    def _draw_npc(self, screen):
-        rect = self._to_screen_rect(self.npc_rect)
-        pygame.draw.ellipse(screen, (16, 33, 24), rect.move(3, 8))
-        pygame.draw.rect(screen, (79, 90, 58), rect, border_radius=6)
-        pygame.draw.circle(screen, (202, 171, 126), rect.midtop, 9)
-        label = self.small_font.render("PNJ", True, (230, 220, 185))
-        screen.blit(label, (rect.x - 5, rect.y - 24))
 
     def _draw_player(self, screen):
         hitbox_rect = self._to_screen_rect(self.player_rect)
@@ -1140,15 +1008,14 @@ class ExplorationScreen:
             self.message = self.default_message
             self.message_until_ms = 0
         active_trigger = self._get_active_trigger()
-        active_interaction = self._get_active_interaction()
         hovered_action = self._get_hovered_quick_action()
-        if active_trigger is not None and active_trigger.get("requires_interact"):
-            text = active_trigger.get("prompt") or "E - Interagir"
+        if active_trigger is not None and self._clean_tiled_value(active_trigger.get("prompt")):
+            text = self._clean_tiled_value(active_trigger.get("prompt"))
+        elif active_trigger is not None and active_trigger.get("requires_interact"):
+            text = "E - Interagir"
         elif hovered_action is not None:
             shortcut = pygame.key.name(hovered_action["shortcut"]).upper()
             text = f"{hovered_action['label']} ({shortcut})"
-        elif active_interaction is not None:
-            text = active_interaction["prompt"]
         elif not self.map.is_loaded:
             text = "Map Tiled indisponible. Affichage de secours actif."
         else:
