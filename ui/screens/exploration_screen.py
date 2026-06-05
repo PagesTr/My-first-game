@@ -945,13 +945,13 @@ class ExplorationScreen:
                 return []
 
             frame_count = sheet.get_width() // frame_size
+            if frame_count <= 0:
+                return []
+
             frames = []
             for frame_index in range(frame_count):
                 frame_rect = pygame.Rect(frame_index * frame_size, 0, frame_size, frame_size)
                 frame = sheet.subsurface(frame_rect).copy()
-                content_rect = frame.get_bounding_rect(min_alpha=1)
-                if content_rect.width > 0 and content_rect.height > 0:
-                    frame = frame.subsurface(content_rect).copy()
                 frames.append(
                     pygame.transform.scale(
                         frame,
