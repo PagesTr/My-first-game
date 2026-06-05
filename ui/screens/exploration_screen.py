@@ -680,7 +680,7 @@ class ExplorationScreen:
         self.player_position, spawn = self._get_spawn_position(spawn_id)
         self.active_spawn_id = spawn.get("spawn_id") if spawn is not None else None
         if spawn is not None:
-            self.player_facing = self._clean_tiled_value(spawn.get("facing")) or self.player_facing
+            self.player_facing = self._normalize_player_facing(spawn.get("facing"))
         self._sync_player_rect_from_position()
         self.camera_offset.update(0, 0)
 
@@ -723,6 +723,23 @@ class ExplorationScreen:
             return None
         value = str(value).strip()
         return value or None
+
+    def _normalize_player_facing(self, facing):
+        facing = self._clean_tiled_value(facing)
+        if facing is None:
+            return "down"
+
+        directions = {
+            "north": "up",
+            "south": "down",
+            "west": "left",
+            "east": "right",
+            "up": "up",
+            "down": "down",
+            "left": "left",
+            "right": "right",
+        }
+        return directions.get(facing.lower(), "down")
 
     def _show_temporary_message(self, message, duration_ms=2200):
         message = self._clean_tiled_value(message)
@@ -900,11 +917,24 @@ class ExplorationScreen:
         animations = {}
         for state in ("idle", "walk"):
             animations[state] = {}
-            for direction in ("down", "up", "left", "right"):
+            loaded_frames = {}
+            for direction in ("down", "up", "side", "right", "left"):
                 sheet_path = Path(f"assets/sprites/player/base/{state}/{state}_{direction}_sheet.png")
                 frames = self._load_player_animation_sheet(sheet_path)
                 if frames:
-                    animations[state][direction] = frames
+                    loaded_frames[direction] = frames
+
+            for direction in ("down", "up"):
+                if direction in loaded_frames:
+                    animations[state][direction] = loaded_frames[direction]
+            if "right" in loaded_frames:
+                animations[state]["right"] = loaded_frames["right"]
+            elif "side" in loaded_frames:
+                animations[state]["right"] = loaded_frames["side"]
+            if "left" in loaded_frames:
+                animations[state]["left"] = loaded_frames["left"]
+            elif "side" in loaded_frames:
+                animations[state]["left"] = self._flip_frames_horizontally(loaded_frames["side"])
         return animations
 
     def _load_player_animation_sheet(self, path):
@@ -932,9 +962,13 @@ class ExplorationScreen:
         except (OSError, pygame.error, ValueError):
             return []
 
+    def _flip_frames_horizontally(self, frames):
+        return [pygame.transform.flip(frame, True, False) for frame in frames]
+
     def _get_player_frame(self):
         state = "walk" if self.player_is_moving else "idle"
         self.player_animation_state = state
+        self.player_facing = self._normalize_player_facing(self.player_facing)
 
         frames = self.player_animations.get(state, {}).get(self.player_facing)
         if not frames:
