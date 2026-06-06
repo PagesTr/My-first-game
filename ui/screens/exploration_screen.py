@@ -417,7 +417,7 @@ class ExplorationScreen:
         self.map_height = 600
         self.camera_offset = pygame.Vector2(0, 0)
         self.tile_size = 16
-        self.player_visual_size = pygame.Vector2(16, 24)
+        self.player_visual_size = pygame.Vector2(24, 36)
         self.player_hitbox_size = pygame.Vector2(10, 8)
         self.player_animations = self._load_player_animations()
         self.player_animation_state = "idle"
@@ -951,16 +951,48 @@ class ExplorationScreen:
             frames = []
             for frame_index in range(frame_count):
                 frame_rect = pygame.Rect(frame_index * frame_size, 0, frame_size, frame_size)
-                frame = sheet.subsurface(frame_rect).copy()
-                frames.append(
-                    pygame.transform.scale(
-                        frame,
-                        (int(self.player_visual_size.x), int(self.player_visual_size.y)),
-                    )
-                )
-            return frames
+                frames.append(sheet.subsurface(frame_rect).copy())
+
+            shared_crop_rect = self._get_shared_frame_crop_rect(frames)
+            if shared_crop_rect is None:
+                return [self._scale_player_frame(frame) for frame in frames]
+
+            return [
+                self._scale_player_frame(frame.subsurface(shared_crop_rect).copy())
+                for frame in frames
+            ]
         except (OSError, pygame.error, ValueError):
             return []
+
+    def _get_shared_frame_crop_rect(self, frames):
+        shared_rect = None
+        for frame in frames:
+            visible_rect = frame.get_bounding_rect(min_alpha=8)
+            if visible_rect.width <= 0 or visible_rect.height <= 0:
+                continue
+            if shared_rect is None:
+                shared_rect = visible_rect.copy()
+            else:
+                shared_rect.union_ip(visible_rect)
+
+        if shared_rect is None:
+            return None
+
+        frame_bounds = frames[0].get_rect()
+        return self._inflate_rect_within_bounds(shared_rect, 2, frame_bounds)
+
+    def _inflate_rect_within_bounds(self, rect, padding, bounds):
+        left = max(bounds.left, rect.left - padding)
+        top = max(bounds.top, rect.top - padding)
+        right = min(bounds.right, rect.right + padding)
+        bottom = min(bounds.bottom, rect.bottom + padding)
+        return pygame.Rect(left, top, max(0, right - left), max(0, bottom - top))
+
+    def _scale_player_frame(self, frame):
+        return pygame.transform.scale(
+            frame,
+            (int(self.player_visual_size.x), int(self.player_visual_size.y)),
+        )
 
     def _flip_frames_horizontally(self, frames):
         return [pygame.transform.flip(frame, True, False) for frame in frames]

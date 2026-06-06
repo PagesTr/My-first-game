@@ -1,5 +1,5 @@
 {
-    "activeFile": "assets/maps/forest_01.tmx",
+    "activeFile": "assets/maps/town_01.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -92,10 +92,10 @@
                 10
             ],
             "scale": 1.1380208333333333,
-            "selectedLayer": 12,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 495.5972540045767,
-                "y": 268.00915331807784
+                "x": 479.78032036613274,
+                "y": 319.85354691075514
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -109,14 +109,14 @@
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
                 9,
-                10,
-                4
+                4,
+                10
             ],
             "scale": 1.5,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 624,
-                "y": 200
+                "x": 658,
+                "y": 850
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -244,14 +244,14 @@
     "property.type": "bool",
     "recentFiles": [
         "assets/tilesets/pixel_crawler_walls.tsx",
-        "assets/maps/town_01.tmx",
-        "assets/tilesets/water.tsx",
-        "assets/tilesets/pixel_crawler_anvil_01.tsx",
-        "assets/tilesets/pixel_crawler_floors.tsx",
-        "assets/tilesets/characters_16x24.tsx",
-        "assets/tilesets/characters_24x36.tsx",
-        "assets/tilesets/pixe_crawlers_doors.tsx",
         "assets/maps/forest_01.tmx",
+        "assets/tilesets/pixe_crawlers_doors.tsx",
+        "assets/tilesets/characters_24x36.tsx",
+        "assets/tilesets/characters_16x24.tsx",
+        "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/pixel_crawler_anvil_01.tsx",
+        "assets/tilesets/water.tsx",
+        "assets/maps/town_01.tmx",
         "assets/maps/vierge.tmx",
         "assets/maps/Vierge.tmx",
         "assets/tilesets/characters.tsx"
