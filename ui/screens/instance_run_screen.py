@@ -9,8 +9,11 @@ class InstanceRunScreen:
         self.font = pygame.font.Font(None, 26)
         self.small_font = pygame.font.Font(None, 20)
         self.started_at_ms = pygame.time.get_ticks()
+        self.phase_started_at_ms = self.started_at_ms
         self.last_result_ref = None
-        self.duration_ms = 3200
+        self.phase = "running"
+        self.run_duration_ms = 3000
+        self.death_pause_ms = 2000
 
     def handle_event(self, event):
         if event.type != pygame.KEYDOWN:
@@ -28,8 +31,13 @@ class InstanceRunScreen:
         if not result:
             return
 
-        elapsed_ms = pygame.time.get_ticks() - self.started_at_ms
-        if elapsed_ms >= self.duration_ms:
+        current_time_ms = pygame.time.get_ticks()
+        elapsed_ms = current_time_ms - self.phase_started_at_ms
+        if self.phase == "running" and elapsed_ms >= self.run_duration_ms:
+            self.phase = "death"
+            self.phase_started_at_ms = current_time_ms
+            return
+        if self.phase == "death" and elapsed_ms >= self.death_pause_ms:
             self.game.state = "combat_result"
 
     def draw(self, screen):
@@ -41,36 +49,39 @@ class InstanceRunScreen:
             self._draw_empty_state(screen)
             return
 
-        progress = self._get_progress()
         zone_name = result.get("zone_name") or result.get("zone_key") or "Unknown zone"
         combats_won = self._as_int(result.get("combats_won"))
-        displayed_combats = int(combats_won * progress)
         death_enemy = result.get("death_enemy") or "Unknown enemy"
-        exp_gained = self._as_int(result.get("exp_gained"))
-        gold_gained = self._as_int(result.get("gold_gained"))
 
+        if self.phase == "death":
+            self._draw_death_phase(screen, combats_won, death_enemy)
+            return
+
+        self._draw_running_phase(screen, zone_name, combats_won)
+
+    def _draw_running_phase(self, screen, zone_name, combats_won):
+        progress = self._get_progress()
+        displayed_combats = int(combats_won * progress)
         panel = pygame.Rect(0, 0, 520, 310)
         panel.center = screen.get_rect().center
         pygame.draw.rect(screen, (23, 28, 25), panel, border_radius=8)
         pygame.draw.rect(screen, (124, 155, 107), panel, 2, border_radius=8)
 
-        title = self.title_font.render("Instance resolved", True, (235, 232, 202))
+        title = self.title_font.render("Expédition", True, (235, 232, 202))
         screen.blit(title, title.get_rect(center=(panel.centerx, panel.y + 44)))
 
         zone_text = self.header_font.render(str(zone_name), True, (190, 220, 156))
         screen.blit(zone_text, zone_text.get_rect(center=(panel.centerx, panel.y + 84)))
 
-        status = "Combats resolved..." if displayed_combats != 1 else "Combat 1..."
+        status = "Tu tiens bon pour l'instant..." if progress < 0.7 else "Combats en cours..."
         status_text = self.font.render(status, True, (224, 224, 210))
         screen.blit(status_text, (panel.x + 42, panel.y + 124))
 
         self._draw_progress_bar(screen, panel, progress)
 
         rows = [
-            ("Combats won", f"{displayed_combats} / {combats_won}"),
-            ("Final enemy", str(death_enemy)),
-            ("XP gained", str(exp_gained)),
-            ("Gold gained", str(gold_gained)),
+            ("Combats remportés", f"{displayed_combats} / {combats_won}"),
+            ("Progression", "L'expédition avance..."),
         ]
         row_y = panel.y + 178
         for label, value in rows:
@@ -80,8 +91,32 @@ class InstanceRunScreen:
             screen.blit(value_surface, value_surface.get_rect(topright=(panel.right - 46, row_y)))
             row_y += 34
 
-        skip_text = self.small_font.render("Enter / Space / Escape to continue", True, (156, 164, 150))
+        skip_text = self.small_font.render("Entrée / Espace / Échap - Continuer", True, (156, 164, 150))
         screen.blit(skip_text, skip_text.get_rect(center=(panel.centerx, panel.bottom - 24)))
+
+    def _draw_death_phase(self, screen, combats_won, death_enemy):
+        panel = pygame.Rect(0, 0, 520, 260)
+        panel.center = screen.get_rect().center
+        pygame.draw.rect(screen, (34, 22, 22), panel, border_radius=8)
+        pygame.draw.rect(screen, (178, 84, 72), panel, 2, border_radius=8)
+
+        title = self.title_font.render("Tu es mort", True, (246, 218, 205))
+        screen.blit(title, title.get_rect(center=(panel.centerx, panel.y + 54)))
+
+        rows = [
+            ("Vaincu par", str(death_enemy)),
+            ("Combats remportés", str(combats_won)),
+        ]
+        row_y = panel.y + 112
+        for label, value in rows:
+            label_surface = self.font.render(label, True, (206, 158, 148))
+            value_surface = self.font.render(value, True, (246, 236, 218))
+            screen.blit(label_surface, (panel.x + 52, row_y))
+            screen.blit(value_surface, value_surface.get_rect(topright=(panel.right - 52, row_y)))
+            row_y += 42
+
+        hint = self.small_font.render("Entrée / Espace - Voir le résultat", True, (198, 172, 164))
+        screen.blit(hint, hint.get_rect(center=(panel.centerx, panel.bottom - 28)))
 
     def _get_result(self):
         result = self.game.last_instance_result or self.game.last_combat_result or {}
@@ -92,11 +127,14 @@ class InstanceRunScreen:
         if result_ref == self.last_result_ref:
             return
         self.last_result_ref = result_ref
-        self.started_at_ms = pygame.time.get_ticks()
+        current_time_ms = pygame.time.get_ticks()
+        self.started_at_ms = current_time_ms
+        self.phase_started_at_ms = current_time_ms
+        self.phase = "running"
 
     def _get_progress(self):
         elapsed_ms = pygame.time.get_ticks() - self.started_at_ms
-        return max(0.0, min(1.0, elapsed_ms / self.duration_ms))
+        return max(0.0, min(1.0, elapsed_ms / self.run_duration_ms))
 
     def _draw_background(self, screen):
         width, height = screen.get_size()
@@ -146,7 +184,7 @@ class InstanceRunScreen:
         pygame.draw.rect(screen, (124, 155, 107), panel, 2, border_radius=8)
         text = self.header_font.render("Aucune instance a afficher.", True, (235, 232, 202))
         screen.blit(text, text.get_rect(center=(panel.centerx, panel.y + 58)))
-        hint = self.small_font.render("Enter / Space / Escape to return", True, (156, 164, 150))
+        hint = self.small_font.render("Entrée / Espace / Échap - Retour", True, (156, 164, 150))
         screen.blit(hint, hint.get_rect(center=(panel.centerx, panel.y + 100)))
 
     def _as_int(self, value):
