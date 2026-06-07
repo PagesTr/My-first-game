@@ -188,6 +188,31 @@ class Game:
         self.state = "town"
         return True
 
+    def start_exploration_combat(self, enemy_id):
+        if self.player is None:
+            return {"started": False, "reason": "missing_player"}
+
+        enemy_id = str(enemy_id).strip() if enemy_id is not None else None
+        if not enemy_id or enemy_id not in self.data.enemies:
+            return {"started": False, "reason": "unknown_enemy", "enemy_id": enemy_id}
+
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        enemy = create_enemy(self.data.enemies[enemy_id], self.player.get("level", 1))
+        self.combat = CombatSystem(self.player, enemy, self.data.skills)
+        self.auto_mode = True
+        self.last_combat_result = None
+        self.pending_combat_context = {
+            "source": "exploration",
+            "enemy_id": enemy_id,
+        }
+        self.state = "combat"
+        return {"started": True, "enemy_id": enemy_id}
+
     def select_class(self, class_key):
         if class_key not in self.data.classes:
             return

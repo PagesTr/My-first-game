@@ -53,7 +53,12 @@ class TiledMap:
                 data_node = layer_node.find("data")
                 if data_node is None or data_node.attrib.get("encoding") != "csv":
                     continue
-                self.layers.append(self._parse_csv_layer(layer_node, data_node))
+                self.layers.append(
+                    {
+                        "name": layer_node.attrib.get("name", ""),
+                        "tiles": self._parse_csv_layer(layer_node, data_node),
+                    }
+                )
 
             self._load_object_groups(root)
             self.is_loaded = bool(self.layers and self.tiles)
@@ -201,6 +206,7 @@ class TiledMap:
         return {
             "trigger_id": trigger_id,
             "trigger_type": self._get_object_property(object_node, "trigger_type"),
+            "encounter_id": self._get_object_property(object_node, "encounter_id"),
             "prompt": self._get_object_property(object_node, "prompt"),
             "requires_interact": self._get_object_bool_property(object_node, "requires_interact"),
             "target_state": self._get_object_property(object_node, "target_state"),
@@ -249,7 +255,8 @@ class TiledMap:
         return str(value).strip() not in {"false", "False", "0", "Off"}
 
     def _build_collision_rect(self, object_node):
-        if object_node.attrib.get("type") != "collision":
+        object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
+        if object_type != "collision":
             return None
         if not self._get_object_bool_property(object_node, "solid"):
             return None
@@ -277,7 +284,8 @@ class TiledMap:
         return pygame.Rect(x, y, width, height)
 
     def _build_collision_polygon(self, object_node):
-        if object_node.attrib.get("type") != "collision":
+        object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
+        if object_type != "collision":
             return None
         if not self._get_object_bool_property(object_node, "solid"):
             return None
@@ -372,15 +380,31 @@ class TiledMap:
                 return frame_gid
         return gid
 
-    def draw(self, screen, camera_offset):
+    def get_layer_index(self, layer_name):
+        for index, layer in enumerate(self.layers):
+            if not isinstance(layer, dict):
+                continue
+            if layer.get("name") == layer_name:
+                return index
+        return None
+
+    def draw_layers(self, screen, camera_offset, start_index=0, end_index=None):
         current_time_ms = pygame.time.get_ticks()
         offset_x, offset_y = camera_offset
         first_column = max(0, offset_x // self.tile_width)
         first_row = max(0, offset_y // self.tile_height)
         last_column = min(self.width, (offset_x + screen.get_width()) // self.tile_width + 2)
         last_row = min(self.height, (offset_y + screen.get_height()) // self.tile_height + 2)
+        layer_count = len(self.layers)
+        start_index = max(0, start_index)
+        end_index = layer_count if end_index is None else max(0, min(end_index, layer_count))
 
-        for layer in self.layers:
+        for layer_entry in self.layers[start_index:end_index]:
+            if not isinstance(layer_entry, dict):
+                continue
+            layer = layer_entry.get("tiles")
+            if not layer:
+                continue
             for row_index in range(first_row, last_row):
                 if row_index >= len(layer):
                     continue
@@ -400,8 +424,13 @@ class TiledMap:
                             ),
                         )
 
+    def draw(self, screen, camera_offset):
+        self.draw_layers(screen, camera_offset)
+
 
 class ExplorationScreen:
+    PLAYER_OVERLAY_LAYER_NAME = "05b_shadows"
+
     def __init__(self, game):
         self.game = game
         self.title_font = pygame.font.Font(None, 34)
@@ -468,6 +497,12 @@ class ExplorationScreen:
         if event.type != pygame.KEYDOWN:
             return
 
+        if event.key == pygame.K_F3:
+            self.show_collision_debug = not self.show_collision_debug
+            state_label = "ON" if self.show_collision_debug else "OFF"
+            self._show_temporary_message(f"Debug collisions: {state_label}")
+            return
+
         if event.key == pygame.K_ESCAPE:
             self.game.state = "main_menu"
             return
@@ -531,8 +566,9 @@ class ExplorationScreen:
     def draw(self, screen):
         current_time_ms = pygame.time.get_ticks()
         self._update_camera(screen)
-        self._draw_map(screen)
+        self._draw_map_below_player(screen)
         self._draw_player(screen)
+        self._draw_map_above_player(screen)
         self._draw_collision_debug(screen)
         if not self._is_overlay_open():
             self._draw_help_panel(screen, current_time_ms)
@@ -772,6 +808,25 @@ class ExplorationScreen:
 
     def _activate_trigger(self, trigger):
         trigger_type = self._clean_tiled_value(trigger.get("trigger_type"))
+        if trigger_type == "combat":
+            encounter_id = self._clean_tiled_value(trigger.get("encounter_id"))
+            if encounter_id is None:
+                self._show_temporary_message("Combat trigger missing encounter_id.")
+                return
+
+            result = self.game.start_exploration_combat(encounter_id)
+            if result is True or (isinstance(result, dict) and result.get("started") is True):
+                return
+
+            reason = result.get("reason") if isinstance(result, dict) else None
+            if reason == "unknown_enemy":
+                self._show_temporary_message(f"Unknown enemy: {encounter_id}.")
+            elif reason == "missing_player":
+                self._show_temporary_message("Cannot start combat without a player.")
+            else:
+                self._show_temporary_message("Combat cannot start.")
+            return
+
         if trigger_type == "state_transition":
             target_map = self._clean_tiled_value(trigger.get("target_map"))
             if target_map:
@@ -899,6 +954,37 @@ class ExplorationScreen:
         for y in range(0, screen.get_height(), 8):
             shade = 28 + int(y * 0.025)
             pygame.draw.rect(screen, (18, min(72, shade + 28), 35), (0, y, screen.get_width(), 8))
+
+    def _draw_map_below_player(self, screen):
+        if not self.map.is_loaded:
+            self._draw_map(screen)
+            return
+
+        screen.fill((18, 28, 22))
+        overlay_layer_index = self.map.get_layer_index(self.PLAYER_OVERLAY_LAYER_NAME)
+        if overlay_layer_index is None:
+            self.map.draw(screen, (int(self.camera_offset.x), int(self.camera_offset.y)))
+            return
+
+        self.map.draw_layers(
+            screen,
+            (int(self.camera_offset.x), int(self.camera_offset.y)),
+            end_index=overlay_layer_index,
+        )
+
+    def _draw_map_above_player(self, screen):
+        if not self.map.is_loaded:
+            return
+
+        overlay_layer_index = self.map.get_layer_index(self.PLAYER_OVERLAY_LAYER_NAME)
+        if overlay_layer_index is None:
+            return
+
+        self.map.draw_layers(
+            screen,
+            (int(self.camera_offset.x), int(self.camera_offset.y)),
+            start_index=overlay_layer_index,
+        )
 
     def _draw_player(self, screen):
         hitbox_rect = self._to_screen_rect(self.player_rect)

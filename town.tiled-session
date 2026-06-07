@@ -47,11 +47,11 @@
             "expandedObjectLayers": [
                 8
             ],
-            "scale": 3,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 406,
-                "y": 239.99999999999997
+                "x": 56,
+                "y": 241.3333333333333
             }
         },
         "assets/automapping/tree_rules.tmx": {
@@ -88,14 +88,14 @@
         },
         "assets/maps/forest_01.tmx": {
             "expandedObjectLayers": [
-                9,
-                10
+                10,
+                9
             ],
             "scale": 1.1380208333333333,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 479.78032036613274,
-                "y": 319.85354691075514
+                "x": 479.7803203661328,
+                "y": 319.8535469107552
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -108,15 +108,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                9,
+                10,
                 4,
-                10
+                9
             ],
             "scale": 1.5,
-            "selectedLayer": 13,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 658,
-                "y": 850
+                "x": 88,
+                "y": 601.3333333333333
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -244,13 +244,13 @@
     "property.type": "bool",
     "recentFiles": [
         "assets/tilesets/pixel_crawler_walls.tsx",
-        "assets/maps/forest_01.tmx",
-        "assets/tilesets/pixe_crawlers_doors.tsx",
-        "assets/tilesets/characters_24x36.tsx",
-        "assets/tilesets/characters_16x24.tsx",
-        "assets/tilesets/pixel_crawler_floors.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/water.tsx",
+        "assets/tilesets/pixel_crawler_floors.tsx",
+        "assets/tilesets/pixe_crawlers_doors.tsx",
+        "assets/tilesets/characters_16x24.tsx",
+        "assets/tilesets/characters_24x36.tsx",
+        "assets/maps/forest_01.tmx",
         "assets/maps/town_01.tmx",
         "assets/maps/vierge.tmx",
         "assets/maps/Vierge.tmx",

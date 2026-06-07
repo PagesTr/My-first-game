@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="coll_woodhouse_01" type="collision">
+  <properties>
+   <property name="entity_id" value="woodhouse_01"/>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+  <polygon points="0,0 -8.33333,6.66667 55.6667,6.66667 55.6667,-25.3333 87.6667,-25.3333 87.6667,-9.33333 167.667,-9.33333 167.667,-25.3333 199.667,-25.3333 199.667,-73.333 55.6667,-73.333 55.6667,-121.333 -24.3333,-121.333 -24.3333,6.66667 -8.33333,6.66667"/>
+ </object>
+</template>
