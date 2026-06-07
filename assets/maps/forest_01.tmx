@@ -1263,10 +1263,10 @@
   <object id="3945" template="../templates/objects/trigger.tx" x="944" y="288" width="16" height="32"/>
   <object id="3947" template="../templates/objects/trigger.tx" name="trigger_combat_gobelin" x="144" y="528" width="48" height="32">
    <properties>
-    <property name="encounter_id" value="young_goblin"/>
     <property name="prompt" value="E - Start a fight"/>
     <property name="trigger_id" value="trigger_combat_gobelin"/>
     <property name="trigger_type" value="combat"/>
+    <property name="zone_id" value="forest_young_goblin"/>
    </properties>
   </object>
  </objectgroup>
