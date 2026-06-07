@@ -213,6 +213,78 @@ class Game:
         self.state = "combat"
         return {"started": True, "enemy_id": enemy_id}
 
+    def start_exploration_instance(self, zone_id):
+        if self.player is None:
+            return {"started": False, "reason": "missing_player"}
+
+        zone_id = str(zone_id).strip() if zone_id is not None else None
+        if not zone_id or zone_id not in self.data.zones:
+            return {"started": False, "reason": "unknown_zone", "zone_id": zone_id}
+
+        zone = self.data.zones[zone_id]
+        if self.player.get("level", 1) < zone.get("unlock_level", 1):
+            return {"started": False, "reason": "locked_zone", "zone_id": zone_id}
+
+        self.selected_zone = zone_id
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.last_instance_result = run_instant_instance(
+            self.player,
+            zone_id,
+            self.data.zones,
+            self.data.enemies,
+            self.data.items,
+            self.data.skills,
+        )
+        self.last_combat_result = self.last_instance_result
+        self.combat = None
+        self.auto_mode = False
+        self.last_instance_source = "exploration"
+
+        enemy_pool = zone.get("enemy_pool", [])
+        combats_won = 0
+        if isinstance(self.last_instance_result, dict):
+            combats_won = int(self.last_instance_result.get("combats_won", 0))
+        enemy_id = None
+        enemy_family = None
+        if (
+            isinstance(enemy_pool, list)
+            and len(enemy_pool) == 1
+            and isinstance(self.last_instance_result, dict)
+        ):
+            enemy_id = enemy_pool[0]
+            enemy_data = self.data.enemies.get(enemy_id, {})
+            enemy_family = enemy_data.get("family") if isinstance(enemy_data, dict) else None
+            if combats_won > 0:
+                self.record_progress_event({
+                    "type": "kill_enemy",
+                    "target": enemy_id,
+                    "amount": combats_won,
+                    "metadata": {
+                        "chapter": zone.get("chapter", "forest"),
+                        "family": enemy_family,
+                        "zone_id": zone_id,
+                    },
+                })
+        if combats_won > 0:
+            self.record_achievement_event({
+                "type": "expedition_finished",
+                "target": zone_id,
+                "amount": combats_won,
+                "metadata": {
+                    "chapter": zone.get("chapter", "forest"),
+                    "enemy_id": enemy_id,
+                    "family": enemy_family,
+                },
+            })
+
+        self.state = "combat_result"
+        return {"started": True, "zone_id": zone_id}
+
     def select_class(self, class_key):
         if class_key not in self.data.classes:
             return

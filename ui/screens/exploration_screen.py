@@ -207,6 +207,7 @@ class TiledMap:
             "trigger_id": trigger_id,
             "trigger_type": self._get_object_property(object_node, "trigger_type"),
             "encounter_id": self._get_object_property(object_node, "encounter_id"),
+            "zone_id": self._get_object_property(object_node, "zone_id"),
             "prompt": self._get_object_property(object_node, "prompt"),
             "requires_interact": self._get_object_bool_property(object_node, "requires_interact"),
             "target_state": self._get_object_property(object_node, "target_state"),
@@ -808,6 +809,27 @@ class ExplorationScreen:
 
     def _activate_trigger(self, trigger):
         trigger_type = self._clean_tiled_value(trigger.get("trigger_type"))
+        if trigger_type == "instance":
+            zone_id = self._clean_tiled_value(trigger.get("zone_id"))
+            if zone_id is None:
+                self._show_temporary_message("Instance trigger missing zone_id.")
+                return
+
+            result = self.game.start_exploration_instance(zone_id)
+            if isinstance(result, dict) and result.get("started") is True:
+                return
+
+            reason = result.get("reason") if isinstance(result, dict) else None
+            if reason == "missing_player":
+                self._show_temporary_message("Cannot start instance without a player.")
+            elif reason == "unknown_zone":
+                self._show_temporary_message(f"Unknown zone: {zone_id}.")
+            elif reason == "locked_zone":
+                self._show_temporary_message("Player level is too low for this zone.")
+            else:
+                self._show_temporary_message("Instance cannot start.")
+            return
+
         if trigger_type == "combat":
             encounter_id = self._clean_tiled_value(trigger.get("encounter_id"))
             if encounter_id is None:
