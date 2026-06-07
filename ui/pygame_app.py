@@ -6,6 +6,7 @@ from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.dungeon_screen import DungeonScreen
 from ui.screens.exploration_screen import ExplorationScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.instance_run_screen import InstanceRunScreen
 from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.main_menu_screen import MainMenuScreen
 from ui.screens.merchant_screen import MerchantScreen
@@ -32,6 +33,7 @@ class PygameApp:
         self.combat_screen = CombatScreen(self.game)
         self.result_screen = ResultScreen(self.game)
         self.inventory_screen = InventoryScreen(self.game)
+        self.instance_run_screen = InstanceRunScreen(self.game)
         self.crafting_screen = CraftingScreen(self.game)
         self.dungeon_screen = DungeonScreen(self.game)
         self.exploration_screen = ExplorationScreen(self.game)
@@ -69,6 +71,8 @@ class PygameApp:
                 self.combat_screen.handle_event(event)
             elif self.game.state == "combat_result":
                 self.result_screen.handle_event(event)
+            elif self.game.state == "instance_run":
+                self.instance_run_screen.handle_event(event)
             elif self.game.state == "inventory":
                 self.inventory_screen.handle_event(event)
             elif self.game.state == "crafting":
@@ -93,6 +97,8 @@ class PygameApp:
     def update(self):
         if self.game.state == "combat":
             self.combat_screen.update()
+        if self.game.state == "instance_run":
+            self.instance_run_screen.update()
         if self.game.state == "zone_actions":
             current_time_ms = pygame.time.get_ticks()
             result = self.game.update_active_gathering(current_time_ms)
@@ -111,6 +117,8 @@ class PygameApp:
             self.combat_screen.draw(self.screen)
         elif self.game.state == "combat_result":
             self.result_screen.draw(self.screen)
+        elif self.game.state == "instance_run":
+            self.instance_run_screen.draw(self.screen)
         elif self.game.state == "inventory":
             self.inventory_screen.draw(self.screen)
         elif self.game.state == "crafting":

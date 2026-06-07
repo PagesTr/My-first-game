@@ -282,7 +282,7 @@ class Game:
                 },
             })
 
-        self.state = "combat_result"
+        self.state = "instance_run"
         return {"started": True, "zone_id": zone_id}
 
     def select_class(self, class_key):

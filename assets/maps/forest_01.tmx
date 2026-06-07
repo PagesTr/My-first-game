@@ -1265,7 +1265,7 @@
    <properties>
     <property name="prompt" value="E - Start a fight"/>
     <property name="trigger_id" value="trigger_combat_gobelin"/>
-    <property name="trigger_type" value="combat"/>
+    <property name="trigger_type" value="instance"/>
     <property name="zone_id" value="forest_young_goblin_trail"/>
    </properties>
   </object>
