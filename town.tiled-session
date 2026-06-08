@@ -50,8 +50,8 @@
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 56,
-                "y": 241.3333333333333
+                "x": 400,
+                "y": 239.99999999999997
             }
         },
         "assets/automapping/tree_rules.tmx": {
@@ -94,8 +94,8 @@
             "scale": 3,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 168,
-                "y": 544
+                "x": 480,
+                "y": 320
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -108,15 +108,15 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                10,
                 4,
+                10,
                 9
             ],
             "scale": 1.5,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 88,
-                "y": 601.3333333333333
+                "x": 658,
+                "y": 850
             }
         },
         "assets/maps/town_demo.tmx": {

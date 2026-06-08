@@ -64,7 +64,15 @@ class InstanceRunScreen:
         displayed_hp = int(max_hp * visual_hp_ratio)
         panel = pygame.Rect(0, 0, 560, 370)
         panel.center = screen.get_rect().center
-        pygame.draw.rect(screen, (23, 28, 25), panel, border_radius=8)
+        danger_level = int(20 * progress)
+        panel_color = (
+            max(10, 23 - danger_level),
+            max(12, 28 - danger_level),
+            max(12, 25 - danger_level),
+        )
+        if visual_hp_ratio < 0.35:
+            panel_color = (max(8, panel_color[0] - 8), max(8, panel_color[1] - 10), max(8, panel_color[2] - 8))
+        pygame.draw.rect(screen, panel_color, panel, border_radius=8)
         border_color = (190, 72, 64) if visual_hp_ratio < 0.15 and self._is_danger_flash_on() else (124, 155, 107)
         pygame.draw.rect(screen, border_color, panel, 2, border_radius=8)
 
@@ -83,7 +91,7 @@ class InstanceRunScreen:
         status_text = self.font.render(status, True, (224, 224, 210))
         screen.blit(status_text, (panel.x + 42, panel.y + 124))
 
-        self._draw_combat_animation(screen, panel, progress)
+        self._draw_expedition_animation(screen, panel, progress, visual_hp_ratio)
         self._draw_health_bar(screen, panel, visual_hp_ratio, displayed_hp, max_hp)
 
         skip_text = self.small_font.render("Entrée / Espace / Échap - Continuer", True, (156, 164, 150))
@@ -160,50 +168,92 @@ class InstanceRunScreen:
             ]
             pygame.draw.polygon(screen, (18, 48, 30), points)
 
-    def _draw_combat_animation(self, screen, panel, progress):
+    def _draw_expedition_animation(self, screen, panel, progress, visual_hp_ratio):
         elapsed_ms = pygame.time.get_ticks() - self.phase_started_at_ms
         cycle_ms = 700
         cycle_progress = (elapsed_ms % cycle_ms) / cycle_ms
-        cycle_index = int(elapsed_ms / cycle_ms)
-        lunge = cycle_progress * 2 if cycle_progress < 0.5 else (1.0 - cycle_progress) * 2
-        lunge_offset = int(24 * lunge)
+        step_wave = cycle_progress * 2 if cycle_progress < 0.5 else (1.0 - cycle_progress) * 2
 
-        arena = pygame.Rect(panel.x + 48, panel.y + 150, panel.width - 96, 88)
-        pygame.draw.rect(screen, (16, 22, 19), arena, border_radius=8)
-        pygame.draw.rect(screen, (56, 74, 62), arena, 1, border_radius=8)
+        path = pygame.Rect(panel.x + 48, panel.y + 150, panel.width - 96, 88)
+        danger_shift = int(22 * progress)
+        path_color = (
+            max(8, 18 - danger_shift // 3),
+            max(10, 26 - danger_shift // 2),
+            max(9, 20 - danger_shift // 3),
+        )
+        pygame.draw.rect(screen, path_color, path, border_radius=8)
+        path_border = (94, 58, 56) if visual_hp_ratio < 0.35 else (56, 74, 62)
+        pygame.draw.rect(screen, path_border, path, 1, border_radius=8)
+
+        ground_y = path.bottom - 16
         pygame.draw.line(
             screen,
-            (38, 55, 43),
-            (arena.x + 24, arena.bottom - 12),
-            (arena.right - 24, arena.bottom - 12),
+            (42, 61, 45),
+            (path.x + 22, ground_y),
+            (path.right - 22, ground_y),
             2,
         )
+        for marker_index in range(6):
+            marker_x = path.x + 34 + marker_index * 74 - int((cycle_progress * 26) % 26)
+            pygame.draw.line(screen, (31, 45, 35), (marker_x, ground_y + 6), (marker_x + 28, ground_y + 6), 2)
 
-        player_x = arena.x + 92 + (lunge_offset if cycle_index % 2 == 0 else 0)
-        enemy_x = arena.right - 92 - (lunge_offset if cycle_index % 2 == 1 else 0)
-        base_y = arena.bottom - 18
-        self._draw_fighter(screen, player_x, base_y, (92, 142, 196), facing=1)
-        self._draw_fighter(screen, enemy_x, base_y, (172, 84, 72), facing=-1)
+        player_x = path.x + int(path.width * (0.30 + 0.15 * step_wave))
+        player_y = ground_y
+        self._draw_player_silhouette(screen, player_x, player_y, step_wave, visual_hp_ratio)
 
-        if 0.38 <= cycle_progress <= 0.58:
-            impact_x = arena.centerx + (16 if cycle_index % 2 == 0 else -16)
-            impact_y = arena.centery + 4
-            impact_color = (246, 232, 150) if progress < 0.78 else (244, 134, 104)
-            pygame.draw.line(screen, impact_color, (impact_x - 18, impact_y), (impact_x + 18, impact_y), 3)
-            pygame.draw.line(screen, impact_color, (impact_x, impact_y - 18), (impact_x, impact_y + 18), 3)
-            pygame.draw.line(screen, impact_color, (impact_x - 13, impact_y - 13), (impact_x + 13, impact_y + 13), 2)
-            pygame.draw.line(screen, impact_color, (impact_x - 13, impact_y + 13), (impact_x + 13, impact_y - 13), 2)
+        enemy_visible = 0.15 <= cycle_progress <= 0.75
+        impact_visible = 0.45 <= cycle_progress <= 0.60
+        if enemy_visible:
+            enemy_life = 1.0
+            if cycle_progress > 0.60:
+                enemy_life = max(0.0, 1.0 - ((cycle_progress - 0.60) / 0.15))
+            enemy_x = player_x + 92 + int(20 * (1.0 - min(cycle_progress, 0.45) / 0.45))
+            enemy_y = ground_y
+            enemy_scale = 0.65 + 0.35 * enemy_life
+            self._draw_enemy_shadow(screen, enemy_x, enemy_y, enemy_life)
+            enemy_color = (52, 42, 43) if visual_hp_ratio >= 0.35 else (66, 36, 38)
+            pygame.draw.circle(screen, enemy_color, (enemy_x, enemy_y - int(32 * enemy_scale)), int(16 * enemy_scale))
+            pygame.draw.rect(
+                screen,
+                enemy_color,
+                (enemy_x - int(12 * enemy_scale), enemy_y - int(30 * enemy_scale), int(24 * enemy_scale), int(24 * enemy_scale)),
+                border_radius=4,
+            )
+            eye_color = (222, 54, 48) if visual_hp_ratio < 0.35 else (188, 62, 58)
+            pygame.draw.circle(screen, eye_color, (enemy_x - int(5 * enemy_scale), enemy_y - int(35 * enemy_scale)), 2)
+            pygame.draw.circle(screen, eye_color, (enemy_x + int(5 * enemy_scale), enemy_y - int(35 * enemy_scale)), 2)
 
-    def _draw_fighter(self, screen, x, base_y, color, facing):
+        if impact_visible:
+            self._draw_impact_effect(screen, player_x + 66, ground_y - 38, progress)
+
+        if visual_hp_ratio < 0.15 and self._is_danger_flash_on():
+            warning = self.small_font.render("Danger", True, (238, 132, 108))
+            screen.blit(warning, warning.get_rect(center=(path.right - 48, path.y + 18)))
+
+    def _draw_player_silhouette(self, screen, x, base_y, step_wave, visual_hp_ratio):
+        color = (82, 132, 182) if visual_hp_ratio >= 0.35 else (92, 112, 148)
         shadow = pygame.Rect(0, 0, 44, 8)
         shadow.center = (x, base_y + 4)
         pygame.draw.ellipse(screen, (7, 10, 9), shadow)
-        pygame.draw.circle(screen, color, (x, base_y - 48), 11)
-        pygame.draw.rect(screen, color, (x - 9, base_y - 38, 18, 28), border_radius=4)
-        pygame.draw.line(screen, color, (x - 7, base_y - 12), (x - 17, base_y), 4)
-        pygame.draw.line(screen, color, (x + 7, base_y - 12), (x + 17, base_y), 4)
-        pygame.draw.line(screen, (226, 220, 178), (x + facing * 10, base_y - 31), (x + facing * 32, base_y - 41), 3)
-        pygame.draw.line(screen, (226, 220, 178), (x + facing * 26, base_y - 45), (x + facing * 36, base_y - 37), 2)
+        bob = int(3 * step_wave)
+        pygame.draw.circle(screen, color, (x, base_y - 48 - bob), 11)
+        pygame.draw.rect(screen, color, (x - 9, base_y - 38 - bob, 18, 28), border_radius=4)
+        pygame.draw.line(screen, color, (x - 7, base_y - 12), (x - 18, base_y - int(4 * step_wave)), 4)
+        pygame.draw.line(screen, color, (x + 7, base_y - 12), (x + 18, base_y - int(4 * (1.0 - step_wave))), 4)
+        pygame.draw.line(screen, (226, 220, 178), (x + 10, base_y - 31 - bob), (x + 36, base_y - 38 - bob), 3)
+        pygame.draw.line(screen, (226, 220, 178), (x + 30, base_y - 43 - bob), (x + 40, base_y - 35 - bob), 2)
+
+    def _draw_enemy_shadow(self, screen, x, base_y, enemy_life):
+        shadow_width = max(8, int(42 * enemy_life))
+        shadow = pygame.Rect(0, 0, shadow_width, 7)
+        shadow.center = (x, base_y + 4)
+        pygame.draw.ellipse(screen, (8, 8, 8), shadow)
+
+    def _draw_impact_effect(self, screen, x, y, progress):
+        impact_color = (246, 232, 150) if progress < 0.78 else (244, 134, 104)
+        pygame.draw.line(screen, impact_color, (x - 18, y + 10), (x + 20, y - 8), 3)
+        pygame.draw.line(screen, impact_color, (x - 12, y - 10), (x + 12, y + 12), 2)
+        pygame.draw.line(screen, impact_color, (x + 2, y - 20), (x + 18, y + 4), 2)
 
     def _draw_health_bar(self, screen, panel, hp_ratio, displayed_hp, max_hp):
         label_color = (248, 190, 170) if hp_ratio < 0.15 and self._is_danger_flash_on() else (238, 236, 214)

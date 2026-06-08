@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3948">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3949">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
@@ -1267,6 +1267,14 @@
     <property name="trigger_id" value="trigger_combat_gobelin"/>
     <property name="trigger_type" value="instance"/>
     <property name="zone_id" value="forest_young_goblin_trail"/>
+   </properties>
+  </object>
+  <object id="3948" template="../templates/objects/trigger.tx" name="trigger_combat_rats" x="192" y="96" width="48" height="32">
+   <properties>
+    <property name="prompt" value="E - Start a fight"/>
+    <property name="trigger_id" value="trigger_combat_rats"/>
+    <property name="trigger_type" value="instance"/>
+    <property name="zone_id" value="forest_rat_outskirts"/>
    </properties>
   </object>
  </objectgroup>
