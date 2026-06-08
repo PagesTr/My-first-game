@@ -12,6 +12,7 @@
  <tileset firstgid="6087" source="../tilesets/pixel_crawler_anvil_01.tsx"/>
  <tileset firstgid="6887" source="../tilesets/characters_16x24.tsx"/>
  <tileset firstgid="7207" source="../tilesets/characters_24x36.tsx"/>
+ <tileset firstgid="7527" source="../tilesets/bones.tsx"/>
  <layer id="2" name="01_ground" width="80" height="100">
   <data encoding="csv">
 2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2959,2961,2962,2907,2937,2962,2957,2959,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,2352,
@@ -247,10 +248,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1891,452,453,454,453,454,455,1936,1934,453,454,454,623,1895,0,0,0,0,0,0,0,0,86,87,87,87,87,87,87,87,88,89,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1976,1977,1977,1977,1977,1977,1977,1937,1933,1977,1977,1977,1977,1978,0,0,0,0,0,0,0,0,86,129,129,129,129,129,129,87,88,131,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,86,87,88,88,88,88,88,88,88,89,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128,129,130,130,130,130,130,130,130,131,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,7527,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128,129,130,130,130,130,130,130,130,131,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2060,2061,2061,2061,2061,2061,2061,2061,2061,2062,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,303,303,304,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+7529,0,0,0,0,303,303,304,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,344,345,345,346,347,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,386,387,387,388,389,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,64,64,63,64,63,63,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,428,429,429,430,431,0,0,0,0,0,0,0,0,263,0,0,0,0,0,0,0,0,0,0,0,0,0,106,105,106,105,106,106,105,106,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1321,7 +1322,7 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="222" name="coll_bush" type="collision" x="336" y="1552" width="48" height="16">
+  <object id="222" name="coll_bush" type="collision" x="336" y="1536" width="48" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
@@ -1405,19 +1406,19 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="237" name="coll_bush" type="collision" x="960" y="1584" width="48" height="16">
+  <object id="237" name="coll_bush" type="collision" x="960" y="1568" width="48" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="238" name="coll_bush" type="collision" x="1008" y="1568" width="32" height="16">
+  <object id="238" name="coll_bush" type="collision" x="1008" y="1552" width="32" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="239" name="coll_bush" type="collision" x="1040" y="1584" width="32" height="16">
+  <object id="239" name="coll_bush" type="collision" x="1040" y="1568" width="32" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
@@ -1435,13 +1436,13 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="242" name="coll_bush" type="collision" x="1168" y="1568" width="48" height="16">
+  <object id="242" name="coll_bush" type="collision" x="1168" y="1552" width="48" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="243" name="coll_bush" type="collision" x="1216" y="1584" width="32" height="16">
+  <object id="243" name="coll_bush" type="collision" x="1216" y="1568" width="32" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
@@ -1489,7 +1490,7 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="251" name="coll_bush" type="collision" x="1184" y="1344" width="48" height="16">
+  <object id="251" name="coll_bush" type="collision" x="1184" y="1328" width="48" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
@@ -1549,7 +1550,7 @@
     <property name="solid" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="261" name="coll_bush" type="collision" x="1184" y="1088" width="48" height="16">
+  <object id="261" name="coll_bush" type="collision" x="1184" y="1072" width="48" height="32">
    <properties>
     <property name="entity_id" value="bush"/>
     <property name="solid" type="bool" value="true"/>
@@ -6930,12 +6931,12 @@
    <point/>
   </object>
   <object id="3763" template="../templates/objects/futur_spawn.tx" type="spawn" x="793" y="1583"/>
-  <object id="3764" name="player_start" type="spawn" x="16" y="448">
+  <object id="3764" name="spawn_from_altar" type="spawn" x="16" y="448">
    <properties>
     <property name="enabled" type="bool" value="true"/>
     <property name="facing" value="right"/>
     <property name="map_id" value="town_01"/>
-    <property name="spawn_id" value="player_start"/>
+    <property name="spawn_id" value="spawn_from_altar"/>
     <property name="spawn_type" value="player"/>
    </properties>
    <point/>

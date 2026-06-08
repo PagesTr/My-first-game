@@ -68,6 +68,7 @@ class Game:
         self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
+        self.has_seen_intro = False
 
     def start_new_game(self):
         self.player = None
@@ -85,6 +86,7 @@ class Game:
         self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
+        self.has_seen_intro = False
         self.state = "class_select"
 
     def save_current_game(self):
@@ -306,8 +308,13 @@ class Game:
             self.data.classes,
             self.data.skills,
         )
-        self.state = "exploration"
+        self.state = "intro_text"
         self.save_current_game()
+
+    def finish_intro(self):
+        self.has_seen_intro = True
+        self.state = "exploration"
+        return True
 
     def select_zone_for_actions(self, zone_key):
         if not self.player or zone_key not in self.data.zones:

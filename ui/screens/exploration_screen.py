@@ -751,9 +751,9 @@ class ExplorationScreen:
                 if spawn is None:
                     self.spawn_debug_message = f"Spawn {spawn_id} not found. Using fallback."
             if spawn is None:
-                spawn = self.map.spawns.get("player_start")
+                spawn = self.map.spawns.get("spawn_from_altar")
                 if spawn is not None and spawn_id is None:
-                    self.spawn_debug_message = "Spawn player_start loaded."
+                    self.spawn_debug_message = "Spawn spawn_from_altar loaded."
 
         if spawn is not None:
             if spawn_id is not None and spawn.get("spawn_id") == spawn_id:
@@ -763,7 +763,7 @@ class ExplorationScreen:
         spawn_ids = sorted(self.map.spawns.keys()) if self.map is not None and self.map.is_loaded else []
         if spawn_id is None:
             if spawn_ids:
-                self.spawn_debug_message = f"player_start not found. Found: {', '.join(spawn_ids)}"
+                self.spawn_debug_message = f"spawn_from_altar not found. Found: {', '.join(spawn_ids)}"
             else:
                 self.spawn_debug_message = "No Tiled spawns found."
         return pygame.Vector2(self.map_width / 2, self.map_height / 2), None
@@ -1145,16 +1145,16 @@ class ExplorationScreen:
         return frames[frame_index]
 
     def _get_initial_player_position(self):
-        spawn = self.map.spawns.get("player_start") if self.map.is_loaded else None
+        spawn = self.map.spawns.get("spawn_from_altar") if self.map.is_loaded else None
         if spawn is not None:
-            self.active_spawn_id = "player_start"
-            self.spawn_debug_message = f"Spawn player_start loaded at x={spawn['x']:.1f}, y={spawn['y']:.1f}"
+            self.active_spawn_id = "spawn_from_altar"
+            self.spawn_debug_message = f"Spawn spawn_from_altar loaded at x={spawn['x']:.1f}, y={spawn['y']:.1f}"
             return pygame.Vector2(spawn["x"], spawn["y"])
 
         self.active_spawn_id = None
         spawn_ids = sorted(self.map.spawns.keys()) if self.map.is_loaded else []
         if spawn_ids:
-            self.spawn_debug_message = f"player_start not found. Found: {', '.join(spawn_ids)}"
+            self.spawn_debug_message = f"spawn_from_altar not found. Found: {', '.join(spawn_ids)}"
         else:
             self.spawn_debug_message = "No Tiled spawns found"
         return pygame.Vector2(self.map_width / 2, self.map_height / 2)

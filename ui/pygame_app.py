@@ -6,6 +6,7 @@ from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.dungeon_screen import DungeonScreen
 from ui.screens.exploration_screen import ExplorationScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.intro_screen import IntroScreen
 from ui.screens.instance_run_screen import InstanceRunScreen
 from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.main_menu_screen import MainMenuScreen
@@ -37,6 +38,7 @@ class PygameApp:
         self.crafting_screen = CraftingScreen(self.game)
         self.dungeon_screen = DungeonScreen(self.game)
         self.exploration_screen = ExplorationScreen(self.game)
+        self.intro_screen = IntroScreen(self.game, self.exploration_screen)
         self.merchant_screen = MerchantScreen(self.game)
         self.skills_screen = SkillsScreen(self.game)
         self.mailbox_screen = MailboxScreen(self.game)
@@ -81,6 +83,8 @@ class PygameApp:
                 self.dungeon_screen.handle_event(event)
             elif self.game.state == "exploration":
                 self.exploration_screen.handle_event(event)
+            elif self.game.state == "intro_text":
+                self.intro_screen.handle_event(event)
             elif self.game.state == "merchant":
                 self.merchant_screen.handle_event(event)
             elif self.game.state == "skills":
@@ -106,6 +110,8 @@ class PygameApp:
                 self.menu_screen.add_gathering_popup(result)
         if self.game.state == "exploration":
             self.exploration_screen.update()
+        if self.game.state == "intro_text":
+            self.intro_screen.update()
 
     def render(self):
         current_time_ms = pygame.time.get_ticks()
@@ -127,6 +133,8 @@ class PygameApp:
             self.dungeon_screen.draw(self.screen)
         elif self.game.state == "exploration":
             self.exploration_screen.draw(self.screen)
+        elif self.game.state == "intro_text":
+            self.intro_screen.draw(self.screen)
         elif self.game.state == "merchant":
             self.merchant_screen.draw(self.screen)
         elif self.game.state == "skills":
