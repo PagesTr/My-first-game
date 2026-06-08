@@ -446,6 +446,8 @@ class ExplorationScreen:
         self.map_width = 800
         self.map_height = 600
         self.camera_offset = pygame.Vector2(0, 0)
+        self.camera_zoom = 2
+        self._world_surface = None
         self.tile_size = 16
         self.player_visual_size = pygame.Vector2(24, 36)
         self.player_hitbox_size = pygame.Vector2(10, 8)
@@ -567,10 +569,14 @@ class ExplorationScreen:
     def draw(self, screen):
         current_time_ms = pygame.time.get_ticks()
         self._update_camera(screen)
-        self._draw_map_below_player(screen)
-        self._draw_player(screen)
-        self._draw_map_above_player(screen)
-        self._draw_collision_debug(screen)
+        gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
+        world_surface = self._get_world_surface(screen)
+        self._draw_map_below_player(world_surface)
+        self._draw_player(world_surface)
+        self._draw_map_above_player(world_surface)
+        self._draw_collision_debug(world_surface)
+        scaled_world = pygame.transform.scale(world_surface, (screen.get_width(), gameplay_height))
+        screen.blit(scaled_world, (0, 0))
         if not self._is_overlay_open():
             self._draw_help_panel(screen, current_time_ms)
         self._draw_quick_action_bar(screen)
@@ -957,11 +963,23 @@ class ExplorationScreen:
         return overlays.get(overlay_id)
 
     def _update_camera(self, screen):
-        max_x = max(0, self.map_width - screen.get_width())
         gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
-        max_y = max(0, self.map_height - gameplay_height)
-        self.camera_offset.x = min(max(self.player_rect.centerx - screen.get_width() // 2, 0), max_x)
-        self.camera_offset.y = min(max(self.player_rect.centery - gameplay_height // 2, 0), max_y)
+        visible_world_width = max(1, int(screen.get_width() / self.camera_zoom))
+        visible_world_height = max(1, int(gameplay_height / self.camera_zoom))
+        max_x = max(0, self.map_width - visible_world_width)
+        max_y = max(0, self.map_height - visible_world_height)
+        self.camera_offset.x = min(max(self.player_rect.centerx - visible_world_width // 2, 0), max_x)
+        self.camera_offset.y = min(max(self.player_rect.centery - visible_world_height // 2, 0), max_y)
+
+    def _get_world_surface(self, screen):
+        gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
+        world_size = (
+            max(1, int(screen.get_width() / self.camera_zoom)),
+            max(1, int(gameplay_height / self.camera_zoom)),
+        )
+        if self._world_surface is None or self._world_surface.get_size() != world_size:
+            self._world_surface = pygame.Surface(world_size)
+        return self._world_surface
 
     def _get_bottom_bar_height(self):
         return 52
