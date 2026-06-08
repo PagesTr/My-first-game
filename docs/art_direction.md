@@ -2,7 +2,7 @@
 
 ## 1. Visual identity
 
-The game uses readable dark medieval fantasy pixel art.
+The game uses readable semi-dark medieval fantasy pixel art.
 
 The world should feel dangerous, damp, old, hostile and slightly sarcastic. Death, loot, forest monsters, dungeon progression and repeated failure are central themes.
 
