@@ -1,5 +1,5 @@
 {
-    "activeFile": "assets/maps/town_01.tmx",
+    "activeFile": "assets/maps/forest_01.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -91,11 +91,11 @@
                 10,
                 9
             ],
-            "scale": 1.1380208333333333,
-            "selectedLayer": 13,
+            "scale": 3,
+            "selectedLayer": 12,
             "viewCenter": {
-                "x": 479.7803203661328,
-                "y": 319.8535469107552
+                "x": 168,
+                "y": 544
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -230,19 +230,16 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "assets/tilesets/pixel_crawler_walls.tsx",
         "assets/maps/town_01.tmx",
-        "assets/tilesets/water.tsx",
-        "assets/tilesets/pixel_crawler_anvil_01.tsx",
-        "assets/tilesets/pixel_crawler_floors.tsx",
-        "assets/tilesets/characters_16x24.tsx",
-        "assets/tilesets/characters_24x36.tsx",
-        "assets/tilesets/pixe_crawlers_doors.tsx",
-        "assets/maps/forest_01.tmx"
+        "assets/maps/forest_01.tmx",
+        "assets/automapping/house_rules.tmx"
     ],
     "project": "town.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "assets/maps/town_01.tmx",
+        "assets/automapping/house_rules.tmx",
+        "assets/maps/forest_01.tmx",
         "assets/tilesets/pixel_crawler_walls.tsx",
         "assets/tilesets/pixel_crawler_anvil_01.tsx",
         "assets/tilesets/water.tsx",
@@ -250,11 +247,8 @@
         "assets/tilesets/pixe_crawlers_doors.tsx",
         "assets/tilesets/characters_16x24.tsx",
         "assets/tilesets/characters_24x36.tsx",
-        "assets/maps/forest_01.tmx",
-        "assets/maps/town_01.tmx",
         "assets/maps/vierge.tmx",
-        "assets/maps/Vierge.tmx",
-        "assets/tilesets/characters.tsx"
+        "assets/maps/Vierge.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
