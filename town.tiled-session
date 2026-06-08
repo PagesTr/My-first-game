@@ -138,11 +138,11 @@
                 10,
                 9
             ],
-            "scale": 0.5,
-            "selectedLayer": 9,
+            "scale": 4,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 750,
-                "y": 750
+                "x": 71,
+                "y": 426
             }
         },
         "assets/maps/town_demo.tmx": {

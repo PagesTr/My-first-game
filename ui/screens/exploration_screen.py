@@ -103,7 +103,14 @@ class TiledMap:
             if columns <= 0:
                 columns = image.get_width() // tile_width
             rows = image.get_height() // tile_height
-            max_tiles = tile_count if tile_count > 0 else columns * rows
+            image_tile_count = columns * rows
+            if tile_count > image_tile_count:
+                tileset_name = tileset_root.attrib.get("name", str(tileset_path))
+                self.warnings.append(
+                    f"Tileset {tileset_name} declares {tile_count} tiles but image contains "
+                    f"{image_tile_count}. Clamping to image bounds."
+                )
+            max_tiles = min(tile_count, image_tile_count) if tile_count > 0 else image_tile_count
 
             for local_id in range(max_tiles):
                 column = local_id % columns
