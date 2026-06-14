@@ -1,0 +1,32 @@
+[
+  {
+    "id": "patch_0_1_welcome",
+    "channel": "notice",
+    "type": "patch_note",
+    "title": "Patch Note - First Steps",
+    "sender": "Development Board",
+    "date": "2026-05-30",
+    "body": "The town notice board is now open. This is where future patch notes, dev notes, and questionable advice will appear.",
+    "important": true
+  },
+  {
+    "id": "dev_note_crafting_station",
+    "channel": "notice",
+    "type": "dev_note",
+    "title": "Dev Note - Crafting Stations",
+    "sender": "Development Board",
+    "date": "2026-05-30",
+    "body": "Crafting from your pockets has been outlawed by common sense. Use the anvil when you want to make something real.",
+    "important": false
+  },
+  {
+    "id": "letter_brindle_001",
+    "channel": "letter",
+    "type": "npc_letter",
+    "title": "A Note from Brindle",
+    "sender": "Quartermaster Brindle",
+    "date": "2026-05-30",
+    "body": "If you keep bringing back goblin ears, at least start counting them properly. The quartermaster's desk has standards.",
+    "important": false
+  }
+]

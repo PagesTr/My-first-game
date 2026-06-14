@@ -128,8 +128,8 @@ class MenuScreen:
         )
         self.mailbox_button = MenuButton(
             (400, 490, 300, 54),
-            "Mailbox",
-            "View combat reports",
+            "Notice Board",
+            "Dev notes and letters",
         )
         self.professions_button = MenuButton(
             (400, 426, 300, 54),
@@ -221,6 +221,12 @@ class MenuScreen:
         if event.type == pygame.KEYDOWN and self.game.state == "zone_actions":
             if event.key == pygame.K_o:
                 self._start_selected_gathering_offline()
+            return
+
+        if event.type == pygame.KEYDOWN and self.game.state == "town":
+            if event.key == pygame.K_e:
+                self._clear_offline_result()
+                self.game.open_exploration()
             return
 
         if event.type != pygame.MOUSEBUTTONDOWN:
@@ -526,6 +532,7 @@ class MenuScreen:
             f"Class: {class_name}",
             f"Level: {player.get('level', 1)}",
             f"Gold: {player.get('gold', 0)}",
+            "E: Explorer la clairiere",
         ]
 
         y = rect.y + 52
@@ -747,7 +754,7 @@ class MenuScreen:
 
     def _handle_region_select_click(self, pos):
         if self.zone_back_button.is_clicked(pos):
-            self.game.state = "town"
+            self.game.state = "exploration"
             return True
 
         if not self.region_buttons:

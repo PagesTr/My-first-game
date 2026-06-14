@@ -68,6 +68,7 @@ class Game:
         self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
+        self.has_seen_intro = False
 
     def start_new_game(self):
         self.player = None
@@ -85,6 +86,7 @@ class Game:
         self.return_state_after_inventory = None
         self.main_menu_message = ""
         self.mailbox = create_mailbox()
+        self.has_seen_intro = False
         self.state = "class_select"
 
     def save_current_game(self):
@@ -178,6 +180,113 @@ class Game:
         self.active_gathering = None
         self.state = "main_menu"
 
+    def open_exploration(self):
+        if self.player is None:
+            return False
+        self.state = "exploration"
+        return True
+
+    def return_to_town(self):
+        self.state = "town"
+        return True
+
+    def start_exploration_combat(self, enemy_id):
+        if self.player is None:
+            return {"started": False, "reason": "missing_player"}
+
+        enemy_id = str(enemy_id).strip() if enemy_id is not None else None
+        if not enemy_id or enemy_id not in self.data.enemies:
+            return {"started": False, "reason": "unknown_enemy", "enemy_id": enemy_id}
+
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        enemy = create_enemy(self.data.enemies[enemy_id], self.player.get("level", 1))
+        self.combat = CombatSystem(self.player, enemy, self.data.skills)
+        self.auto_mode = True
+        self.last_combat_result = None
+        self.pending_combat_context = {
+            "source": "exploration",
+            "enemy_id": enemy_id,
+        }
+        self.state = "combat"
+        return {"started": True, "enemy_id": enemy_id}
+
+    def start_exploration_instance(self, zone_id):
+        if self.player is None:
+            return {"started": False, "reason": "missing_player"}
+
+        zone_id = str(zone_id).strip() if zone_id is not None else None
+        if not zone_id or zone_id not in self.data.zones:
+            return {"started": False, "reason": "unknown_zone", "zone_id": zone_id}
+
+        zone = self.data.zones[zone_id]
+        if self.player.get("level", 1) < zone.get("unlock_level", 1):
+            return {"started": False, "reason": "locked_zone", "zone_id": zone_id}
+
+        self.selected_zone = zone_id
+        prepare_player_for_combat(
+            self.player,
+            self.data.items,
+            self.data.classes,
+            self.data.skills,
+        )
+        self.last_instance_result = run_instant_instance(
+            self.player,
+            zone_id,
+            self.data.zones,
+            self.data.enemies,
+            self.data.items,
+            self.data.skills,
+        )
+        self.last_combat_result = self.last_instance_result
+        self.combat = None
+        self.auto_mode = False
+        self.last_instance_source = "exploration"
+
+        enemy_pool = zone.get("enemy_pool", [])
+        combats_won = 0
+        if isinstance(self.last_instance_result, dict):
+            combats_won = int(self.last_instance_result.get("combats_won", 0))
+        enemy_id = None
+        enemy_family = None
+        if (
+            isinstance(enemy_pool, list)
+            and len(enemy_pool) == 1
+            and isinstance(self.last_instance_result, dict)
+        ):
+            enemy_id = enemy_pool[0]
+            enemy_data = self.data.enemies.get(enemy_id, {})
+            enemy_family = enemy_data.get("family") if isinstance(enemy_data, dict) else None
+            if combats_won > 0:
+                self.record_progress_event({
+                    "type": "kill_enemy",
+                    "target": enemy_id,
+                    "amount": combats_won,
+                    "metadata": {
+                        "chapter": zone.get("chapter", "forest"),
+                        "family": enemy_family,
+                        "zone_id": zone_id,
+                    },
+                })
+        if combats_won > 0:
+            self.record_achievement_event({
+                "type": "expedition_finished",
+                "target": zone_id,
+                "amount": combats_won,
+                "metadata": {
+                    "chapter": zone.get("chapter", "forest"),
+                    "enemy_id": enemy_id,
+                    "family": enemy_family,
+                },
+            })
+
+        self.state = "instance_run"
+        return {"started": True, "zone_id": zone_id}
+
     def select_class(self, class_key):
         if class_key not in self.data.classes:
             return
@@ -199,8 +308,13 @@ class Game:
             self.data.classes,
             self.data.skills,
         )
-        self.state = "town"
+        self.state = "intro_text"
         self.save_current_game()
+
+    def finish_intro(self):
+        self.has_seen_intro = True
+        self.state = "exploration"
+        return True
 
     def select_zone_for_actions(self, zone_key):
         if not self.player or zone_key not in self.data.zones:
@@ -297,7 +411,7 @@ class Game:
         if self.state == "dungeon":
             self.state = "dungeon"
         else:
-            self.state = "town"
+            self.state = "exploration"
         return {"started": True, "dungeon_id": dungeon_id}
 
     def get_active_dungeon_step(self):
@@ -970,7 +1084,7 @@ class Game:
                 self.data.classes,
                 self.data.skills,
             )
-        self.state = "town"
+        self.state = "exploration"
         self.combat = None
         self.auto_mode = False
         self.save_current_game()

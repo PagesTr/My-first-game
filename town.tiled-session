@@ -1,0 +1,307 @@
+{
+    "activeFile": "assets/maps/altar_01.tmx",
+    "automapping.whileDrawing": true,
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Tous les Fichiers (*)",
+    "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 250,
+                "y": 135
+            }
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Ground_rocks": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Objects": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Objects_animated": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Objects_animated2": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Objects_animated3": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#Water_detilazation": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#details": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Undead_land.tmx#water_coasts": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Trist/AppData/Local/Temp/b22ae5ed-47f7-449c-a412-16e86118c7a1_craftpix-net-695666-free-undead-tileset-top-down-pixel-art.zip.7a1/Tiled_files/Water_detilazation2.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/automapping/house_rules.tmx": {
+            "expandedObjectLayers": [
+                8
+            ],
+            "scale": 1.5,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 400,
+                "y": 239.99999999999997
+            }
+        },
+        "assets/automapping/tree_rules.tmx": {
+            "expandedObjectLayers": [
+                6
+            ],
+            "scale": 2,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 320,
+                "y": 240
+            }
+        },
+        "assets/automapping/water_collision_rules.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 35.45454545454545,
+                "y": 36.72727272727273
+            }
+        },
+        "assets/maps/Start_map.tmx": {
+            "expandedObjectLayers": [
+                4,
+                10,
+                9
+            ],
+            "scale": 2,
+            "selectedLayer": 12,
+            "viewCenter": {
+                "x": 464,
+                "y": 176
+            }
+        },
+        "assets/maps/Vierge.tmx": {
+            "expandedObjectLayers": [
+                4,
+                10,
+                9
+            ],
+            "scale": 1.1380208333333333,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 479.7803203661328,
+                "y": 319.8535469107552
+            }
+        },
+        "assets/maps/altar_01.tmx": {
+            "expandedObjectLayers": [
+                10,
+                4,
+                9
+            ],
+            "scale": 2,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 179.5,
+                "y": 161.5
+            }
+        },
+        "assets/maps/forest_01.tmx": {
+            "expandedObjectLayers": [
+                10,
+                9
+            ],
+            "scale": 3,
+            "selectedLayer": 12,
+            "viewCenter": {
+                "x": 480,
+                "y": 320
+            }
+        },
+        "assets/maps/formation_house_test.tmx": {
+            "scale": 3.9866071428571423,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 127.92833146696532,
+                "y": 111.87458006718926
+            }
+        },
+        "assets/maps/town_01.tmx": {
+            "expandedObjectLayers": [
+                10,
+                4,
+                9
+            ],
+            "scale": 4,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 71,
+                "y": 426
+            }
+        },
+        "assets/maps/town_demo.tmx": {
+            "scale": 0.853515625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 639.7070938215103,
+                "y": 480.36613272311206
+            }
+        },
+        "assets/maps/vierge.tmx": {
+            "scale": 0.558125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 840.3135498320269,
+                "y": 765.0615901455768
+            }
+        },
+        "assets/maps/water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "assets/tilesets/Floors_dark_240x192.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "assets/tilesets/Floors_dark_grass-240x192.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "assets/tilesets/altar.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "assets/tilesets/bones.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 11
+        },
+        "assets/tilesets/characters.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "assets/tilesets/characters_16x24.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "assets/tilesets/characters_24x36.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "assets/tilesets/forest_ground_16x16_final.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "assets/tilesets/house_tileset.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixe_crawlers_doors.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        },
+        "assets/tilesets/pixel_crawler_anvil.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_anvil_01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "assets/tilesets/pixel_crawler_building_floors.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_building_shadows.tsx": {
+            "scaleInDock": 3
+        },
+        "assets/tilesets/pixel_crawler_farm.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_floors.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        },
+        "assets/tilesets/pixel_crawler_furnace.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_furniture.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_knight_idle.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_rogue_idle.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_roofs.tsx": {
+            "scaleInDock": 2
+        },
+        "assets/tilesets/pixel_crawler_trees.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_vegetation.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        },
+        "assets/tilesets/pixel_crawler_walls.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "assets/tilesets/pixel_crawler_wizzard_idle.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/pixel_crawler_workbench.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/tilemap_packed.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tilesets/water.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 4
+        }
+    },
+    "frame.defaultDuration": 150,
+    "last.externalTilesetPath": "D:/Jeux test/Games/My first game/assets/tilesets",
+    "last.imagePath": "D:/Jeux test/Games/My first game/assets/images",
+    "last.objectTemplatePath": "D:/Jeux test/Games/My first game/assets/templates/objects",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "assets/maps/town_01.tmx",
+        "assets/maps/altar_01.tmx",
+        "assets/maps/forest_01.tmx",
+        "assets/automapping/house_rules.tmx",
+        "assets/tilesets/Floors_dark_240x192.tsx",
+        "assets/tilesets/Floors_dark_grass-240x192.tsx",
+        "assets/tilesets/pixel_crawler_vegetation.tsx",
+        "assets/automapping/tree_rules.tmx",
+        "assets/tilesets/bones.tsx",
+        "assets/tilesets/altar.tsx"
+    ],
+    "project": "town.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "assets/maps/town_01.tmx",
+        "assets/tilesets/altar.tsx",
+        "assets/tilesets/bones.tsx",
+        "assets/automapping/tree_rules.tmx",
+        "assets/tilesets/pixel_crawler_vegetation.tsx",
+        "assets/tilesets/Floors_dark_grass-240x192.tsx",
+        "assets/tilesets/Floors_dark_240x192.tsx",
+        "assets/automapping/house_rules.tmx",
+        "assets/maps/forest_01.tmx",
+        "assets/maps/altar_01.tmx",
+        "assets/maps/Start_map.tmx",
+        "assets/tilesets/water.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

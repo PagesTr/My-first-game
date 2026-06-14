@@ -1,0 +1,22 @@
+{
+  "id": "archer_idle_front",
+  "source": "imagegen",
+  "style_reference": "docs/art_direction.md",
+  "frame_width": 32,
+  "frame_height": 48,
+  "frame_count": 4,
+  "direction": "front",
+  "animation": "idle",
+  "anchor": "bottom-center",
+  "files": {
+    "source_chroma": "archer_idle_front_source_chroma.png",
+    "sheet": "archer_idle_front_sheet.png",
+    "preview": "archer_idle_front_preview.png",
+    "frames": [
+      "archer_idle_front_0.png",
+      "archer_idle_front_1.png",
+      "archer_idle_front_2.png",
+      "archer_idle_front_3.png"
+    ]
+  }
+}

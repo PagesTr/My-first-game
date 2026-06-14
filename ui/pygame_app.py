@@ -4,7 +4,10 @@ from ui.screens.achievements_screen import AchievementsScreen
 from ui.screens.combat_screen import CombatScreen
 from ui.screens.crafting_screen import CraftingScreen
 from ui.screens.dungeon_screen import DungeonScreen
+from ui.screens.exploration_screen import ExplorationScreen
 from ui.screens.inventory_screen import InventoryScreen
+from ui.screens.intro_screen import IntroScreen
+from ui.screens.instance_run_screen import InstanceRunScreen
 from ui.screens.mailbox_screen import MailboxScreen
 from ui.screens.main_menu_screen import MainMenuScreen
 from ui.screens.merchant_screen import MerchantScreen
@@ -31,8 +34,11 @@ class PygameApp:
         self.combat_screen = CombatScreen(self.game)
         self.result_screen = ResultScreen(self.game)
         self.inventory_screen = InventoryScreen(self.game)
+        self.instance_run_screen = InstanceRunScreen(self.game)
         self.crafting_screen = CraftingScreen(self.game)
         self.dungeon_screen = DungeonScreen(self.game)
+        self.exploration_screen = ExplorationScreen(self.game)
+        self.intro_screen = IntroScreen(self.game, self.exploration_screen)
         self.merchant_screen = MerchantScreen(self.game)
         self.skills_screen = SkillsScreen(self.game)
         self.mailbox_screen = MailboxScreen(self.game)
@@ -67,12 +73,18 @@ class PygameApp:
                 self.combat_screen.handle_event(event)
             elif self.game.state == "combat_result":
                 self.result_screen.handle_event(event)
+            elif self.game.state == "instance_run":
+                self.instance_run_screen.handle_event(event)
             elif self.game.state == "inventory":
                 self.inventory_screen.handle_event(event)
             elif self.game.state == "crafting":
                 self.crafting_screen.handle_event(event)
             elif self.game.state == "dungeon":
                 self.dungeon_screen.handle_event(event)
+            elif self.game.state == "exploration":
+                self.exploration_screen.handle_event(event)
+            elif self.game.state == "intro_text":
+                self.intro_screen.handle_event(event)
             elif self.game.state == "merchant":
                 self.merchant_screen.handle_event(event)
             elif self.game.state == "skills":
@@ -89,11 +101,17 @@ class PygameApp:
     def update(self):
         if self.game.state == "combat":
             self.combat_screen.update()
+        if self.game.state == "instance_run":
+            self.instance_run_screen.update()
         if self.game.state == "zone_actions":
             current_time_ms = pygame.time.get_ticks()
             result = self.game.update_active_gathering(current_time_ms)
             if result is not None and hasattr(self.menu_screen, "add_gathering_popup"):
                 self.menu_screen.add_gathering_popup(result)
+        if self.game.state == "exploration":
+            self.exploration_screen.update()
+        if self.game.state == "intro_text":
+            self.intro_screen.update()
 
     def render(self):
         current_time_ms = pygame.time.get_ticks()
@@ -105,12 +123,18 @@ class PygameApp:
             self.combat_screen.draw(self.screen)
         elif self.game.state == "combat_result":
             self.result_screen.draw(self.screen)
+        elif self.game.state == "instance_run":
+            self.instance_run_screen.draw(self.screen)
         elif self.game.state == "inventory":
             self.inventory_screen.draw(self.screen)
         elif self.game.state == "crafting":
             self.crafting_screen.draw(self.screen)
         elif self.game.state == "dungeon":
             self.dungeon_screen.draw(self.screen)
+        elif self.game.state == "exploration":
+            self.exploration_screen.draw(self.screen)
+        elif self.game.state == "intro_text":
+            self.intro_screen.draw(self.screen)
         elif self.game.state == "merchant":
             self.merchant_screen.draw(self.screen)
         elif self.game.state == "skills":

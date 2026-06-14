@@ -1,0 +1,21 @@
+{
+  "id": "warrior_idle_front",
+  "source": "pixellab",
+  "style_reference": "docs/art_direction.md",
+  "frame_width": 32,
+  "frame_height": 48,
+  "frame_count": 4,
+  "direction": "front",
+  "animation": "idle",
+  "anchor": "bottom-center",
+  "files": {
+    "sheet": "warrior_idle_front_sheet.png",
+    "preview": "warrior_idle_front_preview.png",
+    "frames": [
+      "warrior_idle_front_0.png",
+      "warrior_idle_front_1.png",
+      "warrior_idle_front_2.png",
+      "warrior_idle_front_3.png"
+    ]
+  }
+}

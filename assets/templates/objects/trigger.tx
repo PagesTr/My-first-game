@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="trigger_blanc" type="trigger" width="32" height="16">
+  <properties>
+   <property name="enabled" type="bool" value="true"/>
+   <property name="once" type="bool" value="false"/>
+   <property name="prompt" value="E"/>
+   <property name="requires_interact" type="bool" value="true"/>
+   <property name="target_map" value=""/>
+   <property name="target_spawn_id" value=""/>
+   <property name="target_state" value=""/>
+   <property name="trigger_id" value=""/>
+   <property name="trigger_type" value=""/>
+  </properties>
+ </object>
+</template>
