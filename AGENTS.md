@@ -131,13 +131,26 @@ Before any commit or PR recommendation, agents must check:
 
 Before responding to a development task, classify the task and use the appropriate role from `docs/ai_agents_prompts.md`.
 
+Use **Agent Orchestrateur de Workflow** as the default entry point when:
+
+- the task is unclear;
+- the task has several steps;
+- several agents may be needed;
+- the human asks for a simplified workflow;
+- the task involves issue, PR, tests, Git or Codex coordination;
+- the human wants only the next validation action.
+
+The orchestrator coordinates the workflow, but must not code directly, merge, delete files, rename branches, or make architecture decisions alone.
+
 Use this routing:
 
 | Task type | Required role |
 | --- | --- |
-| unclear task | Agent Cadrage & Découpage |
-| broad task | Agent Cadrage & Découpage |
-| new feature | Agent Cadrage & Découpage first |
+| unclear task | Agent Orchestrateur de Workflow first |
+| broad task | Agent Orchestrateur de Workflow first |
+| multi-step task | Agent Orchestrateur de Workflow first |
+| request to reduce copy-paste | Agent Orchestrateur de Workflow first |
+| new feature | Agent Orchestrateur de Workflow, then Agent Cadrage & Découpage |
 | localized code change | Agent Implémentation Localisée |
 | system logic change | Agent Tests & Stabilité also required |
 | `systems/` change | Agent Tests & Stabilité also required |
@@ -146,13 +159,33 @@ Use this routing:
 | UI or screen change | Agent UI / UX / Narration if useful |
 | pre-commit review | Agent Review Architecture & Git |
 | PR review | Agent Review Architecture & Git |
-| architecture-sensitive task | Agent Cadrage & Découpage, then human validation |
+| architecture-sensitive task | Agent Orchestrateur de Workflow, then Agent Cadrage & Découpage, then human validation |
 
-Do not jump directly to implementation when cadrage is required.
+Do not jump directly to implementation when orchestration or cadrage is required.
 
 ---
 
 ## 6. Required workflow by task size
+
+### Orchestrated task
+
+Use when the human asks for one validation step at a time.
+
+```text
+Agent Orchestrateur de Workflow
+Human validation: OK / STOP / MODIFIER
+Then only the agent selected by the orchestrator
+Agent Review Architecture & Git before commit or PR
+```
+
+Expected scope:
+
+- one next action at a time;
+- explicit allowed and forbidden files;
+- no coding by the orchestrator;
+- no hidden expansion of the task.
+
+---
 
 ### Very small fix
 
@@ -177,6 +210,7 @@ Expected scope:
 Use:
 
 ```text
+Agent Orchestrateur de Workflow if the task has several steps
 Agent Cadrage & Découpage
 Agent Implémentation Localisée
 Agent Tests & Stabilité
@@ -197,6 +231,7 @@ Expected scope:
 Use:
 
 ```text
+Agent Orchestrateur de Workflow
 Agent Cadrage & Découpage
 Human validation
 Agent Tests & Stabilité
@@ -218,6 +253,7 @@ Expected scope:
 Use:
 
 ```text
+Agent Orchestrateur de Workflow
 Agent Cadrage & Découpage
 Agent Review Architecture & Git
 Human validation
@@ -299,6 +335,18 @@ Use for roadmap, design notes, architectural decisions and AI workflow documenta
 ---
 
 ## 9. Output expectations for agents
+
+When orchestrating a workflow, include:
+
+```text
+Diagnostic
+Périmètre proposé
+Fichiers autorisés
+Fichiers interdits
+Étapes minimales
+Prochaine action
+Validation demandée: OK / STOP / MODIFIER
+```
 
 When proposing a change, include:
 
