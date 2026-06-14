@@ -84,7 +84,7 @@ class IntroScreen:
         load_map = getattr(self.exploration_screen, "_load_map", None)
         if callable(load_map):
             try:
-                load_map("intro_01")
+                load_map("altar_01", "first_spawn")
             except Exception:
                 pass
         self.game.finish_intro()

@@ -61,8 +61,8 @@
             "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 408,
-                "y": 163
+                "x": 320,
+                "y": 240
             }
         },
         "assets/automapping/water_collision_rules.tmx": {
@@ -101,15 +101,15 @@
         },
         "assets/maps/altar_01.tmx": {
             "expandedObjectLayers": [
-                4,
                 10,
+                4,
                 9
             ],
-            "scale": 4,
+            "scale": 2,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 173,
-                "y": 176
+                "x": 179.5,
+                "y": 161.5
             }
         },
         "assets/maps/forest_01.tmx": {
@@ -120,8 +120,8 @@
             "scale": 3,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 500.66666666666663,
-                "y": 572
+                "x": 480,
+                "y": 320
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -134,8 +134,8 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
-                4,
                 10,
+                4,
                 9
             ],
             "scale": 4,
