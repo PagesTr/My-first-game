@@ -1,5 +1,5 @@
 {
-    "activeFile": "assets/maps/Start_map.tmx",
+    "activeFile": "assets/maps/altar_01.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -106,9 +106,9 @@
                 9
             ],
             "scale": 4,
-            "selectedLayer": 12,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 472,
+                "x": 173,
                 "y": 176
             }
         },
@@ -273,11 +273,11 @@
     "map.tileWidth": 16,
     "openFiles": [
         "assets/maps/town_01.tmx",
+        "assets/maps/altar_01.tmx",
         "assets/maps/forest_01.tmx",
         "assets/automapping/house_rules.tmx",
         "assets/tilesets/Floors_dark_240x192.tsx",
         "assets/tilesets/Floors_dark_grass-240x192.tsx",
-        "assets/maps/Start_map.tmx",
         "assets/tilesets/pixel_crawler_vegetation.tsx",
         "assets/automapping/tree_rules.tmx",
         "assets/tilesets/bones.tsx",
@@ -287,17 +287,17 @@
     "property.type": "bool",
     "recentFiles": [
         "assets/maps/town_01.tmx",
-        "assets/maps/forest_01.tmx",
-        "assets/automapping/house_rules.tmx",
-        "assets/tilesets/Floors_dark_240x192.tsx",
-        "assets/tilesets/Floors_dark_grass-240x192.tsx",
         "assets/tilesets/altar.tsx",
         "assets/tilesets/bones.tsx",
         "assets/automapping/tree_rules.tmx",
         "assets/tilesets/pixel_crawler_vegetation.tsx",
+        "assets/tilesets/Floors_dark_grass-240x192.tsx",
+        "assets/tilesets/Floors_dark_240x192.tsx",
+        "assets/automapping/house_rules.tmx",
+        "assets/maps/forest_01.tmx",
+        "assets/maps/altar_01.tmx",
         "assets/maps/Start_map.tmx",
-        "assets/tilesets/water.tsx",
-        "assets/tilesets/pixel_crawler_walls.tsx"
+        "assets/tilesets/water.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
