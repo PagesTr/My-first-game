@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run pytest",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "pytest"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run game",
+      "type": "shell",
+      "command": "python",
+      "args": ["main.py"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git status",
+      "type": "shell",
+      "command": "git",
+      "args": ["status", "--short", "--branch"],
+      "problemMatcher": []
+    }
+  ]
+}
