@@ -9,7 +9,14 @@ Primary references:
 - `docs/project_structure.md`
 - `docs/roadmap.md`
 
-AI agents must read and follow these documents before proposing or modifying code.
+Additional references by task type:
+
+- `docs/game_design.md` for long-term gameplay vision;
+- `docs/art_direction.md` for visual direction, sprites, tiles, UI visuals, effects and asset acceptance rules;
+- `docs/narrative_tone_guidelines.md` for dialogue, quest text, item descriptions, achievements and tone;
+- `docs/forest_chapter_content_plan.md` for Forest chapter content, enemies, quests, dungeons, NPC hooks and narrative progression.
+
+AI agents must read and follow the relevant documents before proposing or modifying code, data, assets, UI, narrative text or project workflow.
 
 ---
 
@@ -61,6 +68,7 @@ Responsibility rules:
 - `systems/` contains testable gameplay logic.
 - `entities/` contains game entities.
 - `ui/` and `ui/screens/` handle display, input and screens.
+- `assets/` contains visual and audio resources.
 - `data/` contains static game content in JSON.
 - `tests/` protects important behavior with pytest.
 - `docs/` preserves decisions and workflow rules.
@@ -92,7 +100,8 @@ Avoid:
 - mixing unrelated tasks;
 - modifying many files at once;
 - hardcoding static game content inside gameplay systems;
-- placing business logic inside UI code.
+- placing business logic inside UI code;
+- adding visual, narrative or content conventions that conflict with existing docs.
 
 If a task is unclear, too broad or risky, stop and propose a smaller plan before implementation.
 
@@ -123,7 +132,8 @@ Before any commit or PR recommendation, agents must check:
 - whether the modified files are coherent with the task;
 - whether tests are needed;
 - whether the change should be split;
-- whether the change respects the architecture.
+- whether the change respects the architecture;
+- whether the correct reference documents were applied.
 
 ---
 
@@ -138,7 +148,8 @@ Use **Agent Orchestrateur de Workflow** as the default entry point when:
 - several agents may be needed;
 - the human asks for a simplified workflow;
 - the task involves issue, PR, tests, Git or Codex coordination;
-- the human wants only the next validation action.
+- the human wants only the next validation action;
+- the task requires choosing which project documents apply.
 
 The orchestrator coordinates the workflow, but must not code directly, merge, delete files, rename branches, or make architecture decisions alone.
 
@@ -156,7 +167,10 @@ Use this routing:
 | `systems/` change | Agent Tests & Stabilité also required |
 | `entities/` change | Agent Tests & Stabilité also required |
 | `data/` balance change | Agent Gameplay / Balance Data |
-| UI or screen change | Agent UI / UX / Narration if useful |
+| asset, sprite, tileset, icon, visual effect, Tiled or visual consistency | Agent Assets & Direction Graphique |
+| UI visual layout, panel, button, overlay or readability | Agent Assets & Direction Graphique and/or Agent UI / UX / Narration |
+| UI text, dialogue, quest text, item description, achievement text or narrative tone | Agent UI / UX / Narration |
+| Forest content, enemy taxonomy, quests, dungeons or NPC hooks | Agent Gameplay / Balance Data and/or Agent UI / UX / Narration |
 | pre-commit review | Agent Review Architecture & Git |
 | PR review | Agent Review Architecture & Git |
 | architecture-sensitive task | Agent Orchestrateur de Workflow, then Agent Cadrage & Découpage, then human validation |
@@ -165,7 +179,28 @@ Do not jump directly to implementation when orchestration or cadrage is required
 
 ---
 
-## 6. Required workflow by task size
+## 6. Reference documents by task type
+
+Use these documents as review and cadrage criteria.
+
+| Situation | Required references |
+| --- | --- |
+| any AI or Codex task | `AGENTS.md`, `docs/ai_workflow.md`, `docs/ai_agents_prompts.md` |
+| architecture or file placement | `docs/project_structure.md` |
+| current development priority | `docs/roadmap.md` |
+| gameplay direction or future system | `docs/game_design.md` |
+| visual asset, sprite, icon, tileset, map, UI visual, effect | `docs/art_direction.md` |
+| dialogue, quest text, item description, achievement, narration | `docs/narrative_tone_guidelines.md` |
+| Forest content, Forest enemies, Forest quests, Forest NPCs, Forest dungeons | `docs/forest_chapter_content_plan.md` |
+| visual Forest content | `docs/art_direction.md`, `docs/forest_chapter_content_plan.md` |
+| narrative Forest content | `docs/narrative_tone_guidelines.md`, `docs/forest_chapter_content_plan.md` |
+| UI with visible text | `docs/art_direction.md`, `docs/narrative_tone_guidelines.md`, `docs/project_structure.md` |
+
+If a task references one of these areas, agents must name the relevant documents in their response before proposing implementation.
+
+---
+
+## 7. Required workflow by task size
 
 ### Orchestrated task
 
@@ -182,6 +217,7 @@ Expected scope:
 
 - one next action at a time;
 - explicit allowed and forbidden files;
+- explicit reference documents;
 - no coding by the orchestrator;
 - no hidden expansion of the task.
 
@@ -226,6 +262,45 @@ Expected scope:
 
 ---
 
+### Visual or asset task
+
+Use:
+
+```text
+Agent Orchestrateur de Workflow if the task has several steps
+Agent Assets & Direction Graphique
+Agent Review Architecture & Git before commit or PR
+```
+
+Expected scope:
+
+- clear visual goal;
+- reference to `docs/art_direction.md`;
+- explicit asset paths;
+- no gameplay changes unless separately validated;
+- no deletion or replacement of existing assets without human validation.
+
+---
+
+### Narrative or UI text task
+
+Use:
+
+```text
+Agent Orchestrateur de Workflow if the task has several steps
+Agent UI / UX / Narration
+Agent Review Architecture & Git before commit or PR
+```
+
+Expected scope:
+
+- clear player-facing text goal;
+- reference to `docs/narrative_tone_guidelines.md`;
+- objectives and rewards remain readable;
+- no new narrative system unless separately validated.
+
+---
+
 ### New system
 
 Use:
@@ -264,7 +339,7 @@ Do not code before validation.
 
 ---
 
-## 7. Testing rules
+## 8. Testing rules
 
 Use pytest for important logic.
 
@@ -290,9 +365,11 @@ python main.py
 
 Tests should avoid launching the Pygame loop when the logic can be tested without UI.
 
+Visual-only or narrative-only changes may not need pytest, but they still need manual review for scope, consistency and file placement.
+
 ---
 
-## 8. File-specific guidance
+## 9. File-specific guidance
 
 ### core/
 
@@ -318,11 +395,27 @@ Allowed for rendering, input handling and screen flow.
 
 Do not place core gameplay rules, balancing formulas or item definitions here.
 
+UI visuals and player-facing text must remain consistent with `docs/art_direction.md` and `docs/narrative_tone_guidelines.md` when relevant.
+
+### assets/
+
+Allowed for images, sprites, icons, tilesets, sounds, fonts and visual effects.
+
+Visual assets must follow `docs/art_direction.md`.
+
+Do not add duplicate, temporary or externally generated assets without clear naming and purpose.
+
+Do not delete, replace or mass-rename assets without explicit human validation.
+
 ### data/
 
 Allowed for JSON content such as items, enemies, zones, recipes, classes and balance values.
 
 Do not duplicate static content in Python code when it belongs in JSON.
+
+Data containing visible text should follow `docs/narrative_tone_guidelines.md`.
+
+Forest data should stay coherent with `docs/forest_chapter_content_plan.md`.
 
 ### tests/
 
@@ -330,16 +423,19 @@ Use for pytest coverage of systems, entities, data validation and regression cas
 
 ### docs/
 
-Use for roadmap, design notes, architectural decisions and AI workflow documentation.
+Use for roadmap, design notes, architectural decisions, visual direction, narrative tone and AI workflow documentation.
+
+Do not create duplicate documentation when an existing document already owns the topic.
 
 ---
 
-## 9. Output expectations for agents
+## 10. Output expectations for agents
 
 When orchestrating a workflow, include:
 
 ```text
 Diagnostic
+Documents de référence
 Périmètre proposé
 Fichiers autorisés
 Fichiers interdits
@@ -352,9 +448,10 @@ When proposing a change, include:
 
 ```text
 Summary
+Reference documents used
 Files affected
 Implementation plan or patch
-Tests to run
+Tests or manual checks to run
 Risks
 What is intentionally out of scope
 ```
@@ -362,6 +459,7 @@ What is intentionally out of scope
 When reviewing a change, include:
 
 ```text
+Reference documents check
 Architecture check
 File scope check
 Test coverage check
@@ -372,7 +470,7 @@ Verdict: OK / OK with reservations / Needs changes / Split before commit
 
 ---
 
-## 10. Current project priority
+## 11. Current project priority
 
 Follow the roadmap in `docs/roadmap.md`.
 
@@ -380,10 +478,12 @@ Do not advance future blocks early unless the human explicitly asks.
 
 If the current task conflicts with the roadmap or appears premature, say so and propose a smaller step.
 
+For Forest-specific content, also check `docs/forest_chapter_content_plan.md` before proposing data, narrative, visual or gameplay changes.
+
 ---
 
-## 11. Final rule
+## 12. Final rule
 
 The goal is not to maximize automation.
 
-The goal is to help the human developer make steady, understandable and testable progress while keeping control of architecture, Git and gameplay decisions.
+The goal is to help the human developer make steady, understandable and testable progress while keeping control of architecture, Git, visuals, narrative tone and gameplay decisions.
