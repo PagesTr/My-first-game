@@ -15,6 +15,8 @@ class DataManager:
         self.professions = self.load("data/professions.json")
         self.gathering_nodes = self.load("data/gathering_nodes.json")
         self.quests = self.load("data/quests.json")
+        self.npcs = self.load("data/npcs.json")
+        self.npc_dialogues = self.load("data/npc_dialogues.json")
         self.achievements = self.load("data/achievements.json")
 
     def load(self, path):

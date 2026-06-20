@@ -1,0 +1,213 @@
+{
+  "camp_quartermaster": {
+    "intro": "Welcome to the Forest assignment desk, recruit.\n\nTechnically, this is not a punishment. Administratively, everyone previously assigned here has requested transfer, injury leave, or posthumous clarification. One person tried to request all three at once. Admirable ambition. Terrible form layout.\n\nMy job is to turn this forest's daily nonsense into assignments, rewards, supply notes, casualty reports, and the occasional optimistic checkmark. Your job is to make the problems smaller and return with enough limbs to sign the completion form.\n\nDo not confuse my tone for indifference. I care deeply about survival rates. They make the reports shorter.",
+    "quests": {
+      "forest_brindle_pest_control_officially": {
+        "quest_offer": "We begin with simple work: rats.\n\nNot heroic rats. Not prophetic rats. Just rats. They have discovered our supply crates, our boots, and ideally not the concept of breakfast.\n\nRemove the rats from the supply area. Try not to look too heroic while doing it. It encourages the paperwork.",
+        "progress": "The rats remain undefeated, which is embarrassing for everyone involved, especially the rats.\n\nKill the rats threatening the supply crates.",
+        "completion": "Excellent. The rats are dead, the crates are less perforated, and I can file this as a controlled incident rather than a rodent-led restructuring.\n\nTake your reward. It is small, official, and mostly clean.",
+        "transition": "Unfortunately, the rats were not the only issue. Something else has been clawing at the supply line, and I dislike plural problems."
+      },
+      "forest_brindle_crates_claws_negligence": {
+        "quest_offer": "The crates you saved are still arriving damaged.\n\nThis suggests wolves, goblins, or a very determined crate inspector with poor communication skills. Check the supply route. If something with teeth objects, explain our complaint policy with your weapon.\n\nDefeat the stray wolves around the supply route.",
+        "progress": "The supply route is still being attacked. I remain emotionally prepared to blame goblins.\n\nDefeat the stray wolves around the route.",
+        "completion": "The route is clearer. Some crates are intact, some are damp, and one appears to have been bitten for emphasis.\n\nThis is useful. Not reassuring, but useful.",
+        "transition": "The damage pattern is not random. I hate patterns. Patterns become reports, and reports become meetings."
+      },
+      "forest_brindle_goblin_paperwork_incident": {
+        "quest_offer": "We have confirmed goblin involvement.\n\nThey stole rope, dried food, two cracked shields, and a box labeled 'do not shake'. Naturally, they shook it.\n\nDefeat the young goblins disrupting the supply route.",
+        "progress": "The goblins still have our supplies, which means they are either planning something or trying to invent lunch.\n\nDefeat the young goblins on the supply route.",
+        "completion": "You recovered enough supplies to confirm the goblins were moving away from something deeper in the Forest.\n\nGoblins running toward us is annoying. Goblins running away from something else is a problem.",
+        "transition": "The supply reports now include wolves moving with unusual purpose. Apparently the wildlife wants its own section."
+      },
+      "forest_brindle_wolves_supply_line": {
+        "quest_offer": "Wolves are now attacking the supply line.\n\nNormally, wolves want food. These wolves ignored fresh meat and tore apart sealed crates instead. Unless they have developed an interest in inventory management, something is pushing them.\n\nDefeat the wolves threatening the supply line.",
+        "progress": "The wolves are still active. Please resolve this before they discover scheduling.\n\nDefeat the wolves on the supply route.",
+        "completion": "Wolves do not usually coordinate ambushes around supply schedules or ignore fresh meat to destroy sealed crates.\n\nEither they have developed economic strategy, or the Forest is no longer behaving like a forest.",
+        "transition": "I am upgrading this situation from 'annoying' to 'deeply inconvenient with possible casualties'."
+      },
+      "forest_brindle_reports_do_not_bleed": {
+        "quest_offer": "The reports are getting worse.\n\nRoots where there were no roots. Bones where there were no graves. Goblins refusing to enter areas they previously vandalized with confidence.\n\nDefeat the scouts in the deeper Forest and bring back evidence of their movements.",
+        "progress": "I still need evidence. Preferably something that does not whisper, but we work with what we have.\n\nFind evidence among the goblin scouts.",
+        "completion": "This is not a supply issue anymore.\n\nThis is the kind of report that makes officers use words like 'containment' while standing very far from the thing being contained.",
+        "transition": "Marn needs to see this. He handles gates, thresholds, sealed places, and other concepts that should remain theoretical."
+      },
+      "forest_brindle_forwarded_to_gate": {
+        "quest_offer": "I am officially escalating this matter.\n\nBefore I forward you to Gatekeeper Marn, I need one final confirmation that you can survive contact with problems larger than paperwork.\n\nDefeat the Alpha Wolf and return with proof. Try not to die, because replacing you would involve interviews.",
+        "progress": "The stronger threat is still active. Marn will be more impressed if you arrive alive and less impressed if I send him a form.\n\nDefeat the Alpha Wolf.",
+        "completion": "Good. You survived.\n\nI am officially forwarding this matter to Gatekeeper Marn. Unofficially, I am also forwarding you, because unlike the paperwork, you appear capable of surviving contact with the problem.",
+        "transition": "Go to Marn. Tell him the supply reports started bleeding.\n\nHe will understand. He will sigh first, but he will understand."
+      }
+    }
+  },
+  "old_herbalist": {
+    "intro": "Careful where you step.\n\nNot because of traps. Traps are at least honest. I mean the small green leaves near your boot. They cause itching, swelling, and in one memorable case, a man briefly insisted he could understand furniture.\n\nI am Maela. I prepare remedies, identify useful plants, and discourage adventurers from eating things that glow in colors nature clearly regrets.\n\nThe Forest is generous when treated properly. Lately, it has also become nervous. Plants bend away from paths. Roots surface where nothing was planted. Some herbs bruise before they are touched.\n\nWe will begin simply. You gather what is safe. I will tell you what is not. If something whispers your name, do not answer until I have had a look at it.",
+    "quests": {
+      "forest_maela_polite_amount_leaves": {
+        "quest_offer": "We will start with leaves.\n\nA modest amount. A polite amount. Not an entire bush dragged back by the roots like some tragic salad trophy.\n\nGather basic Forest herbs for simple salves.",
+        "progress": "The leaves are still out there, being leafy and medicinal without your assistance.\n\nGather the basic Forest herbs.",
+        "completion": "Good. These are clean, fresh, and only slightly offended.\n\nMost survival is built from small useful things and the decision not to eat suspicious berries.",
+        "transition": "Now that we have something for scratches, we should prepare something for bites. The Forest has many opinions, and several of them have teeth."
+      },
+      "forest_maela_remedies_bite_shaped_mistakes": {
+        "quest_offer": "You are going to be bitten.\n\nThat is not a prophecy. It is pattern recognition. Bring me healing herbs. They help close wounds and make people stop saying 'it is probably fine' while bleeding on my floor.",
+        "progress": "I still need the healing herbs. Also, if you have been bitten already, try to keep the bitten part attached.",
+        "completion": "These will do nicely.\n\nA little grinding, a little heat, and a little muttering at the patient for waiting too long, and we have a remedy. Use it before you collapse, not after.",
+        "transition": "There are mushrooms deeper in the Forest that may help with stronger mixtures. Some seem judgmental, but that is not technically poison."
+      },
+      "forest_maela_mushrooms_with_opinions": {
+        "quest_offer": "I need mushrooms.\n\nNot the screaming ones. Not yet. Look for the useful spores near fallen wood. They are excellent for stabilizing tonics and more socially perceptive than most mercenaries.",
+        "progress": "The mushrooms should still be near the fallen wood. If they have moved, tell me calmly. I will pretend to be calm as well.",
+        "completion": "Interesting.\n\nThey are fresh, intact, and all leaning in the same direction. That is new in the way that makes my shoulders tense.",
+        "transition": "The roots near that area may be affecting them. Roots are allowed to feed plants. They are not usually allowed to make decisions."
+      },
+      "forest_maela_roots_should_not_twitch": {
+        "quest_offer": "I need root samples.\n\nA normal root stays underground, drinks water, holds soil, and minds its own quiet little business. These roots have been surfacing near the paths. One pulled away from my knife yesterday. Very rude. Also biologically concerning.",
+        "progress": "I still need the root samples. If one moves, do not chase it too far. That sentence used to be unnecessary.",
+        "completion": "Yes. This is wrong.\n\nThe fibers are too tight, the color is too dark, and this end curled toward my hand when I touched it. Alarm is my job. Yours is bringing me the alarming things.",
+        "transition": "If the roots are changing, the sap will show it next. Sap remembers more than people think. Usually trees. Sometimes wounds."
+      },
+      "forest_maela_sap_is_listening": {
+        "quest_offer": "The trees are producing dark sap.\n\nThis is not fire, rot, or ordinary disease. Disease does not usually pulse when spoken near. Bring me a sealed sample, and stop talking to it if it starts being polite.",
+        "progress": "I still need the dark sap. Keep it sealed, and do not let it touch your skin unless you want your arm to have opinions.",
+        "completion": "It moved when I said Rootcaller.\n\nThere. It did it again. That is not good. Useful, yes. Good, no. There is a difference, and it keeps people alive.",
+        "transition": "I can prepare something from this. Not a cure. More like a polite refusal to be immediately consumed by whatever is calling these roots."
+      },
+      "forest_maela_cure_might_apologize": {
+        "quest_offer": "I cannot cure the Forest from here.\n\nI can make something that may help you survive the part of the Forest that has stopped pretending to be passive scenery. Prepare an herbal poultice from the ingredients we gathered.",
+        "progress": "The remedy is not ready. Keep the sap sealed while you work. I repeat that because I enjoy you having skin.",
+        "completion": "There.\n\nIt smells terrible, which is often how you know medicine is sincere. This will not make you safe, but it may keep you standing when the roots start calling.",
+        "transition": "If the corruption is this strong near the surface, Marn should know. And Osric, perhaps. Roots that react to names often grow near things that used to have them."
+      }
+    }
+  },
+  "bone_scribe": {
+    "intro": "Please step carefully.\n\nNot because the floor is fragile. Because some of it may be someone.\n\nArchivist Osric. I record remains, recover names, classify relics, and do my best to ensure that the dead are not reduced to 'miscellaneous loot,' which is a phrase I have formally objected to on several occasions.\n\nThe Forest is old. Older than the camp, older than the roads, older than most heroic confidence. People entered it with maps, blades, songs, contracts, debts, romantic delusions, and in one case a trained ferret.\n\nMany did not leave.\n\nWhen you find bones, tags, broken rings, or equipment that looks as though it has made peace with failure, bring them to me. I will determine who they were, what happened if the evidence permits, and whether the Forest has been moving the remains again.\n\nThat last part is not poetic.",
+    "quests": {
+      "forest_osric_bones_without_appointment": {
+        "quest_offer": "I require bones.\n\nA simple request, though people often react as if I have asked for a fresh personality.\n\nThe nearby scavengers have been disturbing remains before I can identify them. This is rude to the dead, inconvenient for the archive, and professionally offensive.\n\nRecover what bones you can. Clean ones are preferred. Recent ones are acceptable. Moving ones should be reported immediately.",
+        "progress": "The remains are still uncollected.\n\nPlease remember: bones found in piles are not automatically 'decor.' That is how several unpleasant traditions begin.",
+        "completion": "Thank you.\n\nThese are incomplete, but useful. Most people are incomplete by the time they reach my desk.\n\nNo name yet. No clear cause. But the bite marks suggest scavengers, and the soil suggests the remains were moved after burial.\n\nThat is discourteous.",
+        "transition": "If the scavengers are moving bones, we should determine whether they are feeding, nesting, or following something else's instructions."
+      },
+      "forest_osric_catalog_poor_decisions": {
+        "quest_offer": "Bone Gnawers are gathering remains.\n\nThis is not unusual behavior for scavengers. What is unusual is their selectiveness. They are taking skull fragments, old tags, and finger bones, but leaving easier meals behind.\n\nEither they have developed archival preferences, or something has taught them which pieces matter.\n\nNeither option improves my morning.",
+        "progress": "I still need the remains from the den.\n\nIf a Bone Gnawer appears to be sorting them, do not interrupt politely. Interrupt effectively.",
+        "completion": "Yes. This confirms it.\n\nThe remains were not gathered randomly. These pieces belong to different bodies, but they were carried to the same place.\n\nSomeone, or something, is assembling a record very badly.",
+        "transition": "There are old adventurer tags among these marks. That changes the matter from unfortunate to documented."
+      },
+      "forest_osric_previous_expedition": {
+        "quest_offer": "I found a mark on one of the fragments.\n\nNot a wound. Not a bite. A stamped expedition mark.\n\nA group came through this part of the Forest before you. Properly equipped, judging by the metal. Improperly alive, judging by everything else.\n\nSearch the old path. Bring me tags, notes, rings, anything that might let me identify them.",
+        "progress": "The previous expedition remains previous, but not yet understood.\n\nBring me any tags, notes, or relics you find along the old path.",
+        "completion": "A broken tag. A ring. A strip of map.\n\nEnough to confirm they were real, organized, and very badly rewarded for it.\n\nThis name appears twice. Once on the tag, once scratched into the back of the map.\n\nPeople repeat names when they are afraid of forgetting themselves.",
+        "transition": "We should find the others. Death is unfortunate. Being filed under 'unknown' is an additional insult."
+      },
+      "forest_osric_names_forest_kept": {
+        "quest_offer": "The Forest kept their belongings.\n\nNot scattered. Kept.\n\nA ring near a root. A tag under moss. A name scratched into bark from the inside, which I admit raises procedural questions.\n\nFind more named fragments. I would like to return at least a few people to the category of 'someone,' rather than 'remains.'",
+        "progress": "I still need the named fragments.\n\nAnonymous bones are common. Named bones are responsibilities.",
+        "completion": "Good.\n\nMarin. Edda. Veyr. One name still incomplete, but enough to start a record.\n\nThey were not simply lost. They were held here long enough for the Forest to learn them.\n\nThat is not a comforting sentence. I recommend not being comforted by it.",
+        "transition": "Some of these roots have grown through the tags without breaking them. That kind of care is rarely kind."
+      },
+      "forest_osric_grove_remembers": {
+        "quest_offer": "The roots are preserving the tags.\n\nMetal should rust. Leather should rot. Names should fade. Instead, the roots hold them in place like bookmarks.\n\nThere is a buried grove connected to these remains. I do not yet know whether it is a grave, an archive, or a mouth.\n\nPlease investigate the outer traces. Do not enter deeper than necessary. Marn becomes difficult when people pre-die in his jurisdiction.",
+        "progress": "The root-bound remains still need investigation.\n\nIf the roots move to protect the evidence, return. If they move to protect themselves, return faster.",
+        "completion": "This is worse than I hoped, and almost exactly as bad as I feared.\n\nThe roots are not merely growing through the remains. They are arranging them.\n\nNames, tags, bones, relics. The Grove is remembering people in pieces.",
+        "transition": "Marn must be told. He handles thresholds. I handle records. This has become both."
+      },
+      "forest_osric_grave_administrative_error": {
+        "quest_offer": "I need one final confirmation.\n\nA complete tag, a preserved relic, or a rootbound fragment bearing a name. Something the Grove has kept too carefully.\n\nThis is not for curiosity. Curiosity is what killed several of the people I am currently trying to identify.\n\nBring me the evidence, and I will prepare a record for Marn. It is important that he knows this is not merely a dungeon.\n\nIt is a place with witnesses.",
+        "progress": "The final evidence is still missing.\n\nPlease be careful. I dislike preparing records before people are finished being people.",
+        "completion": "Yes.\n\nThis is enough.\n\nThe Grove contains remains from more than one expedition, arranged across years. The Forest did not forget them. It stored them.\n\nI will give this to Marn. He will call it a warning. I will call it testimony.\n\nBoth are correct.",
+        "transition": "Go to Marn when you are ready.\n\nIf you enter Buried Grove, remember this: you are not walking into an empty place. You are walking into a memory that learned to defend itself."
+      }
+    }
+  },
+  "retired_scout": {
+    "intro": "You there. Adventurer-looking person. Good posture, questionable survival odds. Perfect.\n\nName's Fen. Scout. Former scout. One-time scout, technically, but the important word is scout.\n\nI know paths. I know tracks. I know which bushes make noise because of birds and which bushes make noise because something inside them is deciding whether your boots look edible.\n\nI did not get lost. I performed an aggressive survey of several unintended locations and returned with information, scratches, and a valuable fear of mossy slopes.\n\nBrindle sends people to fix problems. I do something more advanced: I show people where the problems are hiding before they become forms.\n\nIf you need guaranteed safety, speak to a wall. It will lie less, but it will also give worse directions.",
+    "quests": {
+      "forest_fen_scouts_honor_used_once": {
+        "quest_offer": "First rule of scouting: look confident.\n\nSecond rule: if confidence fails, point dramatically and walk somewhere else. There is a side route beyond the safer paths. Walk it, clear what blocks it, and come back alive enough to describe it.",
+        "progress": "The route is still unscouted. I would check it myself, obviously, but I am currently preserving my strategic overview.",
+        "completion": "See? Exactly as I predicted.\n\nUnless something terrible happened, in which case I predicted that too and chose not to alarm you. You now understand scouting: walking somewhere dangerous and calling it information.",
+        "transition": "That route should not have been so active. The tracks near it are strange too. Some animals are moving the wrong way, which is rude because it makes me look less right."
+      },
+      "forest_fen_tracks_facing_wrong_way": {
+        "quest_offer": "Wolves leave honest tracks. That is one of their better qualities, after teeth and before social skills.\n\nThese tracks are facing the wrong way. Wolves should be moving toward prey, not away from the deeper woods. Follow them and survive the wolves near the route.",
+        "progress": "The tracks are still there. Unless the wolves came back and corrected them, which would be impressive and inconvenient.",
+        "completion": "You found the wolves, and the wolves found your weapon. Productive for everyone except the wolves.\n\nThey were not hunting. They were avoiding something deeper.",
+        "transition": "I know a shortcut toward that area. It is safe in the sense that I survived it once and refuse to discuss the details."
+      },
+      "forest_fen_shortcut_got_longer": {
+        "quest_offer": "There is a shortcut.\n\nSome people call it 'not a shortcut'. Those people lack imagination and, in one case, a left boot. Follow it, clear whatever blocks the way, and tell me where it actually goes.",
+        "progress": "The shortcut is waiting. If it seems longer than expected, that means it is building character.",
+        "completion": "You made it back. Excellent. That means the shortcut still exists, broadly speaking.\n\nThe fact that it led near goblin signs is concerning. Not surprising, because I suspected it quietly after you left.",
+        "transition": "Goblin signs are next. Their arrows are terrible, but terrible arrows still point somewhere."
+      },
+      "forest_fen_goblin_signs_terrible_arrows": {
+        "quest_offer": "Goblins have started marking paths.\n\nOne sign points toward 'safe shinies', which is either a trap or the saddest travel brochure ever made. Follow the markings, deal with the scouts, and confirm where the route leads.",
+        "progress": "The goblin signs are still out there, lowering the reputation of arrows everywhere.",
+        "completion": "These markings are nonsense. Useful nonsense, unfortunately.\n\nThey point toward the same deeper approach. Goblins do not build routes unless someone is shouting orders, waving food, or both.",
+        "transition": "There is an old scout route near there. I did not run from it. I withdrew from it with excellent speed."
+      },
+      "forest_fen_path_not_run_from": {
+        "quest_offer": "There is a path I definitely meant to mention earlier.\n\nI was not hiding it. I was saving it. Like a professional. Or a coward with timing. Check the old route and return with evidence of what is pushing the Forest around.",
+        "progress": "The old route is still there. Probably. If it is not, return immediately. I do not like paths that make decisions.",
+        "completion": "That route leads toward organized goblin movement and deeper wolf territory.\n\nI saw something like this once, near a camp. I left immediately. For strategic survival purposes.",
+        "transition": "Fine. Yes. There is a camp. No, I did not explore it. I am brave, not decorative."
+      },
+      "forest_fen_smoke_beyond_trees": {
+        "quest_offer": "There is smoke beyond the trees.\n\nCamp smoke, not ordinary cooking smoke. Scout the approach. Do not enter the camp. Look for patrols, drums, supply piles, and anything proving the goblins are organized.",
+        "progress": "The camp approach still needs scouting. Remember: approach means near. Not inside. Inside is where plans become screaming.",
+        "completion": "That confirms it.\n\nGoblin Camp is active, organized, and very much not one of my exaggerations. I almost wish it were. I am excellent at exaggerations.",
+        "transition": "Go to Marn. Tell him the goblins have routes, patrols, smoke, and enough discipline to be concerning. Do not tell him I called the camp 'heroically avoided'."
+      }
+    }
+  },
+  "dungeon_warden": {
+    "intro": "Stop there.\n\nNot because I enjoy blocking paths. I gave up enjoying things sometime around my ninth doomed adventurer.\n\nI am Marn. I keep the gates, thresholds, sealed trails, half-sealed trails, badly sealed trails, and the places everyone insists on entering after I explain why they should not.\n\nYou have spoken to Brindle, I assume. He sends people toward problems with admirable paperwork.\n\nFen has likely pointed at something dangerous while standing far enough away to survive being correct.\n\nMaela has probably told you the Forest is ill in a tone that made it sound like tea might help.\n\nOsric, if involved, has already found the dead and given them better manners than the living.\n\nI stand where their warnings meet.\n\nWhen I tell you a path is a threshold, understand this: beyond it, the Forest stops inconveniencing you and starts answering back.",
+    "quests": {
+      "forest_marn_gate_not_decorative": {
+        "quest_offer": "You have reached the part of the Forest where warnings become useful.\n\nEarlier dangers bite, claw, steal, or make noise. Manageable problems. Unpleasant, but honest.\n\nThe places I guard are different. They gather problems. They keep them behind smoke, roots, old stones, and doors people insist on opening.\n\nBefore you enter anything I point toward, understand the rule: a gate is not decoration. It is a question.",
+        "progress": "The gate remains where it is.\n\nThat is one of its better qualities.",
+        "completion": "Good.\n\nYou listened. That already places you above several people whose names Osric now says very carefully.\n\nWe begin with Goblin Camp. It should not be organized. It is.\n\nThat is enough reason to worry.",
+        "transition": "Fen has seen the smoke. Brindle has seen the reports. I have seen what happens when people ignore both."
+      },
+      "forest_marn_noise_goblin_camp": {
+        "quest_offer": "Goblin Camp is active.\n\nSmoke, patrols, drums, supply piles. Signs of order, which is deeply offensive when attached to goblins.\n\nDo not mistake them for comic relief with knives. A disorganized goblin is a nuisance. An organized goblin is a committee with teeth.\n\nBring me a map scrap or other proof of their routes before you cross the threshold.",
+        "progress": "Goblin Camp is not going anywhere.\n\nUnfortunately, that is part of the problem.",
+        "completion": "You are as ready as anyone can be before discovering they were only partially ready.\n\nThe camp is your first true threshold.\n\nEnter, clear what must be cleared, and do not let the drums decide the pace of your breathing.",
+        "transition": "Inside, you are not scouting anymore. You are breaking their structure."
+      },
+      "forest_marn_break_goblin_camp": {
+        "quest_offer": "The Goblin Quartermaster holds the camp together.\n\nI realize how absurd that sounds. A goblin quartermaster. Somewhere, Brindle is probably offended by the job title.\n\nRemove him, and the camp becomes noise again. Dangerous noise, but less directed.",
+        "progress": "The camp still stands.\n\nTry not to let goblins retain administrative superiority over us.",
+        "completion": "The camp is broken.\n\nNot gone. Goblins are like weeds with arguments. But their command is shattered, their supplies are scattered, and their drums have lost discipline.\n\nThat matters.\n\nDo not celebrate too loudly. The Forest listens when people think they are done.",
+        "transition": "While you were breaking goblin order, the older parts of the Forest began moving.\n\nOsric has records. Maela has roots. I have a bad feeling, which is the least useful of the three and unfortunately the most familiar."
+      },
+      "forest_marn_buried_grove_stirs": {
+        "quest_offer": "Buried Grove is stirring.\n\nOsric says the roots remember names. Maela says the sap reacts to them.\n\nI dislike it when experts agree in quiet voices.\n\nThe Grove is not a graveyard. Graveyards are honest. The dead stay mostly where placed, the living feel appropriately uncomfortable, and everyone understands the arrangement.\n\nThis is different.",
+        "progress": "Buried Grove remains sealed for now.\n\nThat is not safety. That is delay.",
+        "completion": "You have the evidence.\n\nNames in roots. Relics preserved. Remains arranged with intent.\n\nVery well. The threshold is real, and pretending otherwise would only make the eventual screaming less organized.",
+        "transition": "Enter Buried Grove carefully. If the Forest offers you memory, assume it expects payment."
+      },
+      "forest_marn_rootbound_warning": {
+        "quest_offer": "The Rootbound Remnant waits inside.\n\nIt is not alive in the ordinary sense. It is not dead in the useful sense.\n\nIt is what happens when the Forest remembers someone badly enough to use them.\n\nEnd it if you can. Free it if that is what ending it means. Some victories are just cleaner forms of mercy.",
+        "progress": "The Remnant still waits.\n\nI would say 'take your time,' but places like this do not improve with patience.",
+        "completion": "The Remnant has fallen.\n\nGood.\n\nNo, not good. Necessary. There is a difference, and this chapter has been eager to teach it.\n\nThe Grove is quieter now, but not empty. Beneath it, something answered when the roots were disturbed.",
+        "transition": "Grubfang. Rootcaller.\n\nThat name has appeared too often, from too many mouths, roots, relics, and dying things."
+      },
+      "forest_marn_rootcallers_door": {
+        "quest_offer": "This is the final threshold of the Forest.\n\nBeyond it is Grubfang, Rootcaller.\n\nA goblin, yes. But do not let the word make you careless. Some creatures become dangerous by being powerful. Others become dangerous by being listened to.\n\nThe roots listen to him.\n\nPrepare yourself. Finish your business. Mend what gear you trust, and prepare one final remedy if Maela's has not started moving.",
+        "progress": "Rootcaller's door remains ahead.\n\nIt will wait. That is not kindness. That is confidence.",
+        "completion": "Then it is time.\n\nNo more reports. No more scouting. No more samples. No more records.\n\nOnly the thing calling the Forest by its roots, and the person foolish enough to answer back with a weapon.\n\nI have seen many cross thresholds.\n\nTry to be one of the few who return.",
+        "transition": "Enter when ready. The Forest has spoken long enough."
+      },
+      "forest_marn_grubfang_must_fall": {
+        "quest_offer": "Grubfang stands at the root of this.\n\nYes, literally. The Forest has developed a sense of theatrical placement. I hate that it is effective.\n\nHe has called rats, goblins, wolves, roots, bones, and memory into one long mistake.\n\nEnd it.",
+        "progress": "Grubfang still calls.\n\nThe Forest still answers.",
+        "completion": "It is done.\n\nThe roots have quieted. Not died. Not vanished. Quieted.\n\nThat is enough for today.\n\nYou broke the call. You ended the chapter before it became a grave with better scenery.\n\nTake your reward. Then breathe while the Forest remembers how to be only a forest.",
+        "transition": "The path beyond the Forest will open now.\n\nDo not mistake that for peace. It is simply the next place where the world has postponed its problems."
+      }
+    }
+  }
+}

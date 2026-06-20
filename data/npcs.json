@@ -1,0 +1,96 @@
+{
+  "camp_quartermaster": {
+    "name": "Quartermaster Brindle",
+    "chapter": "forest",
+    "role": "combat_quest_giver",
+    "tone": "pragmatic_dry_sarcastic",
+    "related_quests": [
+      "forest_brindle_pest_control_officially",
+      "forest_brindle_crates_claws_negligence",
+      "forest_brindle_goblin_paperwork_incident",
+      "forest_brindle_wolves_supply_line",
+      "forest_brindle_reports_do_not_bleed",
+      "forest_brindle_forwarded_to_gate"
+    ],
+    "related_zones": [
+      "forest_rat_outskirts",
+      "forest_young_goblin_trail",
+      "forest_stray_wolf_path"
+    ]
+  },
+  "old_herbalist": {
+    "name": "Maela the Herbalist",
+    "chapter": "forest",
+    "role": "gathering_consumable_guide",
+    "tone": "gentle_sarcastic_unsettling",
+    "related_quests": [
+      "forest_maela_polite_amount_leaves",
+      "forest_maela_remedies_bite_shaped_mistakes",
+      "forest_maela_mushrooms_with_opinions",
+      "forest_maela_roots_should_not_twitch",
+      "forest_maela_sap_is_listening",
+      "forest_maela_cure_might_apologize"
+    ],
+    "related_zones": [
+      "forest_thorn_sprite_grove"
+    ]
+  },
+  "bone_scribe": {
+    "name": "Archivist Osric",
+    "chapter": "forest",
+    "role": "lore_and_remains_guide",
+    "tone": "polite_morbid_bureaucratic",
+    "related_quests": [
+      "forest_osric_bones_without_appointment",
+      "forest_osric_catalog_poor_decisions",
+      "forest_osric_previous_expedition",
+      "forest_osric_names_forest_kept",
+      "forest_osric_grove_remembers",
+      "forest_osric_grave_administrative_error"
+    ],
+    "related_zones": [
+      "forest_bone_gnawer_den",
+      "forest_lost_adventurer_path",
+      "forest_buried_grove"
+    ]
+  },
+  "retired_scout": {
+    "name": "Fen the One-Time Scout",
+    "chapter": "forest",
+    "role": "exploration_path_guide",
+    "tone": "boastful_unreliable_funny",
+    "related_quests": [
+      "forest_fen_scouts_honor_used_once",
+      "forest_fen_tracks_facing_wrong_way",
+      "forest_fen_shortcut_got_longer",
+      "forest_fen_goblin_signs_terrible_arrows",
+      "forest_fen_path_not_run_from",
+      "forest_fen_smoke_beyond_trees"
+    ],
+    "related_zones": [
+      "forest_goblin_scout_trails",
+      "forest_wolf_hunting_ground",
+      "forest_alpha_wolf_lair"
+    ]
+  },
+  "dungeon_warden": {
+    "name": "Gatekeeper Marn",
+    "chapter": "forest",
+    "role": "dungeon_and_boss_guide",
+    "tone": "solemn_tired_restrained",
+    "related_quests": [
+      "forest_marn_gate_not_decorative",
+      "forest_marn_noise_goblin_camp",
+      "forest_marn_break_goblin_camp",
+      "forest_marn_buried_grove_stirs",
+      "forest_marn_rootbound_warning",
+      "forest_marn_rootcallers_door",
+      "forest_marn_grubfang_must_fall"
+    ],
+    "related_zones": [
+      "forest_goblin_camp",
+      "forest_buried_grove",
+      "forest_rootcaller_lair"
+    ]
+  }
+}

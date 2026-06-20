@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3776">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="80" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="3785">
  <tileset firstgid="1" source="../tilesets/pixel_crawler_walls.tsx"/>
  <tileset firstgid="2101" source="../tilesets/pixel_crawler_floors.tsx"/>
  <tileset firstgid="2751" source="../tilesets/pixel_crawler_trees.tsx"/>
@@ -365,7 +365,7 @@
 5608,5609,0,0,0,3559,3560,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3582,3583,0,3667,3668,0,3667,3668,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5582,5583,5584,0,3584,3585,0,0,0,0,3787,3788,3789,3788,3790,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3607,3608,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5607,5608,5609,0,3609,3610,0,0,0,0,3812,3813,3814,3813,3815,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3634,3635,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,5582,5583,5584,0,3634,3635,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7207,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,5582,5583,5584,0,3634,3635,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3690,3691,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,5582,5583,5584,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6151,6152,6153,6154,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3715,3716,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,5607,5608,5609,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6183,6184,6185,6186,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3684,3685,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -6686,7 +6686,41 @@
    <polygon points="0,0 -8.33333,6.66667 55.6667,6.66667 55.6667,-25.3333 87.6667,-25.3333 87.6667,-9.33333 167.667,-9.33333 167.667,-25.3333 199.667,-25.3333 199.667,-73.3333 71.6667,-73.333 71.6667,-105.333 39.6667,-105.333 15.4167,-129.583 -8.3333,-105.333 -24.3333,-105.333 -24.3333,6.66667 -8.33333,6.66667"/>
   </object>
  </objectgroup>
- <objectgroup id="6" name="91_npcs"/>
+ <objectgroup id="6" name="91_npcs">
+  <object id="3780" name="npc_camp_quartermaster" type="npc" gid="7207" x="444.333" y="593" width="24" height="36">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="display_name" value="Quartermaster Brindle"/>
+    <property name="npc_id" value="camp_quartermaster"/>
+    <property name="prompt" value="E - Talk to Brindle"/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="trigger_id" value="talk_camp_quartermaster"/>
+    <property name="trigger_type" value="dialogue"/>
+   </properties>
+  </object>
+  <object id="3783" name="npc_old_herbalist" type="npc" gid="2147491015" x="697.667" y="706.333" width="24" height="36">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="display_name" value="Maela the Herbalist"/>
+    <property name="npc_id" value="old_herbalist"/>
+    <property name="prompt" value="E - Talk to Maela"/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="trigger_id" value="talk_old_herbalist"/>
+    <property name="trigger_type" value="dialogue"/>
+   </properties>
+  </object>
+  <object id="3784" name="npc_bone_scribe" type="npc" gid="7215" x="637.667" y="263.333" width="24" height="36">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="display_name" value="Archivist Osric"/>
+    <property name="npc_id" value="bone_scribe"/>
+    <property name="prompt" value="E - Talk to Osric"/>
+    <property name="requires_interact" type="bool" value="true"/>
+    <property name="trigger_id" value="talk_bone_scribe"/>
+    <property name="trigger_type" value="dialogue"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="7" name="92_objects"/>
  <objectgroup id="9" name="93_triggers">
   <object id="3739" name="trigger_enter_altar_01" type="trigger" x="0" y="416" width="16" height="64">

@@ -1,5 +1,8 @@
 # Project Roadmap
 
+> Archive note: `docs/roadmap.md` is the official current roadmap.
+> This file is kept as historical reference and should not guide new tasks.
+
 This file tracks planned improvements and deferred ideas.
 It should stay short, practical, and focused on the next useful development steps.
 

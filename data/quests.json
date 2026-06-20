@@ -1,19 +1,769 @@
 {
-  "forest_secure_outskirts": {
-    "name": "Secure the Outskirts",
-    "description": "The forest begins with rats, goblins, and decisions nobody will brag about.",
+  "forest_brindle_pest_control_officially": {
+    "name": "Pest Control, Officially",
+    "description": "Supply crates are being damaged by rats. A routine problem, according to the paperwork.",
     "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [],
     "order": 1,
     "objectives": [
       {
         "type": "kill_enemy",
         "target": "forest_rat",
         "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 15
       },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_brindle_crates_claws_negligence"
+    ]
+  },
+  "forest_brindle_crates_claws_negligence": {
+    "name": "Crates, Claws and Casual Negligence",
+    "description": "The supply route has more damage than rats should be able to explain.",
+    "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [
+      "forest_brindle_pest_control_officially"
+    ],
+    "order": 2,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "stray_wolf",
+        "required": 4
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 20
+      }
+    ],
+    "next_quests": [
+      "forest_brindle_goblin_paperwork_incident"
+    ]
+  },
+  "forest_brindle_goblin_paperwork_incident": {
+    "name": "Goblin Paperwork Incident",
+    "description": "Goblins stole supplies and left behind an inventory list full of nonsense.",
+    "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [
+      "forest_brindle_crates_claws_negligence"
+    ],
+    "order": 3,
+    "objectives": [
       {
         "type": "kill_enemy",
         "target": "young_goblin",
+        "required": 6
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 25
+      },
+      {
+        "type": "item",
+        "item": "goblin_ear",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_brindle_wolves_supply_line"
+    ]
+  },
+  "forest_brindle_wolves_supply_line": {
+    "name": "Wolves in the Supply Line",
+    "description": "Wolves are attacking sealed crates instead of fresh meat. That is not ordinary hunting.",
+    "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [
+      "forest_brindle_goblin_paperwork_incident"
+    ],
+    "order": 4,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "forest_wolf",
+        "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 30
+      },
+      {
+        "type": "item",
+        "item": "wolf_fang",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_brindle_reports_do_not_bleed"
+    ]
+  },
+  "forest_brindle_reports_do_not_bleed": {
+    "name": "Reports Do Not Bleed",
+    "description": "Roots, bones, and goblin movements suggest that the Forest incidents are connected.",
+    "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [
+      "forest_brindle_wolves_supply_line"
+    ],
+    "order": 5,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "goblin_scout",
+        "required": 6
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      },
+      {
+        "type": "item",
+        "item": "goblin_map_scrap",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_brindle_forwarded_to_gate"
+    ]
+  },
+  "forest_brindle_forwarded_to_gate": {
+    "name": "Forwarded to the Gate",
+    "description": "Brindle needs one final confirmation before escalating the Forest problem to Marn.",
+    "chapter": "forest",
+    "npc_id": "camp_quartermaster",
+    "required_quests": [
+      "forest_brindle_reports_do_not_bleed"
+    ],
+    "order": 6,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "alpha_wolf",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      },
+      {
+        "type": "item",
+        "item": "alpha_fang",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_marn_gate_not_decorative"
+    ]
+  },
+  "forest_maela_polite_amount_leaves": {
+    "name": "A Polite Amount of Leaves",
+    "description": "Maela needs a modest amount of basic Forest herbs for simple remedies.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [],
+    "order": 1,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "healing_herb",
+        "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 15
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_maela_remedies_bite_shaped_mistakes"
+    ]
+  },
+  "forest_maela_remedies_bite_shaped_mistakes": {
+    "name": "Remedies for Bite-Shaped Mistakes",
+    "description": "More fighting means more wounds, and Maela would prefer the player to keep all attached parts.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [
+      "forest_maela_polite_amount_leaves"
+    ],
+    "order": 2,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "healing_herb",
+        "required": 8
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 20
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_maela_mushrooms_with_opinions"
+    ]
+  },
+  "forest_maela_mushrooms_with_opinions": {
+    "name": "Mushrooms With Opinions",
+    "description": "Blue-capped mushrooms are useful for tonics and increasingly suspicious social commentary.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [
+      "forest_maela_remedies_bite_shaped_mistakes"
+    ],
+    "order": 3,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "forest_spore",
+        "required": 4
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 25
+      },
+      {
+        "type": "item",
+        "item": "forest_spore",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_maela_roots_should_not_twitch"
+    ]
+  },
+  "forest_maela_roots_should_not_twitch": {
+    "name": "Roots Should Not Twitch",
+    "description": "Roots are surfacing near the paths and objecting to being sampled.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [
+      "forest_maela_mushrooms_with_opinions"
+    ],
+    "order": 4,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "wild_root",
+        "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 30
+      },
+      {
+        "type": "item",
+        "item": "wild_root",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_maela_sap_is_listening"
+    ]
+  },
+  "forest_maela_sap_is_listening": {
+    "name": "The Sap Is Listening",
+    "description": "Dark sap reacts to voices and to the name Rootcaller.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [
+      "forest_maela_roots_should_not_twitch"
+    ],
+    "order": 5,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "briar_sap",
         "required": 3
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      },
+      {
+        "type": "item",
+        "item": "briar_sap",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_maela_cure_might_apologize"
+    ]
+  },
+  "forest_maela_cure_might_apologize": {
+    "name": "A Cure That Might Apologize",
+    "description": "Maela cannot cure the Forest yet, but she can prepare the player to survive what is hurting it.",
+    "chapter": "forest",
+    "npc_id": "old_herbalist",
+    "required_quests": [
+      "forest_maela_sap_is_listening"
+    ],
+    "order": 6,
+    "objectives": [
+      {
+        "type": "craft_recipe",
+        "target": "craft_herbal_poultice",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_marn_buried_grove_stirs"
+    ]
+  },
+  "forest_fen_scouts_honor_used_once": {
+    "name": "Scout's Honor, Used Once",
+    "description": "Fen sends the player toward a deeper side route to convert danger into information.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [],
+    "order": 1,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "stray_wolf",
+        "required": 3
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 15
+      }
+    ],
+    "next_quests": [
+      "forest_fen_tracks_facing_wrong_way"
+    ]
+  },
+  "forest_fen_tracks_facing_wrong_way": {
+    "name": "Tracks Facing the Wrong Way",
+    "description": "Wolf tracks show that the animals are fleeing deeper territory instead of hunting toward it.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [
+      "forest_fen_scouts_honor_used_once"
+    ],
+    "order": 2,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "forest_wolf",
+        "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 20
+      },
+      {
+        "type": "item",
+        "item": "wolf_fang",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_fen_shortcut_got_longer"
+    ]
+  },
+  "forest_fen_shortcut_got_longer": {
+    "name": "The Shortcut That Got Longer",
+    "description": "Fen's shortcut bends toward unstable paths and nature that objects to being scenery.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [
+      "forest_fen_tracks_facing_wrong_way"
+    ],
+    "order": 3,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "thorn_sprite",
+        "required": 4
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 25
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_fen_goblin_signs_terrible_arrows"
+    ]
+  },
+  "forest_fen_goblin_signs_terrible_arrows": {
+    "name": "Goblin Signs, Terrible Arrows",
+    "description": "Goblin path markings are nonsense, but useful nonsense pointing toward organized movement.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [
+      "forest_fen_shortcut_got_longer"
+    ],
+    "order": 4,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "goblin_scout",
+        "required": 6
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 30
+      },
+      {
+        "type": "item",
+        "item": "scout_badge",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_fen_path_not_run_from",
+      "forest_osric_bones_without_appointment"
+    ]
+  },
+  "forest_fen_path_not_run_from": {
+    "name": "The Path I Did Not Run From",
+    "description": "Fen finally points toward the old route he withdrew from with excellent speed.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [
+      "forest_fen_goblin_signs_terrible_arrows"
+    ],
+    "order": 5,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "alpha_wolf",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_fen_smoke_beyond_trees"
+    ]
+  },
+  "forest_fen_smoke_beyond_trees": {
+    "name": "Smoke Beyond the Trees",
+    "description": "Smoke, patrols, and ritual activity confirm that Goblin Camp is active and organized.",
+    "chapter": "forest",
+    "npc_id": "retired_scout",
+    "required_quests": [
+      "forest_fen_path_not_run_from"
+    ],
+    "order": 6,
+    "objectives": [
+      {
+        "type": "kill_enemy",
+        "target": "goblin_shaman",
+        "required": 4
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      },
+      {
+        "type": "item",
+        "item": "scout_badge",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_marn_gate_not_decorative"
+    ]
+  },
+  "forest_osric_bones_without_appointment": {
+    "name": "Bones Without Appointment",
+    "description": "Osric needs basic remains recovered before scavengers turn the archive into a meal.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_fen_goblin_signs_terrible_arrows"
+    ],
+    "order": 4,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "buried_bones",
+        "required": 5
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 15
+      }
+    ],
+    "next_quests": [
+      "forest_osric_catalog_poor_decisions"
+    ]
+  },
+  "forest_osric_catalog_poor_decisions": {
+    "name": "Catalog of Poor Decisions",
+    "description": "Selected remains in the Bone Gnawer Den suggest that scavengers are following more than hunger.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_osric_bones_without_appointment"
+    ],
+    "order": 5,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "cracked_skull",
+        "required": 3
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 20
+      },
+      {
+        "type": "item",
+        "item": "cracked_skull",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_osric_previous_expedition"
+    ]
+  },
+  "forest_osric_previous_expedition": {
+    "name": "The Previous Expedition",
+    "description": "Broken tags on the old path can restore the outline of an expedition the Forest kept.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_osric_catalog_poor_decisions"
+    ],
+    "order": 6,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "broken_adventurer_tag",
+        "required": 3
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 25
+      },
+      {
+        "type": "item",
+        "item": "broken_adventurer_tag",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_osric_names_forest_kept"
+    ]
+  },
+  "forest_osric_names_forest_kept": {
+    "name": "Names the Forest Kept",
+    "description": "Named fragments can return Marin, Edda, Veyr, and others to the record as people rather than remains.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_osric_previous_expedition"
+    ],
+    "order": 7,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "old_charm_fragment",
+        "required": 4
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 30
+      },
+      {
+        "type": "item",
+        "item": "old_charm_fragment",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_osric_grove_remembers"
+    ]
+  },
+  "forest_osric_grove_remembers": {
+    "name": "The Grove Remembers",
+    "description": "Root-bound evidence suggests that the Buried Grove preserves the dead with deliberate care.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_osric_names_forest_kept"
+    ],
+    "order": 8,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "rootbound_relic",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 40
+      },
+      {
+        "type": "item",
+        "item": "rootbound_relic",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_osric_grave_administrative_error"
+    ]
+  },
+  "forest_osric_grave_administrative_error": {
+    "name": "A Grave Administrative Error",
+    "description": "One final root-bound fragment will prove that the Grove has stored expeditions across years.",
+    "chapter": "forest",
+    "npc_id": "bone_scribe",
+    "required_quests": [
+      "forest_osric_grove_remembers"
+    ],
+    "order": 9,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "rootbound_relic",
+        "required": 2
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      },
+      {
+        "type": "item",
+        "item": "rootbound_relic",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_marn_buried_grove_stirs"
+    ]
+  },
+  "forest_marn_gate_not_decorative": {
+    "name": "The Gate Is Not Decorative",
+    "description": "Marn explains why the Forest's deeper thresholds require more than confidence.",
+    "chapter": "forest",
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_brindle_forwarded_to_gate",
+      "forest_fen_smoke_beyond_trees"
+    ],
+    "order": 7,
+    "objectives": [
+      {
+        "type": "talk_to_npc",
+        "target": "dungeon_warden",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 10
+      }
+    ],
+    "next_quests": [
+      "forest_marn_noise_goblin_camp"
+    ]
+  },
+  "forest_marn_noise_goblin_camp": {
+    "name": "Noise from Goblin Camp",
+    "description": "A map scrap will confirm that Goblin Camp has routes, supplies, and an offensive amount of organization.",
+    "chapter": "forest",
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_gate_not_decorative"
+    ],
+    "order": 8,
+    "objectives": [
+      {
+        "type": "gather_item",
+        "target": "goblin_map_scrap",
+        "required": 1
       }
     ],
     "rewards": [
@@ -28,142 +778,18 @@
       }
     ],
     "next_quests": [
-      "forest_first_harvest"
+      "forest_marn_break_goblin_camp"
     ]
   },
-  "forest_first_harvest": {
-    "name": "First Forest Harvest",
-    "description": "Helpful plants grow near the path. Naturally, someone wants them before they become suspicious.",
-    "chapter": "forest",
-    "order": 2,
-    "objectives": [
-      {
-        "type": "gather_item",
-        "target": "healing_herb",
-        "required": 5
-      },
-      {
-        "type": "gather_item",
-        "target": "wild_root",
-        "required": 2
-      }
-    ],
-    "rewards": [
-      {
-        "type": "gold",
-        "amount": 20
-      },
-      {
-        "type": "item",
-        "item": "forest_spore",
-        "quantity": 1
-      }
-    ],
-    "next_quests": [
-      "forest_pack_watches"
-    ]
-  },
-  "forest_pack_watches": {
-    "name": "The Pack Watches",
-    "description": "The wolves are studying your footwork. The official report says they are unimpressed.",
-    "chapter": "forest",
-    "order": 3,
-    "objectives": [
-      {
-        "type": "kill_enemy",
-        "target": "forest_wolf",
-        "required": 5
-      },
-      {
-        "type": "craft_recipe",
-        "target": "craft_wolf_fang_charm",
-        "required": 1
-      }
-    ],
-    "rewards": [
-      {
-        "type": "gold",
-        "amount": 40
-      },
-      {
-        "type": "item",
-        "item": "wolf_fang",
-        "quantity": 2
-      }
-    ],
-    "next_quests": [
-      "forest_bones_under_roots"
-    ]
-  },
-  "forest_bones_under_roots": {
-    "name": "Bones Under the Roots",
-    "description": "Someone buried too many adventurers here. The archaeologist calls it an opportunity.",
-    "chapter": "forest",
-    "order": 4,
-    "objectives": [
-      {
-        "type": "gather_item",
-        "target": "buried_bones",
-        "required": 5
-      },
-      {
-        "type": "kill_enemy",
-        "target": "bone_gnawer",
-        "required": 2
-      }
-    ],
-    "rewards": [
-      {
-        "type": "gold",
-        "amount": 45
-      },
-      {
-        "type": "item",
-        "item": "cracked_skull",
-        "quantity": 1
-      }
-    ],
-    "next_quests": [
-      "forest_smoke_above_trees"
-    ]
-  },
-  "forest_smoke_above_trees": {
-    "name": "Smoke Above the Trees",
-    "description": "Goblin smoke rises between the trees. This implies organization, which is rude.",
-    "chapter": "forest",
-    "order": 5,
-    "objectives": [
-      {
-        "type": "kill_enemy",
-        "target": "goblin_scout",
-        "required": 8
-      },
-      {
-        "type": "gather_item",
-        "target": "old_charm_fragment",
-        "required": 1
-      }
-    ],
-    "rewards": [
-      {
-        "type": "gold",
-        "amount": 60
-      },
-      {
-        "type": "item",
-        "item": "scout_badge",
-        "quantity": 2
-      }
-    ],
-    "next_quests": [
-      "forest_clear_goblin_camp"
-    ]
-  },
-  "forest_clear_goblin_camp": {
+  "forest_marn_break_goblin_camp": {
     "name": "Break the Goblin Camp",
-    "description": "The goblins built a camp. This is either strategy or a zoning violation.",
+    "description": "Break the Goblin Quartermaster's command and reduce the camp to dangerous noise again.",
     "chapter": "forest",
-    "order": 6,
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_noise_goblin_camp"
+    ],
+    "order": 9,
     "objectives": [
       {
         "type": "clear_dungeon",
@@ -183,14 +809,51 @@
       }
     ],
     "next_quests": [
-      "forest_buried_grove"
+      "forest_marn_buried_grove_stirs"
     ]
   },
-  "forest_buried_grove": {
-    "name": "The Buried Grove",
-    "description": "The roots remember the dead. The dead would probably prefer a quieter hobby.",
+  "forest_marn_buried_grove_stirs": {
+    "name": "Buried Grove Stirs",
+    "description": "Maela's roots and Osric's records converge into evidence that the Grove is a true threshold.",
     "chapter": "forest",
-    "order": 7,
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_break_goblin_camp",
+      "forest_maela_cure_might_apologize",
+      "forest_osric_grave_administrative_error"
+    ],
+    "order": 10,
+    "objectives": [
+      {
+        "type": "talk_to_npc",
+        "target": "dungeon_warden",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 30
+      },
+      {
+        "type": "item",
+        "item": "rootbound_relic",
+        "quantity": 1
+      }
+    ],
+    "next_quests": [
+      "forest_marn_rootbound_warning"
+    ]
+  },
+  "forest_marn_rootbound_warning": {
+    "name": "The Rootbound Warning",
+    "description": "The Rootbound Remnant must be confronted before the Grove can release its warning.",
+    "chapter": "forest",
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_buried_grove_stirs"
+    ],
+    "order": 11,
     "objectives": [
       {
         "type": "clear_dungeon",
@@ -210,14 +873,49 @@
       }
     ],
     "next_quests": [
-      "forest_silence_rootcaller"
+      "forest_marn_rootcallers_door"
     ]
   },
-  "forest_silence_rootcaller": {
-    "name": "Silence the Rootcaller",
-    "description": "The forest has found a voice. Bad news: it chants, commands roots, and has terrible timing.",
+  "forest_marn_rootcallers_door": {
+    "name": "Rootcaller's Door",
+    "description": "Prepare one final remedy before crossing the threshold to Grubfang, Rootcaller.",
     "chapter": "forest",
-    "order": 8,
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_rootbound_warning"
+    ],
+    "order": 12,
+    "objectives": [
+      {
+        "type": "craft_recipe",
+        "target": "craft_herbal_poultice",
+        "required": 1
+      }
+    ],
+    "rewards": [
+      {
+        "type": "gold",
+        "amount": 50
+      },
+      {
+        "type": "item",
+        "item": "field_dressing",
+        "quantity": 2
+      }
+    ],
+    "next_quests": [
+      "forest_marn_grubfang_must_fall"
+    ]
+  },
+  "forest_marn_grubfang_must_fall": {
+    "name": "Grubfang Must Fall",
+    "description": "End Grubfang's call and let the Forest remember how to be only a forest.",
+    "chapter": "forest",
+    "npc_id": "dungeon_warden",
+    "required_quests": [
+      "forest_marn_rootcallers_door"
+    ],
+    "order": 13,
     "objectives": [
       {
         "type": "defeat_boss",

@@ -1,5 +1,5 @@
 {
-    "activeFile": "assets/maps/altar_01.tmx",
+    "activeFile": "assets/maps/town_01.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
     ],
@@ -102,26 +102,27 @@
         "assets/maps/altar_01.tmx": {
             "expandedObjectLayers": [
                 10,
-                4,
-                9
+                9,
+                4
             ],
             "scale": 2,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 179.5,
-                "y": 161.5
+                "x": 217.5,
+                "y": 163.5
             }
         },
         "assets/maps/forest_01.tmx": {
             "expandedObjectLayers": [
                 10,
-                9
+                9,
+                6
             ],
-            "scale": 3,
-            "selectedLayer": 12,
+            "scale": 1.1380208333333333,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 480,
-                "y": 320
+                "x": 880.4759725400459,
+                "y": 301.4004576659039
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -135,14 +136,15 @@
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
                 10,
-                4,
-                9
+                9,
+                6,
+                4
             ],
-            "scale": 4,
-            "selectedLayer": 13,
+            "scale": 1.5,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 71,
-                "y": 426
+                "x": 650,
+                "y": 281.33333333333326
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -186,7 +188,7 @@
             "scaleInEditor": 1.5
         },
         "assets/tilesets/characters_16x24.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 5.5
         },
         "assets/tilesets/characters_24x36.tsx": {
@@ -284,9 +286,8 @@
         "assets/tilesets/altar.tsx"
     ],
     "project": "town.tiled-project",
-    "property.type": "bool",
+    "property.type": "string",
     "recentFiles": [
-        "assets/maps/town_01.tmx",
         "assets/tilesets/altar.tsx",
         "assets/tilesets/bones.tsx",
         "assets/automapping/tree_rules.tmx",
@@ -296,6 +297,7 @@
         "assets/automapping/house_rules.tmx",
         "assets/maps/forest_01.tmx",
         "assets/maps/altar_01.tmx",
+        "assets/maps/town_01.tmx",
         "assets/maps/Start_map.tmx",
         "assets/tilesets/water.tsx"
     ],

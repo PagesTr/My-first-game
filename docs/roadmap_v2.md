@@ -1,5 +1,8 @@
 # Project Roadmap V2
 
+> Archive note: `docs/roadmap.md` is the official current roadmap.
+> This file is kept as historical reference and should not guide new tasks.
+
 This roadmap merges the block-based roadmap with the older detailed roadmap.
 It reflects what is currently visible in the code on the `feature_craft` branch.
 

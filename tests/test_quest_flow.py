@@ -1,6 +1,12 @@
 import core.game as game_module
 from core.game import Game
+from systems.quests import accept_quest
 from systems.quests import get_quest_progress
+
+
+BRINDLE_FIRST_QUEST_ID = "forest_brindle_pest_control_officially"
+MAELA_FIRST_QUEST_ID = "forest_maela_polite_amount_leaves"
+FEN_FIRST_QUEST_ID = "forest_fen_scouts_honor_used_once"
 
 
 def select_first_class(game, monkeypatch):
@@ -14,12 +20,18 @@ def test_new_player_has_quest_state(monkeypatch):
     select_first_class(game, monkeypatch)
 
     assert "quests" in game.player
-    assert game.player["quests"]["active"] == ["forest_secure_outskirts"]
+    assert game.player["quests"]["available"] == [
+        BRINDLE_FIRST_QUEST_ID,
+        MAELA_FIRST_QUEST_ID,
+        FEN_FIRST_QUEST_ID,
+    ]
+    assert game.player["quests"]["active"] == []
 
 
 def test_instance_progresses_kill_quest_for_single_enemy_zone(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
+    accept_quest(game.player, game.data.quests, BRINDLE_FIRST_QUEST_ID)
 
     monkeypatch.setattr(
         game_module,
@@ -34,13 +46,13 @@ def test_instance_progresses_kill_quest_for_single_enemy_zone(monkeypatch):
 
     game.select_zone("forest_rat_outskirts")
 
-    assert get_quest_progress(game.player, "forest_secure_outskirts", 0) >= 5
+    assert get_quest_progress(game.player, BRINDLE_FIRST_QUEST_ID, 0) >= 5
 
 
 def test_gathering_progresses_gather_quest(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
-    game.player["quests"]["active"] = ["forest_first_harvest"]
+    game.player["quests"]["active"] = [MAELA_FIRST_QUEST_ID]
 
     monkeypatch.setattr(
         game_module,
@@ -55,27 +67,27 @@ def test_gathering_progresses_gather_quest(monkeypatch):
 
     game.gather_in_zone("forest_rat_outskirts", "druid")
 
-    assert get_quest_progress(game.player, "forest_first_harvest", 0) == 3
+    assert get_quest_progress(game.player, MAELA_FIRST_QUEST_ID, 0) == 3
 
 
 def test_record_craft_quest_progress_updates_craft_objective(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
-    game.player["quests"]["active"] = ["forest_pack_watches"]
+    game.player["quests"]["active"] = ["forest_maela_cure_might_apologize"]
 
     game.record_craft_quest_progress(
-        "craft_wolf_fang_charm",
+        "craft_herbal_poultice",
         {"crafted": True},
     )
 
-    assert get_quest_progress(game.player, "forest_pack_watches", 1) == 1
+    assert get_quest_progress(game.player, "forest_maela_cure_might_apologize", 0) == 1
 
 
 def test_dungeon_completion_records_clear_dungeon_quest(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
     game.player["level"] = 5
-    game.player["quests"]["active"] = ["forest_clear_goblin_camp"]
+    game.player["quests"]["active"] = ["forest_marn_break_goblin_camp"]
     game.start_dungeon("forest_goblin_camp")
     dungeon = game.data.dungeons[game.active_dungeon["dungeon_id"]]
     boss_index = next(
@@ -98,15 +110,15 @@ def test_dungeon_completion_records_clear_dungeon_quest(monkeypatch):
 
     game.resolve_dungeon_boss_step()
 
-    assert get_quest_progress(game.player, "forest_clear_goblin_camp", 0) == 1
-    assert "forest_clear_goblin_camp" in game.player["quests"]["completed"]
+    assert get_quest_progress(game.player, "forest_marn_break_goblin_camp", 0) == 1
+    assert "forest_marn_break_goblin_camp" in game.player["quests"]["completed"]
 
 
 def test_rootcaller_boss_victory_records_defeat_boss_quest(monkeypatch):
     game = Game()
     select_first_class(game, monkeypatch)
     game.player["level"] = 5
-    game.player["quests"]["active"] = ["forest_silence_rootcaller"]
+    game.player["quests"]["active"] = ["forest_marn_grubfang_must_fall"]
     game.start_dungeon("forest_rootcaller_lair")
     dungeon = game.data.dungeons[game.active_dungeon["dungeon_id"]]
     boss_index = next(
@@ -129,5 +141,5 @@ def test_rootcaller_boss_victory_records_defeat_boss_quest(monkeypatch):
 
     game.resolve_dungeon_boss_step()
 
-    assert get_quest_progress(game.player, "forest_silence_rootcaller", 0) == 1
-    assert "forest_silence_rootcaller" in game.player["quests"]["completed"]
+    assert get_quest_progress(game.player, "forest_marn_grubfang_must_fall", 0) == 1
+    assert "forest_marn_grubfang_must_fall" in game.player["quests"]["completed"]

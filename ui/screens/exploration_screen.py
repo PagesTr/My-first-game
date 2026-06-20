@@ -3,9 +3,11 @@ import xml.etree.ElementTree as ET
 
 import pygame
 
+from systems.dialogues import build_npc_conversation
 from ui.overlays.achievement_overlay import AchievementOverlay
 from ui.overlays.craft_book_overlay import CraftBookOverlay
 from ui.overlays.inventory_overlay import InventoryOverlay
+from ui.overlays.npc_dialogue_overlay import NPCDialogueOverlay
 from ui.overlays.profession_overlay import ProfessionOverlay
 from ui.overlays.quest_overlay import QuestOverlay
 from ui.overlays.skill_overlay import SkillOverlay
@@ -31,6 +33,7 @@ class TiledMap:
         self.collision_polygons = []
         self.spawns = {}
         self.triggers = []
+        self.npcs = []
         self.warnings = []
         self.error_message = None
         self.is_loaded = False
@@ -166,6 +169,9 @@ class TiledMap:
             if object_group.attrib.get("name") == "93_triggers":
                 self._load_triggers(object_group)
                 continue
+            if object_group.attrib.get("name") == "91_npcs":
+                self._load_npcs(object_group)
+                continue
             if object_group.attrib.get("name") != "90_collisions":
                 continue
             for object_node in object_group.findall("object"):
@@ -187,6 +193,60 @@ class TiledMap:
             trigger = self._build_trigger(object_node)
             if trigger is not None:
                 self.triggers.append(trigger)
+
+    def _load_npcs(self, object_group):
+        for object_node in object_group.findall("object"):
+            npc = self._build_npc(object_node)
+            if npc is not None:
+                self.npcs.append(npc)
+
+    def _build_npc(self, object_node):
+        object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
+        if str(object_type or "").strip() != "npc" or not self._is_object_enabled(object_node):
+            return None
+
+        npc_id = self._get_object_property(object_node, "npc_id")
+        if not npc_id:
+            return None
+
+        try:
+            x = int(round(float(object_node.attrib["x"])))
+            y = int(round(float(object_node.attrib["y"])))
+            width = int(round(float(object_node.attrib["width"])))
+            height = int(round(float(object_node.attrib["height"])))
+            raw_gid = int(object_node.attrib["gid"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        if width <= 0 or height <= 0:
+            return None
+
+        gid = raw_gid & ~TILED_FLIP_FLAGS
+        sprite = self.tiles.get(gid)
+        if sprite is None:
+            return None
+        sprite = sprite.copy()
+        if raw_gid & 0x80000000:
+            sprite = pygame.transform.flip(sprite, True, False)
+        if raw_gid & 0x40000000:
+            sprite = pygame.transform.flip(sprite, False, True)
+        sprite = pygame.transform.scale(sprite, (width, height))
+
+        rect = pygame.Rect(x, y - height, width, height)
+        collision_width = max(6, width // 2)
+        collision_rect = pygame.Rect(0, 0, collision_width, max(5, height // 5))
+        collision_rect.midbottom = rect.midbottom
+        return {
+            "npc_id": npc_id,
+            "display_name": self._get_object_property(object_node, "display_name") or npc_id,
+            "direction": self._get_object_property(object_node, "direction") or "down",
+            "prompt": self._get_object_property(object_node, "prompt"),
+            "requires_interact": self._get_object_bool_property(object_node, "requires_interact"),
+            "trigger_id": self._get_object_property(object_node, "trigger_id"),
+            "trigger_type": self._get_object_property(object_node, "trigger_type"),
+            "rect": rect,
+            "collision_rect": collision_rect,
+            "sprite": sprite,
+        }
 
     def _build_trigger(self, object_node):
         object_type = object_node.attrib.get("type") or object_node.attrib.get("class")
@@ -472,11 +532,13 @@ class ExplorationScreen:
         self.obstacles = []
         self.collision_polygons = []
         self.triggers = []
+        self.npcs = []
         self._load_map(self.current_map_id)
         self.active_overlay = None
         self.achievement_overlay = AchievementOverlay(self.game)
         self.craft_book_overlay = CraftBookOverlay(self.game)
         self.inventory_overlay = InventoryOverlay(self.game)
+        self.npc_dialogue_overlay = NPCDialogueOverlay(self.game)
         self.profession_overlay = ProfessionOverlay(self.game)
         self.quest_overlay = QuestOverlay(self.game)
         self.skill_overlay = SkillOverlay(self.game)
@@ -523,12 +585,28 @@ class ExplorationScreen:
             return
 
         if event.key == pygame.K_e:
+            npc = self._get_active_npc()
+            if npc is not None:
+                self._activate_npc(npc)
+                return
             trigger = self._get_active_trigger()
             if trigger is not None:
                 self._activate_trigger(trigger)
                 return
 
     def _handle_overlay_event(self, event):
+        if self.active_overlay == "npc_dialogue":
+            self.npc_dialogue_overlay.handle_event(event)
+            if not self.npc_dialogue_overlay.is_open():
+                result = self.npc_dialogue_overlay.last_result or {}
+                accepted_quest_id = result.get("accepted_quest_id")
+                if accepted_quest_id:
+                    quest = self.game.data.quests.get(accepted_quest_id, {})
+                    quest_name = quest.get("name", accepted_quest_id)
+                    self._show_temporary_message(f"Quest accepted: {quest_name}")
+                self.active_overlay = None
+            return
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             action = self._get_quick_action_at(event.pos)
             if action is not None:
@@ -579,7 +657,7 @@ class ExplorationScreen:
         gameplay_height = max(1, screen.get_height() - self._get_bottom_bar_height())
         world_surface = self._get_world_surface(screen)
         self._draw_map_below_player(world_surface)
-        self._draw_player(world_surface)
+        self._draw_entities(world_surface)
         self._draw_map_above_player(world_surface)
         self._draw_collision_debug(world_surface)
         scaled_world = pygame.transform.scale(world_surface, (screen.get_width(), gameplay_height))
@@ -726,6 +804,12 @@ class ExplorationScreen:
         self.obstacles = list(loaded_map.collision_rects) if loaded_map.is_loaded else []
         self.collision_polygons = list(loaded_map.collision_polygons) if loaded_map.is_loaded else []
         self.triggers = list(loaded_map.triggers) if loaded_map.is_loaded else []
+        self.npcs = list(loaded_map.npcs) if loaded_map.is_loaded else []
+        self.obstacles.extend(
+            npc["collision_rect"]
+            for npc in self.npcs
+            if isinstance(npc.get("collision_rect"), pygame.Rect)
+        )
 
         self.player_position, spawn = self._get_spawn_position(spawn_id)
         self.active_spawn_id = spawn.get("spawn_id") if spawn is not None else None
@@ -817,6 +901,14 @@ class ExplorationScreen:
                 reachable_trigger = trigger
         return reachable_trigger
 
+    def _get_active_npc(self):
+        reach_rect = self._get_trigger_reach_rect()
+        for npc in self.npcs:
+            interaction_rect = npc.get("collision_rect") or npc.get("rect")
+            if interaction_rect is not None and reach_rect.colliderect(interaction_rect):
+                return npc
+        return None
+
     def _get_trigger_reach_rect(self):
         return self.player_rect.inflate(24, 24)
 
@@ -882,6 +974,29 @@ class ExplorationScreen:
             return
 
         self._show_temporary_message("Trigger non configure.")
+
+    def _activate_npc(self, npc):
+        npc_id = self._clean_tiled_value(npc.get("npc_id"))
+        if npc_id is None or npc_id not in self.game.data.npcs:
+            self._show_temporary_message("NPC non configure.")
+            return
+
+        conversation = build_npc_conversation(
+            self.game.player,
+            self.game.data.npcs,
+            self.game.data.quests,
+            self.game.data.npc_dialogues,
+            npc_id,
+        )
+        if not conversation.get("pages"):
+            self._show_temporary_message("Nothing to discuss.")
+            return
+
+        npc_view = dict(self.game.data.npcs[npc_id])
+        npc_view["display_name"] = npc.get("display_name") or npc_view.get("name")
+        self._close_active_overlay()
+        if self.npc_dialogue_overlay.open(npc_view, conversation):
+            self.active_overlay = "npc_dialogue"
 
     def _get_quick_action_for_key(self, key):
         for action in self.quick_actions:
@@ -960,6 +1075,7 @@ class ExplorationScreen:
     def _get_overlay(self, overlay_id):
         overlays = {
             "inventory": self.inventory_overlay,
+            "npc_dialogue": self.npc_dialogue_overlay,
             "quests": self.quest_overlay,
             "achievements": self.achievement_overlay,
             "skills": self.skill_overlay,
@@ -1045,6 +1161,21 @@ class ExplorationScreen:
 
         pygame.draw.rect(screen, (66, 122, 166), draw_rect, border_radius=3)
         pygame.draw.circle(screen, (226, 188, 140), (draw_rect.centerx, draw_rect.y + 5), 5)
+
+    def _draw_entities(self, screen):
+        entities = [(self.player_rect.bottom, "player", None)]
+        entities.extend((npc["rect"].bottom, "npc", npc) for npc in self.npcs)
+        for _sort_y, entity_type, entity in sorted(entities, key=lambda entry: entry[0]):
+            if entity_type == "player":
+                self._draw_player(screen)
+            else:
+                self._draw_npc(screen, entity)
+
+    def _draw_npc(self, screen, npc):
+        draw_rect = self._to_screen_rect(npc["rect"])
+        collision_rect = self._to_screen_rect(npc["collision_rect"])
+        pygame.draw.ellipse(screen, (10, 25, 18), collision_rect.inflate(8, 2))
+        screen.blit(npc["sprite"], draw_rect)
 
     def _load_player_animations(self):
         animations = {}
@@ -1180,6 +1311,8 @@ class ExplorationScreen:
                 pygame.draw.lines(screen, (220, 160, 80), True, screen_points, 1)
         for trigger in self.triggers:
             pygame.draw.rect(screen, (80, 160, 230), self._to_screen_rect(trigger["rect"]), 1)
+        for npc in self.npcs:
+            pygame.draw.rect(screen, (90, 210, 130), self._to_screen_rect(npc["rect"]), 1)
 
     def _layout_quick_action_bar(self, screen):
         bar_height = self._get_bottom_bar_height()
@@ -1211,7 +1344,11 @@ class ExplorationScreen:
             pygame.draw.rect(screen, outline_color, rect, 2, border_radius=6)
             self._draw_quick_action_icon(screen, action, rect, is_hovered or is_active)
 
-        if hovered_action is not None and self._get_active_trigger() is None:
+        if (
+            hovered_action is not None
+            and self._get_active_trigger() is None
+            and self._get_active_npc() is None
+        ):
             self._draw_quick_action_tooltip(screen, hovered_action, bar_rect)
 
     def _draw_quick_action_icon(self, screen, action, rect, is_hovered):
@@ -1309,8 +1446,13 @@ class ExplorationScreen:
             self.message = self.default_message
             self.message_until_ms = 0
         active_trigger = self._get_active_trigger()
+        active_npc = self._get_active_npc()
         hovered_action = self._get_hovered_quick_action()
-        if active_trigger is not None and self._clean_tiled_value(active_trigger.get("prompt")):
+        if active_npc is not None and self._clean_tiled_value(active_npc.get("prompt")):
+            text = self._clean_tiled_value(active_npc.get("prompt"))
+        elif active_npc is not None:
+            text = "E - Talk"
+        elif active_trigger is not None and self._clean_tiled_value(active_trigger.get("prompt")):
             text = self._clean_tiled_value(active_trigger.get("prompt"))
         elif active_trigger is not None and active_trigger.get("requires_interact"):
             text = "E - Interagir"
