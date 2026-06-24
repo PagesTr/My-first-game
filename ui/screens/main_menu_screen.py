@@ -1,6 +1,7 @@
 import pygame
 
 from systems.save_load import has_save_file
+from ui.assets import load_image
 from ui.overlays.notice_board_overlay import NoticeBoardOverlay
 
 
@@ -20,8 +21,10 @@ PALETTE = {
     "muted": (190, 184, 160),
     "gold": (228, 188, 86),
     "button": (76, 58, 38),
+    "button_hover": (96, 73, 44),
     "button_disabled": (42, 40, 36),
     "button_border": (205, 170, 80),
+    "button_border_hover": (236, 204, 112),
     "shadow": (8, 10, 13),
 }
 
@@ -33,8 +36,16 @@ class Button:
         self.enabled = enabled
 
     def draw(self, screen, font):
-        bg_color = PALETTE["button"] if self.enabled else PALETTE["button_disabled"]
-        border_color = PALETTE["button_border"] if self.enabled else (88, 92, 96)
+        hovered = self.enabled and self.rect.collidepoint(pygame.mouse.get_pos())
+        if not self.enabled:
+            bg_color = PALETTE["button_disabled"]
+            border_color = (88, 92, 96)
+        elif hovered:
+            bg_color = PALETTE["button_hover"]
+            border_color = PALETTE["button_border_hover"]
+        else:
+            bg_color = PALETTE["button"]
+            border_color = PALETTE["button_border"]
         text_color = PALETTE["text"] if self.enabled else (132, 138, 142)
 
         pygame.draw.rect(screen, PALETTE["shadow"], self.rect.move(4, 4))
@@ -53,14 +64,15 @@ class MainMenuScreen:
     def __init__(self, game, app=None):
         self.game = game
         self.app = app
-        self.title_font = pygame.font.Font(None, 62)
+        self.background = load_image("assets/backgrounds/main_menu.png", (800, 600))
+        self.title_font = pygame.font.Font(None, 48)
         self.header_font = pygame.font.Font(None, 34)
         self.subtitle_font = pygame.font.Font(None, 24)
-        self.button_font = pygame.font.Font(None, 30)
-        self.continue_button = Button((292, 248, 216, 52), "Continue")
-        self.new_game_button = Button((292, 316, 216, 52), "New Game")
-        self.notice_board_button = Button((292, 384, 216, 52), "Notice Board")
-        self.quit_button = Button((292, 452, 216, 52), "Quit")
+        self.button_font = pygame.font.Font(None, 28)
+        self.continue_button = Button((76, 220, 248, 48), "Continue")
+        self.new_game_button = Button((76, 290, 248, 48), "New Game")
+        self.notice_board_button = Button((76, 360, 248, 48), "Notice Board")
+        self.quit_button = Button((76, 430, 248, 48), "Quit")
         self.notice_board_overlay = NoticeBoardOverlay(self.game)
         self.message = ""
         self.message_until = 0
@@ -116,7 +128,7 @@ class MainMenuScreen:
 
         if not self.continue_button.enabled:
             no_save = self.subtitle_font.render("No save found", True, PALETTE["muted"])
-            no_save_rect = no_save.get_rect(center=(400, 308))
+            no_save_rect = no_save.get_rect(center=(200, 279))
             screen.blit(no_save, no_save_rect)
 
         if self.message and pygame.time.get_ticks() <= self.message_until:
@@ -134,6 +146,18 @@ class MainMenuScreen:
         self.message_until = pygame.time.get_ticks() + 1800
 
     def _draw_background(self, screen):
+        if self.background is None:
+            self._draw_fallback_background(screen)
+            return
+
+        screen.blit(self.background, (0, 0))
+        readability_overlay = pygame.Surface((800, 600), pygame.SRCALPHA)
+        readability_overlay.fill((5, 7, 12, 38))
+        pygame.draw.rect(readability_overlay, (3, 5, 10, 112), (0, 0, 370, 600))
+        pygame.draw.rect(readability_overlay, (3, 5, 10, 72), (370, 0, 70, 600))
+        screen.blit(readability_overlay, (0, 0))
+
+    def _draw_fallback_background(self, screen):
         for y in range(0, 600, 4):
             blend = y / 600
             color = (
@@ -164,7 +188,7 @@ class MainMenuScreen:
             pygame.draw.rect(screen, (12, 15, 15), (x, 468 + (x % 48), 16, 4))
 
     def _draw_title_banner(self, screen):
-        banner_rect = pygame.Rect(196, 52, 408, 112)
+        banner_rect = pygame.Rect(48, 36, 304, 108)
         pygame.draw.rect(screen, PALETTE["shadow"], banner_rect.move(5, 5))
         pygame.draw.rect(screen, PALETTE["panel_dark"], banner_rect)
         pygame.draw.rect(screen, PALETTE["border_light"], banner_rect, 3)
@@ -172,8 +196,8 @@ class MainMenuScreen:
 
         title_shadow = self.title_font.render("My First Game", True, PALETTE["shadow"])
         title = self.title_font.render("My First Game", True, PALETTE["gold"])
-        title_rect = title.get_rect(center=(400, 95))
-        shadow_rect = title_shadow.get_rect(center=(403, 98))
+        title_rect = title.get_rect(center=(200, 77))
+        shadow_rect = title_shadow.get_rect(center=(203, 80))
         screen.blit(title_shadow, shadow_rect)
         screen.blit(title, title_rect)
 
@@ -182,28 +206,30 @@ class MainMenuScreen:
             True,
             PALETTE["muted"],
         )
-        subtitle_rect = subtitle.get_rect(center=(400, 134))
+        subtitle_rect = subtitle.get_rect(center=(200, 116))
         screen.blit(subtitle, subtitle_rect)
 
     def _draw_menu_panel(self, screen):
-        panel_rect = pygame.Rect(248, 194, 304, 322)
+        panel_rect = pygame.Rect(48, 164, 304, 332)
         pygame.draw.rect(screen, PALETTE["shadow"], panel_rect.move(5, 5))
-        pygame.draw.rect(screen, PALETTE["panel"], panel_rect)
-        pygame.draw.rect(screen, PALETTE["border"], panel_rect, 3)
-        pygame.draw.rect(screen, PALETTE["panel_light"], panel_rect.inflate(-14, -14), 1)
+        panel_surface = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
+        panel_surface.fill((*PALETTE["panel_dark"], 224))
+        pygame.draw.rect(panel_surface, PALETTE["border"], panel_surface.get_rect(), 3)
+        pygame.draw.rect(panel_surface, PALETTE["panel_light"], panel_surface.get_rect().inflate(-14, -14), 1)
         pygame.draw.line(
-            screen,
+            panel_surface,
             PALETTE["border_light"],
-            (panel_rect.x + 12, panel_rect.y + 12),
-            (panel_rect.right - 12, panel_rect.y + 12),
+            (12, 12),
+            (panel_rect.w - 12, 12),
             2,
         )
+        screen.blit(panel_surface, panel_rect)
         header = self.header_font.render("Main Menu", True, PALETTE["text"])
-        header_rect = header.get_rect(center=(400, panel_rect.y + 30))
+        header_rect = header.get_rect(center=(200, panel_rect.y + 30))
         screen.blit(header, header_rect)
 
     def _draw_message(self, screen, message):
-        rect = pygame.Rect(236, 488, 328, 34)
+        rect = pygame.Rect(60, 506, 280, 34)
         pygame.draw.rect(screen, PALETTE["shadow"], rect.move(3, 3))
         pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
         pygame.draw.rect(screen, PALETTE["border_light"], rect, 1)
@@ -213,6 +239,6 @@ class MainMenuScreen:
 
     def _draw_footer(self, screen):
         version = self.subtitle_font.render("Prototype build", True, (130, 124, 105))
-        screen.blit(version, (50, 548))
+        screen.blit(version, (62, 558))
         hint = self.subtitle_font.render("Top-down exploration", True, PALETTE["muted"])
         screen.blit(hint, (604, 548))

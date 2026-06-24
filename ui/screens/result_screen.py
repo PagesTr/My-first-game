@@ -8,11 +8,11 @@ PALETTE = {
     "forest_front": (12, 28, 24),
     "ground": (17, 20, 22),
     "ground_light": (36, 41, 34),
-    "panel": (37, 45, 54),
-    "panel_dark": (27, 34, 42),
-    "panel_light": (64, 73, 78),
-    "border": (92, 82, 58),
-    "border_light": (192, 172, 105),
+    "panel": (20, 30, 40),
+    "panel_dark": (11, 19, 28),
+    "panel_light": (56, 69, 76),
+    "border": (119, 88, 43),
+    "border_light": (218, 177, 79),
     "text": (238, 232, 214),
     "muted": (174, 184, 174),
     "gold": (228, 188, 86),
@@ -20,8 +20,10 @@ PALETTE = {
     "victory": (105, 198, 117),
     "defeat": (194, 82, 76),
     "level_up": (120, 217, 138),
-    "button": (42, 58, 54),
-    "button_border": (192, 172, 105),
+    "button": (27, 67, 105),
+    "button_hover": (38, 88, 136),
+    "button_border": (218, 177, 79),
+    "button_border_hover": (244, 207, 112),
     "shadow": (8, 10, 13),
 }
 
@@ -32,10 +34,24 @@ class Button:
         self.text = text
 
     def draw(self, screen, font):
+        hovered = self.rect.collidepoint(pygame.mouse.get_pos())
+        background = PALETTE["button_hover"] if hovered else PALETTE["button"]
+        border = (
+            PALETTE["button_border_hover"]
+            if hovered
+            else PALETTE["button_border"]
+        )
         pygame.draw.rect(screen, PALETTE["shadow"], self.rect.move(4, 4))
-        pygame.draw.rect(screen, PALETTE["button"], self.rect)
-        pygame.draw.rect(screen, PALETTE["button_border"], self.rect, 3)
+        pygame.draw.rect(screen, background, self.rect)
+        pygame.draw.rect(screen, border, self.rect, 3)
         pygame.draw.rect(screen, PALETTE["panel_light"], self.rect.inflate(-10, -10), 1)
+        pygame.draw.line(
+            screen,
+            border,
+            (self.rect.x + 12, self.rect.y + 6),
+            (self.rect.right - 12, self.rect.y + 6),
+            1,
+        )
 
         label = font.render(self.text, True, PALETTE["text"])
         label_rect = label.get_rect(center=self.rect.center)
@@ -195,10 +211,15 @@ class ResultScreen:
             )
             return
 
-        self._draw_title(screen, title_text, title_color)
+        report_title = (
+            "Rapport d'expédition"
+            if is_instance_result
+            else "Rapport de combat"
+        )
+        self._draw_title(screen, title_text, title_color, report_title)
 
-        summary_rect = pygame.Rect(64, 138, 322, 318)
-        loot_rect = pygame.Rect(414, 138, 322, 318)
+        summary_rect = pygame.Rect(64, 148, 322, 326)
+        loot_rect = pygame.Rect(414, 148, 322, 326)
         self._draw_panel(screen, summary_rect, "Résumé")
         self._draw_panel(screen, loot_rect, "Butin")
 
@@ -222,16 +243,8 @@ class ResultScreen:
             y = self._draw_summary_line(screen, "Niveau actuel", current_level, y)
 
             if result.get("leveled_up", False):
-                y += 10
-                y = self._draw_summary_line(
-                    screen, "Level up", "Oui", y, PALETTE["level_up"]
-                )
-                self._draw_summary_line(
-                    screen,
-                    "Nouveau niveau",
-                    result.get("new_level", current_level),
-                    y,
-                    PALETTE["level_up"],
+                self._draw_level_up_panel(
+                    screen, summary_rect, result.get("new_level", current_level)
                 )
 
         self._draw_loot_section(screen, loot_rect, drops)
@@ -252,18 +265,23 @@ class ResultScreen:
         title_text,
         title_color,
     ):
-        self._draw_title(screen, title_text, title_color)
+        report_title = (
+            "Rapport d'expédition"
+            if result.get("is_instance_result") is True
+            else "Rapport de combat"
+        )
+        self._draw_title(screen, title_text, title_color, report_title)
 
         subtitle = self.header_font.render("Inventaire plein", True, PALETTE["gold"])
-        subtitle_rect = subtitle.get_rect(center=(400, 124))
+        subtitle_rect = subtitle.get_rect(center=(400, 136))
         screen.blit(subtitle, subtitle_rect)
 
         self._draw_replacement_instructions(screen)
 
         self._draw_compact_summary(screen, exp_gained, gold_gained, current_level)
 
-        loot_rect = pygame.Rect(42, 210, 328, 242)
-        inventory_rect = pygame.Rect(400, 210, 358, 242)
+        loot_rect = pygame.Rect(42, 242, 328, 218)
+        inventory_rect = pygame.Rect(400, 242, 358, 218)
         self._draw_panel(screen, loot_rect, "Butin temporaire")
         self._draw_panel(screen, inventory_rect, "Inventaire")
 
@@ -275,7 +293,7 @@ class ResultScreen:
         self._draw_result_buttons(screen, result)
 
     def _draw_compact_summary(self, screen, exp_gained, gold_gained, current_level):
-        rect = pygame.Rect(220, 180, 360, 26)
+        rect = pygame.Rect(220, 192, 360, 26)
         pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
         pygame.draw.rect(screen, PALETTE["border"], rect, 1)
 
@@ -454,49 +472,74 @@ class ResultScreen:
         for x in range(0, 800, 24):
             pygame.draw.rect(screen, (12, 15, 15), (x, 468 + (x % 48), 16, 4))
 
-    def _draw_title(self, screen, title_text, title_color):
-        banner_rect = pygame.Rect(250, 36, 300, 72)
-        pygame.draw.rect(screen, PALETTE["shadow"], banner_rect.move(4, 4))
+        veil = pygame.Surface((800, 600), pygame.SRCALPHA)
+        veil.fill((3, 8, 13, 54))
+        screen.blit(veil, (0, 0))
+
+    def _draw_title(self, screen, title_text, title_color, subtitle):
+        banner_rect = pygame.Rect(178, 18, 444, 104)
+        left_wing = [(178, 42), (136, 34), (150, 70), (136, 104), (178, 96)]
+        right_wing = [(622, 42), (664, 34), (650, 70), (664, 104), (622, 96)]
+        pygame.draw.polygon(
+            screen,
+            PALETTE["shadow"],
+            [(x + 4, y + 4) for x, y in left_wing],
+        )
+        pygame.draw.polygon(
+            screen,
+            PALETTE["shadow"],
+            [(x + 4, y + 4) for x, y in right_wing],
+        )
+        pygame.draw.polygon(screen, PALETTE["panel_dark"], left_wing)
+        pygame.draw.polygon(screen, PALETTE["panel_dark"], right_wing)
+        pygame.draw.lines(screen, PALETTE["border"], True, left_wing, 3)
+        pygame.draw.lines(screen, PALETTE["border"], True, right_wing, 3)
+
+        pygame.draw.rect(screen, PALETTE["shadow"], banner_rect.move(5, 5))
         pygame.draw.rect(screen, PALETTE["panel_dark"], banner_rect)
         pygame.draw.rect(screen, PALETTE["border_light"], banner_rect, 3)
+        pygame.draw.rect(screen, PALETTE["border"], banner_rect.inflate(-12, -12), 1)
 
         shadow = self.title_font.render(title_text, True, PALETTE["shadow"])
         title = self.title_font.render(title_text, True, title_color)
-        title_rect = title.get_rect(center=(400, 72))
-        shadow_rect = shadow.get_rect(center=(403, 75))
+        title_rect = title.get_rect(center=(400, 53))
+        shadow_rect = shadow.get_rect(center=(403, 56))
         screen.blit(shadow, shadow_rect)
         screen.blit(title, title_rect)
+
+        subtitle_rect = pygame.Rect(244, 82, 312, 30)
+        pygame.draw.rect(screen, PALETTE["shadow"], subtitle_rect.move(3, 3))
+        pygame.draw.rect(screen, (15, 25, 34), subtitle_rect)
+        pygame.draw.rect(screen, PALETTE["border"], subtitle_rect, 2)
+        subtitle_text = self.small_font.render(subtitle, True, PALETTE["text"])
+        screen.blit(subtitle_text, subtitle_text.get_rect(center=subtitle_rect.center))
 
     def _draw_panel(self, screen, rect, title):
         pygame.draw.rect(screen, PALETTE["shadow"], rect.move(5, 5))
         pygame.draw.rect(screen, PALETTE["panel"], rect)
         pygame.draw.rect(screen, PALETTE["border"], rect, 3)
         pygame.draw.rect(screen, PALETTE["panel_light"], rect.inflate(-14, -14), 1)
-        pygame.draw.line(
-            screen,
-            PALETTE["border_light"],
-            (rect.x + 10, rect.y + 10),
-            (rect.right - 10, rect.y + 10),
-            2,
-        )
 
-        title_bg = pygame.Rect(rect.x + 18, rect.y + 14, rect.width - 36, 34)
+        self._draw_corner_accents(screen, rect)
+        title_bg = pygame.Rect(rect.x + 42, rect.y - 16, rect.width - 84, 38)
+        pygame.draw.rect(screen, PALETTE["shadow"], title_bg.move(3, 3))
         pygame.draw.rect(screen, PALETTE["panel_dark"], title_bg)
         pygame.draw.rect(screen, PALETTE["border_light"], title_bg, 2)
         title_text = self.header_font.render(title, True, PALETTE["text"])
-        screen.blit(title_text, (title_bg.x + 12, title_bg.y + 5))
+        screen.blit(title_text, title_text.get_rect(center=title_bg.center))
+
+    def _draw_corner_accents(self, screen, rect):
+        for x, y in (
+            (rect.x + 8, rect.y + 8),
+            (rect.right - 8, rect.y + 8),
+            (rect.x + 8, rect.bottom - 8),
+            (rect.right - 8, rect.bottom - 8),
+        ):
+            pygame.draw.rect(screen, PALETTE["border_light"], (x - 3, y - 3, 6, 6))
+            pygame.draw.rect(screen, PALETTE["panel_dark"], (x - 1, y - 1, 2, 2))
 
     def _draw_button(self, screen, button):
-        pygame.draw.rect(screen, PALETTE["shadow"], button.rect.move(4, 4))
-        pygame.draw.rect(screen, PALETTE["button"], button.rect)
-        pygame.draw.rect(screen, PALETTE["button_border"], button.rect, 3)
-        pygame.draw.rect(
-            screen, PALETTE["panel_light"], button.rect.inflate(-10, -10), 1
-        )
-
-        label = self.font.render(button.text, True, PALETTE["text"])
-        label_rect = label.get_rect(center=button.rect.center)
-        screen.blit(label, label_rect)
+        button.draw(screen, self.font)
 
     def _draw_result_buttons(self, screen, result):
         if self._has_pending_drops(result):
@@ -510,14 +553,63 @@ class ResultScreen:
         self._draw_button(screen, self.continue_btn)
 
     def _draw_summary_line(self, screen, label, value, y, value_color=None):
-        row_rect = pygame.Rect(92, y - 5, 250, 31)
+        row_rect = pygame.Rect(86, y - 5, 278, 31)
         pygame.draw.rect(screen, PALETTE["panel_dark"], row_rect)
-        pygame.draw.rect(screen, (58, 66, 66), row_rect, 1)
+        pygame.draw.rect(screen, PALETTE["panel_light"], row_rect, 1)
+        self._draw_summary_icon(screen, label, row_rect)
         label_text = self.font.render(f"{label} :", True, PALETTE["muted"])
         value_text = self.font.render(str(value), True, value_color or PALETTE["text"])
-        screen.blit(label_text, (row_rect.x + 10, y))
+        screen.blit(label_text, (row_rect.x + 42, y))
         screen.blit(value_text, (row_rect.right - value_text.get_width() - 10, y))
         return y + 38
+
+    def _draw_summary_icon(self, screen, label, row_rect):
+        icon_rect = pygame.Rect(row_rect.x + 8, row_rect.y + 5, 22, 22)
+        if "XP" in label:
+            pygame.draw.polygon(
+                screen,
+                PALETTE["xp"],
+                [
+                    icon_rect.midtop,
+                    icon_rect.midright,
+                    icon_rect.midbottom,
+                    icon_rect.midleft,
+                ],
+            )
+            glyph = "X"
+        elif "Gold" in label:
+            pygame.draw.circle(screen, PALETTE["gold"], icon_rect.center, 10)
+            glyph = "G"
+        else:
+            pygame.draw.rect(screen, PALETTE["border"], icon_rect)
+            glyph = "L"
+        text = self.small_font.render(glyph, True, PALETTE["panel_dark"])
+        screen.blit(text, text.get_rect(center=icon_rect.center))
+
+    def _draw_level_up_panel(self, screen, summary_rect, new_level):
+        rect = pygame.Rect(
+            summary_rect.x + 22,
+            summary_rect.bottom - 104,
+            summary_rect.w - 44,
+            78,
+        )
+        pygame.draw.rect(screen, PALETTE["shadow"], rect.move(3, 3))
+        pygame.draw.rect(screen, (23, 62, 38), rect)
+        pygame.draw.rect(screen, PALETTE["level_up"], rect, 2)
+        pygame.draw.rect(screen, (74, 118, 65), rect.inflate(-10, -10), 1)
+
+        arrow = [
+            (rect.x + 28, rect.y + 43),
+            (rect.x + 46, rect.y + 23),
+            (rect.x + 64, rect.y + 43),
+        ]
+        pygame.draw.polygon(screen, PALETTE["level_up"], arrow)
+        pygame.draw.rect(screen, PALETTE["level_up"], (rect.x + 39, rect.y + 41, 14, 20))
+
+        title = self.font.render("Niveau supérieur !", True, PALETTE["level_up"])
+        value = self.header_font.render(str(new_level), True, PALETTE["text"])
+        screen.blit(title, (rect.x + 78, rect.y + 14))
+        screen.blit(value, value.get_rect(center=(rect.right - 32, rect.centery + 8)))
 
     def _draw_loot_section(self, screen, rect, drops):
         self.loot_rows = []
@@ -529,6 +621,7 @@ class ResultScreen:
             columns = 5
             start_x = rect.x + 20
             start_y = rect.y + 72
+            mouse_pos = pygame.mouse.get_pos()
             start_index = self.loot_page * self.loot_items_per_page
             visible_drops = drops[start_index:start_index + self.loot_items_per_page]
 
@@ -547,7 +640,12 @@ class ResultScreen:
                     PALETTE["panel_dark"],
                     card_rect,
                 )
-                pygame.draw.rect(screen, self._get_drop_color(drop), card_rect, 2)
+                border_color = (
+                    PALETTE["border_light"]
+                    if card_rect.collidepoint(mouse_pos)
+                    else self._get_drop_color(drop)
+                )
+                pygame.draw.rect(screen, border_color, card_rect, 2)
                 if real_drop_index == self.selected_pending_drop_index:
                     pygame.draw.rect(screen, PALETTE["border_light"], card_rect, 4)
                 pygame.draw.rect(
@@ -666,7 +764,7 @@ class ResultScreen:
         )
 
     def _draw_replacement_instructions(self, screen):
-        rect = pygame.Rect(128, 136, 544, 42)
+        rect = pygame.Rect(128, 152, 544, 42)
         pygame.draw.rect(screen, PALETTE["shadow"], rect.move(3, 3))
         pygame.draw.rect(screen, PALETTE["panel_dark"], rect)
         pygame.draw.rect(screen, PALETTE["border"], rect, 1)
@@ -754,12 +852,12 @@ class ResultScreen:
         if page_count <= 1:
             return
 
-        prev_btn.rect = pygame.Rect(rect.right - 104, rect.y + 16, 28, 24)
-        next_btn.rect = pygame.Rect(rect.right - 34, rect.y + 16, 28, 24)
+        prev_btn.rect = pygame.Rect(rect.right - 104, rect.y + 28, 28, 24)
+        next_btn.rect = pygame.Rect(rect.right - 34, rect.y + 28, 28, 24)
         page_text = self.small_font.render(
             f"{current_page + 1}/{page_count}", True, PALETTE["muted"]
         )
-        page_rect = page_text.get_rect(center=(rect.right - 55, rect.y + 28))
+        page_rect = page_text.get_rect(center=(rect.right - 55, rect.y + 40))
 
         self._draw_button(screen, prev_btn)
         screen.blit(page_text, page_rect)

@@ -108,21 +108,21 @@
             "scale": 2,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 217.5,
-                "y": 163.5
+                "x": 240,
+                "y": 160
             }
         },
         "assets/maps/forest_01.tmx": {
             "expandedObjectLayers": [
+                6,
                 10,
-                9,
-                6
+                9
             ],
             "scale": 1.1380208333333333,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 880.4759725400459,
-                "y": 301.4004576659039
+                "x": 479.78032036613274,
+                "y": 319.85354691075514
             }
         },
         "assets/maps/formation_house_test.tmx": {
@@ -135,16 +135,16 @@
         },
         "assets/maps/town_01.tmx": {
             "expandedObjectLayers": [
+                6,
                 10,
                 9,
-                6,
                 4
             ],
             "scale": 1.5,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 650,
-                "y": 281.33333333333326
+                "x": 456.66666666666663,
+                "y": 611.3333333333333
             }
         },
         "assets/maps/town_demo.tmx": {
@@ -283,11 +283,13 @@
         "assets/tilesets/pixel_crawler_vegetation.tsx",
         "assets/automapping/tree_rules.tmx",
         "assets/tilesets/bones.tsx",
-        "assets/tilesets/altar.tsx"
+        "assets/tilesets/altar.tsx",
+        "assets/tilesets/characters_24x36.tsx"
     ],
     "project": "town.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "assets/tilesets/characters_24x36.tsx",
         "assets/tilesets/altar.tsx",
         "assets/tilesets/bones.tsx",
         "assets/automapping/tree_rules.tmx",
@@ -298,8 +300,7 @@
         "assets/maps/forest_01.tmx",
         "assets/maps/altar_01.tmx",
         "assets/maps/town_01.tmx",
-        "assets/maps/Start_map.tmx",
-        "assets/tilesets/water.tsx"
+        "assets/maps/Start_map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
