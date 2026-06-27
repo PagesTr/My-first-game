@@ -4,10 +4,13 @@ from ui.assets import load_image
 
 
 KIT_PATH = "assets/ui/pixel_kit"
+SOURCE_PATH = "assets/ui/pixel_kit/sources"
 TILE = 16
 BUTTON_HEIGHT = 40
 TAB_HEIGHT = 38
 SLOT_SIZE = 48
+PANEL_SOURCE_BORDER = 96
+PANEL_TARGET_BORDER = 48
 
 _KIT_CACHE = {}
 
@@ -16,6 +19,13 @@ def _asset(name):
     if name not in _KIT_CACHE:
         _KIT_CACHE[name] = load_image(f"{KIT_PATH}/{name}")
     return _KIT_CACHE[name]
+
+
+def _source_asset(name):
+    key = f"sources/{name}"
+    if key not in _KIT_CACHE:
+        _KIT_CACHE[key] = load_image(f"{SOURCE_PATH}/{name}")
+    return _KIT_CACHE[key]
 
 
 def _tile_surface(screen, image, rect):
@@ -27,8 +37,71 @@ def _tile_surface(screen, image, rect):
             screen.blit(image, target, area=target.clip(rect).move(-x, -y))
 
 
+def _blit_scaled(screen, image, source_rect, target_rect):
+    source_rect = pygame.Rect(source_rect)
+    target_rect = pygame.Rect(target_rect)
+    if target_rect.width <= 0 or target_rect.height <= 0:
+        return
+    piece = image.subsurface(source_rect)
+    if piece.get_size() != target_rect.size:
+        piece = pygame.transform.scale(piece, target_rect.size)
+    screen.blit(piece, target_rect)
+
+
+def _draw_panel_from_source(screen, rect, image):
+    rect = pygame.Rect(rect)
+    source_border = PANEL_SOURCE_BORDER
+    target_border = min(
+        PANEL_TARGET_BORDER,
+        max(1, rect.width // 3),
+        max(1, rect.height // 3),
+    )
+    source_w, source_h = image.get_size()
+    source_center_w = source_w - source_border * 2
+    source_center_h = source_h - source_border * 2
+    target_center_w = rect.width - target_border * 2
+    target_center_h = rect.height - target_border * 2
+
+    columns = (
+        (0, target_border, source_border),
+        (target_border, target_center_w, source_center_w),
+        (rect.width - target_border, target_border, source_border),
+    )
+    rows = (
+        (0, target_border, source_border),
+        (target_border, target_center_h, source_center_h),
+        (rect.height - target_border, target_border, source_border),
+    )
+    source_columns = (0, source_border, source_w - source_border)
+    source_rows = (0, source_border, source_h - source_border)
+
+    for row_index, (target_y, target_h, source_h_part) in enumerate(rows):
+        for col_index, (target_x, target_w, source_w_part) in enumerate(columns):
+            _blit_scaled(
+                screen,
+                image,
+                (
+                    source_columns[col_index],
+                    source_rows[row_index],
+                    source_w_part,
+                    source_h_part,
+                ),
+                (
+                    rect.x + target_x,
+                    rect.y + target_y,
+                    target_w,
+                    target_h,
+                ),
+            )
+
+
 def draw_panel(screen, rect, fallback_draw=None):
     rect = pygame.Rect(rect)
+    source_panel = _source_asset("ui_pixel_kit_panel_01.png")
+    if source_panel is not None and source_panel.get_size() == (432, 432):
+        _draw_panel_from_source(screen, rect, source_panel)
+        return
+
     parts = {
         name: _asset(name)
         for name in (

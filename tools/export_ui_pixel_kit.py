@@ -1,8 +1,9 @@
 """Export the pixel UI kit PNGs from a single Aseprite atlas export.
 
 Workflow:
-1. Edit assets/ui/pixel_kit/sources/ui_pixel_kit_01.aseprite.
-2. Export the full atlas as assets/ui/pixel_kit/sources/ui_pixel_kit_01.png.
+1. Edit assets/ui/pixel_kit/sources/ui_pixel_kit_worksheet.png in Aseprite,
+   or use it as the base layer for a .aseprite source.
+2. Export the full atlas as assets/ui/pixel_kit/sources/ui_pixel_kit_worksheet.png.
 3. Run: .\\.venv\\Scripts\\python.exe tools\\export_ui_pixel_kit.py
 
 If Aseprite is available in PATH, or ASEPRITE_EXE points to aseprite.exe,
@@ -24,34 +25,46 @@ ROOT = Path(__file__).resolve().parents[1]
 KIT_DIR = ROOT / "assets" / "ui" / "pixel_kit"
 SOURCE_DIR = KIT_DIR / "sources"
 SOURCE_ASEPRITE = SOURCE_DIR / "ui_pixel_kit_01.aseprite"
-SOURCE_PNG = SOURCE_DIR / "ui_pixel_kit_01.png"
+SOURCE_PNG = SOURCE_DIR / "ui_pixel_kit_worksheet.png"
+LEGACY_SOURCE_PNG = SOURCE_DIR / "ui_pixel_kit_01.png"
 
 
 EXPORTS = {
     # Panel pieces, 16x16.
     "panel_corner_tl.png": (0, 0, 16, 16),
-    "panel_edge_top.png": (32, 0, 16, 16),
-    "panel_corner_tr.png": (64, 0, 16, 16),
-    "panel_fill_dark.png": (96, 0, 16, 16),
-    "panel_edge_left.png": (128, 0, 16, 16),
-    "panel_edge_right.png": (160, 0, 16, 16),
-    "panel_corner_bl.png": (192, 0, 16, 16),
-    "panel_edge_bottom.png": (224, 0, 16, 16),
-    "panel_corner_br.png": (240, 16, 16, 16),
+    "panel_edge_top.png": (16, 0, 16, 16),
+    "panel_corner_tr.png": (32, 0, 16, 16),
+    "panel_fill_dark.png": (48, 0, 16, 16),
+    "panel_edge_left.png": (64, 0, 16, 16),
+    "panel_edge_right.png": (80, 0, 16, 16),
+    "panel_corner_bl.png": (96, 0, 16, 16),
+    "panel_edge_bottom.png": (112, 0, 16, 16),
+    "panel_corner_br.png": (128, 0, 16, 16),
 
     # Buttons, 16x40.
-    "button_left.png": (0, 32, 16, 40),
-    "button_center.png": (32, 32, 16, 40),
-    "button_right.png": (64, 32, 16, 40),
-    "button_hover_left.png": (96, 32, 16, 40),
-    "button_hover_center.png": (128, 32, 16, 40),
-    "button_hover_right.png": (160, 32, 16, 40),
+    "button_left.png": (0, 24, 16, 40),
+    "button_center.png": (16, 24, 16, 40),
+    "button_right.png": (32, 24, 16, 40),
+    "button_hover_left.png": (48, 24, 16, 40),
+    "button_hover_center.png": (64, 24, 16, 40),
+    "button_hover_right.png": (80, 24, 16, 40),
+    "button_disabled_left.png": (96, 24, 16, 40),
+    "button_disabled_center.png": (112, 24, 16, 40),
+    "button_disabled_right.png": (128, 24, 16, 40),
 
     # Tabs and slot frame.
     "tab_left.png": (0, 80, 16, 38),
-    "tab_center.png": (32, 80, 16, 38),
-    "tab_right.png": (64, 80, 16, 38),
-    "slot_frame.png": (96, 80, 48, 48),
+    "tab_center.png": (16, 80, 16, 38),
+    "tab_right.png": (32, 80, 16, 38),
+    "slot_frame.png": (64, 80, 48, 48),
+
+    # Rarity halos, 48x48.
+    "slot_halo_common.png": (0, 128, 48, 48),
+    "slot_halo_uncommon.png": (48, 128, 48, 48),
+    "slot_halo_rare.png": (96, 128, 48, 48),
+    "slot_halo_epic.png": (144, 128, 48, 48),
+    "slot_halo_legendary.png": (192, 128, 48, 48),
+    "slot_halo_unique.png": (240, 128, 48, 48),
 }
 
 
@@ -91,7 +104,11 @@ def _validate_source(atlas: pygame.Surface) -> None:
 
 
 def export_pngs() -> None:
-    if not SOURCE_PNG.exists():
+    source_png = SOURCE_PNG
+    if not source_png.exists() and LEGACY_SOURCE_PNG.exists():
+        source_png = LEGACY_SOURCE_PNG
+
+    if not source_png.exists():
         exported = _export_atlas_from_aseprite()
         if not exported:
             raise FileNotFoundError(
@@ -102,7 +119,7 @@ def export_pngs() -> None:
 
     pygame.init()
     try:
-        atlas = pygame.image.load(str(SOURCE_PNG))
+        atlas = pygame.image.load(str(source_png))
         _validate_source(atlas)
 
         for name, rect in EXPORTS.items():
